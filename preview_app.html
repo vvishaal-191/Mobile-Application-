@@ -1741,6 +1741,20 @@ function filterHistory(cat, el) {
     }
   });
 }
+
+function toggleCardDetails(btn) {
+  const card = btn.closest('.card') || btn.closest('.req-card');
+  if (!card) return;
+  const details = card.querySelector('.req-expanded-details');
+  if (!details) return;
+  if (details.style.display === 'none' || !details.style.display) {
+    details.style.display = 'block';
+    btn.textContent = 'Hide Details ∧';
+  } else {
+    details.style.display = 'none';
+    btn.textContent = 'View Details ›';
+  }
+}
 document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
 </script>
 </body>
