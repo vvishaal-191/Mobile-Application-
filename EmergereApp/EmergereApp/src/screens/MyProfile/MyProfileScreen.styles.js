@@ -26,6 +26,7 @@ export default StyleSheet.create({
     fontWeight: '700',
     color: colors.textMuted,
     letterSpacing: 0.5,
+    marginBottom: spacing.md,
   },
   sectionHeaderRow: {
     flexDirection: 'row',

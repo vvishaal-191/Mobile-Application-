@@ -5,10 +5,19 @@
 <div class="device">
 <div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
-  <div class="header"><div class="back-btn">←</div><div><h1>My Profile</h1><p>Employee Details</p></div></div>
+  <div class="header">
+    <div class="back-btn">←</div>
+    <div><h1>My Profile</h1><p>Employee Details</p></div>
+  </div>
+
+  <!-- PROFILE SUMMARY CARD -->
   <div class="card profile-card" id="profile-main-card" style="position:relative;">
     <div style="position:absolute; top:12px; right:12px;" id="profile-edit-btn-wrap">
       <button class="edit-btn" onclick="enableProfileEdit()" style="background:#E7EEFF; color:#2F6BFF; border:none; padding:4px 10px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">✏️ Edit</button>
+    </div>
+    <div style="position:absolute; top:12px; right:12px; display:none; gap:6px;" id="profile-save-cancel-wrap">
+      <button onclick="cancelProfileEdit()" style="background:none; border:1px solid #E7EAF0; padding:4px 10px; border-radius:8px; color:#6B7280; font-size:13px; cursor:pointer;">Cancel</button>
+      <button onclick="saveProfileEdit()" style="background:#2F6BFF; border:none; padding:4px 12px; border-radius:8px; color:#fff; font-size:13px; font-weight:700; cursor:pointer;">Save</button>
     </div>
     <div id="profile-view-mode">
       <div class="avatar big" id="profile-avatar-display">PS</div>
@@ -17,13 +26,7 @@
       <span class="id-chip" id="profile-id-display">EMP-2024-0156</span>
     </div>
     <div id="profile-edit-mode" style="display:none; text-align:left;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span style="font-size:12px; font-weight:700; color:#9AA3B2;">EDIT PROFILE SUMMARY</span>
-        <div>
-          <button onclick="cancelProfileEdit()" style="background:none; border:1px solid #E7EAF0; padding:4px 10px; border-radius:8px; color:#6B7280; font-size:13px; margin-right:6px; cursor:pointer;">Cancel</button>
-          <button onclick="saveProfileEdit()" style="background:#2F6BFF; border:none; padding:4px 12px; border-radius:8px; color:#fff; font-size:13px; font-weight:700; cursor:pointer;">Save</button>
-        </div>
-      </div>
+      <p class="section-title" style="margin-bottom:12px;">PROFILE SUMMARY</p>
       <div style="margin-bottom:10px;">
         <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Full Name</label>
         <input type="text" id="edit-profile-name" value="Priya Sharma" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
@@ -38,20 +41,41 @@
       </div>
     </div>
   </div>
+
   <div class="card status-card"><div class="status-row"><b>Employment Status</b><span class="badge success">Active</span></div></div>
+
+  <!-- JOB INFORMATION CARD -->
   <div class="card">
     <p class="section-title">JOB INFORMATION</p>
-    <div class="info-row"><span>Department</span><b>IT</b></div>
-    <div class="info-row"><span>Team</span><b>Development</b></div>
-    <div class="info-row"><span>Reporting Manager</span><b class="link">Rahul Sharma</b></div>
-    <div class="info-row"><span>Work Location</span><b>Bangalore</b></div>
-    <div class="info-row"><span>Joining Date</span><b>Mar 15, 2022</b></div>
+    <div id="job-read-mode">
+      <div class="info-row"><span>Department</span><b id="val-dept">IT</b></div>
+      <div class="info-row"><span>Team</span><b id="val-team">Development</b></div>
+      <div class="info-row"><span>Reporting Manager</span><b class="link" id="val-manager">Rahul Sharma</b></div>
+      <div class="info-row"><span>Work Location</span><b id="val-location">Bangalore</b></div>
+      <div class="info-row"><span>Joining Date</span><b id="val-date">Mar 15, 2022</b></div>
+    </div>
+    <div id="job-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:8px;">
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Department</label><input type="text" id="input-dept" value="IT" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Team</label><input type="text" id="input-team" value="Development" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Reporting Manager</label><input type="text" id="input-manager" value="Rahul Sharma" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Work Location</label><input type="text" id="input-location" value="Bangalore" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Joining Date</label><input type="text" id="input-date" value="Mar 15, 2022" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+    </div>
   </div>
+
+  <!-- CONTACT INFORMATION CARD -->
   <div class="card">
     <p class="section-title">CONTACT INFORMATION</p>
-    <div class="info-row"><span>Email</span><b>priya.sharma@emergere.com</b></div>
-    <div class="info-row"><span>Phone</span><b>+91 98765 43210</b></div>
+    <div id="contact-read-mode">
+      <div class="info-row"><span>Email</span><b id="val-email">priya.sharma@emergere.com</b></div>
+      <div class="info-row"><span>Phone</span><b id="val-phone">+91 98765 43210</b></div>
+    </div>
+    <div id="contact-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:8px;">
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Email</label><input type="email" id="input-email" value="priya.sharma@emergere.com" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Phone</label><input type="text" id="input-phone" value="+91 98765 43210" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
+    </div>
   </div>
+
   <button class="btn logout-btn">Logout</button>
 </div>
 <div class="bottom-nav">
@@ -68,20 +92,36 @@
 function enableProfileEdit() {
   document.getElementById('profile-view-mode').style.display = 'none';
   document.getElementById('profile-edit-mode').style.display = 'block';
+  document.getElementById('job-read-mode').style.display = 'none';
+  document.getElementById('job-edit-mode').style.display = 'flex';
+  document.getElementById('contact-read-mode').style.display = 'none';
+  document.getElementById('contact-edit-mode').style.display = 'flex';
+
   document.getElementById('profile-edit-btn-wrap').style.display = 'none';
+  document.getElementById('profile-save-cancel-wrap').style.display = 'flex';
 }
+
 function cancelProfileEdit() {
   document.getElementById('profile-view-mode').style.display = 'block';
   document.getElementById('profile-edit-mode').style.display = 'none';
+  document.getElementById('job-read-mode').style.display = 'block';
+  document.getElementById('job-edit-mode').style.display = 'none';
+  document.getElementById('contact-read-mode').style.display = 'block';
+  document.getElementById('contact-edit-mode').style.display = 'none';
+
   document.getElementById('profile-edit-btn-wrap').style.display = 'block';
+  document.getElementById('profile-save-cancel-wrap').style.display = 'none';
 }
+
 function saveProfileEdit() {
   const name = document.getElementById('edit-profile-name').value;
   const role = document.getElementById('edit-profile-role').value;
   const id = document.getElementById('edit-profile-id').value;
+
   document.getElementById('profile-name-display').textContent = name;
   document.getElementById('profile-role-display').textContent = role;
   document.getElementById('profile-id-display').textContent = id;
+
   let initials = 'PS';
   if (name) {
     const parts = name.trim().split(' ').filter(Boolean);
@@ -89,6 +129,25 @@ function saveProfileEdit() {
     else initials = name.substring(0, 2).toUpperCase();
   }
   document.getElementById('profile-avatar-display').textContent = initials;
+
+  const dept = document.getElementById('input-dept').value;
+  const team = document.getElementById('input-team').value;
+  const mgr = document.getElementById('input-manager').value;
+  const loc = document.getElementById('input-location').value;
+  const date = document.getElementById('input-date').value;
+
+  document.getElementById('val-dept').textContent = dept;
+  document.getElementById('val-team').textContent = team;
+  document.getElementById('val-manager').textContent = mgr;
+  document.getElementById('val-location').textContent = loc;
+  document.getElementById('val-date').textContent = date;
+
+  const email = document.getElementById('input-email').value;
+  const phone = document.getElementById('input-phone').value;
+
+  document.getElementById('val-email').textContent = email;
+  document.getElementById('val-phone').textContent = phone;
+
   cancelProfileEdit();
 }
 </script>

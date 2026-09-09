@@ -10,37 +10,13 @@ import BottomNavBar from '../../components/BottomNavBar';
 import styles from './MyProfileScreen.styles';
 
 export default function MyProfileScreen({ navigation }) {
-  const [isEditingProfileHeader, setIsEditingProfileHeader] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   const [profileHeader, setProfileHeader] = useState({
     name: 'Priya Sharma',
     role: 'Senior Software Engineer',
     employeeId: 'EMP-2024-0156',
   });
-  const [editProfileHeaderForm, setEditProfileHeaderForm] = useState({ ...profileHeader });
-
-  const [isEditingJob, setIsEditingJob] = useState(false);
-  const [isEditingContact, setIsEditingContact] = useState(false);
-
-  const getInitials = (nameStr) => {
-    if (!nameStr) return 'PS';
-    const parts = nameStr.trim().split(' ').filter(Boolean);
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    return nameStr.substring(0, 2).toUpperCase();
-  };
-
-  const handleEditProfileHeaderPress = () => {
-    setEditProfileHeaderForm({ ...profileHeader });
-    setIsEditingProfileHeader(true);
-  };
-
-  const handleSaveProfileHeader = () => {
-    setProfileHeader({ ...editProfileHeaderForm });
-    setIsEditingProfileHeader(false);
-  };
-
-  const handleCancelProfileHeader = () => {
-    setIsEditingProfileHeader(false);
-  };
 
   const [jobInfo, setJobInfo] = useState({
     department: 'IT',
@@ -55,37 +31,35 @@ export default function MyProfileScreen({ navigation }) {
     phone: '+91 98765 43210',
   });
 
+  const [editProfileHeaderForm, setEditProfileHeaderForm] = useState({ ...profileHeader });
   const [editJobForm, setEditJobForm] = useState({ ...jobInfo });
   const [editContactForm, setEditContactForm] = useState({ ...contactInfo });
 
+  const getInitials = (nameStr) => {
+    if (!nameStr) return 'PS';
+    const parts = nameStr.trim().split(' ').filter(Boolean);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return nameStr.substring(0, 2).toUpperCase();
+  };
+
   const go = (screen) => navigation && navigation.navigate(screen);
 
-  const handleEditJobPress = () => {
+  const handleEditPress = () => {
+    setEditProfileHeaderForm({ ...profileHeader });
     setEditJobForm({ ...jobInfo });
-    setIsEditingJob(true);
-  };
-
-  const handleSaveJob = () => {
-    setJobInfo({ ...editJobForm });
-    setIsEditingJob(false);
-  };
-
-  const handleCancelJob = () => {
-    setIsEditingJob(false);
-  };
-
-  const handleEditContactPress = () => {
     setEditContactForm({ ...contactInfo });
-    setIsEditingContact(true);
+    setIsEditing(true);
   };
 
-  const handleSaveContact = () => {
+  const handleSavePress = () => {
+    setProfileHeader({ ...editProfileHeaderForm });
+    setJobInfo({ ...editJobForm });
     setContactInfo({ ...editContactForm });
-    setIsEditingContact(false);
+    setIsEditing(false);
   };
 
-  const handleCancelContact = () => {
-    setIsEditingContact(false);
+  const handleCancelPress = () => {
+    setIsEditing(false);
   };
 
   return (
@@ -98,14 +72,26 @@ export default function MyProfileScreen({ navigation }) {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Card style={styles.profileCard}>
-          {!isEditingProfileHeader ? (
-            <>
-              <View style={styles.cardHeaderRightEdit}>
-                <TouchableOpacity style={styles.editBtn} onPress={handleEditProfileHeaderPress}>
-                  <Feather name="edit-2" size={14} color="#2F6BFF" />
-                  <Text style={styles.editBtnText}>Edit</Text>
+          <View style={styles.cardHeaderRightEdit}>
+            {!isEditing ? (
+              <TouchableOpacity style={styles.editBtn} onPress={handleEditPress}>
+                <Feather name="edit-2" size={14} color="#2F6BFF" />
+                <Text style={styles.editBtnText}>Edit</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.actionBtnGroup}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={handleCancelPress}>
+                  <Text style={styles.cancelBtnText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSavePress}>
+                  <Text style={styles.saveBtnText}>Save</Text>
                 </TouchableOpacity>
               </View>
+            )}
+          </View>
+
+          {!isEditing ? (
+            <>
               <Avatar initials={getInitials(profileHeader.name)} size={90} />
               <Text style={styles.name}>{profileHeader.name}</Text>
               <Text style={styles.role}>{profileHeader.role}</Text>
@@ -115,17 +101,7 @@ export default function MyProfileScreen({ navigation }) {
             </>
           ) : (
             <View style={styles.editFormContainer}>
-              <View style={styles.sectionHeaderRow}>
-                <Text style={styles.sectionTitle}>EDIT PROFILE SUMMARY</Text>
-                <View style={styles.actionBtnGroup}>
-                  <TouchableOpacity style={styles.cancelBtn} onPress={handleCancelProfileHeader}>
-                    <Text style={styles.cancelBtnText}>Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.saveBtn} onPress={handleSaveProfileHeader}>
-                    <Text style={styles.saveBtnText}>Save</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+              <Text style={styles.sectionTitle}>PROFILE SUMMARY</Text>
 
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Full Name</Text>
@@ -164,28 +140,11 @@ export default function MyProfileScreen({ navigation }) {
           </View>
         </Card>
 
-        {/* JOB INFORMATION CARD WITH EDITING ACCESS */}
+        {/* JOB INFORMATION CARD */}
         <Card style={styles.infoCard}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>JOB INFORMATION</Text>
-            {!isEditingJob ? (
-              <TouchableOpacity style={styles.editBtn} onPress={handleEditJobPress}>
-                <Feather name="edit-2" size={14} color="#2F6BFF" />
-                <Text style={styles.editBtnText}>Edit</Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.actionBtnGroup}>
-                <TouchableOpacity style={styles.cancelBtn} onPress={handleCancelJob}>
-                  <Text style={styles.cancelBtnText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.saveBtn} onPress={handleSaveJob}>
-                  <Text style={styles.saveBtnText}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+          <Text style={styles.sectionTitle}>JOB INFORMATION</Text>
 
-          {!isEditingJob ? (
+          {!isEditing ? (
             <>
               <InfoRow label="Department" value={jobInfo.department} />
               <InfoRow label="Team" value={jobInfo.team} />
@@ -243,28 +202,11 @@ export default function MyProfileScreen({ navigation }) {
           )}
         </Card>
 
-        {/* CONTACT INFORMATION CARD WITH EDITING ACCESS */}
+        {/* CONTACT INFORMATION CARD */}
         <Card style={styles.infoCard}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
-            {!isEditingContact ? (
-              <TouchableOpacity style={styles.editBtn} onPress={handleEditContactPress}>
-                <Feather name="edit-2" size={14} color="#2F6BFF" />
-                <Text style={styles.editBtnText}>Edit</Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.actionBtnGroup}>
-                <TouchableOpacity style={styles.cancelBtn} onPress={handleCancelContact}>
-                  <Text style={styles.cancelBtnText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.saveBtn} onPress={handleSaveContact}>
-                  <Text style={styles.saveBtnText}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+          <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
 
-          {!isEditingContact ? (
+          {!isEditing ? (
             <>
               <InfoRow label="Email" value={contactInfo.email} />
               <InfoRow label="Phone" value={contactInfo.phone} />
