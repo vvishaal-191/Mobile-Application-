@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"/><title>My Attendance - Preview</title>
+<link rel="stylesheet" href="../../../preview/base.css"/>
+<link rel="stylesheet" href="./preview.css"/></head>
+<body>
+<div class="device">
+  <div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+  <div class="screen">
+    <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>My Attendance</h1></div>
+    <p class="month">September 2026</p>
+    <div class="pill-tabs">
+      <div class="pill active" onclick="activatePill(this,'.pill-tabs .pill')">September 2026</div>
+      <div class="pill" onclick="activatePill(this,'.pill-tabs .pill')">All Statuses</div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#1FAE6E"></i>Present</span>
+      <span><i style="background:#E5484D"></i>Absent</span>
+      <span><i style="background:#2F6BFF"></i>Leave</span>
+      <span><i style="background:#F5A623"></i>Permission</span>
+      <span><i style="background:#8B5CF6"></i>WFH</span>
+      <span><i style="background:#8C93A3"></i>Week-Off</span>
+    </div>
+    <div class="card calendar-card">
+      <div class="week-row"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="dates-grid" id="grid"></div>
+    </div>
+    <div class="card">
+      <p class="details-title">TODAY'S DETAILS</p>
+      <div class="detail-row"><span>Date</span><b>Sep 03, 2026 (Thu)</b></div>
+      <div class="detail-row"><span>Check-In Time</span><b>09:15 AM</b></div>
+      <div class="detail-row"><span>Check-Out Time</span><b>--:--</b></div>
+      <div class="detail-row"><span>Working Hours</span><b>6h 45m</b></div>
+      <div class="detail-row"><span>Status</span><b>Present</b></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="tab"><span class="icon">▦</span>Dashboard</div>
+    <div class="tab active"><span class="icon">📅</span>Attendance</div>
+    <div class="tab"><span class="icon">➕</span>Apply</div>
+    <div class="tab"><span class="icon">🕘</span>History</div>
+    <div class="tab"><span class="icon">👤</span>Profile</div>
+  </div>
+</div>
+<script src="../../../preview/shared.js"></script>
+<script src="./preview.js"></script>
+</body></html>

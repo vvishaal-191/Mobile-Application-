@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>My Requests - Preview</title>
+<link rel="stylesheet" href="../../../preview/base.css"/>
+<link rel="stylesheet" href="./preview.css"/></head>
+<body>
+<div class="device">
+<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="screen">
+  <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>My Requests</h1></div>
+  <p class="subtitle">Track your leaves & permissions</p>
+  <div class="pill-tabs">
+    <div class="pill active" onclick="activatePill(this,'.pill-tabs .pill')">All</div>
+    <div class="pill" onclick="activatePill(this,'.pill-tabs .pill')">Leaves</div>
+    <div class="pill" onclick="activatePill(this,'.pill-tabs .pill')">Permissions</div>
+  </div>
+
+  <div class="card req-card"><div class="req-row"><div class="req-left"><span class="ico success">✓</span><div><b>Casual Leave</b><p>Sep 02, 2026</p></div></div><span class="badge success">Approved</span></div><hr/><p class="remark">Remarks: Approved by Rahul Sharma.</p></div>
+  <div class="card req-card"><div class="req-row"><div class="req-left"><span class="ico warning">⏱</span><div><b>Permission (Early Going)</b><p>Sep 08, 2026 • 03:00 PM - 05:00 PM</p></div></div><span class="badge warning">Pending</span></div><hr/><p class="remark">Remarks: Sent to TL for review.</p></div>
+  <div class="card req-card"><div class="req-row"><div class="req-left"><span class="ico danger">✕</span><div><b>Sick Leave</b><p>Sep 15, 2026</p></div></div><span class="badge danger">Rejected</span></div><hr/><p class="remark">Remarks: Rejected: 'Insufficient balance'.</p></div>
+</div>
+<div class="bottom-nav">
+  <div class="tab"><span class="icon">▦</span>Dashboard</div>
+  <div class="tab"><span class="icon">📅</span>Attendance</div>
+  <div class="tab"><span class="icon">➕</span>Apply</div>
+  <div class="tab active"><span class="icon">🕘</span>History</div>
+  <div class="tab"><span class="icon">👤</span>Profile</div>
+</div>
+</div>
+<script src="../../../preview/shared.js"></script>
+<script src="./preview.js"></script>
+</body></html>

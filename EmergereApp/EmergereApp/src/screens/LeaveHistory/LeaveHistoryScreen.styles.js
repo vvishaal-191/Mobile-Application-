@@ -1,0 +1,125 @@
+// src/screens/LeaveHistory/LeaveHistoryScreen.styles.js
+import { StyleSheet } from 'react-native';
+import { colors, spacing, radius } from '../../theme/theme';
+
+export default StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.background },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+  },
+  logo: { width: 22, height: 22 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: colors.textPrimary },
+  subtitle: { color: colors.textSecondary, paddingHorizontal: spacing.lg, marginTop: 4 },
+  scrollContent: { paddingBottom: spacing.xxl },
+  requestCard: { marginHorizontal: spacing.lg, marginBottom: spacing.lg },
+  requestRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  requestLeft: { flexDirection: 'row', gap: spacing.md, flex: 1, paddingRight: spacing.sm },
+  requestTitle: { fontSize: 17, fontWeight: '800', color: colors.textPrimary },
+  requestDate: { color: colors.textSecondary, marginTop: 4, fontSize: 13 },
+  remarkDivider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.md },
+  cardFooterRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  remarkText: { color: colors.textSecondary, fontStyle: 'italic', fontSize: 13, flex: 1 },
+  viewDetailsLink: { color: colors.primary, fontWeight: '700', fontSize: 13, marginLeft: 8 },
+
+  /* Modal Styles */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: spacing.lg,
+  },
+  modalCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl || 20,
+    padding: spacing.lg,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    flex: 1,
+    paddingRight: spacing.sm,
+  },
+  modalCategory: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    marginTop: 2,
+  },
+  modalDivider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginVertical: spacing.md,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  detailLabel: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  detailValue: {
+    fontSize: 14,
+    color: colors.textPrimary,
+    fontWeight: '700',
+  },
+  detailRowVertical: {
+    marginTop: 10,
+  },
+  detailValueBox: {
+    backgroundColor: colors.background,
+    padding: 10,
+    borderRadius: 10,
+    fontSize: 13,
+    color: colors.textPrimary,
+    marginTop: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  detailRemarkBox: {
+    backgroundColor: colors.infoBg,
+    padding: 10,
+    borderRadius: 10,
+    fontSize: 13,
+    color: colors.primary,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  closeBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.md || 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: spacing.lg,
+  },
+  closeBtnText: {
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+});

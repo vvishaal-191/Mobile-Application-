@@ -1,0 +1,116 @@
+// src/screens/MyAttendance/MyAttendanceScreen.styles.js
+import { StyleSheet } from 'react-native';
+import { colors, spacing, radius } from '../../theme/theme';
+
+export default StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.background },
+  scrollContent: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingTop: spacing.lg,
+  },
+  logo: { width: 22, height: 22 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: colors.textPrimary },
+  filterRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  filterPillActive: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E7EEFF',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: radius.full || 999,
+  },
+  filterActiveText: { color: colors.primary, fontWeight: '700', fontSize: 14 },
+  filterPill: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: radius.full || 999,
+  },
+  filterText: { color: colors.textSecondary, fontWeight: '600', fontSize: 14 },
+  legendRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginVertical: spacing.sm,
+  },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 8 },
+  legendDot: { width: 8, height: 8, borderRadius: 4 },
+  legendText: { fontSize: 12, color: colors.textSecondary },
+  calendarCard: { padding: spacing.md, marginBottom: spacing.md },
+  weekRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
+  weekDayText: { flex: 1, textAlign: 'center', fontWeight: '700', color: colors.textMuted, fontSize: 13 },
+  datesGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  dateCellEmpty: { width: '14.28%', alignItems: 'center', paddingVertical: 8, opacity: 0.3 },
+  dateCell: { width: '14.28%', alignItems: 'center', paddingVertical: 8, borderRadius: radius.sm },
+  dateCellSelected: { borderWidth: 1.5, borderColor: colors.primary, borderRadius: radius.sm },
+  dateNum: { fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 2 },
+  dateNumMuted: { fontSize: 14, fontWeight: '700', color: colors.textMuted },
+  dateDot: { width: 5, height: 5, borderRadius: 2.5 },
+  detailsCard: { padding: spacing.md },
+  detailsTitle: { fontSize: 12, fontWeight: '700', color: colors.textMuted, letterSpacing: 0.5, marginBottom: spacing.md },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
+  detailLabel: { fontSize: 14, color: colors.textSecondary },
+  detailValue: { fontSize: 14, color: colors.textPrimary, fontWeight: '600' },
+  detailValueBold: { fontWeight: '800' },
+
+  /* Month Picker Modal Styles */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: spacing.lg,
+  },
+  monthPickerCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl || 20,
+    padding: spacing.lg,
+    elevation: 8,
+  },
+  monthPickerTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+  monthOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: radius.md || 12,
+    marginBottom: 4,
+  },
+  monthOptionSelected: {
+    backgroundColor: '#E7EEFF',
+  },
+  monthOptionText: {
+    fontSize: 15,
+    color: colors.textPrimary,
+    fontWeight: '500',
+  },
+  monthOptionTextSelected: {
+    color: colors.primary,
+    fontWeight: '800',
+  },
+  closePickerBtn: {
+    marginTop: spacing.md,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  closePickerText: {
+    color: colors.textSecondary,
+    fontWeight: '700',
+    fontSize: 15,
+  },
+});

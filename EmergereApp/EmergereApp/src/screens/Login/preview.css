@@ -1,0 +1,13 @@
+/* Login screen specific overrides on top of preview/base.css */
+.login-screen{ padding: 70px 24px 0; }
+.login-screen .logo{ width:140px; height:90px; object-fit:contain; margin-bottom:50px; }
+.login-screen h1{ color:#fff; font-size:28px; font-weight:800; margin:0 0 8px; }
+.login-screen .subtitle{ color:#9AA3B8; font-size:15px; margin:0 0 36px; }
+.login-screen .field{ padding:0; margin-bottom:20px; }
+.login-screen .field-label.light{ color:#C7CCDA; }
+.login-screen input{ background:#2B3448; border:none; color:#fff; }
+.login-screen .password-row{ display:flex; align-items:center; background:#2B3448; border-radius:12px; padding:0 14px; }
+.login-screen .password-row input{ background:transparent; flex:1; padding:14px 0; }
+.login-screen .password-row span{ color:#8B93A7; cursor:pointer; }
+.login-screen .btn.full{ width:100%; padding:17px; margin-top:8px; }
+.login-screen .forgot{ text-align:center; color:#fff; font-weight:600; margin-top:20px; }

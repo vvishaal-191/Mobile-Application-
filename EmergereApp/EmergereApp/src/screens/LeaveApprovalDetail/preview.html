@@ -1,0 +1,95 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Request Detail - Preview</title>
+<link rel="stylesheet" href="../../../preview/base.css"/>
+<link rel="stylesheet" href="./preview.css"/></head>
+<body>
+<div class="device">
+<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="screen">
+  <div class="header"><div class="back-btn">←</div><div><h1>Request Detail</h1><p>Casual Leave Application</p></div></div>
+
+  <div class="card emp-card">
+    <div class="emp-row"><div class="avatar big">PS</div>
+      <div><b>Priya Sharma</b><p>Senior Software Engineer</p><span class="emp-id">EMP-2024-0156</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">LEAVE SPECIFICS</p>
+    <div class="detail-row"><span>Leave Type</span><b class="link">Casual Leave</b></div>
+    <div class="detail-row"><span>From Date</span><b>Sep 10, 2026</b></div>
+    <div class="detail-row"><span>To Date</span><b>Sep 11, 2026</b></div>
+    <div class="detail-row"><span>Total Days</span><b>2 Days</b></div>
+    <div class="detail-row"><span>Emergency Contact</span><b>+91 98765 43210</b></div>
+    <div class="reason-block">
+      <p class="reason-label">Reason for Leave</p>
+      <p class="reason-text">Family function - attending sister's wedding ceremony in Bangalore.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">APPROVAL PATH</p>
+    <div class="path-row"><span class="done">Priya (Applied)</span>›<span class="pending">Manager (Pending)</span>›<span class="future">HR Desk</span></div>
+  </div>
+
+  <label class="remarks-label">Manager Remarks (Optional)</label>
+  <textarea class="remarks-input" rows="3" placeholder="Write any comments here..."></textarea>
+
+  <div class="btn-row">
+    <button class="btn outline-reject" onclick="handleDetailLeaveDecision('rejected')">Reject</button>
+    <button class="btn btn-primary" onclick="handleDetailLeaveDecision('approved')">Approve</button>
+  </div>
+</div>
+<div class="bottom-nav">
+  <div class="tab active"><span class="icon">▦</span>Dashboard</div>
+  <div class="tab"><span class="icon">📅</span>Attendance</div>
+  <div class="tab"><span class="icon">➕</span>Apply</div>
+  <div class="tab"><span class="icon">🕘</span>History</div>
+  <div class="tab"><span class="icon">👤</span>Profile</div>
+</div>
+</div>
+<script src="../../../preview/shared.js"></script>
+<script src="./preview.js"></script>
+<script>
+function handleDetailLeaveDecision(status) {
+  const isApproved = status === 'approved';
+  const labelText = isApproved ? 'Approved' : 'Rejected';
+  const badgeClass = isApproved ? 'badge success' : 'badge danger';
+
+  const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+
+  // 1. Update tpl-ManagerDashboard template string in DOM if present
+  const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
+  if (mgrTpl) {
+    let tplHtml = mgrTpl.innerHTML;
+    tplHtml = tplHtml.replace(
+      /id="dash-priya-status-badge"[^>]*>[^<]*/,
+      'id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText
+    );
+    tplHtml = tplHtml.replace(
+      /class="qbadge" id="manager-dash-leave-badge">3/,
+      'class="qbadge" id="manager-dash-leave-badge">2'
+    );
+    mgrTpl.innerHTML = tplHtml;
+  }
+
+  // 2. Update current DOM if rendered
+  const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+  if (liveBadge) {
+    liveBadge.className = badgeClass;
+    liveBadge.textContent = labelText;
+  }
+
+  const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
+  if (liveQBadge) {
+    liveQBadge.textContent = '2';
+  }
+
+  // 3. Navigate back to Manager Dashboard
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-ManagerDashboard');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-ManagerDashboard');
+  }
+}
+</script>
+</body></html>

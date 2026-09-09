@@ -1,0 +1,8 @@
+.mini-logo{width:22px;height:22px;}
+.subtitle{padding:0 20px;color:var(--text-secondary);margin:4px 0 4px;}
+.month-label{padding:0 20px;font-size:13px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;margin:16px 0 8px;}
+.hol-row{display:flex;align-items:center;gap:16px;}
+.date-block{width:60px;}
+.date-block b{display:block;font-size:17px;}
+.date-block span{color:var(--text-secondary);font-size:13px;}
+.name{flex:1;font-size:17px;font-weight:700;}

@@ -1,0 +1,21 @@
+{
+  "name": "emergere-hrms-workspace",
+  "version": "1.0.0",
+  "description": "Emergere HRMS Mobile & Web Application Workspace",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "web": "node server.js",
+    "dev": "node server.js",
+    "mobile": "node server.js",
+    "expo": "cd EmergereApp/EmergereApp && npx expo start",
+    "expo:lan": "cd EmergereApp/EmergereApp && npx expo start --lan",
+    "expo:tunnel": "cd EmergereApp/EmergereApp && npx expo start --tunnel",
+    "expo:android": "cd EmergereApp/EmergereApp && npx expo start --android",
+    "expo:ios": "cd EmergereApp/EmergereApp && npx expo start --ios",
+    "expo:web": "cd EmergereApp/EmergereApp && npx expo start --web"
+  },
+  "keywords": ["hrms", "emergere", "react-native", "expo", "web", "mobile"],
+  "author": "",
+  "license": "ISC"
+}

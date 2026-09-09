@@ -1,0 +1,8 @@
+.mini-logo{width:22px;height:22px;}
+.subtitle{padding:0 20px;color:var(--text-secondary);margin:4px 0 16px;}
+.field{padding:0 20px;margin-bottom:18px;}
+.field.two-col{display:flex;gap:12px;}
+.field.two-col > div{flex:1;padding:0;}
+.auto-box{background:var(--info-bg);color:var(--primary);font-weight:700;border-radius:12px;padding:14px;}
+.upload-box{border:1.5px dashed var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--text-secondary);}
+.btn.full{width:calc(100% - 40px);margin:8px 20px 20px;}

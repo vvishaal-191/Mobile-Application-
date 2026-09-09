@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Apply Leave - Preview</title>
+<link rel="stylesheet" href="../../../preview/base.css"/>
+<link rel="stylesheet" href="./preview.css"/></head>
+<body>
+<div class="device">
+<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="screen">
+  <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Apply Leave</h1></div>
+  <p class="subtitle">Create new leave request</p>
+  <div class="field"><label class="field-label">Leave Type *</label>
+    <select><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Privilege Leave</option></select>
+  </div>
+  <div class="field two-col">
+    <div><label class="field-label">From Date *</label><input value="07-Sep-2026" readonly/></div>
+    <div><label class="field-label">To Date *</label><input value="07-Sep-2026" readonly/></div>
+  </div>
+  <div class="field"><label class="field-label">Number of Days</label><div class="auto-box">1.0 Day (Auto-calculated)</div></div>
+  <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
+  <div class="field"><label class="field-label">Supporting Document</label><div class="upload-box">☁️ Click to upload (PDF, JPEG, max 5MB)</div></div>
+  <div class="field"><label class="field-label">Contact Info During Leave</label><input placeholder="Emergency contact or location details"/></div>
+  <button class="btn btn-primary full">Submit Request</button>
+</div>
+<div class="bottom-nav">
+  <div class="tab"><span class="icon">▦</span>Dashboard</div>
+  <div class="tab"><span class="icon">📅</span>Attendance</div>
+  <div class="tab active"><span class="icon">➕</span>Apply</div>
+  <div class="tab"><span class="icon">🕘</span>History</div>
+  <div class="tab"><span class="icon">👤</span>Profile</div>
+</div>
+</div>
+<script src="../../../preview/shared.js"></script>
+<script src="./preview.js"></script>
+</body></html>

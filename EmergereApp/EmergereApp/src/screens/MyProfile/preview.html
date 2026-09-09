@@ -1,0 +1,95 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>My Profile - Preview</title>
+<link rel="stylesheet" href="../../../preview/base.css"/>
+<link rel="stylesheet" href="./preview.css"/></head>
+<body>
+<div class="device">
+<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="screen">
+  <div class="header"><div class="back-btn">←</div><div><h1>My Profile</h1><p>Employee Details</p></div></div>
+  <div class="card profile-card" id="profile-main-card" style="position:relative;">
+    <div style="position:absolute; top:12px; right:12px;" id="profile-edit-btn-wrap">
+      <button class="edit-btn" onclick="enableProfileEdit()" style="background:#E7EEFF; color:#2F6BFF; border:none; padding:4px 10px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">✏️ Edit</button>
+    </div>
+    <div id="profile-view-mode">
+      <div class="avatar big" id="profile-avatar-display">PS</div>
+      <h2 id="profile-name-display">Priya Sharma</h2>
+      <p class="role" id="profile-role-display">Senior Software Engineer</p>
+      <span class="id-chip" id="profile-id-display">EMP-2024-0156</span>
+    </div>
+    <div id="profile-edit-mode" style="display:none; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-size:12px; font-weight:700; color:#9AA3B2;">EDIT PROFILE SUMMARY</span>
+        <div>
+          <button onclick="cancelProfileEdit()" style="background:none; border:1px solid #E7EAF0; padding:4px 10px; border-radius:8px; color:#6B7280; font-size:13px; margin-right:6px; cursor:pointer;">Cancel</button>
+          <button onclick="saveProfileEdit()" style="background:#2F6BFF; border:none; padding:4px 12px; border-radius:8px; color:#fff; font-size:13px; font-weight:700; cursor:pointer;">Save</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Full Name</label>
+        <input type="text" id="edit-profile-name" value="Priya Sharma" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Designation / Role</label>
+        <input type="text" id="edit-profile-role" value="Senior Software Engineer" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Employee ID</label>
+        <input type="text" id="edit-profile-id" value="EMP-2024-0156" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
+      </div>
+    </div>
+  </div>
+  <div class="card status-card"><div class="status-row"><b>Employment Status</b><span class="badge success">Active</span></div></div>
+  <div class="card">
+    <p class="section-title">JOB INFORMATION</p>
+    <div class="info-row"><span>Department</span><b>IT</b></div>
+    <div class="info-row"><span>Team</span><b>Development</b></div>
+    <div class="info-row"><span>Reporting Manager</span><b class="link">Rahul Sharma</b></div>
+    <div class="info-row"><span>Work Location</span><b>Bangalore</b></div>
+    <div class="info-row"><span>Joining Date</span><b>Mar 15, 2022</b></div>
+  </div>
+  <div class="card">
+    <p class="section-title">CONTACT INFORMATION</p>
+    <div class="info-row"><span>Email</span><b>priya.sharma@emergere.com</b></div>
+    <div class="info-row"><span>Phone</span><b>+91 98765 43210</b></div>
+  </div>
+  <button class="btn logout-btn">Logout</button>
+</div>
+<div class="bottom-nav">
+  <div class="tab"><span class="icon">▦</span>Dashboard</div>
+  <div class="tab"><span class="icon">📅</span>Attendance</div>
+  <div class="tab"><span class="icon">➕</span>Apply</div>
+  <div class="tab"><span class="icon">🕘</span>History</div>
+  <div class="tab active"><span class="icon">👤</span>Profile</div>
+</div>
+</div>
+<script src="../../../preview/shared.js"></script>
+<script src="./preview.js"></script>
+<script>
+function enableProfileEdit() {
+  document.getElementById('profile-view-mode').style.display = 'none';
+  document.getElementById('profile-edit-mode').style.display = 'block';
+  document.getElementById('profile-edit-btn-wrap').style.display = 'none';
+}
+function cancelProfileEdit() {
+  document.getElementById('profile-view-mode').style.display = 'block';
+  document.getElementById('profile-edit-mode').style.display = 'none';
+  document.getElementById('profile-edit-btn-wrap').style.display = 'block';
+}
+function saveProfileEdit() {
+  const name = document.getElementById('edit-profile-name').value;
+  const role = document.getElementById('edit-profile-role').value;
+  const id = document.getElementById('edit-profile-id').value;
+  document.getElementById('profile-name-display').textContent = name;
+  document.getElementById('profile-role-display').textContent = role;
+  document.getElementById('profile-id-display').textContent = id;
+  let initials = 'PS';
+  if (name) {
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length >= 2) initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    else initials = name.substring(0, 2).toUpperCase();
+  }
+  document.getElementById('profile-avatar-display').textContent = initials;
+  cancelProfileEdit();
+}
+</script>
+</body></html>

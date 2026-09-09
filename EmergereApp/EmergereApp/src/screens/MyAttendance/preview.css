@@ -1,0 +1,15 @@
+.mini-logo{width:22px;height:22px;}
+.month{padding:0 20px;color:var(--text-secondary);margin:4px 0 0;}
+.legend{display:flex;flex-wrap:wrap;gap:12px;padding:12px 20px;font-size:13px;color:var(--text-secondary);}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;}
+.calendar-card{padding:12px;}
+.week-row{display:flex;justify-content:space-between;margin-bottom:8px;font-weight:700;color:var(--text-muted);}
+.week-row span{flex:1;text-align:center;}
+.dates-grid{display:flex;flex-wrap:wrap;}
+.date-cell{width:14.28%;text-align:center;padding:8px 0;}
+.date-cell.selected{border:1.5px solid var(--primary);border-radius:8px;}
+.date-cell .num{font-weight:700;display:block;margin-bottom:4px;}
+.date-cell .dot{width:6px;height:6px;border-radius:3px;display:inline-block;}
+.details-title{font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;margin:0 0 12px;}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;}
+.detail-row span{color:var(--text-secondary);}

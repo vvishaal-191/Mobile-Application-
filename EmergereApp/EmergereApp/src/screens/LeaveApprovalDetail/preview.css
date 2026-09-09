@@ -1,0 +1,21 @@
+.emp-card{padding:16px;}
+.emp-row{display:flex;gap:12px;align-items:center;}
+.avatar.big{width:56px;height:56px;border-radius:28px;font-size:20px;}
+.emp-row p{margin:2px 0 0;color:var(--text-secondary);}
+.emp-id{color:var(--primary);font-weight:700;font-size:13px;}
+.section-title{font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;margin:0 0 12px;}
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;}
+.detail-row span{color:var(--text-secondary);}
+.detail-row .link{color:var(--primary);}
+.reason-block{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;}
+.reason-label{color:var(--text-secondary);margin:0 0 6px;}
+.reason-text{margin:0;line-height:1.5;}
+.path-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.path-row .done{color:var(--success);font-weight:700;}
+.path-row .pending{color:var(--warning);font-weight:700;}
+.path-row .future{color:var(--text-secondary);}
+.remarks-label{display:block;padding:0 20px;font-weight:700;margin-bottom:8px;}
+.remarks-input{margin:0 20px 16px;width:calc(100% - 40px);min-height:80px;}
+.btn-row{padding:0 20px 20px;}
+.outline-reject{flex:1;background:#fff;border:1.5px solid var(--danger-bg);color:var(--danger);border-radius:999px;}
+.btn-row .btn-primary{border-radius:999px;}
