@@ -1607,55 +1607,70 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     <div class="pill" onclick="filterHistory('permissions', this)">Permissions</div>
   </div>
 
-  <div class="card req-card" data-type="leaves" style="cursor:pointer;" onclick="toggleCardAccordion(this, event)">
+  <div class="card req-card" data-type="leaves">
     <div class="req-row"><div class="req-left"><span class="ico success">✓</span><div><b>Casual Leave</b><p>Sep 02, 2026</p></div></div><span class="badge success">Approved</span></div>
     <hr/>
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <p class="remark" style="margin:0;">Remarks: Approved by Rahul Sharma.</p>
-      <span class="view-link" style="color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</span>
+      <span class="remark" style="margin:0;">Remarks: Approved by Rahul Sharma.</span>
+      <button class="view-details-btn" onclick="event.stopPropagation(); toggleCardDetails(this)" style="background:none; border:none; color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</button>
     </div>
-    <div class="dropdown-content" style="display:none; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Request Type</span><b style="color:var(--text);">Leave Request</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Date</span><b style="color:var(--text);">Sep 02, 2026</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Duration</span><b style="color:var(--text);">1.0 Day</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Applied On</span><b style="color:var(--text);">Aug 30, 2026</b></div>
-      <div style="margin-top:6px;"><span style="font-size:12px; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:2px;">Reason</span><div style="background:var(--bg); border:1px solid var(--border); padding:8px 10px; border-radius:8px; font-size:13px; color:var(--text);">Family function in hometown.</div></div>
-      <div style="margin-top:6px;"><span style="font-size:12px; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:2px;">Approver Remarks</span><div style="background:var(--info-bg); color:var(--primary); padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600;">Approved by Rahul Sharma.</div></div>
+    <div class="req-expanded-details" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:13px;">
+      <p style="font-size:11px; font-weight:800; color:var(--text-muted); letter-spacing:0.5px; margin:0 0 10px;">COMPLETE REQUEST DETAILS</p>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Request Type</span><b>Leave</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Category</span><b>Casual Leave</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Date / Duration</span><b>Sep 02, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Number of Days</span><b>1.0 Day</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Applied Date</span><b>Aug 30, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0;"><span>Approval Status</span><span class="badge success">Approved</span></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Approver / Manager</span><b>Rahul Sharma</b></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Reason / Comments</span><div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">Family function in hometown.</div></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Approver Comments</span><div style="background:var(--info-bg); color:var(--primary); padding:8px 12px; border-radius:8px; font-weight:600;">Approved. Coordinate handover with team.</div></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Supporting Documents</span><div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border); color:var(--primary); font-weight:600;">📎 None Attached</div></div>
     </div>
   </div>
 
-  <div class="card req-card" data-type="permissions" style="cursor:pointer;" onclick="toggleCardAccordion(this, event)">
+  <div class="card req-card" data-type="permissions">
     <div class="req-row"><div class="req-left"><span class="ico warning">⏱</span><div><b>Permission (Early Going)</b><p>Sep 08, 2026 • 03:00 PM - 05:00 PM</p></div></div><span class="badge warning">Pending</span></div>
     <hr/>
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <p class="remark" style="margin:0;">Remarks: Sent to TL for review.</p>
-      <span class="view-link" style="color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</span>
+      <span class="remark" style="margin:0;">Remarks: Sent to TL for review.</span>
+      <button class="view-details-btn" onclick="event.stopPropagation(); toggleCardDetails(this)" style="background:none; border:none; color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</button>
     </div>
-    <div class="dropdown-content" style="display:none; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Request Type</span><b style="color:var(--text);">Permission Request</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Date</span><b style="color:var(--text);">Sep 08, 2026</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Time Slot</span><b style="color:var(--text);">03:00 PM - 05:00 PM</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Duration</span><b style="color:var(--text);">2 Hours</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Applied On</span><b style="color:var(--text);">Sep 07, 2026</b></div>
-      <div style="margin-top:6px;"><span style="font-size:12px; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:2px;">Reason</span><div style="background:var(--bg); border:1px solid var(--border); padding:8px 10px; border-radius:8px; font-size:13px; color:var(--text);">Personal medical appointment.</div></div>
-      <div style="margin-top:6px;"><span style="font-size:12px; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:2px;">Approver Remarks</span><div style="background:var(--info-bg); color:var(--primary); padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600;">Sent to TL for review.</div></div>
+    <div class="req-expanded-details" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:13px;">
+      <p style="font-size:11px; font-weight:800; color:var(--text-muted); letter-spacing:0.5px; margin:0 0 10px;">COMPLETE REQUEST DETAILS</p>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Request Type</span><b>Permission</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Category</span><b>Permission (Early Going)</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Date</span><b>Sep 08, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Start & End Time</span><b>03:00 PM - 05:00 PM</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Duration / Hours</span><b>2 Hours</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Applied Date</span><b>Sep 07, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0;"><span>Approval Status</span><span class="badge warning">Pending</span></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Approver / Manager</span><b>Rahul Sharma</b></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Reason / Comments</span><div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">Personal medical appointment at Apollo Clinic.</div></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Approver Comments</span><div style="background:var(--info-bg); color:var(--primary); padding:8px 12px; border-radius:8px; font-weight:600;">Awaiting team lead review.</div></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Supporting Documents</span><div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border); color:var(--primary); font-weight:600;">📎 doctor_appointment.pdf</div></div>
     </div>
   </div>
 
-  <div class="card req-card" data-type="leaves" style="cursor:pointer;" onclick="toggleCardAccordion(this, event)">
+  <div class="card req-card" data-type="leaves">
     <div class="req-row"><div class="req-left"><span class="ico danger">✕</span><div><b>Sick Leave</b><p>Sep 15, 2026</p></div></div><span class="badge danger">Rejected</span></div>
     <hr/>
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <p class="remark" style="margin:0;">Remarks: Rejected: 'Insufficient balance'.</p>
-      <span class="view-link" style="color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</span>
+      <span class="remark" style="margin:0;">Remarks: Rejected: 'Insufficient balance'.</span>
+      <button class="view-details-btn" onclick="event.stopPropagation(); toggleCardDetails(this)" style="background:none; border:none; color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</button>
     </div>
-    <div class="dropdown-content" style="display:none; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Request Type</span><b style="color:var(--text);">Leave Request</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Date</span><b style="color:var(--text);">Sep 15, 2026</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Duration</span><b style="color:var(--text);">1.0 Day</b></div>
-      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:var(--text-secondary);">Applied On</span><b style="color:var(--text);">Sep 14, 2026</b></div>
-      <div style="margin-top:6px;"><span style="font-size:12px; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:2px;">Reason</span><div style="background:var(--bg); border:1px solid var(--border); padding:8px 10px; border-radius:8px; font-size:13px; color:var(--text);">Severe fever and doctor advised rest.</div></div>
-      <div style="margin-top:6px;"><span style="font-size:12px; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:2px;">Approver Remarks</span><div style="background:var(--danger-bg); color:var(--danger); padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600;">Rejected: 'Insufficient balance'.</div></div>
+    <div class="req-expanded-details" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:13px;">
+      <p style="font-size:11px; font-weight:800; color:var(--text-muted); letter-spacing:0.5px; margin:0 0 10px;">COMPLETE REQUEST DETAILS</p>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Request Type</span><b>Leave</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Category</span><b>Sick Leave</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Date / Duration</span><b>Sep 15, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Number of Days</span><b>1.0 Day</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Applied Date</span><b>Sep 14, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0;"><span>Approval Status</span><span class="badge danger">Rejected</span></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Approver / Manager</span><b>Rahul Sharma</b></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Reason / Comments</span><div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">Severe fever and doctor advised rest.</div></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Approver Comments</span><div style="background:var(--info-bg); color:var(--primary); padding:8px 12px; border-radius:8px; font-weight:600;">Rejected: Insufficient leave balance available.</div></div>
+      <div style="margin-top:10px;"><span style="color:var(--text-muted); font-weight:700; font-size:12px; display:block; margin-bottom:4px;">Supporting Documents</span><div style="background:var(--bg); padding:8px 12px; border-radius:8px; border:1px solid var(--border); color:var(--primary); font-weight:600;">📎 medical_prescription.pdf</div></div>
     </div>
   </div>
 

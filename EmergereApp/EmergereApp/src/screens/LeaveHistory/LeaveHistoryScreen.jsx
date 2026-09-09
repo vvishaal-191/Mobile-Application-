@@ -18,47 +18,64 @@ const REQUESTS = [
   {
     id: '1',
     type: 'leaves',
-    categoryLabel: 'Leave Request',
+    requestType: 'Leave',
+    category: 'Casual Leave',
     icon: 'check-circle',
     iconColor: '#1FAE6E',
     title: 'Casual Leave',
     date: 'Sep 02, 2026',
+    timeSlot: 'N/A (Full Day)',
     duration: '1.0 Day',
-    appliedOn: 'Aug 30, 2026',
+    daysOrHours: '1.0 Day',
+    appliedDate: 'Aug 30, 2026',
     reason: 'Family function in hometown.',
     status: 'Approved',
     tone: 'success',
+    approverName: 'Rahul Sharma',
+    approverComments: 'Approved. Coordinate handover with team.',
+    supportingDocs: 'None Attached',
     remark: 'Approved by Rahul Sharma.',
   },
   {
     id: '2',
     type: 'permissions',
-    categoryLabel: 'Permission Request',
+    requestType: 'Permission',
+    category: 'Permission (Early Going)',
     icon: 'clock',
     iconColor: '#F5A623',
     title: 'Permission (Early Going)',
     date: 'Sep 08, 2026',
     timeSlot: '03:00 PM - 05:00 PM',
     duration: '2 Hours',
-    appliedOn: 'Sep 07, 2026',
-    reason: 'Personal medical appointment.',
+    daysOrHours: '2 Hours',
+    appliedDate: 'Sep 07, 2026',
+    reason: 'Personal medical appointment at Apollo Clinic.',
     status: 'Pending',
     tone: 'warning',
+    approverName: 'Rahul Sharma',
+    approverComments: 'Awaiting team lead review.',
+    supportingDocs: 'doctor_appointment.pdf',
     remark: 'Sent to TL for review.',
   },
   {
     id: '3',
     type: 'leaves',
-    categoryLabel: 'Leave Request',
+    requestType: 'Leave',
+    category: 'Sick Leave',
     icon: 'x-circle',
     iconColor: '#E5484D',
     title: 'Sick Leave',
     date: 'Sep 15, 2026',
+    timeSlot: 'N/A (Full Day)',
     duration: '1.0 Day',
-    appliedOn: 'Sep 14, 2026',
+    daysOrHours: '1.0 Day',
+    appliedDate: 'Sep 14, 2026',
     reason: 'Severe fever and doctor advised rest.',
     status: 'Rejected',
     tone: 'danger',
+    approverName: 'Rahul Sharma',
+    approverComments: 'Rejected: Insufficient casual/sick leave balance available.',
+    supportingDocs: 'medical_prescription.pdf',
     remark: "Rejected: 'Insufficient balance'.",
   },
 ];
@@ -66,7 +83,6 @@ const REQUESTS = [
 export default function LeaveHistoryScreen({ navigation }) {
   const [tab, setTab] = useState('all');
   const [expandedId, setExpandedId] = useState(null);
-  const [selectedReq, setSelectedReq] = useState(null);
 
   const go = (screen) => navigation && navigation.navigate(screen);
   const filtered = tab === 'all' ? REQUESTS : REQUESTS.filter((r) => r.type === tab);
@@ -90,79 +106,71 @@ export default function LeaveHistoryScreen({ navigation }) {
           const isExpanded = expandedId === req.id;
           return (
             <Card key={req.id} style={styles.requestCard}>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => toggleExpand(req.id)}
-              >
-                <View style={styles.requestRow}>
-                  <View style={styles.requestLeft}>
-                    <Feather name={req.icon} size={22} color={req.iconColor} />
-                    <View>
-                      <Text style={styles.requestTitle}>{req.title}</Text>
-                      <Text style={styles.requestDate}>
-                        {req.type === 'permissions' ? `${req.date} • ${req.timeSlot}` : req.date}
-                      </Text>
-                    </View>
+              <View style={styles.requestRow}>
+                <View style={styles.requestLeft}>
+                  <Feather name={req.icon} size={22} color={req.iconColor} />
+                  <View>
+                    <Text style={styles.requestTitle}>{req.title}</Text>
+                    <Text style={styles.requestDate}>
+                      {req.type === 'permissions' ? `${req.date} • ${req.timeSlot}` : req.date}
+                    </Text>
                   </View>
-                  <StatusBadge label={req.status} tone={req.tone} />
                 </View>
-              </TouchableOpacity>
+                <StatusBadge label={req.status} tone={req.tone} />
+              </View>
 
               <View style={styles.remarkDivider} />
 
-              <TouchableOpacity
-                style={styles.cardFooterRow}
-                activeOpacity={0.7}
-                onPress={() => toggleExpand(req.id)}
-              >
+              <View style={styles.cardFooterRow}>
                 <Text style={styles.remarkText}>Remarks: {req.remark}</Text>
-                <Text style={styles.viewDetailsLink}>
-                  {isExpanded ? 'Hide Details ˅' : 'View Details ›'}
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={() => toggleExpand(req.id)} activeOpacity={0.7}>
+                  <Text style={styles.viewDetailsLink}>
+                    {isExpanded ? 'Hide Details ∧' : 'View Details ›'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-              {/* EXPANDABLE DROP-DOWN DETAILS */}
               {isExpanded && (
-                <View style={styles.dropdownContainer}>
-                  <View style={styles.dropdownDivider} />
+                <View style={styles.expandedDetailsContainer}>
+                  <View style={styles.expandedDivider} />
 
-                  <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Category</Text>
-                    <Text style={styles.detailValue}>
-                      {req.type === 'leaves' ? 'Leave Request' : 'Permission Request'}
-                    </Text>
-                  </View>
+                  <Text style={styles.expandedHeaderTitle}>COMPLETE REQUEST DETAILS</Text>
 
-                  <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Date</Text>
-                    <Text style={styles.detailValue}>{req.date}</Text>
-                  </View>
-
-                  {req.type === 'permissions' && req.timeSlot ? (
-                    <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Time Slot</Text>
-                      <Text style={styles.detailValue}>{req.timeSlot}</Text>
+                  <View style={styles.detailGrid}>
+                    <DetailItem label="Request Type" value={req.requestType} />
+                    <DetailItem label="Category" value={req.category} />
+                    <DetailItem label="Date" value={req.date} />
+                    {req.type === 'permissions' && (
+                      <DetailItem label="Start & End Time" value={req.timeSlot} />
+                    )}
+                    <DetailItem label="Duration" value={req.duration} />
+                    <DetailItem label="Number of Days/Hours" value={req.daysOrHours} />
+                    <DetailItem label="Applied Date" value={req.appliedDate} />
+                    <View style={styles.detailGridRow}>
+                      <Text style={styles.detailGridLabel}>Approval Status</Text>
+                      <View style={{ marginTop: 2 }}>
+                        <StatusBadge label={req.status} tone={req.tone} />
+                      </View>
                     </View>
-                  ) : null}
-
-                  <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Duration</Text>
-                    <Text style={styles.detailValue}>{req.duration}</Text>
+                    <DetailItem label="Approver / Manager" value={req.approverName} />
                   </View>
 
-                  <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Applied On</Text>
-                    <Text style={styles.detailValue}>{req.appliedOn}</Text>
+                  <View style={styles.detailBlock}>
+                    <Text style={styles.detailBlockLabel}>Reason / Comments</Text>
+                    <Text style={styles.detailBlockText}>{req.reason}</Text>
                   </View>
 
-                  <View style={styles.detailRowVertical}>
-                    <Text style={styles.detailLabel}>Reason</Text>
-                    <Text style={styles.detailValueBox}>{req.reason}</Text>
+                  <View style={styles.detailBlock}>
+                    <Text style={styles.detailBlockLabel}>Approver Comments</Text>
+                    <Text style={styles.detailBlockTextHighlight}>{req.approverComments}</Text>
                   </View>
 
-                  <View style={styles.detailRowVertical}>
-                    <Text style={styles.detailLabel}>Approver Remarks</Text>
-                    <Text style={styles.detailRemarkBox}>{req.remark}</Text>
+                  <View style={styles.detailBlock}>
+                    <Text style={styles.detailBlockLabel}>Supporting Documents</Text>
+                    <View style={styles.docRow}>
+                      <Feather name="paperclip" size={14} color="#2F6BFF" />
+                      <Text style={styles.docText}>{req.supportingDocs}</Text>
+                    </View>
                   </View>
                 </View>
               )}
@@ -171,84 +179,16 @@ export default function LeaveHistoryScreen({ navigation }) {
         })}
       </ScrollView>
 
-      {/* Details Popup Modal */}
-      <Modal
-        visible={!!selectedReq}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSelectedReq(null)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setSelectedReq(null)}
-        >
-          <TouchableOpacity activeOpacity={1} style={styles.modalCard}>
-            {selectedReq && (
-              <>
-                <View style={styles.modalHeader}>
-                  <View style={styles.modalTitleRow}>
-                    <Feather name={selectedReq.icon} size={24} color={selectedReq.iconColor} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.modalCategory}>{selectedReq.categoryLabel}</Text>
-                      <Text style={styles.modalTitle}>{selectedReq.title}</Text>
-                    </View>
-                  </View>
-                  <StatusBadge label={selectedReq.status} tone={selectedReq.tone} />
-                </View>
-
-                <View style={styles.modalDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Category</Text>
-                  <Text style={styles.detailValue}>{selectedReq.type === 'leaves' ? 'Leave' : 'Permission'}</Text>
-                </View>
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Date</Text>
-                  <Text style={styles.detailValue}>{selectedReq.date}</Text>
-                </View>
-
-                {selectedReq.type === 'permissions' && (
-                  <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Time Slot</Text>
-                    <Text style={styles.detailValue}>{selectedReq.timeSlot}</Text>
-                  </View>
-                )}
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Duration</Text>
-                  <Text style={styles.detailValue}>{selectedReq.duration}</Text>
-                </View>
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Applied On</Text>
-                  <Text style={styles.detailValue}>{selectedReq.appliedOn}</Text>
-                </View>
-
-                <View style={styles.detailRowVertical}>
-                  <Text style={styles.detailLabel}>Reason</Text>
-                  <Text style={styles.detailValueBox}>{selectedReq.reason}</Text>
-                </View>
-
-                <View style={styles.detailRowVertical}>
-                  <Text style={styles.detailLabel}>Approver Remarks</Text>
-                  <Text style={styles.detailRemarkBox}>{selectedReq.remark}</Text>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.closeBtn}
-                  onPress={() => setSelectedReq(null)}
-                >
-                  <Text style={styles.closeBtnText}>Close Details</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
-
       <BottomNavBar active="History" onNavigate={go} />
+    </View>
+  );
+}
+
+function DetailItem({ label, value }) {
+  return (
+    <View style={styles.detailGridRow}>
+      <Text style={styles.detailGridLabel}>{label}</Text>
+      <Text style={styles.detailGridValue}>{value}</Text>
     </View>
   );
 }
