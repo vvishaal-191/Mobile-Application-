@@ -65,10 +65,15 @@ const REQUESTS = [
 
 export default function LeaveHistoryScreen({ navigation }) {
   const [tab, setTab] = useState('all');
+  const [expandedId, setExpandedId] = useState(null);
   const [selectedReq, setSelectedReq] = useState(null);
 
   const go = (screen) => navigation && navigation.navigate(screen);
   const filtered = tab === 'all' ? REQUESTS : REQUESTS.filter((r) => r.type === tab);
+
+  const toggleExpand = (id) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
 
   return (
     <View style={styles.screen}>
@@ -81,33 +86,89 @@ export default function LeaveHistoryScreen({ navigation }) {
       <PillTabs tabs={TABS} active={tab} onChange={setTab} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {filtered.map((req) => (
-          <TouchableOpacity
-            key={req.id}
-            activeOpacity={0.7}
-            onPress={() => setSelectedReq(req)}
-          >
-            <Card style={styles.requestCard}>
-              <View style={styles.requestRow}>
-                <View style={styles.requestLeft}>
-                  <Feather name={req.icon} size={22} color={req.iconColor} />
-                  <View>
-                    <Text style={styles.requestTitle}>{req.title}</Text>
-                    <Text style={styles.requestDate}>
-                      {req.type === 'permissions' ? `${req.date} • ${req.timeSlot}` : req.date}
+        {filtered.map((req) => {
+          const isExpanded = expandedId === req.id;
+          return (
+            <Card key={req.id} style={styles.requestCard}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => toggleExpand(req.id)}
+              >
+                <View style={styles.requestRow}>
+                  <View style={styles.requestLeft}>
+                    <Feather name={req.icon} size={22} color={req.iconColor} />
+                    <View>
+                      <Text style={styles.requestTitle}>{req.title}</Text>
+                      <Text style={styles.requestDate}>
+                        {req.type === 'permissions' ? `${req.date} • ${req.timeSlot}` : req.date}
+                      </Text>
+                    </View>
+                  </View>
+                  <StatusBadge label={req.status} tone={req.tone} />
+                </View>
+              </TouchableOpacity>
+
+              <View style={styles.remarkDivider} />
+
+              <TouchableOpacity
+                style={styles.cardFooterRow}
+                activeOpacity={0.7}
+                onPress={() => toggleExpand(req.id)}
+              >
+                <Text style={styles.remarkText}>Remarks: {req.remark}</Text>
+                <Text style={styles.viewDetailsLink}>
+                  {isExpanded ? 'Hide Details ˅' : 'View Details ›'}
+                </Text>
+              </TouchableOpacity>
+
+              {/* EXPANDABLE DROP-DOWN DETAILS */}
+              {isExpanded && (
+                <View style={styles.dropdownContainer}>
+                  <View style={styles.dropdownDivider} />
+
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Category</Text>
+                    <Text style={styles.detailValue}>
+                      {req.type === 'leaves' ? 'Leave Request' : 'Permission Request'}
                     </Text>
                   </View>
+
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Date</Text>
+                    <Text style={styles.detailValue}>{req.date}</Text>
+                  </View>
+
+                  {req.type === 'permissions' && req.timeSlot ? (
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>Time Slot</Text>
+                      <Text style={styles.detailValue}>{req.timeSlot}</Text>
+                    </View>
+                  ) : null}
+
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Duration</Text>
+                    <Text style={styles.detailValue}>{req.duration}</Text>
+                  </View>
+
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Applied On</Text>
+                    <Text style={styles.detailValue}>{req.appliedOn}</Text>
+                  </View>
+
+                  <View style={styles.detailRowVertical}>
+                    <Text style={styles.detailLabel}>Reason</Text>
+                    <Text style={styles.detailValueBox}>{req.reason}</Text>
+                  </View>
+
+                  <View style={styles.detailRowVertical}>
+                    <Text style={styles.detailLabel}>Approver Remarks</Text>
+                    <Text style={styles.detailRemarkBox}>{req.remark}</Text>
+                  </View>
                 </View>
-                <StatusBadge label={req.status} tone={req.tone} />
-              </View>
-              <View style={styles.remarkDivider} />
-              <View style={styles.cardFooterRow}>
-                <Text style={styles.remarkText}>Remarks: {req.remark}</Text>
-                <Text style={styles.viewDetailsLink}>View Details ›</Text>
-              </View>
+              )}
             </Card>
-          </TouchableOpacity>
-        ))}
+          );
+        })}
       </ScrollView>
 
       {/* Details Popup Modal */}

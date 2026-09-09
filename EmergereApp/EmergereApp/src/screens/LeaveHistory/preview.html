@@ -13,9 +13,57 @@
     <div class="pill" onclick="activatePill(this,'.pill-tabs .pill')">Permissions</div>
   </div>
 
-  <div class="card req-card"><div class="req-row"><div class="req-left"><span class="ico success">✓</span><div><b>Casual Leave</b><p>Sep 02, 2026</p></div></div><span class="badge success">Approved</span></div><hr/><p class="remark">Remarks: Approved by Rahul Sharma.</p></div>
-  <div class="card req-card"><div class="req-row"><div class="req-left"><span class="ico warning">⏱</span><div><b>Permission (Early Going)</b><p>Sep 08, 2026 • 03:00 PM - 05:00 PM</p></div></div><span class="badge warning">Pending</span></div><hr/><p class="remark">Remarks: Sent to TL for review.</p></div>
-  <div class="card req-card"><div class="req-row"><div class="req-left"><span class="ico danger">✕</span><div><b>Sick Leave</b><p>Sep 15, 2026</p></div></div><span class="badge danger">Rejected</span></div><hr/><p class="remark">Remarks: Rejected: 'Insufficient balance'.</p></div>
+  <div class="card req-card" style="cursor:pointer;" onclick="toggleDropdownDetails(this)">
+    <div class="req-row"><div class="req-left"><span class="ico success">✓</span><div><b>Casual Leave</b><p>Sep 02, 2026</p></div></div><span class="badge success">Approved</span></div>
+    <hr/>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <p class="remark" style="margin:0;">Remarks: Approved by Rahul Sharma.</p>
+      <span class="view-link" style="color:#2F6BFF; font-weight:700; font-size:13px; cursor:pointer;">View Details ›</span>
+    </div>
+    <div class="dropdown-content" style="display:none; margin-top:12px; padding-top:10px; border-top:1px dashed #E7EAF0;">
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Request Type</span><b style="color:#111827;">Leave Request</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Date</span><b style="color:#111827;">Sep 02, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Duration</span><b style="color:#111827;">1.0 Day</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Applied On</span><b style="color:#111827;">Aug 30, 2026</b></div>
+      <div style="margin-top:6px;"><span style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:2px;">Reason</span><div style="background:#F5F7FA; border:1px solid #E7EAF0; padding:8px 10px; border-radius:8px; font-size:13px; color:#111827;">Family function in hometown.</div></div>
+      <div style="margin-top:6px;"><span style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:2px;">Approver Remarks</span><div style="background:#E7EEFF; color:#2F6BFF; padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600;">Approved by Rahul Sharma.</div></div>
+    </div>
+  </div>
+
+  <div class="card req-card" style="cursor:pointer;" onclick="toggleDropdownDetails(this)">
+    <div class="req-row"><div class="req-left"><span class="ico warning">⏱</span><div><b>Permission (Early Going)</b><p>Sep 08, 2026 • 03:00 PM - 05:00 PM</p></div></div><span class="badge warning">Pending</span></div>
+    <hr/>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <p class="remark" style="margin:0;">Remarks: Sent to TL for review.</p>
+      <span class="view-link" style="color:#2F6BFF; font-weight:700; font-size:13px; cursor:pointer;">View Details ›</span>
+    </div>
+    <div class="dropdown-content" style="display:none; margin-top:12px; padding-top:10px; border-top:1px dashed #E7EAF0;">
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Request Type</span><b style="color:#111827;">Permission Request</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Date</span><b style="color:#111827;">Sep 08, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Time Slot</span><b style="color:#111827;">03:00 PM - 05:00 PM</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Duration</span><b style="color:#111827;">2 Hours</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Applied On</span><b style="color:#111827;">Sep 07, 2026</b></div>
+      <div style="margin-top:6px;"><span style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:2px;">Reason</span><div style="background:#F5F7FA; border:1px solid #E7EAF0; padding:8px 10px; border-radius:8px; font-size:13px; color:#111827;">Personal medical appointment.</div></div>
+      <div style="margin-top:6px;"><span style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:2px;">Approver Remarks</span><div style="background:#E7EEFF; color:#2F6BFF; padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600;">Sent to TL for review.</div></div>
+    </div>
+  </div>
+
+  <div class="card req-card" style="cursor:pointer;" onclick="toggleDropdownDetails(this)">
+    <div class="req-row"><div class="req-left"><span class="ico danger">✕</span><div><b>Sick Leave</b><p>Sep 15, 2026</p></div></div><span class="badge danger">Rejected</span></div>
+    <hr/>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <p class="remark" style="margin:0;">Remarks: Rejected: 'Insufficient balance'.</p>
+      <span class="view-link" style="color:#2F6BFF; font-weight:700; font-size:13px; cursor:pointer;">View Details ›</span>
+    </div>
+    <div class="dropdown-content" style="display:none; margin-top:12px; padding-top:10px; border-top:1px dashed #E7EAF0;">
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Request Type</span><b style="color:#111827;">Leave Request</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Date</span><b style="color:#111827;">Sep 15, 2026</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Duration</span><b style="color:#111827;">1.0 Day</b></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span style="color:#6B7280;">Applied On</span><b style="color:#111827;">Sep 14, 2026</b></div>
+      <div style="margin-top:6px;"><span style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:2px;">Reason</span><div style="background:#F5F7FA; border:1px solid #E7EAF0; padding:8px 10px; border-radius:8px; font-size:13px; color:#111827;">Severe fever and doctor advised rest.</div></div>
+      <div style="margin-top:6px;"><span style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:2px;">Approver Remarks</span><div style="background:#FCE4E4; color:#E5484D; padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600;">Rejected: 'Insufficient balance'.</div></div>
+    </div>
+  </div>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -27,4 +75,13 @@
 </div>
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
-</body></html>
+<script>
+function toggleDropdownDetails(cardEl) {
+  const content = cardEl.querySelector('.dropdown-content');
+  const link = cardEl.querySelector('.view-link');
+  if (!content) return;
+  const isHidden = content.style.display === 'none';
+  content.style.display = isHidden ? 'block' : 'none';
+  if (link) link.textContent = isHidden ? 'Hide Details ˅' : 'View Details ›';
+}
+</script>

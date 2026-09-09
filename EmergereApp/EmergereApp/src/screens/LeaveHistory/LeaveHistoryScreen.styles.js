@@ -24,6 +24,8 @@ export default StyleSheet.create({
   cardFooterRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   remarkText: { color: colors.textSecondary, fontStyle: 'italic', fontSize: 13, flex: 1 },
   viewDetailsLink: { color: colors.primary, fontWeight: '700', fontSize: 13, marginLeft: 8 },
+  dropdownContainer: { marginTop: spacing.sm, paddingTop: spacing.xs },
+  dropdownDivider: { height: 1, backgroundColor: colors.border, marginVertical: spacing.sm },
 
   /* Modal Styles */
   modalOverlay: {
