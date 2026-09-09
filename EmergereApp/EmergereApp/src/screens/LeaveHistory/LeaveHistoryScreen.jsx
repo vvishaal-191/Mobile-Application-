@@ -138,13 +138,13 @@ export default function LeaveHistoryScreen({ navigation }) {
 
                   <View style={styles.detailGrid}>
                     <DetailItem label="Request Type" value={req.requestType} />
-                    <DetailItem label="Category" value={req.category} />
-                    <DetailItem label="Date" value={req.date} />
+                    <DetailItem label="Leave/Permission Category" value={req.category} />
+                    <DetailItem label="Date / Duration" value={req.date} />
                     {req.type === 'permissions' && (
-                      <DetailItem label="Start & End Time" value={req.timeSlot} />
+                      <DetailItem label="Start and End Time" value={req.timeSlot} />
                     )}
-                    <DetailItem label="Duration" value={req.duration} />
-                    <DetailItem label="Number of Days/Hours" value={req.daysOrHours} />
+                    <DetailItem label="Number of Days / Hours" value={req.daysOrHours} />
+                    <DetailItem label="Reason / Comments" value={req.reason} />
                     <DetailItem label="Applied Date" value={req.appliedDate} />
                     <View style={styles.detailGridRow}>
                       <Text style={styles.detailGridLabel}>Approval Status</Text>
@@ -152,25 +152,9 @@ export default function LeaveHistoryScreen({ navigation }) {
                         <StatusBadge label={req.status} tone={req.tone} />
                       </View>
                     </View>
-                    <DetailItem label="Approver / Manager" value={req.approverName} />
-                  </View>
-
-                  <View style={styles.detailBlock}>
-                    <Text style={styles.detailBlockLabel}>Reason / Comments</Text>
-                    <Text style={styles.detailBlockText}>{req.reason}</Text>
-                  </View>
-
-                  <View style={styles.detailBlock}>
-                    <Text style={styles.detailBlockLabel}>Approver Comments</Text>
-                    <Text style={styles.detailBlockTextHighlight}>{req.approverComments}</Text>
-                  </View>
-
-                  <View style={styles.detailBlock}>
-                    <Text style={styles.detailBlockLabel}>Supporting Documents</Text>
-                    <View style={styles.docRow}>
-                      <Feather name="paperclip" size={14} color="#2F6BFF" />
-                      <Text style={styles.docText}>{req.supportingDocs}</Text>
-                    </View>
+                    <DetailItem label="Approver / Manager Name" value={req.approverName} />
+                    <DetailItem label="Approver Comments" value={req.approverComments} />
+                    <DetailItem label="Supporting Documents" value={req.supportingDocs} />
                   </View>
                 </View>
               )}
