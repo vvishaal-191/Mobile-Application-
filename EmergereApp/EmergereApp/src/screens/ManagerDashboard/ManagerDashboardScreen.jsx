@@ -1,6 +1,7 @@
 // src/screens/ManagerDashboard/ManagerDashboardScreen.jsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import StatusBadge from '../../components/StatusBadge';
 import BottomNavBar from '../../components/BottomNavBar';
@@ -54,11 +55,17 @@ export default function ManagerDashboardScreen({ navigation, route }) {
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerRow}>
-          <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-          <View>
-            <Text style={styles.headerTitle}>Manager Hub</Text>
-            <Text style={styles.headerSubtitle}>Emergere IT Solutions</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
+            <View>
+              <Text style={styles.headerTitle}>Manager Hub</Text>
+              <Text style={styles.headerSubtitle}>Emergere IT Solutions</Text>
+            </View>
           </View>
+          <TouchableOpacity style={styles.bellButton} onPress={() => go('Notifications')}>
+            <Feather name="bell" size={20} color={'#2F6BFF'} />
+            <View style={styles.bellDot} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.greetingRow}>

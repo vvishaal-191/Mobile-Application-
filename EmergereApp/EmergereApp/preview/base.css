@@ -89,3 +89,8 @@ input, textarea, select{
 }
 label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; display:block;}
 .field{padding:0 20px; margin-bottom:18px;}
+
+/* SVG Icon Styling for Bottom Nav & Statusbar */
+.bottom-nav .tab .icon svg { stroke: var(--text-muted); transition: stroke 0.2s ease; }
+.bottom-nav .tab.active .icon svg { stroke: var(--primary); }
+.statusbar .status-icons { display: inline-flex; align-items: center; gap: 5px; color: inherit; }

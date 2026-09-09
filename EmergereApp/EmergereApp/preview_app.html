@@ -270,7 +270,7 @@ input:focus{border-color:#FFFFFF; box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
 </head>
 <body>
 <div class="device">
-  <div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+  <div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
   <div class="screen">
     <div class="logo-badge">
       <div class="logo-icon"></div>
@@ -403,11 +403,21 @@ body{
 /* Bottom nav */
 .bottom-nav{
   position:absolute; bottom:0; left:0; right:0; background:var(--surface);
-  border-top:1px solid var(--border); display:flex; padding:10px 0 22px;
+  border-top:1px solid var(--border); display:flex; padding:8px 0 18px; z-index:100;
 }
-.bottom-nav .tab{flex:1; text-align:center; font-size:11px; color:var(--text-muted);}
-.bottom-nav .tab .icon{font-size:20px; display:block; margin-bottom:2px;}
+.bottom-nav .tab{
+  flex:1; text-align:center; font-size:11px; color:var(--text-muted); cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+}
+.bottom-nav .tab .icon{
+  display:flex; align-items:center; justify-content:center; height:22px; width:22px; margin-bottom:2px;
+}
+.bottom-nav .tab .icon svg{
+  stroke:#6B7280; width:20px; height:20px; transition: stroke 0.2s ease;
+}
 .bottom-nav .tab.active{color:var(--primary); font-weight:700;}
+.bottom-nav .tab.active .icon svg{stroke:var(--primary);}
+.statusbar .status-icons{display:inline-flex; align-items:center; gap:5px; color:inherit;}
 
 /* Avatar */
 .avatar{
@@ -458,11 +468,11 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 </head>
 <body>
 <div class="device">
-  <div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+  <div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
   <div class="screen">
     <div class="dash-top">
       <div class="brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><span>Dashboard</span></div>
-      <div class="bell">🔔<span class="dot"></span></div>
+      <div class="bell" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-Notifications')">🔔<span class="dot"></span></div>
     </div>
     <p class="company">IT Solutions Pvt. Ltd.</p>
     <h1 class="greeting">Hello, Vikram Rathore!</h1>
@@ -496,15 +506,15 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
     </div>
 
     <p class="section-label">PENDING REQUESTS (2)</p>
-    <div class="card request-card"><div class="request-row"><div><b>Casual Leave (1 Day)</b><p>Sep 07, 2026 • Personal Work</p></div><span class="badge warning">Pending</span></div></div>
+    <div class="card request-card"><div class="request-row"><div><b>Casual Leave (1 Day)</b><p>Sep 07, 2026 • Personal Work</p></div><span id="emp-dash-casual-leave-badge" class="badge warning">Pending</span></div></div>
     <div class="card request-card"><div class="request-row"><div><b>Early Going (2 hrs)</b><p>Sep 04, 2026 • Doctor Appointment</p></div><span class="badge success">Approved</span></div></div>
   </div>
   <div class="bottom-nav">
-    <div class="tab active"><span class="icon">▦</span>Dashboard</div>
-    <div class="tab"><span class="icon">📅</span>Attendance</div>
-    <div class="tab"><span class="icon">➕</span>Apply</div>
-    <div class="tab"><span class="icon">🕘</span>History</div>
-    <div class="tab"><span class="icon">👤</span>Profile</div>
+    <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
   </div>
 </div>
 <script>
@@ -661,7 +671,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-  <div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+  <div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
   <div class="screen">
     <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>My Attendance</h1></div>
     <div class="pill-tabs">
@@ -693,11 +703,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     </div>
   </div>
   <div class="bottom-nav">
-    <div class="tab"><span class="icon">▦</span>Dashboard</div>
-    <div class="tab active"><span class="icon">📅</span>Attendance</div>
-    <div class="tab"><span class="icon">➕</span>Apply</div>
-    <div class="tab"><span class="icon">🕘</span>History</div>
-    <div class="tab"><span class="icon">👤</span>Profile</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+    <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+    <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
   </div>
 </div>
 <script>
@@ -945,7 +955,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Apply Leave</h1></div>
   <p class="subtitle">Create new leave request</p>
@@ -981,11 +991,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <button class="btn btn-primary full">Submit Request</button>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab active"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -1171,7 +1181,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Apply Permission</h1></div>
   <p class="subtitle">Request short duration permission</p>
@@ -1187,11 +1197,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <button class="btn btn-primary full">Submit Request</button>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab active"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -1391,7 +1401,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Leave Balances</h1></div>
   <p class="subtitle">Employee Balance Summary for 2026</p>
@@ -1404,11 +1414,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="card bal-card"><div class="bal-head"><b>Emergency Leave</b><span style="color:#E5484D">2 Available</span></div><div class="progress"><div style="width:100%;background:#E5484D"></div></div><div class="stats"><div><small>Allocated</small><h4>2</h4></div><div><small>Used</small><h4>0</h4></div></div></div>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab active"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -1587,7 +1597,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>My Requests</h1></div>
   <p class="subtitle">Track your leaves & permissions</p>
@@ -1636,11 +1646,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </div>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab active"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -1802,7 +1812,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Holiday Calendar</h1></div>
   <p class="subtitle">Company & optional holidays 2026</p>
@@ -1820,11 +1830,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab active"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -1937,7 +1947,7 @@ body{
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Notifications</h1></div>
   <p class="subtitle">Stay updated with your requests</p>
@@ -1991,11 +2001,11 @@ body{
   </div>
 </div>
 <div class="bottom-nav">
-  <div class="tab active"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -2103,7 +2113,7 @@ body{
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><div><h1>My Profile</h1><p>Employee Details</p></div></div>
   <div class="card profile-card" id="profile-main-card" style="position:relative;">
@@ -2201,11 +2211,11 @@ body{
   <button class="btn logout-btn" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-Login')">Logout</button>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab active"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -2406,7 +2416,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><div><h1>Manager Hub</h1><p>IT Solutions</p></div></div>
   <div class="greeting-row"><div><h2>Hello, Rahul Sharma</h2><p class="date">Thu, Sep 03 2026</p></div><span class="badge purple">Manager</span></div>
@@ -2431,11 +2441,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="card req-card" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail')"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span class="badge warning">Pending</span></div></div>
 </div>
 <div class="bottom-nav">
-  <div class="tab active"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -2595,7 +2605,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><div><h1>Team Attendance</h1><p>Real-time Status</p></div></div>
   <div class="date-nav" style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--border); border-radius:999px; margin:0 20px 16px; padding:6px 12px;">
@@ -2614,11 +2624,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="card member-card"><div class="member-row"><div class="avatar">RV</div><div class="member-info"><b>Ritu Verma</b><p>No Record Found</p></div><span class="badge danger">Absent</span></div></div>
 </div>
 <div class="bottom-nav">
-  <div class="tab"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab active"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -2780,7 +2790,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><div><h1>Leave Approvals</h1><p>Manage Team Requests</p></div></div>
     <div class="pill-tabs" id="leave-approval-tabs">
@@ -2846,11 +2856,11 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
   </div>
 </div>
 <div class="bottom-nav">
-  <div class="tab active"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -2906,16 +2916,40 @@ function switchLeaveTab(status, el) {
 
 function processLeaveAction(id, newStatus) {
   const card = document.querySelector(`.approval-card[data-leave-id="${id}"]`);
-  if (!card) return;
-  
-  card.setAttribute('data-status', newStatus);
-  const actionWrap = card.querySelector('.card-action-wrap');
-  if (actionWrap) {
-    if (newStatus === 'approved') {
-      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
-    } else {
-      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+  if (card) {
+    card.setAttribute('data-status', newStatus);
+    const actionWrap = card.querySelector('.card-action-wrap');
+    if (actionWrap) {
+      if (newStatus === 'approved') {
+        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
+      } else {
+        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+      }
     }
+  }
+
+  const isApproved = newStatus === 'approved';
+  const labelText = isApproved ? 'Approved' : 'Rejected';
+  const badgeClass = isApproved ? 'badge success' : 'badge danger';
+
+  const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+
+  // Update tpl-EmployeeDashboard template in DOM
+  const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
+  if (empTpl) {
+    let tplHtml = empTpl.innerHTML;
+    tplHtml = tplHtml.replace(
+      /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
+      '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
+    );
+    empTpl.innerHTML = tplHtml;
+  }
+
+  // Update live element if currently rendered
+  const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+  if (liveEmpBadge) {
+    liveEmpBadge.className = badgeClass;
+    liveEmpBadge.textContent = labelText;
   }
 
   updateLeaveTabCounts();
@@ -3087,7 +3121,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><div><h1>Request Detail</h1><p>Casual Leave Application</p></div></div>
 
@@ -3124,11 +3158,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   </div>
 </div>
 <div class="bottom-nav">
-  <div class="tab active"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>
@@ -3194,11 +3228,28 @@ function handleDetailLeaveDecision(status) {
     mgrTpl.innerHTML = tplHtml;
   }
 
-  // 2. Update current active DOM element
+  // 2. Update tpl-EmployeeDashboard template element in outer document
+  const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
+  if (empTpl) {
+    let tplHtml = empTpl.innerHTML;
+    tplHtml = tplHtml.replace(
+      /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
+      '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
+    );
+    empTpl.innerHTML = tplHtml;
+  }
+
+  // 3. Update current active DOM elements if rendered
   const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
   if (liveBadge) {
     liveBadge.className = badgeClass;
     liveBadge.textContent = labelText;
+  }
+
+  const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+  if (liveEmpBadge) {
+    liveEmpBadge.className = badgeClass;
+    liveEmpBadge.textContent = labelText;
   }
 
   const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
@@ -3206,7 +3257,7 @@ function handleDetailLeaveDecision(status) {
     liveQBadge.textContent = '2';
   }
 
-  // 3. Navigate back to Manager Dashboard
+  // 4. Navigate back to Manager Dashboard
   if (window.parent && window.parent.loadScreen) {
     window.parent.loadScreen('tpl-ManagerDashboard');
   } else if (typeof loadScreen === 'function') {
@@ -3335,7 +3386,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 </head>
 <body>
 <div class="device">
-<div class="statusbar"><span>09:41</span><span>••• 📶 🔋</span></div>
+<div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><div><h1>Permission Approvals</h1><p>Short-duration Passes</p></div></div>
     <div class="pill-tabs" id="perm-approval-tabs">
@@ -3395,11 +3446,11 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
   </div>
 </div>
 <div class="bottom-nav">
-  <div class="tab active"><span class="icon">▦</span>Dashboard</div>
-  <div class="tab"><span class="icon">📅</span>Attendance</div>
-  <div class="tab"><span class="icon">➕</span>Apply</div>
-  <div class="tab"><span class="icon">🕘</span>History</div>
-  <div class="tab"><span class="icon">👤</span>Profile</div>
+  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
+  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
 </div>
 </div>
 <script>

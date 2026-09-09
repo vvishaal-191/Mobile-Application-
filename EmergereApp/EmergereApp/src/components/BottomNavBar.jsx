@@ -11,7 +11,7 @@ const TABS = [
   { key: 'Attendance', label: 'Attendance', icon: 'calendar' },
   { key: 'Apply', label: 'Apply', icon: 'plus-circle' },
   { key: 'History', label: 'History', icon: 'clock' },
-  { key: 'Profile', label: 'Profile', icon: 'user' },
+  { key: 'Profile', label: 'More', icon: 'menu' },
 ];
 
 export default function BottomNavBar({ active, onNavigate }) {

@@ -1,5 +1,5 @@
 // src/screens/EmployeeDashboard/EmployeeDashboardScreen.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Card from '../../components/Card';
@@ -20,7 +20,7 @@ const QUICK_ACTIONS = [
   { key: 'viewHolidays', label: 'View Holidays', icon: 'x-circle' },
 ];
 
-const PENDING_REQUESTS = [
+const INITIAL_REQUESTS = [
   {
     id: '1',
     title: 'Casual Leave (1 Day)',
@@ -37,10 +37,21 @@ const PENDING_REQUESTS = [
   },
 ];
 
-export default function EmployeeDashboardScreen({ navigation }) {
+export default function EmployeeDashboardScreen({ navigation, route }) {
+  const [requests, setRequests] = useState(INITIAL_REQUESTS);
   const [checkedIn, setCheckedIn] = useState(true);
 
   const go = (screen) => navigation && navigation.navigate(screen);
+
+  useEffect(() => {
+    if (route && route.params && route.params.newStatus) {
+      const { requestId, newStatus } = route.params;
+      const tone = newStatus === 'Approved' ? 'success' : 'danger';
+      setRequests((prev) =>
+        prev.map((req) => (req.id === (requestId || '1') ? { ...req, status: newStatus, tone } : req))
+      );
+    }
+  }, [route?.params]);
 
   return (
     <View style={styles.screen}>
@@ -84,7 +95,7 @@ export default function EmployeeDashboardScreen({ navigation }) {
             </View>
             <TouchableOpacity
               style={styles.checkOutBtn}
-              onPress={() => setCheckedIn(false)}
+              onPress={() => setCheckedIn(!checkedIn)}
             >
               <Text style={styles.checkOutText}>
                 {checkedIn ? 'Check Out' : 'Check In'}
@@ -140,8 +151,8 @@ export default function EmployeeDashboardScreen({ navigation }) {
           ))}
         </View>
 
-        <Text style={styles.sectionLabel}>PENDING REQUESTS (2)</Text>
-        {PENDING_REQUESTS.map((req) => (
+        <Text style={styles.sectionLabel}>RECENT REQUESTS ({requests.length})</Text>
+        {requests.map((req) => (
           <Card key={req.id} style={styles.requestCard}>
             <View style={styles.requestRow}>
               <View>
