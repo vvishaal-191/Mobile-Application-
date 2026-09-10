@@ -1112,7 +1112,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Apply Leave</h1></div>
   <p class="subtitle">Create new leave request</p>
   <div class="field"><label class="field-label">Leave Type *</label>
-    <select id="apply-leave-type-select"><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Emergency Leave</option><option>Privilege Leave</option></select>
+    <select><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Privilege Leave</option></select>
   </div>
   <div class="field two-col">
     <div>
@@ -1137,10 +1137,10 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     </div>
   </div>
   <div class="field"><label class="field-label">Number of Days</label><div class="auto-box" id="days-count-box">1.0 Day (Auto-calculated)</div></div>
-  <div class="field"><label class="field-label">Reason *</label><textarea id="apply-leave-reason" rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
+  <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
   
   
-  <button class="btn btn-primary full" onclick="if(window.parent&&window.parent.submitLeaveForm)window.parent.submitLeaveForm()">Submit Request</button>
+  <button class="btn btn-primary full">Submit Request</button>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -1338,15 +1338,15 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Apply Permission</h1></div>
   <p class="subtitle">Request short duration permission</p>
   <div class="field"><label class="field-label">Date *</label><input value="04-Sep-2026" readonly/></div>
-  <div class="field"><label class="field-label">Permission Type *</label><select><option>Early Going</option><option>Late Coming</option></select></div>
+  <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
   <div class="field two-col">
     <div><label class="field-label">Start Time *</label><input value="03:00 PM" readonly/></div>
     <div><label class="field-label">End Time *</label><input value="05:00 PM" readonly/></div>
   </div>
   <div class="field"><label class="field-label">Duration</label><div class="auto-box">2 Hours (Auto-calculated)</div></div>
-  <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
+  <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
   <div class="field"><label class="field-label">Approving Manager</label><select><option>Rahul Sharma (Team Lead)</option></select></div>
-  <button class="btn btn-primary full">Submit Request</button>
+  <button class="btn btn-primary full" onclick="handleApplyPermissionSubmit()">Submit Request</button>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -3691,22 +3691,50 @@ function switchPermTab(status, el) {
   renderPermissionApprovals();
 }
 
+function handleApplyPermissionSubmit() {
+  const permTypeSelect = document.getElementById('perm-type-select');
+  const reasonText = document.getElementById('perm-reason-text');
+  const pType = permTypeSelect ? permTypeSelect.value : 'Early Going';
+  const pReason = reasonText ? reasonText.value : 'Personal medical checkup';
+
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-PermissionApprovals');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-PermissionApprovals');
+  }
+}
+
 function processPermAction(id, newStatus) {
   const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
-  if (!card) return;
-  
-  card.setAttribute('data-status', newStatus);
-  const actionWrap = card.querySelector('.card-action-wrap');
-  if (actionWrap) {
-    if (newStatus === 'approved') {
-      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
-    } else {
-      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+  if (card) {
+    card.setAttribute('data-status', newStatus);
+    const actionWrap = card.querySelector('.card-action-wrap');
+    if (actionWrap) {
+      if (newStatus === 'approved') {
+        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
+      } else {
+        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+      }
     }
   }
 
   updatePermTabCounts();
   renderPermissionApprovals();
+
+  // Add notification item
+  const notifContainer = document.getElementById('notif-container');
+  if (notifContainer) {
+    const isApprove = newStatus === 'approved';
+    const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for Early Going (04-Sep-2026) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
+    notifContainer.insertAdjacentHTML('afterbegin', notifHtml);
+  }
+
+  // Update Employee Dashboard badge if present
+  const dashBadge = document.getElementById('dash-perm-status-badge');
+  if (dashBadge) {
+    dashBadge.textContent = newStatus === 'approved' ? 'Approved' : 'Rejected';
+    dashBadge.className = 'badge ' + (newStatus === 'approved' ? 'success' : 'danger');
+  }
 }
 
 function updatePermTabCounts() {
@@ -3813,83 +3841,6 @@ function renderPermissionApprovals() {
     }
   };
 
-  var STORED_DECISION = null;
-  var STORED_NOTIFICATIONS = [];
-
-  function submitLeaveForm() {
-    var frame = document.getElementById('frame');
-    var doc = frame ? (frame.contentDocument || (frame.contentWindow && frame.contentWindow.document)) : null;
-
-    var leaveType = 'Casual Leave';
-    var fromDate = '07-Sep-2026';
-    var toDate = '07-Sep-2026';
-    var daysCount = '1.0 Day';
-    var reason = 'Personal leave request';
-
-    if (doc) {
-      var typeEl = doc.getElementById('apply-leave-type-select'); if (typeEl) leaveType = typeEl.value;
-      var fromEl = doc.getElementById('from-date-display'); if (fromEl) fromDate = fromEl.value;
-      var toEl = doc.getElementById('to-date-display'); if (toEl) toDate = toEl.value;
-      var daysEl = doc.getElementById('days-count-box'); if (daysEl) daysCount = daysEl.textContent.replace('(Auto-calculated)', '').trim();
-      var reasonEl = doc.getElementById('apply-leave-reason'); if (reasonEl && reasonEl.value) reason = reasonEl.value;
-    }
-
-    PERSON_DATA['submitted'] = {
-      initials: 'PS',
-      name: 'Priya Sharma',
-      role: 'Senior Software Engineer',
-      empId: 'EMP-2024-0156',
-      leaveType: leaveType,
-      fromDate: fromDate,
-      toDate: toDate,
-      totalDays: daysCount || '1.0 Day',
-      contact: '+91 98765 43210',
-      reason: reason || (leaveType + ' application for personal work.'),
-      subtitle: leaveType + ' Application',
-      appliedPath: 'Priya (Applied)',
-      status: 'Pending'
-    };
-
-    loadScreen('tpl-LeaveApprovalDetail', 'submitted');
-  }
-
-  function handleDetailLeaveDecision(status) {
-    var p = PERSON_DATA[SELECTED_PERSON] || PERSON_DATA['priya'];
-    var isApprove = status === 'approved';
-    var statusText = isApprove ? 'Approved' : 'Rejected';
-    var badgeClass = isApprove ? 'success' : 'danger';
-    p.status = statusText;
-
-    var frame = document.getElementById('frame');
-    var doc = frame ? (frame.contentDocument || (frame.contentWindow && frame.contentWindow.document)) : null;
-    var remarkVal = '';
-    if (doc) {
-      var rmEl = doc.querySelector('.remarks-input');
-      if (rmEl && rmEl.value) remarkVal = rmEl.value;
-    }
-
-    STORED_NOTIFICATIONS.unshift({
-      id: String(Date.now()),
-      text: 'Your ' + p.leaveType + ' request for ' + p.fromDate + ' has been ' + statusText + ' by Manager Rahul Sharma. ' + (remarkVal ? 'Remarks: "' + remarkVal + '"' : ''),
-      time: 'Just now',
-      icon: isApprove ? '✓' : '✕',
-      iconClass: isApprove ? 'success' : 'danger',
-      unread: true
-    });
-
-    STORED_DECISION = {
-      leaveType: p.leaveType,
-      fromDate: p.fromDate,
-      toDate: p.toDate,
-      totalDays: p.totalDays,
-      status: statusText,
-      badgeClass: badgeClass,
-      remarks: remarkVal || (isApprove ? 'Approved by Rahul Sharma.' : 'Rejected by Rahul Sharma.')
-    };
-
-    loadScreen('tpl-EmployeeDashboard');
-  }
-
   function loadScreen(tplId, personKey) {
     if (personKey) {
       SELECTED_PERSON = personKey;
@@ -3924,33 +3875,6 @@ function renderPermissionApprovals() {
       var elReason = doc.getElementById('lad-reason'); if (elReason) elReason.textContent = p.reason;
       var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle;
       var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath;
-    }
-
-    if (currentTpl === 'tpl-Notifications' && STORED_NOTIFICATIONS.length > 0) {
-      var container = doc.getElementById('notif-container');
-      if (container) {
-        STORED_NOTIFICATIONS.forEach(function(n) {
-          var itemHtml = '<div class="card notif-card unread"><div class="notif-row"><span class="ico-wrap ' + n.iconClass + '">' + n.icon + '</span><div class="notif-text"><p>' + n.text + '</p><small>' + n.time + '</small></div><span class="dot"></span><span class="close-item-btn" onclick="removeSingleNotif(this)">✕</span></div></div>';
-          container.insertAdjacentHTML('afterbegin', itemHtml);
-        });
-      }
-    }
-
-    if (currentTpl === 'tpl-EmployeeDashboard' && STORED_DECISION) {
-      var reqBadge = doc.getElementById('emp-dash-casual-leave-badge');
-      if (reqBadge) {
-        reqBadge.textContent = STORED_DECISION.status;
-        reqBadge.className = 'badge ' + STORED_DECISION.badgeClass;
-      }
-    }
-
-    if (currentTpl === 'tpl-LeaveHistory' && STORED_DECISION) {
-      var historyScreen = doc.querySelector('.screen');
-      var firstCard = doc.querySelector('.req-card');
-      if (historyScreen && firstCard) {
-        var newCardHtml = '<div class="card req-card" data-type="leaves"><div class="req-row"><div class="req-left"><span class="ico ' + STORED_DECISION.badgeClass + '">' + (STORED_DECISION.status === 'Approved' ? '✓' : '✕') + '</span><div><b>' + STORED_DECISION.leaveType + '</b><p>' + STORED_DECISION.fromDate + '</p></div></div><span class="badge ' + STORED_DECISION.badgeClass + '">' + STORED_DECISION.status + '</span></div><hr/><div style="display:flex; justify-content:space-between; align-items:center;"><span class="remark" style="margin:0;">Remarks: ' + STORED_DECISION.remarks + '</span><button class="view-details-btn" onclick="event.stopPropagation(); toggleCardDetails(this)" style="background:none; border:none; color:var(--primary); font-weight:700; font-size:13px; cursor:pointer;">View Details ›</button></div></div>';
-        firstCard.insertAdjacentHTML('beforebegin', newCardHtml);
-      }
     }
 
     var tabs = doc.querySelectorAll('.bottom-nav .tab');

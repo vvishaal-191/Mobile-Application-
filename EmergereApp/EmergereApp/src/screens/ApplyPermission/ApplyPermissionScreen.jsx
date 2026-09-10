@@ -13,7 +13,23 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [reason, setReason] = useState('');
   const [manager] = useState('Rahul Sharma (Team Lead)');
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const handleSubmit = () => {
+    const newRequest = {
+      id: Date.now().toString(),
+      initials: 'PS',
+      name: 'Priya Sharma',
+      type: permissionType,
+      schedule: `${date} (${startTime} - ${endTime})`,
+      duration: '2 Hours',
+      reason: reason || 'Personal work / Medical checkup',
+      status: 'pending',
+      typeTone: 'purple',
+    };
+
+    if (navigation) {
+      navigation.navigate('PermissionApprovals', { newPermissionRequest: newRequest });
+    }
+  };
 
   return (
     <View style={styles.screen}>
@@ -76,7 +92,7 @@ export default function ApplyPermissionScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.submitBtn} onPress={() => go('LeaveHistory')}>
+        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
           <Text style={styles.submitText}>Submit Request</Text>
         </TouchableOpacity>
       </ScrollView>

@@ -41,9 +41,26 @@ const INITIAL_NOTIFICATIONS = [
   },
 ];
 
-export default function NotificationsScreen({ navigation }) {
+export default function NotificationsScreen({ navigation, route }) {
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const go = (screen) => navigation && navigation.navigate(screen);
+
+  React.useEffect(() => {
+    if (route?.params?.newNotification) {
+      const newNotif = route.params.newNotification;
+      setNotifications((prev) => [
+        {
+          id: newNotif.id || Date.now().toString(),
+          icon: newNotif.icon || 'check-circle',
+          color: newNotif.tone === 'danger' ? '#E5484D' : '#1FAE6E',
+          text: newNotif.desc || newNotif.title,
+          time: 'Just now',
+          unread: true,
+        },
+        ...prev,
+      ]);
+    }
+  }, [route?.params?.newNotification]);
 
   const handleClearAll = () => {
     setNotifications([]);

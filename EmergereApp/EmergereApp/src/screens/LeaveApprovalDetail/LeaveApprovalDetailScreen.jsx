@@ -27,28 +27,12 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
   const person = route?.params?.person || DEFAULT_PERSON;
 
   const handleDecision = (status) => {
-    const decisionNotification = {
-      id: String(Date.now()),
-      title: `Leave ${status}`,
-      desc: `Your ${person.leaveType || 'Leave'} request for ${person.fromDate || 'Sep 07'} has been ${status.toLowerCase()} by Manager Rahul Sharma. ${remarks ? `Remarks: "${remarks}"` : ''}`,
-      time: 'Just now',
-      unread: true,
-      icon: status === 'Approved' ? 'check-circle' : 'x-circle',
-      iconColor: status === 'Approved' ? '#1FAE6E' : '#E5484D',
-    };
-
+    // Navigate back to ManagerDashboard with decision status
     if (navigation) {
-      navigation.navigate('EmployeeDashboard', {
-        decision: {
-          personId: person.id,
-          leaveType: person.leaveType,
-          fromDate: person.fromDate,
-          toDate: person.toDate,
-          totalDays: person.totalDays,
-          status: status,
-          remarks: remarks,
-          notification: decisionNotification,
-        },
+      navigation.navigate('ManagerDashboard', {
+        requestId: person.id || '1',
+        newStatus: status, // 'Approved' or 'Rejected'
+        remarks: remarks,
       });
     }
   };

@@ -60,11 +60,32 @@ const INITIAL_REQUESTS = [
   },
 ];
 
-export default function PermissionApprovalsScreen({ navigation }) {
+export default function PermissionApprovalsScreen({ navigation, route }) {
   const [activeTab, setActiveTab] = useState('pending');
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const go = (screen, params) => navigation && navigation.navigate(screen, params);
+
+  React.useEffect(() => {
+    if (route?.params?.newPermissionRequest) {
+      const newReq = route.params.newPermissionRequest;
+      setRequests((prev) => [
+        {
+          id: newReq.id || Date.now().toString(),
+          initials: newReq.initials || 'PS',
+          name: newReq.name || 'Priya Sharma',
+          type: newReq.type || 'Early Going',
+          tag: newReq.type || 'Early Going',
+          tagTone: newReq.typeTone || 'purple',
+          schedule: newReq.schedule || 'Sep 04 (03:00 - 05:00 PM)',
+          duration: newReq.duration || '2 Hours',
+          reason: newReq.reason || 'Personal medical checkup',
+          status: 'pending',
+        },
+        ...prev,
+      ]);
+    }
+  }, [route?.params?.newPermissionRequest]);
 
   const pendingCount = requests.filter((r) => r.status === 'pending').length;
   const approvedCount = requests.filter((r) => r.status === 'approved').length;
@@ -80,12 +101,40 @@ export default function PermissionApprovalsScreen({ navigation }) {
     setRequests((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: 'approved' } : item))
     );
+    const targetItem = requests.find((r) => r.id === id);
+    if (navigation) {
+      navigation.navigate('Notifications', {
+        newNotification: {
+          id: Date.now().toString(),
+          title: `Permission Approved: ${targetItem?.type || 'Permission'}`,
+          desc: `Your ${targetItem?.type || 'Permission'} request for ${targetItem?.schedule || 'today'} was Approved by Rahul Sharma.`,
+          time: 'Just now',
+          icon: 'check-circle',
+          tone: 'success',
+          read: false,
+        },
+      });
+    }
   };
 
   const handleReject = (id) => {
     setRequests((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: 'rejected' } : item))
     );
+    const targetItem = requests.find((r) => r.id === id);
+    if (navigation) {
+      navigation.navigate('Notifications', {
+        newNotification: {
+          id: Date.now().toString(),
+          title: `Permission Rejected: ${targetItem?.type || 'Permission'}`,
+          desc: `Your ${targetItem?.type || 'Permission'} request for ${targetItem?.schedule || 'today'} was Rejected by Rahul Sharma.`,
+          time: 'Just now',
+          icon: 'x-circle',
+          tone: 'danger',
+          read: false,
+        },
+      });
+    }
   };
 
   const filteredRequests = requests.filter((item) => item.status === activeTab);
