@@ -22,15 +22,45 @@ const INITIAL_QUICK_ACTIONS = [
 ];
 
 const INITIAL_RECENT_REQUESTS = [
-  { id: '1', name: 'Priya Sharma', subtitle: 'Casual Leave • Sep 10-11 (2 Days)', status: 'Pending', tone: 'warning' },
-  { id: '2', name: 'Sneha Gupta', subtitle: 'Earned Leave • Sep 15-19 (5 Days)', status: 'Pending', tone: 'warning' },
+  {
+    id: '1',
+    name: 'Priya Sharma',
+    role: 'Senior Software Engineer',
+    empId: 'EMP-2024-0156',
+    initials: 'PS',
+    leaveType: 'Casual Leave',
+    subtitle: 'Casual Leave • Sep 10-11 (2 Days)',
+    fromDate: 'Sep 10, 2026',
+    toDate: 'Sep 11, 2026',
+    totalDays: '2 Days',
+    emergencyContact: '+91 98765 43210',
+    reason: "Family function - attending sister's wedding ceremony in Bangalore.",
+    status: 'Pending',
+    tone: 'warning',
+  },
+  {
+    id: '2',
+    name: 'Sneha Gupta',
+    role: 'Product Designer',
+    empId: 'EMP-2024-0210',
+    initials: 'SG',
+    leaveType: 'Earned Leave',
+    subtitle: 'Earned Leave • Sep 15-19 (5 Days)',
+    fromDate: 'Sep 15, 2026',
+    toDate: 'Sep 19, 2026',
+    totalDays: '5 Days',
+    emergencyContact: '+91 98123 45678',
+    reason: 'Annual family vacation trip to Himachal Pradesh.',
+    status: 'Pending',
+    tone: 'warning',
+  },
 ];
 
 export default function ManagerDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_RECENT_REQUESTS);
   const [quickActions, setQuickActions] = useState(INITIAL_QUICK_ACTIONS);
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   useEffect(() => {
     if (route && route.params && route.params.newStatus) {
@@ -111,7 +141,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
           <TouchableOpacity
             key={r.id}
             activeOpacity={0.7}
-            onPress={() => navigation && navigation.navigate('LeaveApprovalDetail', { request: r })}
+            onPress={() => go('LeaveApprovalDetail', { request: r })}
           >
             <Card style={styles.requestCard}>
               <View style={styles.requestRow}>
@@ -119,10 +149,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
                   <Text style={styles.requestName}>{r.name}</Text>
                   <Text style={styles.requestSubtitle}>{r.subtitle}</Text>
                 </View>
-                <StatusBadge
-                  label={r.status}
-                  tone={r.tone || (r.status === 'Approved' ? 'success' : r.status === 'Rejected' ? 'danger' : 'warning')}
-                />
+                <StatusBadge label={r.status} tone={r.tone || (r.status === 'Approved' ? 'success' : r.status === 'Rejected' ? 'danger' : 'warning')} />
               </View>
             </Card>
           </TouchableOpacity>

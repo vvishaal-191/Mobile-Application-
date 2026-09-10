@@ -2618,8 +2618,8 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     <div class="quick-action" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-HolidayCalendar')">Team Calendar</div>
   </div>
   <p class="section-label">RECENT REQUESTS</p>
-  <div class="card req-card" style="cursor:pointer;" onclick="openLeaveApprovalDetail('1')"><div class="req-row"><div><b>Priya Sharma</b><p>Casual Leave • Sep 10-11 (2 Days)</p></div><span id="dash-priya-status-badge" class="badge warning">Pending</span></div></div>
-  <div class="card req-card" style="cursor:pointer;" onclick="openLeaveApprovalDetail('2')"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span id="dash-sneha-status-badge" class="badge warning">Pending</span></div></div>
+  <div class="card req-card" style="cursor:pointer;" onclick="openLeaveApprovalDetail('priya')"><div class="req-row"><div><b>Priya Sharma</b><p>Casual Leave • Sep 10-11 (2 Days)</p></div><span id="dash-priya-status-badge" class="badge warning">Pending</span></div></div>
+  <div class="card req-card" style="cursor:pointer;" onclick="openLeaveApprovalDetail('sneha')"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span class="badge warning">Pending</span></div></div>
 </div>
 <div class="bottom-nav">
   <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -2981,7 +2981,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
   </div>
 
   <div id="leave-approvals-list">
-    <div class="card approval-card" data-leave-id="1" data-status="pending">
+    <div class="card approval-card" data-leave-id="1" data-status="pending" data-employee-key="priya">
       <div class="top-row"><div class="emp-row"><div class="avatar">PS</div><div><b>Priya Sharma</b><p>EMP-2024-0156</p></div></div><span class="badge info">Casual Leave</span></div>
       <hr/>
       <div class="detail-row"><span>Duration</span><b>2 Days (Sep 10 - Sep 11)</b></div>
@@ -2991,7 +2991,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
       </div>
     </div>
 
-    <div class="card approval-card" data-leave-id="2" data-status="pending">
+    <div class="card approval-card" data-leave-id="2" data-status="pending" data-employee-key="amit">
       <div class="top-row"><div class="emp-row"><div class="avatar">AP</div><div><b>Amit Patel</b><p>EMP-2024-0089</p></div></div><span class="badge warning">Sick Leave</span></div>
       <hr/>
       <div class="detail-row"><span>Duration</span><b>1 Day (Sep 12)</b></div>
@@ -3001,7 +3001,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
       </div>
     </div>
 
-    <div class="card approval-card" data-leave-id="3" data-status="pending">
+    <div class="card approval-card" data-leave-id="3" data-status="pending" data-employee-key="sneha">
       <div class="top-row"><div class="emp-row"><div class="avatar">SG</div><div><b>Sneha Gupta</b><p>EMP-2024-0210</p></div></div><span class="badge purple">Earned Leave</span></div>
       <hr/>
       <div class="detail-row"><span>Duration</span><b>3 Days (Sep 15 - Sep 17)</b></div>
@@ -3011,7 +3011,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
       </div>
     </div>
 
-    <div class="card approval-card" data-leave-id="4" data-status="approved" style="display:none;">
+    <div class="card approval-card" data-leave-id="4" data-status="approved" data-employee-key="vikram" style="display:none;">
       <div class="top-row"><div class="emp-row"><div class="avatar">VS</div><div><b>Vikram Singh</b><p>EMP-2024-0112</p></div></div><span class="badge info">Casual Leave</span></div>
       <hr/>
       <div class="detail-row"><span>Duration</span><b>1 Day (Sep 05)</b></div>
@@ -3370,15 +3370,27 @@ function setActiveNav(el) {
 
 </script>
 <script>
-document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
+function filterHistory(cat, el) {
+  const pills = el.parentElement.querySelectorAll('.pill');
+  pills.forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
 
-let currentSelectedReqId = '1';
+  const cards = document.querySelectorAll('.req-card');
+  cards.forEach(card => {
+    const type = card.getAttribute('data-type');
+    if (cat === 'all' || type === cat) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
 
 function handleDetailLeaveDecision(status) {
   const isApproved = status === 'approved';
   const labelText = isApproved ? 'Approved' : 'Rejected';
   const badgeClass = isApproved ? 'badge success' : 'badge danger';
-  const targetBadgeId = currentSelectedReqId === '2' ? 'dash-sneha-status-badge' : 'dash-priya-status-badge';
 
   const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
 
@@ -3386,10 +3398,9 @@ function handleDetailLeaveDecision(status) {
   const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
   if (mgrTpl) {
     let tplHtml = mgrTpl.innerHTML;
-    const regex = new RegExp('<span[^>]*id="' + targetBadgeId + '"[^>]*>[\\s\\S]*?<\\/span>');
     tplHtml = tplHtml.replace(
-      regex,
-      '<span id="' + targetBadgeId + '" class="' + badgeClass + '">' + labelText + '</span>'
+      /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
+      '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
     );
     tplHtml = tplHtml.replace(
       /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
@@ -3398,30 +3409,28 @@ function handleDetailLeaveDecision(status) {
     mgrTpl.innerHTML = tplHtml;
   }
 
-  // 2. Update tpl-EmployeeDashboard template element in outer document if Priya
-  if (currentSelectedReqId === '1') {
-    const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
-    if (empTpl) {
-      let tplHtml = empTpl.innerHTML;
-      tplHtml = tplHtml.replace(
-        /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
-        '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
-      );
-      empTpl.innerHTML = tplHtml;
-    }
-
-    const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
-    if (liveEmpBadge) {
-      liveEmpBadge.className = badgeClass;
-      liveEmpBadge.textContent = labelText;
-    }
+  // 2. Update tpl-EmployeeDashboard template element in outer document
+  const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
+  if (empTpl) {
+    let tplHtml = empTpl.innerHTML;
+    tplHtml = tplHtml.replace(
+      /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
+      '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
+    );
+    empTpl.innerHTML = tplHtml;
   }
 
   // 3. Update current active DOM elements if rendered
-  const liveBadge = parentDoc.getElementById(targetBadgeId) || document.getElementById(targetBadgeId);
+  const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
   if (liveBadge) {
     liveBadge.className = badgeClass;
     liveBadge.textContent = labelText;
+  }
+
+  const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+  if (liveEmpBadge) {
+    liveEmpBadge.className = badgeClass;
+    liveEmpBadge.textContent = labelText;
   }
 
   const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
@@ -3436,6 +3445,11 @@ function handleDetailLeaveDecision(status) {
     loadScreen('tpl-ManagerDashboard');
   }
 }
+
+</script>
+</body>
+</html></template>
+<template id="tpl-PermissionApprovals"><!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8" />
@@ -3810,16 +3824,117 @@ function renderPermissionApprovals() {
     }
 
     if (currentTpl === 'tpl-LeaveApprovals') {
-      doc.querySelectorAll('.approval-card, .card').forEach(function(card) {
+      doc.querySelectorAll('.approval-card').forEach(function(card) {
         card.style.cursor = 'pointer';
         card.addEventListener('click', function(e) {
           if (e.target.tagName !== 'BUTTON') {
-            loadScreen('tpl-LeaveApprovalDetail');
+            var empKey = card.getAttribute('data-employee-key') || 'priya';
+            openLeaveApprovalDetail(empKey);
           }
         });
       });
     }
+
+    if (currentTpl === 'tpl-LeaveApprovalDetail') {
+      var selectedKey = window.selectedLeaveKey || 'priya';
+      var data = EMPLOYEE_LEAVE_DETAILS[selectedKey] || EMPLOYEE_LEAVE_DETAILS['priya'];
+
+      var subEl = doc.querySelector('.header p');
+      if (subEl) subEl.textContent = data.subtitle || (data.leaveType + ' Application');
+
+      var avatarEl = doc.querySelector('.emp-card .avatar');
+      if (avatarEl) avatarEl.textContent = data.initials;
+
+      var nameEl = doc.querySelector('.emp-card b');
+      if (nameEl) nameEl.textContent = data.name;
+
+      var roleEl = doc.querySelector('.emp-card p');
+      if (roleEl) roleEl.textContent = data.role;
+
+      var idEl = doc.querySelector('.emp-card .emp-id');
+      if (idEl) idEl.textContent = data.empId;
+
+      var rows = doc.querySelectorAll('.card .detail-row');
+      if (rows.length >= 5) {
+        var b0 = rows[0].querySelector('b'); if (b0) b0.textContent = data.leaveType;
+        var b1 = rows[1].querySelector('b'); if (b1) b1.textContent = data.fromDate;
+        var b2 = rows[2].querySelector('b'); if (b2) b2.textContent = data.toDate;
+        var b3 = rows[3].querySelector('b'); if (b3) b3.textContent = data.totalDays;
+        var b4 = rows[4].querySelector('b'); if (b4) b4.textContent = data.emergencyContact;
+      }
+
+      var reasonEl = doc.querySelector('.reason-text');
+      if (reasonEl) reasonEl.textContent = data.reason;
+
+      var doneEl = doc.querySelector('.path-row .done');
+      if (doneEl) doneEl.textContent = data.appliedBy + ' (Applied)';
+    }
   });
+
+  var EMPLOYEE_LEAVE_DETAILS = {
+    'priya': {
+      name: 'Priya Sharma',
+      role: 'Senior Software Engineer',
+      empId: 'EMP-2024-0156',
+      initials: 'PS',
+      leaveType: 'Casual Leave',
+      subtitle: 'Casual Leave Application',
+      fromDate: 'Sep 10, 2026',
+      toDate: 'Sep 11, 2026',
+      totalDays: '2 Days',
+      emergencyContact: '+91 98765 43210',
+      reason: "Family function - attending sister's wedding ceremony in Bangalore.",
+      appliedBy: 'Priya'
+    },
+    'sneha': {
+      name: 'Sneha Gupta',
+      role: 'Product Designer',
+      empId: 'EMP-2024-0210',
+      initials: 'SG',
+      leaveType: 'Earned Leave',
+      subtitle: 'Earned Leave Application',
+      fromDate: 'Sep 15, 2026',
+      toDate: 'Sep 19, 2026',
+      totalDays: '5 Days',
+      emergencyContact: '+91 98123 45678',
+      reason: 'Annual family vacation trip to Himachal Pradesh.',
+      appliedBy: 'Sneha'
+    },
+    'amit': {
+      name: 'Amit Patel',
+      role: 'Backend Developer',
+      empId: 'EMP-2024-0089',
+      initials: 'AP',
+      leaveType: 'Sick Leave',
+      subtitle: 'Sick Leave Application',
+      fromDate: 'Sep 12, 2026',
+      toDate: 'Sep 12, 2026',
+      totalDays: '1 Day',
+      emergencyContact: '+91 98989 12345',
+      reason: 'Doctor appointment and blood tests.',
+      appliedBy: 'Amit'
+    },
+    'vikram': {
+      name: 'Vikram Singh',
+      role: 'QA Analyst',
+      empId: 'EMP-2024-0112',
+      initials: 'VS',
+      leaveType: 'Casual Leave',
+      subtitle: 'Casual Leave Application',
+      fromDate: 'Sep 05, 2026',
+      toDate: 'Sep 05, 2026',
+      totalDays: '1 Day',
+      emergencyContact: '+91 97654 32109',
+      reason: 'Personal home maintenance work.',
+      appliedBy: 'Vikram'
+    }
+  };
+  var selectedLeaveKey = 'priya';
+
+  function openLeaveApprovalDetail(key) {
+    window.selectedLeaveKey = key || 'priya';
+    loadScreen('tpl-LeaveApprovalDetail');
+  }
 
   document.querySelectorAll('.nav-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
