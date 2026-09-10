@@ -3515,20 +3515,6 @@ function handleDetailLeaveDecision(status) {
     loadScreen('tpl-ManagerDashboard');
   }
 }
-
-  const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
-  if (liveQBadge) {
-    liveQBadge.textContent = '2';
-  }
-
-  // 4. Navigate back to Manager Dashboard
-  if (window.parent && window.parent.loadScreen) {
-    window.parent.loadScreen('tpl-ManagerDashboard');
-  } else if (typeof loadScreen === 'function') {
-    loadScreen('tpl-ManagerDashboard');
-  }
-}
-
 </script>
 </body>
 </html></template>
