@@ -14,19 +14,32 @@ export default function ApplyLeaveScreen({ navigation }) {
   const [reason, setReason] = useState('');
   const [daysCount, setDaysCount] = useState('1.0 Day (Auto-calculated)');
 
-  const go = (screen) => navigation && navigation.navigate(screen);
-
-  const toggleFromDate = () => {
-    setFromDate(fromDate === '07-Sep-2026' ? '10-Sep-2026' : '07-Sep-2026');
+  const cycleLeaveType = () => {
+    const currentIndex = LEAVE_TYPES.indexOf(leaveType);
+    const nextIndex = (currentIndex + 1) % LEAVE_TYPES.length;
+    setLeaveType(LEAVE_TYPES[nextIndex]);
   };
 
-  const toggleToDate = () => {
-    if (toDate === '07-Sep-2026') {
-      setToDate('12-Sep-2026');
-      setDaysCount('6.0 Days (Auto-calculated)');
-    } else {
-      setToDate('07-Sep-2026');
-      setDaysCount('1.0 Day (Auto-calculated)');
+  const handleFormSubmit = () => {
+    const newRequest = {
+      id: String(Date.now()),
+      name: 'Priya Sharma',
+      role: 'Senior Software Engineer',
+      empId: 'EMP-2024-0156',
+      initials: 'PS',
+      leaveType: leaveType,
+      fromDate: fromDate,
+      toDate: toDate,
+      totalDays: daysCount.split(' ')[0] || '1.0 Day',
+      emergencyContact: '+91 98765 43210',
+      reason: reason || `${leaveType} application for personal work.`,
+      status: 'Pending',
+      tone: 'warning',
+      isNewSubmitted: true,
+    };
+
+    if (navigation) {
+      navigation.navigate('LeaveApprovalDetail', { person: newRequest });
     }
   };
 
@@ -41,7 +54,7 @@ export default function ApplyLeaveScreen({ navigation }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Leave Type *</Text>
-          <TouchableOpacity style={styles.selectBox}>
+          <TouchableOpacity style={styles.selectBox} onPress={cycleLeaveType}>
             <Text style={styles.selectText}>{leaveType}</Text>
             <Feather name="chevron-down" size={18} color="#6B7280" />
           </TouchableOpacity>
@@ -88,7 +101,7 @@ export default function ApplyLeaveScreen({ navigation }) {
           />
         </View>
 
-        <TouchableOpacity style={styles.submitBtn} onPress={() => go('LeaveHistory')}>
+        <TouchableOpacity style={styles.submitBtn} onPress={handleFormSubmit}>
           <Text style={styles.submitText}>Submit Request</Text>
         </TouchableOpacity>
       </ScrollView>
