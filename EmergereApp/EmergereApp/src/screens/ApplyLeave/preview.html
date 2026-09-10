@@ -11,8 +11,26 @@
     <select><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Privilege Leave</option></select>
   </div>
   <div class="field two-col">
-    <div><label class="field-label">From Date *</label><input value="07-Sep-2026" readonly/></div>
-    <div><label class="field-label">To Date *</label><input value="07-Sep-2026" readonly/></div>
+    <div>
+      <label class="field-label">From Date *</label>
+      <div class="date-input-wrap" onclick="openCalPicker('from-date-picker', this.querySelector('.cal-icon-btn'))">
+        <input type="text" id="from-date-display" value="07-Sep-2026" readonly />
+        <label for="from-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('from-date-picker', this)">
+          📅
+          <input type="date" id="from-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
+        </label>
+      </div>
+    </div>
+    <div>
+      <label class="field-label">To Date *</label>
+      <div class="date-input-wrap" onclick="openCalPicker('to-date-picker', this.querySelector('.cal-icon-btn'))">
+        <input type="text" id="to-date-display" value="07-Sep-2026" readonly />
+        <label for="to-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('to-date-picker', this)">
+          📅
+          <input type="date" id="to-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
+        </label>
+      </div>
+    </div>
   </div>
   <div class="field"><label class="field-label">Number of Days</label><div class="auto-box">1.0 Day (Auto-calculated)</div></div>
   <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="Describe the reason for your leave..."></textarea></div>

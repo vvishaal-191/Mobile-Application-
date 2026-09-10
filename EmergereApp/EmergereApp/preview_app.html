@@ -1085,10 +1085,18 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 
 
 .mini-logo{width:22px;height:22px;}
-.date-input-wrap{position:relative;display:flex;align-items:center;width:100%;}
-.date-input-wrap input[type="text"]{width:100%;height:48px;border:1px solid var(--border);border-radius:12px;padding:0 44px 0 14px;font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;cursor:pointer;}
-.cal-icon-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:8px;background:#E7EEFF;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0;padding:0;font-size:14px;z-index:2;}
+.date-input-wrap{position:relative;display:flex;align-items:center;width:100%;cursor:pointer;}
+.date-input-wrap input[type="text"]{width:100%;height:48px;border:1px solid var(--border);border-radius:12px;padding:0 48px 0 14px;font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;cursor:pointer;transition:all 0.2s ease;}
+.date-input-wrap:hover input[type="text"]{border-color:var(--primary);box-shadow:0 0 0 3px rgba(47, 107, 255, 0.12);}
+.cal-icon-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;background:#E7EEFF;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0;padding:0;font-size:16px;z-index:2;transition:all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);box-shadow:0 2px 6px rgba(47, 107, 255, 0.15);}
+.cal-icon-btn:hover{transform:translateY(-50%) scale(1.12);background:var(--primary);color:#ffffff;box-shadow:0 4px 12px rgba(47, 107, 255, 0.35);}
+.cal-icon-btn:active, .cal-icon-btn.clicked{transform:translateY(-50%) scale(0.92);animation:calPulseHighlight 0.4s ease-out;}
 .cal-icon-btn input[type="date"]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+@keyframes calPulseHighlight{
+  0%{transform:translateY(-50%) scale(0.95);box-shadow:0 0 0 0 rgba(47, 107, 255, 0.6);}
+  50%{transform:translateY(-50%) scale(1.18);box-shadow:0 0 0 8px rgba(47, 107, 255, 0);}
+  100%{transform:translateY(-50%) scale(1);box-shadow:0 2px 6px rgba(47, 107, 255, 0.15);}
+}
 .subtitle{padding:0 20px;color:var(--text-secondary);margin:4px 0 16px;}
 .field{padding:0 20px;margin-bottom:18px;}
 .field.two-col{display:flex;gap:12px;}
@@ -1111,9 +1119,9 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="field two-col">
     <div>
       <label class="field-label">From Date *</label>
-      <div class="date-input-wrap">
-        <input type="text" id="from-date-display" value="07-Sep-2026" readonly onclick="try{document.getElementById('from-date-picker').showPicker()}catch(e){}" />
-        <label for="from-date-picker" class="cal-icon-btn" title="Open Calendar">
+      <div class="date-input-wrap" onclick="openCalPicker('from-date-picker', this.querySelector('.cal-icon-btn'))">
+        <input type="text" id="from-date-display" value="07-Sep-2026" readonly />
+        <label for="from-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('from-date-picker', this)">
           📅
           <input type="date" id="from-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
         </label>
@@ -1121,9 +1129,9 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     </div>
     <div>
       <label class="field-label">To Date *</label>
-      <div class="date-input-wrap">
-        <input type="text" id="to-date-display" value="07-Sep-2026" readonly onclick="try{document.getElementById('to-date-picker').showPicker()}catch(e){}" />
-        <label for="to-date-picker" class="cal-icon-btn" title="Open Calendar">
+      <div class="date-input-wrap" onclick="openCalPicker('to-date-picker', this.querySelector('.cal-icon-btn'))">
+        <input type="text" id="to-date-display" value="07-Sep-2026" readonly />
+        <label for="to-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('to-date-picker', this)">
           📅
           <input type="date" id="to-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
         </label>
@@ -1200,7 +1208,40 @@ function updateLeaveDates() {
       let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       if (diffDays < 1) diffDays = 1;
       daysBox.textContent = `${diffDays}.0 Day${diffDays > 1 ? 's' : ''} (Auto-calculated)`;
+  }
+}
+
+function openCalPicker(pickerId, btnEl) {
+  const picker = document.getElementById(pickerId);
+  let targetBtn = btnEl;
+  if (!targetBtn && pickerId) {
+    targetBtn = document.querySelector(`label[for="${pickerId}"]`);
+  }
+  if (targetBtn) {
+    targetBtn.classList.remove('clicked');
+    void targetBtn.offsetWidth;
+    targetBtn.classList.add('clicked');
+  }
+  if (picker) {
+    if (typeof picker.showPicker === 'function') {
+      try {
+        picker.showPicker();
+      } catch (e) {
+        picker.click();
+      }
+    } else {
+      picker.click();
     }
+  }
+}
+
+function syncPermDate(val) {
+  const display = document.getElementById('perm-date-display');
+  if (display && val) {
+    display.value = formatDateString(val);
+  }
+  if (typeof calcPermDuration === 'function') {
+    calcPermDuration();
   }
 }
 
@@ -1333,7 +1374,13 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <p class="subtitle">Request short duration permission</p>
   <div class="field">
     <label class="field-label">Date *</label>
-    <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;" onchange="calcPermDuration()"/>
+    <div class="date-input-wrap" onclick="openCalPicker('perm-date-picker', this.querySelector('.cal-icon-btn'))">
+      <input type="text" id="perm-date-display" value="04-Sep-2026" readonly />
+      <label for="perm-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('perm-date-picker', this)">
+        📅
+        <input type="date" id="perm-date-picker" value="2026-09-04" onchange="syncPermDate(this.value)" />
+      </label>
+    </div>
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
   <div class="field two-col">
