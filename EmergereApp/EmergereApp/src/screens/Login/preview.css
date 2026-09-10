@@ -11,3 +11,43 @@
 .login-screen .password-row span{ color:#8B93A7; cursor:pointer; }
 .login-screen .btn.full{ width:100%; padding:17px; margin-top:8px; }
 .login-screen .forgot{ text-align:center; color:#fff; font-weight:600; margin-top:20px; }
+
+/* Modal styles */
+.modal-overlay {
+  position: absolute; top:0; left:0; right:0; bottom:0;
+  background: rgba(13, 23, 42, 0.8);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; z-index: 1000;
+}
+.modal-card {
+  background: #FFFFFF; color: #111827;
+  width: 100%; max-width: 360px;
+  border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.modal-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
+.modal-head h3 { margin:0; font-size: 20px; font-weight: 800; color: #111827; }
+.modal-close { font-size: 18px; color: #6B7280; cursor: pointer; font-weight: bold; }
+.modal-sub { margin: 0 0 16px; font-size: 13px; color: #6B7280; line-height: 1.4; }
+.modal-err-box {
+  background: #FCE4E4; border: 1px solid #F87171; color: #E5484D;
+  padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  margin-bottom: 14px; text-align: center;
+}
+.modal-field { margin-bottom: 14px; }
+.modal-field label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px; }
+.modal-field input {
+  width: 100%; height: 44px; background: #F3F4F6; border: 1px solid #E5E7EB;
+  border-radius: 10px; padding: 0 12px; color: #111827; font-size: 14px; outline: none;
+}
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.btn-cancel {
+  flex: 1; height: 44px; border-radius: 10px; background: #F3F4F6; color: #4B5563;
+  border: none; font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.btn-confirm {
+  flex: 1; height: 44px; border-radius: 10px; background: #2F6BFF; color: #FFFFFF;
+  border: none; font-weight: 700; font-size: 14px; cursor: pointer;
+}

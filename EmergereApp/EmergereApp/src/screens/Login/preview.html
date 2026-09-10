@@ -16,19 +16,55 @@
 
       <div class="field">
         <label class="field-label light">Email Address *</label>
-        <input type="email" value="developer@emergere.com" />
+        <input type="email" id="email" value="developer@emergere.com" />
       </div>
 
       <div class="field">
         <label class="field-label light">Password *</label>
         <div class="password-row">
-          <input id="pwd" type="password" value="password123" />
+          <input id="pwd" type="password" placeholder="Enter password (min 8 chars)" />
           <span onclick="toggleVisibility('pwd')">👁</span>
+        </div>
+        <div id="pwd-error" class="error-msg" style="display:none; color:#FFD1D1; font-size:13px; font-weight:600; margin-top:6px;">
+          Password must contain a minimum of 8 characters.
         </div>
       </div>
 
-      <button class="btn btn-primary full">Login</button>
-      <p class="forgot">Forgot Password?</p>
+      <div class="remember-row" onclick="toggleRemember(this)" style="display:flex; align-items:center; gap:10px; margin-bottom:20px; cursor:pointer;">
+        <div class="chk-box" style="width:20px; height:20px; border-radius:6px; background:#8EC4EA; border:1.5px solid #FFFFFF; display:flex; align-items:center; justify-content:center; color:#FFFFFF; font-size:12px; font-weight:bold;">✓</div>
+        <span style="color:#FFFFFF; font-size:14px; font-weight:500;">Remember me</span>
+      </div>
+
+      <button class="btn btn-primary full" onclick="handleLogin()">Login</button>
+      <p class="forgot" onclick="openForgotModal()" style="cursor:pointer;">Forgot Password?</p>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>Forgot Password?</h3>
+          <span class="modal-close" onclick="closeForgotModal()">✕</span>
+        </div>
+        <p class="modal-sub">Enter your registered Email ID and Contact Number to verify your account.</p>
+        
+        <div id="modal-err" class="modal-err-box" style="display:none;"></div>
+
+        <div class="modal-field">
+          <label>Email ID *</label>
+          <input type="email" id="forgot-email" placeholder="developer@emergere.com" />
+        </div>
+
+        <div class="modal-field">
+          <label>Contact Number *</label>
+          <input type="tel" id="forgot-contact" placeholder="Enter 10-digit contact number" maxlength="10" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeForgotModal()">Cancel</button>
+          <button class="btn-confirm" onclick="confirmForgot()">Confirm</button>
+        </div>
+      </div>
     </div>
   </div>
   <script src="../../../preview/shared.js"></script>

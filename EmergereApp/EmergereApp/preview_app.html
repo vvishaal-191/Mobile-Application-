@@ -266,6 +266,46 @@ input:focus{border-color:#FFFFFF; box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
 .forgot-link{
   text-align:center; color:#FFFFFF; font-size:14px; font-weight:600; text-decoration:none; cursor:pointer; display:block;
 }
+
+/* Modal styles */
+.modal-overlay {
+  position: absolute; top:0; left:0; right:0; bottom:0;
+  background: rgba(13, 23, 42, 0.8);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; z-index: 1000;
+}
+.modal-card {
+  background: #FFFFFF; color: #111827;
+  width: 100%; max-width: 360px;
+  border-radius: 20px; padding: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.modal-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
+.modal-head h3 { margin:0; font-size: 20px; font-weight: 800; color: #111827; }
+.modal-close { font-size: 18px; color: #6B7280; cursor: pointer; font-weight: bold; }
+.modal-sub { margin: 0 0 16px; font-size: 13px; color: #6B7280; line-height: 1.4; }
+.modal-err-box {
+  background: #FCE4E4; border: 1px solid #F87171; color: #E5484D;
+  padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  margin-bottom: 14px; text-align: center;
+}
+.modal-field { margin-bottom: 14px; }
+.modal-field label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px; }
+.modal-field input {
+  width: 100%; height: 44px; background: #F3F4F6; border: 1px solid #E5E7EB;
+  border-radius: 10px; padding: 0 12px; color: #111827; font-size: 14px; outline: none;
+}
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.btn-cancel {
+  flex: 1; height: 44px; border-radius: 10px; background: #F3F4F6; color: #4B5563;
+  border: none; font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.btn-confirm {
+  flex: 1; height: 44px; border-radius: 10px; background: #2F6BFF; color: #FFFFFF;
+  border: none; font-weight: 700; font-size: 14px; cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -280,24 +320,55 @@ input:focus{border-color:#FFFFFF; box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
 
     <div class="field">
       <label class="field-label">Email Address *</label>
-      <input type="email" value="developer@emergere.com" placeholder="Enter your email" />
+      <input type="email" id="login-email" value="developer@emergere.com" placeholder="Enter your email" />
     </div>
 
     <div class="field">
       <label class="field-label">Password *</label>
       <div class="input-wrap">
-        <input type="password" id="login-pass" value="••••••••••••" placeholder="Enter your password" />
+        <input type="password" id="login-pass" placeholder="Enter your password (min 8 chars)" />
         <button class="eye-btn" onclick="toggleVisibility('login-pass')">👁</button>
+      </div>
+      <div id="login-pass-err" class="error-msg" style="display:none; color:#FFD1D1; font-size:13px; font-weight:600; margin-top:6px;">
+        Password must contain a minimum of 8 characters.
       </div>
     </div>
 
-    <div class="remember-row">
-      <div class="checkbox">✓</div>
+    <div class="remember-row" onclick="toggleRememberMeApp(this)">
+      <div class="checkbox" id="app-remember-chk">✓</div>
       <span class="remember-text">Remember me</span>
     </div>
 
-    <button class="btn-login" onclick="window.parent.loadScreen('tpl-EmployeeDashboard')">Login</button>
-    <a class="forgot-link" onclick="window.parent.loadScreen('tpl-EmployeeDashboard')">Forgot Password?</a>
+    <button class="btn-login" onclick="handleAppLogin()">Login</button>
+    <a class="forgot-link" onclick="openAppForgotModal()">Forgot Password?</a>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="app-forgot-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Forgot Password?</h3>
+        <span class="modal-close" onclick="closeAppForgotModal()">✕</span>
+      </div>
+      <p class="modal-sub">Enter your registered Email ID and Contact Number to verify your account.</p>
+      
+      <div id="app-modal-err" class="modal-err-box" style="display:none;"></div>
+
+      <div class="modal-field">
+        <label>Email ID *</label>
+        <input type="email" id="app-forgot-email" placeholder="developer@emergere.com" />
+      </div>
+
+      <div class="modal-field">
+        <label>Contact Number *</label>
+        <input type="tel" id="app-forgot-contact" placeholder="Enter 10-digit contact number" maxlength="10" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeAppForgotModal()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmAppForgot()">Confirm</button>
+      </div>
+    </div>
   </div>
 </div>
 <script>
@@ -319,11 +390,87 @@ function setActiveNav(el) {
 
 </script>
 <script>
-// Screen-specific preview JS
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Login preview ready');
-});
+let appRemember = true;
 
+function toggleRememberMeApp(el) {
+  appRemember = !appRemember;
+  const chk = document.getElementById('app-remember-chk');
+  if (chk) {
+    chk.textContent = appRemember ? '✓' : '';
+    chk.style.background = appRemember ? '#8EC4EA' : 'transparent';
+  }
+}
+
+function handleAppLogin() {
+  const pwdInput = document.getElementById('login-pass');
+  const pwdErr = document.getElementById('login-pass-err');
+  if (!pwdInput || pwdInput.value.length < 8) {
+    if (pwdErr) pwdErr.style.display = 'block';
+    return;
+  }
+  if (pwdErr) pwdErr.style.display = 'none';
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-EmployeeDashboard');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-EmployeeDashboard');
+  }
+}
+
+function openAppForgotModal() {
+  const emailVal = document.getElementById('login-email') ? document.getElementById('login-email').value : '';
+  const forgotEmail = document.getElementById('app-forgot-email');
+  const forgotContact = document.getElementById('app-forgot-contact');
+  const modalErr = document.getElementById('app-modal-err');
+
+  if (forgotEmail) forgotEmail.value = emailVal;
+  if (forgotContact) forgotContact.value = '';
+  if (modalErr) modalErr.style.display = 'none';
+
+  const modal = document.getElementById('app-forgot-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAppForgotModal() {
+  const modal = document.getElementById('app-forgot-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function confirmAppForgot() {
+  const emailInput = document.getElementById('app-forgot-email');
+  const contactInput = document.getElementById('app-forgot-contact');
+  const modalErr = document.getElementById('app-modal-err');
+
+  const emailVal = emailInput ? emailInput.value.trim() : '';
+  const contactVal = contactInput ? contactInput.value.trim() : '';
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\d{10}$/;
+
+  if (!emailVal || !emailRegex.test(emailVal)) {
+    if (modalErr) {
+      modalErr.textContent = 'Please enter a valid registered Email ID.';
+      modalErr.style.display = 'block';
+    }
+    return;
+  }
+
+  if (!contactVal || !phoneRegex.test(contactVal.replace(/[\s-]/g, ''))) {
+    if (modalErr) {
+      modalErr.textContent = 'Please enter a valid 10-digit registered Contact Number.';
+      modalErr.style.display = 'block';
+    }
+    return;
+  }
+
+  if (modalErr) modalErr.style.display = 'none';
+  closeAppForgotModal();
+
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-EmployeeDashboard');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-EmployeeDashboard');
+  }
+}
 </script>
 </body>
 </html></template>
