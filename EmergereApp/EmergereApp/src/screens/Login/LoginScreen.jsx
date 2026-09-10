@@ -13,7 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import styles from './LoginScreen.styles';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('developer@emergere.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -35,7 +35,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleOpenForgotModal = () => {
-    setForgotEmail(email || '');
+    setForgotEmail('');
     setForgotContact('');
     setForgotError('');
     setShowForgotModal(true);
@@ -80,7 +80,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.input}
           value={email}
           onChangeText={setEmail}
-          placeholder="developer@emergere.com"
+          placeholder="Enter your email address"
           placeholderTextColor="#F2F2F2"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -97,7 +97,7 @@ export default function LoginScreen({ navigation }) {
               setPassword(text);
               if (text.length >= 8) setPasswordError('');
             }}
-            placeholder="Enter password (min 8 chars)"
+            placeholder="Enter your password"
             placeholderTextColor="#F2F2F2"
             secureTextEntry={!showPassword}
           />
@@ -166,7 +166,7 @@ export default function LoginScreen({ navigation }) {
                   setForgotEmail(text);
                   setForgotError('');
                 }}
-                placeholder="developer@emergere.com"
+                placeholder="Enter your email address"
                 placeholderTextColor="#9CA3AF"
                 keyboardType="email-address"
                 autoCapitalize="none"

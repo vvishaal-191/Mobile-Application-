@@ -30,12 +30,11 @@ function toggleRemember(el) {
 }
 
 function openForgotModal() {
-  const emailVal = document.getElementById('email') ? document.getElementById('email').value : '';
   const forgotEmail = document.getElementById('forgot-email');
   const forgotContact = document.getElementById('forgot-contact');
   const modalErr = document.getElementById('modal-err');
   
-  if (forgotEmail) forgotEmail.value = emailVal;
+  if (forgotEmail) forgotEmail.value = '';
   if (forgotContact) forgotContact.value = '';
   if (modalErr) modalErr.style.display = 'none';
 

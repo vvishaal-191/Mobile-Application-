@@ -320,13 +320,13 @@ input:focus{border-color:#FFFFFF; box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
 
     <div class="field">
       <label class="field-label">Email Address *</label>
-      <input type="email" id="login-email" value="developer@emergere.com" placeholder="Enter your email" />
+      <input type="email" id="login-email" value="" placeholder="Enter your email address" />
     </div>
 
     <div class="field">
       <label class="field-label">Password *</label>
       <div class="input-wrap">
-        <input type="password" id="login-pass" placeholder="Enter your password (min 8 chars)" />
+        <input type="password" id="login-pass" placeholder="Enter your password" />
         <button class="eye-btn" onclick="toggleVisibility('login-pass')">👁</button>
       </div>
       <div id="login-pass-err" class="error-msg" style="display:none; color:#FFD1D1; font-size:13px; font-weight:600; margin-top:6px;">
@@ -356,7 +356,7 @@ input:focus{border-color:#FFFFFF; box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
 
       <div class="modal-field">
         <label>Email ID *</label>
-        <input type="email" id="app-forgot-email" placeholder="developer@emergere.com" />
+        <input type="email" id="app-forgot-email" placeholder="Enter your email address" />
       </div>
 
       <div class="modal-field">
@@ -417,12 +417,11 @@ function handleAppLogin() {
 }
 
 function openAppForgotModal() {
-  const emailVal = document.getElementById('login-email') ? document.getElementById('login-email').value : '';
   const forgotEmail = document.getElementById('app-forgot-email');
   const forgotContact = document.getElementById('app-forgot-contact');
   const modalErr = document.getElementById('app-modal-err');
 
-  if (forgotEmail) forgotEmail.value = emailVal;
+  if (forgotEmail) forgotEmail.value = '';
   if (forgotContact) forgotContact.value = '';
   if (modalErr) modalErr.style.display = 'none';
 
