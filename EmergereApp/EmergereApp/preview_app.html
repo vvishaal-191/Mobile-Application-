@@ -1119,7 +1119,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Apply Leave</h1></div>
   <p class="subtitle">Create new leave request</p>
   <div class="field"><label class="field-label">Leave Type *</label>
-    <select><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Privilege Leave</option></select>
+    <select id="leave-type-select"><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Privilege Leave</option></select>
   </div>
   <div class="field two-col">
     <div>
@@ -1144,10 +1144,10 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     </div>
   </div>
   <div class="field"><label class="field-label">Number of Days</label><div class="auto-box" id="days-count-box">1.0 Day (Auto-calculated)</div></div>
-  <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
+  <div class="field"><label class="field-label">Reason *</label><textarea id="leave-reason-text" rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
   
   
-  <button class="btn btn-primary full">Submit Request</button>
+  <button class="btn btn-primary full" onclick="handleApplyLeaveSubmit()">Submit Request</button>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -1179,6 +1179,46 @@ function setActiveNav(el) {
   el.classList.add('active');
 }
 
+</script>
+<script>
+function handleApplyLeaveSubmit() {
+  var leaveTypeEl = document.getElementById('leave-type-select');
+  var fromDateEl = document.getElementById('from-date-display');
+  var toDateEl = document.getElementById('to-date-display');
+  var daysEl = document.getElementById('days-count-box');
+  var reasonEl = document.getElementById('leave-reason-text');
+
+  var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
+  var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
+  var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
+  var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
+  var reason = reasonEl ? reasonEl.value.trim() : '';
+
+  var store = window.parent || window;
+  store.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason };
+
+  var parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+  var approvalsTpl = parentDoc.getElementById('tpl-LeaveApprovals');
+  if (approvalsTpl) {
+    var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
+    var newId = 'emp-new-' + Date.now();
+    var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending" style="border:2px solid #2F6BFF;">'
+      + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+      + '<hr/>'
+      + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' – ' + toDate + ')</b></div>'
+      + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
+      + '<div class="card-action-wrap" id="action-wrap-' + newId + '">'
+      + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\', \'approved\')">Approve</button></div>'
+      + '</div></div>';
+    var tplHtml = approvalsTpl.innerHTML;
+    tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
+    approvalsTpl.innerHTML = tplHtml;
+  }
+
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-LeaveApprovals');
+  }
+}
 </script>
 <script>
 function formatDateString(dateVal) {
@@ -2255,6 +2295,9 @@ body{
       </div>
     </div>
   </div>
+  <div style="padding:0 20px 20px;">
+    <button class="btn btn-primary full" style="margin-top:4px;" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard');}">Go to Dashboard →</button>
+  </div>
 </div>
 <div class="bottom-nav">
   <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -3144,21 +3187,34 @@ function switchLeaveTab(status, el) {
 
 function processLeaveAction(id, newStatus) {
   const card = document.querySelector(`.approval-card[data-leave-id="${id}"]`);
+  const store = window.parent || window;
+  const leaveReq = store.lastLeaveRequest || {};
+  const lType = leaveReq.leaveType || 'Casual Leave';
+  const fromDate = leaveReq.fromDate || 'Sep 07';
+
   if (card) {
     card.setAttribute('data-status', newStatus);
     const actionWrap = card.querySelector('.card-action-wrap');
     if (actionWrap) {
-      if (newStatus === 'approved') {
-        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
-      } else {
-        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
-      }
+      const isApprovedAction = newStatus === 'approved';
+      const statusBadge = isApprovedAction
+        ? '<span class="badge success">✓ Approved</span>'
+        : '<span class="badge danger">✕ Rejected</span>';
+      actionWrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:10px;">'
+        + statusBadge
+        + '<button class="btn btn-primary" style="padding:10px 22px;font-size:14px;border-radius:12px;" onclick="goToNotificationsAfterLeave(\'' + newStatus + '\')">Next →</button>'
+        + '</div>';
     }
   }
 
   const isApproved = newStatus === 'approved';
   const labelText = isApproved ? 'Approved' : 'Rejected';
   const badgeClass = isApproved ? 'badge success' : 'badge danger';
+  const icoClass = isApproved ? 'success' : 'danger';
+  const icoChar = isApproved ? '✓' : '✕';
+  const msgText = isApproved
+    ? 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Approved</b> by the Manager'
+    : 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Rejected</b> by the Manager';
 
   const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
 
@@ -3180,9 +3236,35 @@ function processLeaveAction(id, newStatus) {
     liveEmpBadge.textContent = labelText;
   }
 
+  // Inject dynamic notification into tpl-Notifications template
+  const notifTpl = parentDoc.getElementById('tpl-Notifications');
+  if (notifTpl) {
+    const notifCard = '<div class="card notif-card unread" id="dynamic-leave-notif">'
+      + '<div class="notif-row">'
+      + '<span class="ico-wrap ' + icoClass + '">' + icoChar + '</span>'
+      + '<div class="notif-text"><p>' + msgText + '</p><small>Just now</small></div>'
+      + '<span class="dot"></span>'
+      + '<span class="close-item-btn" onclick="this.closest(\'.notif-card\').remove()" title="Delete">✕</span>'
+      + '</div></div>';
+    let tplHtml = notifTpl.innerHTML;
+    if (tplHtml.indexOf('dynamic-leave-notif') === -1) {
+      tplHtml = tplHtml.replace('<div id="notif-container">', '<div id="notif-container">' + notifCard);
+      notifTpl.innerHTML = tplHtml;
+    }
+  }
+
+  store.lastLeaveDecision = { status: newStatus, labelText, lType, fromDate, icoClass, icoChar, msgText };
+
   updateLeaveTabCounts();
   renderLeaveApprovals();
 }
+
+function goToNotificationsAfterLeave(status) {
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-Notifications');
+  }
+}
+
 
 function updateLeaveTabCounts() {
   const pending = document.querySelectorAll('.approval-card[data-status="pending"]').length;
