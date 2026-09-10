@@ -43,7 +43,6 @@ export default function ApplyPermissionScreen({ navigation }) {
         <View style={styles.field}>
           <Text style={styles.label}>Date *</Text>
           <View style={styles.dateInputRow}>
-            <Feather name="calendar" size={18} color="#2F6BFF" style={{ marginRight: 10 }} />
             <TextInput
               style={styles.flexInput}
               value={date}

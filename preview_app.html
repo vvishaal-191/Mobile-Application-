@@ -1339,12 +1339,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <p class="subtitle">Request short duration permission</p>
   <div class="field">
     <label class="field-label">Date *</label>
-    <div style="position:relative; display:flex; align-items:center;">
-      <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;" onchange="calcPermDuration()"/>
-      <div style="position:absolute; right:14px; pointer-events:none; display:flex; align-items:center; color:var(--primary);">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-      </div>
-    </div>
+    <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;" onchange="calcPermDuration()"/>
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
   <div class="field two-col">
