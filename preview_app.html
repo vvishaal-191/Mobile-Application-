@@ -1153,7 +1153,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <div class="field"><label class="field-label">Reason *</label><textarea id="leave-reason-text" rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
   
   
-  <button class="btn btn-primary full">Submit Request</button>
+  <button class="btn btn-primary full" id="leave-submit-btn" onclick="handleApplyLeaveSubmit()">Submit Request</button>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -4190,6 +4190,51 @@ function renderPermissionApprovals() {
         loginBtn.addEventListener('click', function(e) {
           e.preventDefault();
           loadScreen('tpl-EmployeeDashboard');
+        });
+      }
+    }
+
+    if (currentTpl === 'tpl-ApplyLeave') {
+      var submitBtn = doc.getElementById('leave-submit-btn') || doc.querySelector('.btn-primary.full');
+      if (submitBtn) {
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.addEventListener('click', function(e) {
+          // Read form values from the iframe document
+          var leaveTypeEl = doc.getElementById('leave-type-select');
+          var fromDateEl = doc.getElementById('from-date-display');
+          var toDateEl   = doc.getElementById('to-date-display');
+          var daysEl     = doc.getElementById('days-count-box');
+          var reasonEl   = doc.getElementById('leave-reason-text');
+
+          var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
+          var fromDate  = fromDateEl  ? fromDateEl.value  : '07-Sep-2026';
+          var toDate    = toDateEl    ? toDateEl.value    : '07-Sep-2026';
+          var daysText  = daysEl      ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
+          var reason    = reasonEl    ? reasonEl.value.trim() : '';
+
+          // Store on outer window
+          window.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason };
+
+          // Inject pending card into Leave Approvals template
+          var approvalsTpl = document.getElementById('tpl-LeaveApprovals');
+          if (approvalsTpl) {
+            var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
+            var newId = 'emp-new-' + Date.now();
+            var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending" style="border:2px solid #2F6BFF;">'
+              + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+              + '<hr/>'
+              + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
+              + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
+              + '<div class="card-action-wrap">'
+              + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\',\'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\',\'approved\')">Approve</button></div>'
+              + '</div></div>';
+            var tplHtml = approvalsTpl.innerHTML;
+            if (tplHtml.indexOf(newId) === -1) {
+              tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
+              approvalsTpl.innerHTML = tplHtml;
+            }
+          }
+          loadScreen('tpl-LeaveApprovals');
         });
       }
     }
