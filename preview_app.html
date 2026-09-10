@@ -1337,15 +1337,23 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Apply Permission</h1></div>
   <p class="subtitle">Request short duration permission</p>
-  <div class="field"><label class="field-label">Date *</label><input value="04-Sep-2026" readonly/></div>
+  <div class="field">
+    <label class="field-label">Date *</label>
+    <div style="position:relative; display:flex; align-items:center;">
+      <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;" onchange="calcPermDuration()"/>
+      <div style="position:absolute; right:14px; pointer-events:none; display:flex; align-items:center; color:var(--primary);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      </div>
+    </div>
+  </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
   <div class="field two-col">
-    <div><label class="field-label">Start Time *</label><input value="03:00 PM" readonly/></div>
-    <div><label class="field-label">End Time *</label><input value="05:00 PM" readonly/></div>
+    <div><label class="field-label">Start Time *</label><input type="time" id="perm-start-time" value="15:00" style="cursor:pointer;" onchange="calcPermDuration()" oninput="calcPermDuration()"/></div>
+    <div><label class="field-label">End Time *</label><input type="time" id="perm-end-time" value="17:00" style="cursor:pointer;" onchange="calcPermDuration()" oninput="calcPermDuration()"/></div>
   </div>
-  <div class="field"><label class="field-label">Duration</label><div class="auto-box">2 Hours (Auto-calculated)</div></div>
+  <div class="field"><label class="field-label">Duration</label><div class="auto-box" id="perm-duration-box">2 Hours (Auto-calculated)</div></div>
   <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
-  <div class="field"><label class="field-label">Approving Manager</label><select><option>Rahul Sharma (Team Lead)</option></select></div>
+  <div class="field"><label class="field-label">Approving Manager</label><select id="perm-manager-select"><option>Rahul Sharma (Team Lead)</option></select></div>
   <button class="btn btn-primary full" onclick="handleApplyPermissionSubmit()">Submit Request</button>
 </div>
 <div class="bottom-nav">
@@ -3691,11 +3699,116 @@ function switchPermTab(status, el) {
   renderPermissionApprovals();
 }
 
+function formatTime12H(time24) {
+  if (!time24) return '';
+  const [hStr, mStr] = time24.split(':');
+  let h = parseInt(hStr, 10);
+  const m = mStr || '00';
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12;
+  if (h === 0) h = 12;
+  const hDisplay = h < 10 ? '0' + h : h;
+  return `${hDisplay}:${m} ${ampm}`;
+}
+
+function formatDateDisplay(dateStr) {
+  if (!dateStr) return '04-Sep-2026';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const year = parts[0];
+    const monthIdx = parseInt(parts[1], 10) - 1;
+    const day = parts[2];
+    if (months[monthIdx]) {
+      return `${day}-${months[monthIdx]}-${year}`;
+    }
+  }
+  return dateStr;
+}
+
+function calcPermDuration() {
+  const startVal = document.getElementById('perm-start-time') ? document.getElementById('perm-start-time').value : '15:00';
+  const endVal = document.getElementById('perm-end-time') ? document.getElementById('perm-end-time').value : '17:00';
+  const durationBox = document.getElementById('perm-duration-box');
+  if (!durationBox) return;
+
+  if (startVal && endVal) {
+    const [sH, sM] = startVal.split(':').map(Number);
+    const [eH, eM] = endVal.split(':').map(Number);
+    let startMin = sH * 60 + sM;
+    let endMin = eH * 60 + eM;
+    let diff = endMin - startMin;
+    if (diff < 0) diff += 24 * 60;
+    const hours = Math.floor(diff / 60);
+    const mins = diff % 60;
+    let text = '';
+    if (hours > 0 && mins > 0) text = `${hours} Hr ${mins} Mins`;
+    else if (hours > 0) text = `${hours} Hour${hours > 1 ? 's' : ''}`;
+    else text = `${mins} Mins`;
+    durationBox.textContent = `${text} (Auto-calculated)`;
+  } else {
+    durationBox.textContent = 'Auto-calculated';
+  }
+}
+
+let lastPermRequest = null;
+
 function handleApplyPermissionSubmit() {
+  const permDateInput = document.getElementById('perm-date-input');
   const permTypeSelect = document.getElementById('perm-type-select');
+  const startTimeInput = document.getElementById('perm-start-time');
+  const endTimeInput = document.getElementById('perm-end-time');
+  const durationBox = document.getElementById('perm-duration-box');
   const reasonText = document.getElementById('perm-reason-text');
+
+  const rawDate = permDateInput ? permDateInput.value : '2026-09-04';
+  const formattedDate = formatDateDisplay(rawDate);
   const pType = permTypeSelect ? permTypeSelect.value : 'Early Going';
-  const pReason = reasonText ? reasonText.value : 'Personal medical checkup';
+  const rawStart = startTimeInput ? startTimeInput.value : '15:00';
+  const rawEnd = endTimeInput ? endTimeInput.value : '17:00';
+  const pStart = formatTime12H(rawStart);
+  const pEnd = formatTime12H(rawEnd);
+  const pDuration = durationBox ? durationBox.textContent.replace(' (Auto-calculated)', '') : '2 Hours';
+  const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
+
+  const newId = 'perm-' + Date.now();
+
+  lastPermRequest = {
+    id: newId,
+    type: pType,
+    date: formattedDate,
+    start: pStart,
+    end: pEnd,
+    duration: pDuration,
+    reason: pReason,
+    status: 'pending'
+  };
+
+  // Prepend card to #permission-approvals-list
+  const listContainer = document.getElementById('permission-approvals-list');
+  if (listContainer) {
+    const badgeTone = pType === 'Late Coming' ? 'purple' : pType === 'Early Going' ? 'warning' : 'info';
+    const newCardHtml = `
+      <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}">
+        <div class="top-row"><div class="emp-row"><div class="avatar">JD</div><div><b>John Doe</b><p>${pType}</p></div></div><span class="badge ${badgeTone}">${pType}</span></div>
+        <hr/>
+        <div class="detail-row"><span>Schedule</span><b>${formattedDate} (${pStart} - ${pEnd})</b></div>
+        <div class="detail-row"><span>Duration</span><b>${pDuration}</b></div>
+        <div class="detail-row"><span>Reason</span><b>${pReason}</b></div>
+        <div class="card-action-wrap">
+          <div class="btn-row">
+            <button class="btn btn-reject" onclick="processPermAction('${newId}', 'rejected')">Reject</button>
+            <button class="btn btn-approve" onclick="processPermAction('${newId}', 'approved')">Approve</button>
+          </div>
+        </div>
+      </div>
+    `;
+    listContainer.insertAdjacentHTML('afterbegin', newCardHtml);
+  }
+
+  updatePermTabCounts();
+  currentPermTab = 'pending';
+  renderPermissionApprovals();
 
   if (window.parent && window.parent.loadScreen) {
     window.parent.loadScreen('tpl-PermissionApprovals');
@@ -3706,8 +3819,16 @@ function handleApplyPermissionSubmit() {
 
 function processPermAction(id, newStatus) {
   const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
+  let pType = 'Permission';
+  let pDate = '04-Sep-2026';
+
   if (card) {
     card.setAttribute('data-status', newStatus);
+    pType = card.getAttribute('data-type') || (card.querySelector('.emp-row p') ? card.querySelector('.emp-row p').textContent : 'Permission');
+    const scheduleEl = card.querySelector('.detail-row b');
+    if (scheduleEl) {
+      pDate = scheduleEl.textContent.split(' ')[0] || '04-Sep-2026';
+    }
     const actionWrap = card.querySelector('.card-action-wrap');
     if (actionWrap) {
       if (newStatus === 'approved') {
@@ -3716,6 +3837,9 @@ function processPermAction(id, newStatus) {
         actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
       }
     }
+  } else if (lastPermRequest && lastPermRequest.id === id) {
+    pType = lastPermRequest.type;
+    pDate = lastPermRequest.date;
   }
 
   updatePermTabCounts();
@@ -3725,7 +3849,7 @@ function processPermAction(id, newStatus) {
   const notifContainer = document.getElementById('notif-container');
   if (notifContainer) {
     const isApprove = newStatus === 'approved';
-    const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for Early Going (04-Sep-2026) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
+    const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for ${pType} (${pDate}) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
     notifContainer.insertAdjacentHTML('afterbegin', notifHtml);
   }
 

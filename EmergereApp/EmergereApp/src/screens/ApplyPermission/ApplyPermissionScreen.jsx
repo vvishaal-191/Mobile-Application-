@@ -6,12 +6,12 @@ import BottomNavBar from '../../components/BottomNavBar';
 import styles from './ApplyPermissionScreen.styles';
 
 export default function ApplyPermissionScreen({ navigation }) {
-  const [date] = useState('04-Sep-2026');
-  const [permissionType] = useState('Early Going');
-  const [startTime] = useState('03:00 PM');
-  const [endTime] = useState('05:00 PM');
+  const [date, setDate] = useState('04-Sep-2026');
+  const [permissionType, setPermissionType] = useState('Early Going');
+  const [startTime, setStartTime] = useState('03:00 PM');
+  const [endTime, setEndTime] = useState('05:00 PM');
   const [reason, setReason] = useState('');
-  const [manager] = useState('Rahul Sharma (Team Lead)');
+  const [manager, setManager] = useState('Rahul Sharma (Team Lead)');
 
   const handleSubmit = () => {
     const newRequest = {
@@ -42,7 +42,16 @@ export default function ApplyPermissionScreen({ navigation }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Date *</Text>
-          <View style={styles.inputBox}><Text style={styles.inputText}>{date}</Text></View>
+          <View style={styles.dateInputRow}>
+            <Feather name="calendar" size={18} color="#2F6BFF" style={{ marginRight: 10 }} />
+            <TextInput
+              style={styles.flexInput}
+              value={date}
+              onChangeText={setDate}
+              placeholder="DD-MMM-YYYY"
+              placeholderTextColor="#9AA3B2"
+            />
+          </View>
         </View>
 
         <View style={styles.field}>
@@ -56,11 +65,29 @@ export default function ApplyPermissionScreen({ navigation }) {
         <View style={styles.row}>
           <View style={styles.halfField}>
             <Text style={styles.label}>Start Time *</Text>
-            <View style={styles.inputBox}><Text style={styles.inputText}>{startTime}</Text></View>
+            <View style={styles.dateInputRow}>
+              <Feather name="clock" size={16} color="#6B7280" style={{ marginRight: 6 }} />
+              <TextInput
+                style={styles.flexInput}
+                value={startTime}
+                onChangeText={setStartTime}
+                placeholder="03:00 PM"
+                placeholderTextColor="#9AA3B2"
+              />
+            </View>
           </View>
           <View style={styles.halfField}>
             <Text style={styles.label}>End Time *</Text>
-            <View style={styles.inputBox}><Text style={styles.inputText}>{endTime}</Text></View>
+            <View style={styles.dateInputRow}>
+              <Feather name="clock" size={16} color="#6B7280" style={{ marginRight: 6 }} />
+              <TextInput
+                style={styles.flexInput}
+                value={endTime}
+                onChangeText={setEndTime}
+                placeholder="05:00 PM"
+                placeholderTextColor="#9AA3B2"
+              />
+            </View>
           </View>
         </View>
 
@@ -97,7 +124,7 @@ export default function ApplyPermissionScreen({ navigation }) {
         </TouchableOpacity>
       </ScrollView>
 
-      <BottomNavBar active="Apply" onNavigate={go} />
+      <BottomNavBar active="Apply" onNavigate={(scr) => navigation && navigation.navigate(scr)} />
     </View>
   );
 }
