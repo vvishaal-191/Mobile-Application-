@@ -1424,7 +1424,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
 
-  <div class="field"><label class="field-label">Duration</label><div class="auto-box" id="perm-duration-box">2 Hours (Auto-calculated)</div></div>
+  <div class="field"><label class="field-label">Duration *</label><input type="text" id="perm-duration-input" value="2 Hours" placeholder="E.g., 2 Hours" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit;"/></div>
   <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
   <div class="field"><label class="field-label">Approving Manager</label><select id="perm-manager-select"><option>Rahul Sharma (Team Lead)</option></select></div>
   <button class="btn btn-primary full" onclick="handleApplyPermissionSubmit()">Submit Request</button>
@@ -3897,7 +3897,7 @@ function handleApplyPermissionSubmit() {
   const permTypeSelect = document.getElementById('perm-type-select');
   const startTimeInput = document.getElementById('perm-start-time');
   const endTimeInput = document.getElementById('perm-end-time');
-  const durationBox = document.getElementById('perm-duration-box');
+  const durationInput = document.getElementById('perm-duration-input') || document.getElementById('perm-duration-box');
   const reasonText = document.getElementById('perm-reason-text');
 
   const rawDate = permDateInput ? permDateInput.value : '2026-09-04';
@@ -3909,7 +3909,7 @@ function handleApplyPermissionSubmit() {
   const rawEnd = endTimeInput ? endTimeInput.value : '17:00';
   const pStart = startTimeDisplay ? startTimeDisplay.value : formatTime12H(rawStart);
   const pEnd = endTimeDisplay ? endTimeDisplay.value : formatTime12H(rawEnd);
-  const pDuration = durationBox ? durationBox.textContent.replace(' (Auto-calculated)', '') : '2 Hours';
+  const pDuration = durationInput ? (durationInput.value ? durationInput.value.trim() : durationInput.textContent.replace(' (Auto-calculated)', '')) : '2 Hours';
   const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
 
   const newId = 'perm-' + Date.now();

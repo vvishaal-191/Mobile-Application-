@@ -10,7 +10,7 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [permissionType, setPermissionType] = useState('Early Going');
   const [startTime, setStartTime] = useState('03:00 PM');
   const [endTime, setEndTime] = useState('05:00 PM');
-  const [durationText, setDurationText] = useState('2 Hours (Auto-calculated)');
+  const [durationText, setDurationText] = useState('2 Hours');
   const [reason, setReason] = useState('');
   const [manager, setManager] = useState('Rahul Sharma (Team Lead)');
 
@@ -64,7 +64,7 @@ export default function ApplyPermissionScreen({ navigation }) {
       name: 'Priya Sharma',
       type: permissionType,
       schedule: `${date} (${startTime} - ${endTime})`,
-      duration: durationText.replace(' (Auto-calculated)', ''),
+      duration: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
       reason: reason || 'Personal work / Medical checkup',
       status: 'pending',
       typeTone: 'purple',
@@ -133,9 +133,15 @@ export default function ApplyPermissionScreen({ navigation }) {
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Duration</Text>
-          <View style={styles.autoBox}>
-            <Text style={styles.autoText}>{durationText}</Text>
+          <Text style={styles.label}>Duration *</Text>
+          <View style={styles.dateInputRow}>
+            <TextInput
+              style={styles.flexInput}
+              value={durationText}
+              onChangeText={setDurationText}
+              placeholder="E.g., 2 Hours"
+              placeholderTextColor="#9AA3B2"
+            />
           </View>
         </View>
 
