@@ -50,9 +50,6 @@ export default function ApplyPermissionScreen({ navigation }) {
               placeholder="DD-MMM-YYYY"
               placeholderTextColor="#9AA3B2"
             />
-            <View style={styles.calIconBadge}>
-              <Feather name="calendar" size={16} color="#2F6BFF" />
-            </View>
           </View>
         </View>
 

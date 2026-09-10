@@ -1381,13 +1381,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   <p class="subtitle">Request short duration permission</p>
   <div class="field">
     <label class="field-label">Date *</label>
-    <div class="date-input-wrap" onclick="openCalPicker('perm-date-picker', this.querySelector('.cal-icon-btn'))">
-      <input type="text" id="perm-date-display" value="04-Sep-2026" readonly />
-      <label for="perm-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('perm-date-picker', this)">
-        📅
-        <input type="date" id="perm-date-picker" value="2026-09-04" onchange="syncPermDate(this.value)" />
-      </label>
-    </div>
+    <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;" onchange="calcPermDuration()"/>
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
   <div class="field two-col">
