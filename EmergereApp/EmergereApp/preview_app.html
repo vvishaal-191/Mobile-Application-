@@ -1208,6 +1208,7 @@ function updateLeaveDates() {
       let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       if (diffDays < 1) diffDays = 1;
       daysBox.textContent = `${diffDays}.0 Day${diffDays > 1 ? 's' : ''} (Auto-calculated)`;
+    }
   }
 }
 

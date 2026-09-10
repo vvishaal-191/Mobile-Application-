@@ -1215,6 +1215,9 @@ function updateLeaveDates() {
       if (diffDays < 1) diffDays = 1;
       daysBox.textContent = `${diffDays}.0 Day${diffDays > 1 ? 's' : ''} (Auto-calculated)`;
     }
+  }
+}
+
 function openCalPicker(pickerId, btnEl) {
   const picker = document.getElementById(pickerId);
   let targetBtn = btnEl;
