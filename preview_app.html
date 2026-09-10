@@ -1389,22 +1389,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;" onchange="calcPermDuration()"/>
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
-  <div class="field two-col">
-    <div>
-      <label class="field-label">Start Time *</label>
-      <div class="time-input-wrap" onclick="openTimePicker('perm-start-time')">
-        <input type="text" id="perm-start-time-display" value="03:00 PM" readonly style="padding-right:14px;" />
-        <input type="time" id="perm-start-time" value="15:00" onchange="syncPermTime('start', this.value)" />
-      </div>
-    </div>
-    <div>
-      <label class="field-label">End Time *</label>
-      <div class="time-input-wrap" onclick="openTimePicker('perm-end-time')">
-        <input type="text" id="perm-end-time-display" value="05:00 PM" readonly style="padding-right:14px;" />
-        <input type="time" id="perm-end-time" value="17:00" onchange="syncPermTime('end', this.value)" />
-      </div>
-    </div>
-  </div>
+
   <div class="field"><label class="field-label">Duration</label><div class="auto-box" id="perm-duration-box">2 Hours (Auto-calculated)</div></div>
   <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
   <div class="field"><label class="field-label">Approving Manager</label><select id="perm-manager-select"><option>Rahul Sharma (Team Lead)</option></select></div>

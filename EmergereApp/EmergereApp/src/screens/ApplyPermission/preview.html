@@ -13,22 +13,7 @@
     <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;"/>
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
-  <div class="field two-col">
-    <div>
-      <label class="field-label">Start Time *</label>
-      <div class="time-input-wrap" onclick="if(window.parent&&window.parent.openTimePicker){window.parent.openTimePicker('perm-start-time')}else{try{document.getElementById('perm-start-time').showPicker()}catch(e){}}">
-        <input type="text" id="perm-start-time-display" value="03:00 PM" readonly style="padding-right:14px;" />
-        <input type="time" id="perm-start-time" value="15:00" />
-      </div>
-    </div>
-    <div>
-      <label class="field-label">End Time *</label>
-      <div class="time-input-wrap" onclick="if(window.parent&&window.parent.openTimePicker){window.parent.openTimePicker('perm-end-time')}else{try{document.getElementById('perm-end-time').showPicker()}catch(e){}}">
-        <input type="text" id="perm-end-time-display" value="05:00 PM" readonly style="padding-right:14px;" />
-        <input type="time" id="perm-end-time" value="17:00" />
-      </div>
-    </div>
-  </div>
+
   <div class="field"><label class="field-label">Duration</label><div class="auto-box" id="perm-duration-box">2 Hours (Auto-calculated)</div></div>
   <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
   <div class="field"><label class="field-label">Approving Manager</label><select><option>Rahul Sharma (Team Lead)</option></select></div>
