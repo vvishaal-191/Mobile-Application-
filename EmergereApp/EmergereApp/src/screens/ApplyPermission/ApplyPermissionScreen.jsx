@@ -10,8 +10,52 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [permissionType, setPermissionType] = useState('Early Going');
   const [startTime, setStartTime] = useState('03:00 PM');
   const [endTime, setEndTime] = useState('05:00 PM');
+  const [durationText, setDurationText] = useState('2 Hours (Auto-calculated)');
   const [reason, setReason] = useState('');
   const [manager, setManager] = useState('Rahul Sharma (Team Lead)');
+
+  const parseTimeToMinutes = (timeStr) => {
+    if (!timeStr) return null;
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (!match) return null;
+    let hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    const ampm = match[3] ? match[3].toUpperCase() : null;
+
+    if (ampm) {
+      if (ampm === 'PM' && hours < 12) hours += 12;
+      if (ampm === 'AM' && hours === 12) hours = 0;
+    }
+    return hours * 60 + minutes;
+  };
+
+  const calculateDurationText = (startStr, endStr) => {
+    const startMin = parseTimeToMinutes(startStr);
+    const endMin = parseTimeToMinutes(endStr);
+    if (startMin === null || endMin === null) return '2 Hours (Auto-calculated)';
+
+    let diff = endMin - startMin;
+    if (diff < 0) diff += 24 * 60;
+    const hours = Math.floor(diff / 60);
+    const mins = diff % 60;
+
+    let result = '';
+    if (hours > 0 && mins > 0) result = `${hours} Hr ${mins} Mins`;
+    else if (hours > 0) result = `${hours} Hour${hours > 1 ? 's' : ''}`;
+    else result = `${mins} Mins`;
+
+    return `${result} (Auto-calculated)`;
+  };
+
+  const handleStartTimeChange = (text) => {
+    setStartTime(text);
+    setDurationText(calculateDurationText(text, endTime));
+  };
+
+  const handleEndTimeChange = (text) => {
+    setEndTime(text);
+    setDurationText(calculateDurationText(startTime, text));
+  };
 
   const handleSubmit = () => {
     const newRequest = {
@@ -20,7 +64,7 @@ export default function ApplyPermissionScreen({ navigation }) {
       name: 'Priya Sharma',
       type: permissionType,
       schedule: `${date} (${startTime} - ${endTime})`,
-      duration: '2 Hours',
+      duration: durationText.replace(' (Auto-calculated)', ''),
       reason: reason || 'Personal work / Medical checkup',
       status: 'pending',
       typeTone: 'purple',
@@ -65,27 +109,27 @@ export default function ApplyPermissionScreen({ navigation }) {
           <View style={styles.halfField}>
             <Text style={styles.label}>Start Time *</Text>
             <View style={styles.dateInputRow}>
-              <Feather name="clock" size={16} color="#6B7280" style={{ marginRight: 6 }} />
               <TextInput
                 style={styles.flexInput}
                 value={startTime}
-                onChangeText={setStartTime}
+                onChangeText={handleStartTimeChange}
                 placeholder="03:00 PM"
                 placeholderTextColor="#9AA3B2"
               />
+              <Feather name="clock" size={16} color="#6B7280" />
             </View>
           </View>
           <View style={styles.halfField}>
             <Text style={styles.label}>End Time *</Text>
             <View style={styles.dateInputRow}>
-              <Feather name="clock" size={16} color="#6B7280" style={{ marginRight: 6 }} />
               <TextInput
                 style={styles.flexInput}
                 value={endTime}
-                onChangeText={setEndTime}
+                onChangeText={handleEndTimeChange}
                 placeholder="05:00 PM"
                 placeholderTextColor="#9AA3B2"
               />
+              <Feather name="clock" size={16} color="#6B7280" />
             </View>
           </View>
         </View>
@@ -93,7 +137,7 @@ export default function ApplyPermissionScreen({ navigation }) {
         <View style={styles.field}>
           <Text style={styles.label}>Duration</Text>
           <View style={styles.autoBox}>
-            <Text style={styles.autoText}>2 Hours (Auto-calculated)</Text>
+            <Text style={styles.autoText}>{durationText}</Text>
           </View>
         </View>
 

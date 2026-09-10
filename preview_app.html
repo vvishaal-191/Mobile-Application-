@@ -1103,6 +1103,11 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   50%{transform:translateY(-50%) scale(1.18);box-shadow:0 0 0 8px rgba(47, 107, 255, 0);}
   100%{transform:translateY(-50%) scale(1);box-shadow:0 2px 6px rgba(47, 107, 255, 0.15);}
 }
+.time-input-wrap{position:relative;display:flex;align-items:center;width:100%;cursor:pointer;}
+.time-input-wrap input[type="text"]{width:100%;height:48px;border:1px solid var(--border);border-radius:12px;padding:0 40px 0 14px;font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;cursor:pointer;transition:all 0.2s ease;}
+.time-input-wrap:hover input[type="text"]{border-color:var(--primary);box-shadow:0 0 0 3px rgba(47, 107, 255, 0.12);}
+.time-clock-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center;justify-content:center;color:#6B7280;z-index:2;}
+.time-input-wrap input[type="time"]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;}
 .subtitle{padding:0 20px;color:var(--text-secondary);margin:4px 0 16px;}
 .field{padding:0 20px;margin-bottom:18px;}
 .field.two-col{display:flex;gap:12px;}
@@ -1385,8 +1390,26 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
   </div>
   <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select></div>
   <div class="field two-col">
-    <div><label class="field-label">Start Time *</label><input type="time" id="perm-start-time" value="15:00" style="cursor:pointer;" onchange="calcPermDuration()" oninput="calcPermDuration()"/></div>
-    <div><label class="field-label">End Time *</label><input type="time" id="perm-end-time" value="17:00" style="cursor:pointer;" onchange="calcPermDuration()" oninput="calcPermDuration()"/></div>
+    <div>
+      <label class="field-label">Start Time *</label>
+      <div class="time-input-wrap" onclick="openTimePicker('perm-start-time')">
+        <input type="text" id="perm-start-time-display" value="03:00 PM" readonly />
+        <span class="time-clock-ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </span>
+        <input type="time" id="perm-start-time" value="15:00" onchange="syncPermTime('start', this.value)" />
+      </div>
+    </div>
+    <div>
+      <label class="field-label">End Time *</label>
+      <div class="time-input-wrap" onclick="openTimePicker('perm-end-time')">
+        <input type="text" id="perm-end-time-display" value="05:00 PM" readonly />
+        <span class="time-clock-ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </span>
+        <input type="time" id="perm-end-time" value="17:00" onchange="syncPermTime('end', this.value)" />
+      </div>
+    </div>
   </div>
   <div class="field"><label class="field-label">Duration</label><div class="auto-box" id="perm-duration-box">2 Hours (Auto-calculated)</div></div>
   <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
@@ -3785,6 +3808,29 @@ function calcPermDuration() {
     durationBox.textContent = `${text} (Auto-calculated)`;
   } else {
     durationBox.textContent = 'Auto-calculated';
+}
+
+function syncPermTime(type, val) {
+  const displayId = type === 'start' ? 'perm-start-time-display' : 'perm-end-time-display';
+  const displayEl = document.getElementById(displayId);
+  if (displayEl && val) {
+    displayEl.value = formatTime12H(val);
+  }
+  calcPermDuration();
+}
+
+function openTimePicker(pickerId) {
+  const picker = document.getElementById(pickerId);
+  if (picker) {
+    if (typeof picker.showPicker === 'function') {
+      try {
+        picker.showPicker();
+      } catch (e) {
+        picker.click();
+      }
+    } else {
+      picker.click();
+    }
   }
 }
 
@@ -3801,10 +3847,10 @@ function handleApplyPermissionSubmit() {
   const rawDate = permDateInput ? permDateInput.value : '2026-09-04';
   const formattedDate = formatDateDisplay(rawDate);
   const pType = permTypeSelect ? permTypeSelect.value : 'Early Going';
-  const rawStart = startTimeInput ? startTimeInput.value : '15:00';
-  const rawEnd = endTimeInput ? endTimeInput.value : '17:00';
-  const pStart = formatTime12H(rawStart);
-  const pEnd = formatTime12H(rawEnd);
+  const startTimeDisplay = document.getElementById('perm-start-time-display');
+  const endTimeDisplay = document.getElementById('perm-end-time-display');
+  const pStart = startTimeDisplay ? startTimeDisplay.value : formatTime12H(rawStart);
+  const pEnd = endTimeDisplay ? endTimeDisplay.value : formatTime12H(rawEnd);
   const pDuration = durationBox ? durationBox.textContent.replace(' (Auto-calculated)', '') : '2 Hours';
   const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
 
