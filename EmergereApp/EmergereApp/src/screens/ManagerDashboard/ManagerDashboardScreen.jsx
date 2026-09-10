@@ -108,14 +108,21 @@ export default function ManagerDashboardScreen({ navigation, route }) {
 
         <Text style={styles.sectionLabel}>RECENT REQUESTS</Text>
         {requests.map((r) => (
-          <TouchableOpacity key={r.id} activeOpacity={0.7} onPress={() => go('LeaveApprovalDetail')}>
+          <TouchableOpacity
+            key={r.id}
+            activeOpacity={0.7}
+            onPress={() => navigation && navigation.navigate('LeaveApprovalDetail', { request: r })}
+          >
             <Card style={styles.requestCard}>
               <View style={styles.requestRow}>
                 <View>
                   <Text style={styles.requestName}>{r.name}</Text>
                   <Text style={styles.requestSubtitle}>{r.subtitle}</Text>
                 </View>
-                <StatusBadge label={r.status} tone={r.tone || (r.status === 'Approved' ? 'success' : r.status === 'Rejected' ? 'danger' : 'warning')} />
+                <StatusBadge
+                  label={r.status}
+                  tone={r.tone || (r.status === 'Approved' ? 'success' : r.status === 'Rejected' ? 'danger' : 'warning')}
+                />
               </View>
             </Card>
           </TouchableOpacity>

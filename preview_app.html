@@ -3393,10 +3393,53 @@ function filterHistory(cat, el) {
 }
 document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
 
+let currentSelectedReqId = '1';
+
+function openLeaveApprovalDetail(reqId) {
+  currentSelectedReqId = reqId || '1';
+  const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+  const detailTpl = parentDoc.getElementById('tpl-LeaveApprovalDetail');
+
+  if (detailTpl) {
+    let tplHtml = detailTpl.innerHTML;
+    if (reqId === '2') {
+      tplHtml = tplHtml.replace(/Priya Sharma/g, 'Sneha Gupta');
+      tplHtml = tplHtml.replace(/>PS</g, '>SG<');
+      tplHtml = tplHtml.replace(/Senior Software Engineer/g, 'UI/UX Designer');
+      tplHtml = tplHtml.replace(/EMP-2024-0156/g, 'EMP-2024-0284');
+      tplHtml = tplHtml.replace(/Casual Leave/g, 'Earned Leave');
+      tplHtml = tplHtml.replace(/Sep 10, 2026/g, 'Sep 15, 2026');
+      tplHtml = tplHtml.replace(/Sep 11, 2026/g, 'Sep 19, 2026');
+      tplHtml = tplHtml.replace(/2 Days/g, '5 Days');
+      tplHtml = tplHtml.replace(/Family function - attending sister's wedding ceremony in Bangalore\./g, 'Annual family vacation trip to Himachal Pradesh.');
+      tplHtml = tplHtml.replace(/Priya \(Applied\)/g, 'Sneha (Applied)');
+    } else {
+      tplHtml = tplHtml.replace(/Sneha Gupta/g, 'Priya Sharma');
+      tplHtml = tplHtml.replace(/>SG</g, '>PS<');
+      tplHtml = tplHtml.replace(/UI\/UX Designer/g, 'Senior Software Engineer');
+      tplHtml = tplHtml.replace(/EMP-2024-0284/g, 'EMP-2024-0156');
+      tplHtml = tplHtml.replace(/Earned Leave/g, 'Casual Leave');
+      tplHtml = tplHtml.replace(/Sep 15, 2026/g, 'Sep 10, 2026');
+      tplHtml = tplHtml.replace(/Sep 19, 2026/g, 'Sep 11, 2026');
+      tplHtml = tplHtml.replace(/5 Days/g, '2 Days');
+      tplHtml = tplHtml.replace(/Annual family vacation trip to Himachal Pradesh\./g, "Family function - attending sister's wedding ceremony in Bangalore.");
+      tplHtml = tplHtml.replace(/Sneha \(Applied\)/g, 'Priya (Applied)');
+    }
+    detailTpl.innerHTML = tplHtml;
+  }
+
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-LeaveApprovalDetail');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-LeaveApprovalDetail');
+  }
+}
+
 function handleDetailLeaveDecision(status) {
   const isApproved = status === 'approved';
   const labelText = isApproved ? 'Approved' : 'Rejected';
   const badgeClass = isApproved ? 'badge success' : 'badge danger';
+  const targetBadgeId = currentSelectedReqId === '2' ? 'dash-sneha-status-badge' : 'dash-priya-status-badge';
 
   const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
 
@@ -3404,9 +3447,10 @@ function handleDetailLeaveDecision(status) {
   const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
   if (mgrTpl) {
     let tplHtml = mgrTpl.innerHTML;
+    const regex = new RegExp('<span[^>]*id="' + targetBadgeId + '"[^>]*>[\\s\\S]*?<\\/span>');
     tplHtml = tplHtml.replace(
-      /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
-      '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
+      regex,
+      '<span id="' + targetBadgeId + '" class="' + badgeClass + '">' + labelText + '</span>'
     );
     tplHtml = tplHtml.replace(
       /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
@@ -3415,28 +3459,30 @@ function handleDetailLeaveDecision(status) {
     mgrTpl.innerHTML = tplHtml;
   }
 
-  // 2. Update tpl-EmployeeDashboard template element in outer document
-  const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
-  if (empTpl) {
-    let tplHtml = empTpl.innerHTML;
-    tplHtml = tplHtml.replace(
-      /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
-      '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
-    );
-    empTpl.innerHTML = tplHtml;
+  // 2. Update tpl-EmployeeDashboard template element in outer document if Priya
+  if (currentSelectedReqId === '1') {
+    const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
+    if (empTpl) {
+      let tplHtml = empTpl.innerHTML;
+      tplHtml = tplHtml.replace(
+        /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
+        '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
+      );
+      empTpl.innerHTML = tplHtml;
+    }
+
+    const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+    if (liveEmpBadge) {
+      liveEmpBadge.className = badgeClass;
+      liveEmpBadge.textContent = labelText;
+    }
   }
 
   // 3. Update current active DOM elements if rendered
-  const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+  const liveBadge = parentDoc.getElementById(targetBadgeId) || document.getElementById(targetBadgeId);
   if (liveBadge) {
     liveBadge.className = badgeClass;
     liveBadge.textContent = labelText;
-  }
-
-  const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
-  if (liveEmpBadge) {
-    liveEmpBadge.className = badgeClass;
-    liveEmpBadge.textContent = labelText;
   }
 
   const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');

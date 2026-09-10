@@ -2618,8 +2618,8 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
     <div class="quick-action" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-HolidayCalendar')">Team Calendar</div>
   </div>
   <p class="section-label">RECENT REQUESTS</p>
-  <div class="card req-card" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail')"><div class="req-row"><div><b>Priya Sharma</b><p>Casual Leave • Sep 10-11 (2 Days)</p></div><span id="dash-priya-status-badge" class="badge warning">Pending</span></div></div>
-  <div class="card req-card" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail')"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span class="badge warning">Pending</span></div></div>
+  <div class="card req-card" style="cursor:pointer;" onclick="openLeaveApprovalDetail('1')"><div class="req-row"><div><b>Priya Sharma</b><p>Casual Leave • Sep 10-11 (2 Days)</p></div><span id="dash-priya-status-badge" class="badge warning">Pending</span></div></div>
+  <div class="card req-card" style="cursor:pointer;" onclick="openLeaveApprovalDetail('2')"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span id="dash-sneha-status-badge" class="badge warning">Pending</span></div></div>
 </div>
 <div class="bottom-nav">
   <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -3370,27 +3370,15 @@ function setActiveNav(el) {
 
 </script>
 <script>
-function filterHistory(cat, el) {
-  const pills = el.parentElement.querySelectorAll('.pill');
-  pills.forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-
-  const cards = document.querySelectorAll('.req-card');
-  cards.forEach(card => {
-    const type = card.getAttribute('data-type');
-    if (cat === 'all' || type === cat) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
 document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
+
+let currentSelectedReqId = '1';
 
 function handleDetailLeaveDecision(status) {
   const isApproved = status === 'approved';
   const labelText = isApproved ? 'Approved' : 'Rejected';
   const badgeClass = isApproved ? 'badge success' : 'badge danger';
+  const targetBadgeId = currentSelectedReqId === '2' ? 'dash-sneha-status-badge' : 'dash-priya-status-badge';
 
   const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
 
@@ -3398,9 +3386,10 @@ function handleDetailLeaveDecision(status) {
   const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
   if (mgrTpl) {
     let tplHtml = mgrTpl.innerHTML;
+    const regex = new RegExp('<span[^>]*id="' + targetBadgeId + '"[^>]*>[\\s\\S]*?<\\/span>');
     tplHtml = tplHtml.replace(
-      /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
-      '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
+      regex,
+      '<span id="' + targetBadgeId + '" class="' + badgeClass + '">' + labelText + '</span>'
     );
     tplHtml = tplHtml.replace(
       /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
@@ -3409,28 +3398,30 @@ function handleDetailLeaveDecision(status) {
     mgrTpl.innerHTML = tplHtml;
   }
 
-  // 2. Update tpl-EmployeeDashboard template element in outer document
-  const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
-  if (empTpl) {
-    let tplHtml = empTpl.innerHTML;
-    tplHtml = tplHtml.replace(
-      /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
-      '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
-    );
-    empTpl.innerHTML = tplHtml;
+  // 2. Update tpl-EmployeeDashboard template element in outer document if Priya
+  if (currentSelectedReqId === '1') {
+    const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
+    if (empTpl) {
+      let tplHtml = empTpl.innerHTML;
+      tplHtml = tplHtml.replace(
+        /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
+        '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
+      );
+      empTpl.innerHTML = tplHtml;
+    }
+
+    const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+    if (liveEmpBadge) {
+      liveEmpBadge.className = badgeClass;
+      liveEmpBadge.textContent = labelText;
+    }
   }
 
   // 3. Update current active DOM elements if rendered
-  const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+  const liveBadge = parentDoc.getElementById(targetBadgeId) || document.getElementById(targetBadgeId);
   if (liveBadge) {
     liveBadge.className = badgeClass;
     liveBadge.textContent = labelText;
-  }
-
-  const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
-  if (liveEmpBadge) {
-    liveEmpBadge.className = badgeClass;
-    liveEmpBadge.textContent = labelText;
   }
 
   const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
@@ -3445,11 +3436,6 @@ function handleDetailLeaveDecision(status) {
     loadScreen('tpl-ManagerDashboard');
   }
 }
-
-</script>
-</body>
-</html></template>
-<template id="tpl-PermissionApprovals"><!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8" />

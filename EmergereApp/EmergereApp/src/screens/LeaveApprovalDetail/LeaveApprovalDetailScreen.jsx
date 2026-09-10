@@ -8,13 +8,27 @@ import BottomNavBar from '../../components/BottomNavBar';
 import styles from './LeaveApprovalDetailScreen.styles';
 
 export default function LeaveApprovalDetailScreen({ navigation, route }) {
+  const requestParam = route?.params?.request;
+  const reqId = requestParam?.id || '1';
+  const empName = requestParam?.name || 'Priya Sharma';
+  const initials = empName === 'Sneha Gupta' ? 'SG' : 'PS';
+  const role = empName === 'Sneha Gupta' ? 'UI/UX Designer' : 'Senior Software Engineer';
+  const empCode = empName === 'Sneha Gupta' ? 'EMP-2024-0284' : 'EMP-2024-0156';
+  const leaveType = empName === 'Sneha Gupta' ? 'Earned Leave' : 'Casual Leave';
+  const fromDate = empName === 'Sneha Gupta' ? 'Sep 15, 2026' : 'Sep 10, 2026';
+  const toDate = empName === 'Sneha Gupta' ? 'Sep 19, 2026' : 'Sep 11, 2026';
+  const totalDays = empName === 'Sneha Gupta' ? '5 Days' : '2 Days';
+  const reason = empName === 'Sneha Gupta'
+    ? 'Annual family vacation trip to Himachal Pradesh.'
+    : "Family function - attending sister's wedding ceremony in Bangalore.";
+
   const [remarks, setRemarks] = useState('');
 
   const handleDecision = (status) => {
     // Navigate back to ManagerDashboard with decision status
     if (navigation) {
       navigation.navigate('ManagerDashboard', {
-        requestId: '1',
+        requestId: reqId,
         newStatus: status, // 'Approved' or 'Rejected'
         remarks: remarks,
       });
@@ -25,42 +39,40 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
     <View style={styles.screen}>
       <ScreenHeader
         title="Request Detail"
-        subtitle="Casual Leave Application"
+        subtitle={`${leaveType} Application`}
         onBack={() => navigation && navigation.goBack()}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Card style={styles.employeeCard}>
           <View style={styles.employeeRow}>
-            <Avatar initials="PS" size={56} />
+            <Avatar initials={initials} size={56} />
             <View>
-              <Text style={styles.name}>Priya Sharma</Text>
-              <Text style={styles.role}>Senior Software Engineer</Text>
-              <Text style={styles.empId}>EMP-2024-0156</Text>
+              <Text style={styles.name}>{empName}</Text>
+              <Text style={styles.role}>{role}</Text>
+              <Text style={styles.empId}>{empCode}</Text>
             </View>
           </View>
         </Card>
 
         <Card style={styles.specsCard}>
           <Text style={styles.sectionTitle}>LEAVE SPECIFICS</Text>
-          <DetailRow label="Leave Type" value="Casual Leave" link />
-          <DetailRow label="From Date" value="Sep 10, 2026" />
-          <DetailRow label="To Date" value="Sep 11, 2026" />
-          <DetailRow label="Total Days" value="2 Days" bold />
+          <DetailRow label="Leave Type" value={leaveType} link />
+          <DetailRow label="From Date" value={fromDate} />
+          <DetailRow label="To Date" value={toDate} />
+          <DetailRow label="Total Days" value={totalDays} bold />
           <DetailRow label="Emergency Contact" value="+91 98765 43210" />
 
           <View style={styles.reasonBlock}>
             <Text style={styles.reasonLabel}>Reason for Leave</Text>
-            <Text style={styles.reasonText}>
-              Family function - attending sister's wedding ceremony in Bangalore.
-            </Text>
+            <Text style={styles.reasonText}>{reason}</Text>
           </View>
         </Card>
 
         <Card style={styles.pathCard}>
           <Text style={styles.sectionTitle}>APPROVAL PATH</Text>
           <View style={styles.pathRow}>
-            <Text style={styles.pathDone}>Priya (Applied)</Text>
+            <Text style={styles.pathDone}>{empName.split(' ')[0]} (Applied)</Text>
             <Text style={styles.pathArrow}>›</Text>
             <Text style={styles.pathPending}>Manager (Pending)</Text>
             <Text style={styles.pathArrow}>›</Text>
