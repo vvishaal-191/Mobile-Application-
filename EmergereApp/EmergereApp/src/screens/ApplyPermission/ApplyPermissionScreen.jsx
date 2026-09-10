@@ -116,7 +116,6 @@ export default function ApplyPermissionScreen({ navigation }) {
                 placeholder="03:00 PM"
                 placeholderTextColor="#9AA3B2"
               />
-              <Feather name="clock" size={16} color="#6B7280" />
             </View>
           </View>
           <View style={styles.halfField}>
@@ -129,7 +128,6 @@ export default function ApplyPermissionScreen({ navigation }) {
                 placeholder="05:00 PM"
                 placeholderTextColor="#9AA3B2"
               />
-              <Feather name="clock" size={16} color="#6B7280" />
             </View>
           </View>
         </View>
