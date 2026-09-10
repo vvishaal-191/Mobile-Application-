@@ -116,7 +116,8 @@ export default function LeaveApprovalsScreen({ navigation }) {
           </Card>
         ) : (
           filteredRequests.map((item) => (
-            <Card key={item.id} style={styles.requestCard}>
+            <TouchableOpacity key={item.id} activeOpacity={0.8} onPress={() => navigation && navigation.navigate('LeaveApprovalDetail', { request: item })}>
+              <Card style={styles.requestCard}>
               <View style={styles.topRow}>
                 <View style={styles.employeeRow}>
                   <Avatar initials={item.initials} size={48} />
@@ -158,6 +159,7 @@ export default function LeaveApprovalsScreen({ navigation }) {
                 </View>
               )}
             </Card>
+          </TouchableOpacity>
           ))
         )}
       </ScrollView>
