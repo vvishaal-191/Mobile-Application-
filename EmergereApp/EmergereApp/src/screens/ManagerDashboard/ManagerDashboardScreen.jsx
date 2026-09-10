@@ -22,15 +22,45 @@ const INITIAL_QUICK_ACTIONS = [
 ];
 
 const INITIAL_RECENT_REQUESTS = [
-  { id: '1', name: 'Priya Sharma', subtitle: 'Casual Leave • Sep 10-11 (2 Days)', status: 'Pending', tone: 'warning' },
-  { id: '2', name: 'Sneha Gupta', subtitle: 'Earned Leave • Sep 15-19 (5 Days)', status: 'Pending', tone: 'warning' },
+  {
+    id: '1',
+    name: 'Priya Sharma',
+    role: 'Senior Software Engineer',
+    empId: 'EMP-2024-0156',
+    initials: 'PS',
+    leaveType: 'Casual Leave',
+    fromDate: 'Sep 10, 2026',
+    toDate: 'Sep 11, 2026',
+    totalDays: '2 Days',
+    emergencyContact: '+91 98765 43210',
+    reason: "Family function - attending sister's wedding ceremony in Bangalore.",
+    subtitle: 'Casual Leave • Sep 10-11 (2 Days)',
+    status: 'Pending',
+    tone: 'warning',
+  },
+  {
+    id: '2',
+    name: 'Sneha Gupta',
+    role: 'Product Designer',
+    empId: 'EMP-2024-0210',
+    initials: 'SG',
+    leaveType: 'Earned Leave',
+    fromDate: 'Sep 15, 2026',
+    toDate: 'Sep 19, 2026',
+    totalDays: '5 Days',
+    emergencyContact: '+91 91234 56789',
+    reason: 'Personal leave - annual family vacation to Kerala with family.',
+    subtitle: 'Earned Leave • Sep 15-19 (5 Days)',
+    status: 'Pending',
+    tone: 'warning',
+  },
 ];
 
 export default function ManagerDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_RECENT_REQUESTS);
   const [quickActions, setQuickActions] = useState(INITIAL_QUICK_ACTIONS);
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   useEffect(() => {
     if (route && route.params && route.params.newStatus) {
@@ -108,7 +138,11 @@ export default function ManagerDashboardScreen({ navigation, route }) {
 
         <Text style={styles.sectionLabel}>RECENT REQUESTS</Text>
         {requests.map((r) => (
-          <TouchableOpacity key={r.id} activeOpacity={0.7} onPress={() => navigation && navigation.navigate('LeaveApprovalDetail', { request: r })}>
+          <TouchableOpacity
+            key={r.id}
+            activeOpacity={0.7}
+            onPress={() => go('LeaveApprovalDetail', { person: r })}
+          >
             <Card style={styles.requestCard}>
               <View style={styles.requestRow}>
                 <View>
