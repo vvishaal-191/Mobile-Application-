@@ -140,3 +140,38 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 .bottom-nav .tab:hover .icon svg { stroke: var(--primary); filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.65)); }
 .bottom-nav .tab.active .icon svg { stroke: var(--primary); filter: drop-shadow(0 0 4px rgba(47, 107, 255, 0.4)); }
 .statusbar .status-icons { display: inline-flex; align-items: center; gap: 5px; color: inherit; }
+
+/* Calendar Date Cell Glow Hover */
+.date-cell {
+  position: relative;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
+  border: 1.5px solid transparent;
+  user-select: none;
+}
+.date-cell:hover {
+  background: rgba(47, 107, 255, 0.1) !important;
+  border-color: rgba(47, 107, 255, 0.45) !important;
+  box-shadow: 0 0 14px rgba(47, 107, 255, 0.3), inset 0 0 8px rgba(47, 107, 255, 0.15) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  z-index: 10 !important;
+}
+.date-cell:hover .num {
+  color: var(--primary, #2F6BFF) !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 8px rgba(47, 107, 255, 0.4) !important;
+}
+.date-cell .dot {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.date-cell:hover .dot {
+  transform: scale(1.35) !important;
+  box-shadow: 0 0 6px currentColor !important;
+}
+.date-cell.selected {
+  border: 1.5px solid var(--primary, #2F6BFF) !important;
+  border-radius: 10px !important;
+  background: rgba(47, 107, 255, 0.05);
+}
+

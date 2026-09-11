@@ -1843,17 +1843,39 @@
           width: 14.28%;
           text-align: center;
           padding: 8px 0;
+          cursor: pointer;
+          border-radius: 10px;
+          position: relative;
+          transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
+          border: 1.5px solid transparent;
+          user-select: none;
+        }
+
+        .date-cell:hover {
+          background: rgba(47, 107, 255, 0.1);
+          border-color: rgba(47, 107, 255, 0.45);
+          box-shadow: 0 0 14px rgba(47, 107, 255, 0.3), inset 0 0 8px rgba(47, 107, 255, 0.15);
+          transform: translateY(-2px) scale(1.05);
+          z-index: 10;
+        }
+
+        .date-cell:hover .num {
+          color: var(--primary, #2F6BFF);
+          font-weight: 800;
+          text-shadow: 0 0 8px rgba(47, 107, 255, 0.4);
         }
 
         .date-cell.selected {
           border: 1.5px solid var(--primary);
-          border-radius: 8px;
+          border-radius: 10px;
+          background: rgba(47, 107, 255, 0.05);
         }
 
         .date-cell .num {
           font-weight: 700;
           display: block;
           margin-bottom: 4px;
+          transition: color 0.2s ease, text-shadow 0.2s ease;
         }
 
         .date-cell .dot {
@@ -1861,6 +1883,12 @@
           height: 6px;
           border-radius: 3px;
           display: inline-block;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .date-cell:hover .dot {
+          transform: scale(1.35);
+          box-shadow: 0 0 6px currentColor;
         }
 
         .details-title {
@@ -9903,6 +9931,37 @@
             .bottom-nav .tab.active .icon svg {
               stroke: var(--primary, #2F6BFF) !important;
               filter: drop-shadow(0 0 4px rgba(47, 107, 255, 0.4)) !important;
+            }
+            .date-cell {
+              position: relative !important;
+              cursor: pointer !important;
+              border-radius: 10px !important;
+              transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease !important;
+              border: 1.5px solid transparent;
+            }
+            .date-cell:hover {
+              background: rgba(47, 107, 255, 0.12) !important;
+              border-color: rgba(47, 107, 255, 0.45) !important;
+              box-shadow: 0 0 14px rgba(47, 107, 255, 0.35), inset 0 0 8px rgba(47, 107, 255, 0.15) !important;
+              transform: translateY(-2px) scale(1.05) !important;
+              z-index: 10 !important;
+            }
+            .date-cell:hover .num {
+              color: var(--primary, #2F6BFF) !important;
+              font-weight: 800 !important;
+              text-shadow: 0 0 8px rgba(47, 107, 255, 0.4) !important;
+            }
+            .date-cell .dot {
+              transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            }
+            .date-cell:hover .dot {
+              transform: scale(1.35) !important;
+              box-shadow: 0 0 6px currentColor !important;
+            }
+            .date-cell.selected {
+              border: 1.5px solid var(--primary, #2F6BFF) !important;
+              border-radius: 10px !important;
+              background: rgba(47, 107, 255, 0.06) !important;
             }
           `;
           if (doc.head) doc.head.appendChild(navGlowStyle);
