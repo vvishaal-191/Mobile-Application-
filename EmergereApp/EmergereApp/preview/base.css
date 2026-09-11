@@ -37,7 +37,20 @@ body{
 /* Card */
 .card{
   background:var(--surface); border:1px solid var(--border); border-radius:16px;
-  padding:16px; margin:0 20px 16px;
+  padding:16px; margin:0 20px 16px; transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.card:hover, .request-card:hover, .hol-card:hover{
+  border-color:var(--primary);
+  box-shadow:0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);
+  transform:translateY(-2px);
+  cursor:pointer;
+}
+.quick-action{
+  width:calc(50% - 6px); background:var(--info-bg); color:var(--primary); font-weight:700; font-size:13px; border-radius:12px; padding:14px;
+  border:1.5px solid transparent; transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.2s ease; cursor:pointer;
+}
+.quick-action:hover{
+  background:#DCE7FF; border-color:var(--primary); box-shadow:0 0 16px rgba(47, 107, 255, 0.3), 0 4px 12px rgba(47, 107, 255, 0.15); transform:translateY(-2px);
 }
 
 /* Badge */
@@ -49,8 +62,10 @@ body{
 .badge.purple{background:var(--purple-bg); color:var(--purple);}
 
 /* Buttons */
-.btn{border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:700; text-align:center; cursor:pointer;}
-.btn-primary{background:var(--primary); color:#fff;}
+.btn{border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:700; text-align:center; cursor:pointer; transition:all 0.25s ease;}
+.btn-primary{background:var(--primary); color:#fff; transition:background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;}
+.btn-primary:hover{background:var(--primary-dark); box-shadow:0 8px 24px rgba(47, 107, 255, 0.45); transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0); box-shadow:0 4px 12px rgba(47, 107, 255, 0.3);}
 .btn-approve{background:#DFF7EC; color:var(--success);}
 .btn-reject{background:var(--danger-bg); color:var(--danger);}
 .btn-row{display:flex; gap:12px; padding:0 20px;}
@@ -65,9 +80,28 @@ body{
 .bottom-nav{
   position:absolute; bottom:0; left:0; right:0; background:var(--surface);
   border-top:1px solid var(--border); display:flex; padding:10px 0 22px;
+  z-index: 100;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
-.bottom-nav .tab{flex:1; text-align:center; font-size:11px; color:var(--text-muted); cursor:pointer; user-select:none;}
-.bottom-nav .tab .icon{font-size:20px; display:block; margin-bottom:2px;}
+.bottom-nav:hover {
+  box-shadow: 0 -4px 20px rgba(47, 107, 255, 0.18), 0 0 15px rgba(47, 107, 255, 0.12);
+  border-top-color: rgba(47, 107, 255, 0.4);
+}
+.bottom-nav .tab{
+  flex:1; text-align:center; font-size:11px; color:var(--text-muted); cursor:pointer; user-select:none;
+  padding: 6px 8px; border-radius: 12px; transition: all 0.25s ease;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.bottom-nav .tab:hover {
+  color: var(--primary);
+  background: rgba(47, 107, 255, 0.09);
+  box-shadow: 0 0 14px rgba(47, 107, 255, 0.25), inset 0 0 10px rgba(47, 107, 255, 0.1);
+  transform: translateY(-2px);
+}
+.bottom-nav .tab .icon{font-size:20px; display:block; margin-bottom:2px; transition: transform 0.25s ease;}
+.bottom-nav .tab:hover .icon {
+  transform: scale(1.08);
+}
 .bottom-nav .tab.active{color:var(--primary); font-weight:700;}
 
 /* Avatar */
@@ -86,11 +120,23 @@ body{
 input, textarea, select{
   width:100%; border:1px solid var(--border); border-radius:12px; padding:14px;
   font-size:15px; color:var(--text); background:var(--surface); font-family:inherit;
+  transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+input:hover, textarea:hover, select:hover,
+.field:hover input, .field:hover textarea, .field:hover select{
+  border-color:var(--primary);
+  box-shadow:0 0 14px rgba(47, 107, 255, 0.3), 0 0 0 3.5px rgba(47, 107, 255, 0.15);
+}
+input:focus, textarea:focus, select:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 18px rgba(47, 107, 255, 0.4), 0 0 0 4px rgba(47, 107, 255, 0.2);
 }
 label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; display:block;}
-.field{padding:0 20px; margin-bottom:18px;}
+.field{padding:0 20px; margin-bottom:18px; transition:transform 0.2s ease;}
 
 /* SVG Icon Styling for Bottom Nav & Statusbar */
-.bottom-nav .tab .icon svg { stroke: var(--text-muted); transition: stroke 0.2s ease; }
-.bottom-nav .tab.active .icon svg { stroke: var(--primary); }
+.bottom-nav .tab .icon svg { stroke: var(--text-muted); transition: stroke 0.25s ease, filter 0.25s ease; }
+.bottom-nav .tab:hover .icon svg { stroke: var(--primary); filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.65)); }
+.bottom-nav .tab.active .icon svg { stroke: var(--primary); filter: drop-shadow(0 0 4px rgba(47, 107, 255, 0.4)); }
 .statusbar .status-icons { display: inline-flex; align-items: center; gap: 5px; color: inherit; }

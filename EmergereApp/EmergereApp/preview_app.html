@@ -606,7 +606,10 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .balance-head{display:flex;justify-content:space-between;margin-bottom:6px;}
 .balance-head .value{color:var(--primary);font-weight:700;}
 .quick-grid{display:flex;flex-wrap:wrap;gap:12px;padding:0 20px;margin-bottom:16px;}
-.quick-action{width:calc(50% - 6px);background:var(--info-bg);color:var(--primary);font-weight:700;font-size:13px;border-radius:12px;padding:14px;}
+.quick-action{width:calc(50% - 6px);background:var(--info-bg);color:var(--primary);font-weight:700;font-size:13px;border-radius:12px;padding:14px;border:1.5px solid transparent;transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.2s ease;cursor:pointer;}
+.quick-action:hover{background:#DCE7FF;border-color:var(--primary);box-shadow:0 0 16px rgba(47, 107, 255, 0.3), 0 4px 12px rgba(47, 107, 255, 0.15);transform:translateY(-2px);}
+.request-card{transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;cursor:pointer;}
+.request-card:hover{border-color:var(--primary);box-shadow:0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);transform:translateY(-2px);}
 .request-row{display:flex;justify-content:space-between;align-items:center;}
 .request-row p{margin:4px 0 0;color:var(--text-secondary);font-size:13px;}
 
@@ -1030,7 +1033,13 @@ body{
 /* Card */
 .card{
   background:var(--surface); border:1px solid var(--border); border-radius:16px;
-  padding:16px; margin:0 20px 16px;
+  padding:16px; margin:0 20px 16px; transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.card:hover, .hol-card:hover{
+  border-color:var(--primary);
+  box-shadow:0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);
+  transform:translateY(-2px);
+  cursor:pointer;
 }
 
 /* Badge */
@@ -1042,8 +1051,10 @@ body{
 .badge.purple{background:var(--purple-bg); color:var(--purple);}
 
 /* Buttons */
-.btn{border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:700; text-align:center; cursor:pointer;}
-.btn-primary{background:var(--primary); color:#fff;}
+.btn{border:none; border-radius:14px; padding:14px; font-size:15px; font-weight:700; text-align:center; cursor:pointer; transition:all 0.25s ease;}
+.btn-primary{background:var(--primary); color:#fff; transition:background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;}
+.btn-primary:hover{background:var(--primary-dark); box-shadow:0 8px 24px rgba(47, 107, 255, 0.45); transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0); box-shadow:0 4px 12px rgba(47, 107, 255, 0.3);}
 .btn-approve{background:#DFF7EC; color:var(--success);}
 .btn-reject{background:var(--danger-bg); color:var(--danger);}
 .btn-row{display:flex; gap:12px; padding:0 20px;}
@@ -1079,9 +1090,20 @@ body{
 input, textarea, select{
   width:100%; border:1px solid var(--border); border-radius:12px; padding:14px;
   font-size:15px; color:var(--text); background:var(--surface); font-family:inherit;
+  transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+input:hover, textarea:hover, select:hover,
+.field:hover input, .field:hover textarea, .field:hover select{
+  border-color:var(--primary);
+  box-shadow:0 0 14px rgba(47, 107, 255, 0.3), 0 0 0 3.5px rgba(47, 107, 255, 0.15);
+}
+input:focus, textarea:focus, select:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 18px rgba(47, 107, 255, 0.4), 0 0 0 4px rgba(47, 107, 255, 0.2);
 }
 label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; display:block;}
-.field{padding:0 20px; margin-bottom:18px;}
+.field{padding:0 20px; margin-bottom:18px; transition:transform 0.2s ease;}
 
 
 .mini-logo{width:22px;height:22px;}
@@ -1426,7 +1448,7 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 
   <div class="field"><label class="field-label">Duration *</label><input type="text" id="perm-duration-input" value="2 Hours" placeholder="E.g., 2 Hours" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit;"/></div>
   <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
-  <div class="field"><label class="field-label">Approving Manager</label><select id="perm-manager-select"><option>Rahul Sharma (Team Lead)</option></select></div>
+  <div class="field"><label class="field-label">Approving Manager</label><select id="perm-manager-select"><option>Rahul Sharma (Team Lead)</option><option>Priya Verma (HR Manager)</option><option>Suresh Kumar (Engineering Manager)</option></select></div>
   <button class="btn btn-primary full" onclick="handleApplyPermissionSubmit()">Submit Request</button>
 </div>
 <div class="bottom-nav">
@@ -2112,18 +2134,107 @@ label.field-label{font-size:14px; font-weight:600; color:var(--text); margin-bot
 <div class="screen">
   <div class="header"><img class="mini-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAACCCAYAAAADm4eUAAAD30lEQVR4nO3dv4scZRzH8c8mRrCwFwarKYyIiTAoiI1YaCeKqK2FpLnKHyhpBAXByi4WglbxH1AEoyJaRZQVL9iIbOdqJ6Jg0BjP4jZ6HJfv7U52c7nZ16u522HmYZ7lec+Pay4BAAAAAAAAAP43WsWgJze2tlYx7jJsnhmtZM4M09IWy40cxdWIhf0cWcYghzGO5PCeN9fPNV1Bh7TA3E3YS+87yJDiSIY3H5ajVyBDXUxDnRf9LeUdBIZq4UCGfpUd+vxYzEKBrMviWZd5sj+PWFAQCBTmDmTdHjvWbb7szR0ECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECjcd9AkMVdN2fyT5asem96eT8ZtN211M8sF0Mn5qx75nkzwxnYxv2efYK9tHSW5N8tx0Mv6iabtTSZ5N8neSX5Ocmk7GP/Yca8/9r/kLOaQEsjp/TSfjB/fY/meSO5q2OzqdjC83bTdK0s6273fsf9ubtrs7yXtN272Q5PEkD0wn40tN272c5J0kjyw6VpITxf5rySPWwfgmyb2z3+9JcqHHGN8laZK8mOSV6WR8abb9rSQXm7Y72mMsdnEHORjnsn2F/3L281ySpxcc4+EknyW5PzsCm07Gvyd5rOdY7CKQ1bm5abvPd3w+PZ2Mz89+/zjJRpJXkzyU7av+PMde2X4syfEkdyX59spOTds9n+TRJLdNJ+PjPcba77zXjkBW56rP8tPJ+Jem7f5p2u722effmrab59id7w0vJXkmyQ/Zfnf4evby/W6Sn3uO9UZ13uvIO8jB+SjJ60k+7Xn8J0nuS/J2kteatjs2276R5HLPsdjFHWR1dj+qnJ9Oxqd3fP4w24Gc6HFsknw/O/bJJHcmudC03U9Jzmb7z70Lj9W03ZE5918bo3l3XMf/uLR5ZjT398MwecSCgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAgECgIBAoCgYJAoCAQKAgECgKBgkCgIBAoCAQKAoGCQKAwdyCbZ0ajVZ7IjWbd5sve3EGgIBAoLBTIujx2rMs82d/Cd5ChL56hz4/FeMSCQq9AhnqVHeq86K/3HWRoi2lo82E5lrIoTm5sbS1jnIMgDCpLeQc5rIvssJ43189KFsiNfEcRBQAAAAAAAAClfwF80CP2hZ7O+wAAAABJRU5ErkJggg=="/><h1>Holiday Calendar</h1></div>
   <p class="subtitle">Company & optional holidays 2026</p>
-  <div class="pill-tabs">
-    <div class="pill active" onclick="activatePill(this,'.pill-tabs .pill')">Holidays</div>
+  <div class="pill-tabs" style="overflow-x:auto; padding-bottom:8px; white-space:nowrap; -webkit-overflow-scrolling:touch;">
+    <div class="pill active" onclick="filterHolidayMonth('all', this)">All</div>
+    <div class="pill" onclick="filterHolidayMonth('jan', this)">Jan</div>
+    <div class="pill" onclick="filterHolidayMonth('feb', this)">Feb</div>
+    <div class="pill" onclick="filterHolidayMonth('mar', this)">Mar</div>
+    <div class="pill" onclick="filterHolidayMonth('apr', this)">Apr</div>
+    <div class="pill" onclick="filterHolidayMonth('may', this)">May</div>
+    <div class="pill" onclick="filterHolidayMonth('jun', this)">Jun</div>
+    <div class="pill" onclick="filterHolidayMonth('jul', this)">Jul</div>
+    <div class="pill" onclick="filterHolidayMonth('aug', this)">Aug</div>
+    <div class="pill" onclick="filterHolidayMonth('sep', this)">Sep</div>
+    <div class="pill" onclick="filterHolidayMonth('oct', this)">Oct</div>
+    <div class="pill" onclick="filterHolidayMonth('nov', this)">Nov</div>
+    <div class="pill" onclick="filterHolidayMonth('dec', this)">Dec</div>
   </div>
-  <p class="month-label">SEPTEMBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 10</b><span>Wed</span></div><div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span></div></div>
-  <p class="month-label">OCTOBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 02</b><span>Fri</span></div><div class="name">Gandhi Jayanti</div><span class="badge info">National</span></div></div>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 24</b><span>Sat</span></div><div class="name">Dussehra</div><span class="badge purple">Festival</span></div></div>
-  <p class="month-label">NOVEMBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Nov 14</b><span>Sat</span></div><div class="name">Diwali</div><span class="badge purple">Festival</span></div></div>
-  <p class="month-label">DECEMBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
+  <div id="holiday-list-container">
+    <div class="hol-month-group" data-month="jan">
+      <p class="month-label">JANUARY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 01</b><span>Thu</span></div><div class="name">New Year's Day</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 15</b><span>Thu</span></div><div class="name">Makar Sankranti / Pongal</div><span class="badge purple">Festival</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 26</b><span>Mon</span></div><div class="name">Republic Day</div><span class="badge info">National</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="feb">
+      <p class="month-label">FEBRUARY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Feb 15</b><span>Sun</span></div><div class="name">Maha Shivratri</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="mar">
+      <p class="month-label">MARCH 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 03</b><span>Tue</span></div><div class="name">Holi / Dhulandi</div><span class="badge purple">Festival</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 20</b><span>Fri</span></div><div class="name">Id-ul-Fitr (Ramzan)</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="apr">
+      <p class="month-label">APRIL 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 03</b><span>Fri</span></div><div class="name">Good Friday</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 14</b><span>Tue</span></div><div class="name">Ambedkar Jayanti / Tamil New Year</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="may">
+      <p class="month-label">MAY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 01</b><span>Fri</span></div><div class="name">May Day / Labour Day</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 27</b><span>Wed</span></div><div class="name">Bakrid / Id-ul-Zuha</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="jun">
+      <p class="month-label">JUNE 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jun 26</b><span>Fri</span></div><div class="name">Muharram</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="jul">
+      <p class="month-label">JULY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jul 26</b><span>Sun</span></div><div class="name">Regional Holiday</div><span class="badge purple">Optional</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="aug">
+      <p class="month-label">AUGUST 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 15</b><span>Sat</span></div><div class="name">Independence Day</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 26</b><span>Wed</span></div><div class="name">Milad-un-Nabi</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="sep">
+      <p class="month-label">SEPTEMBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 10</b><span>Wed</span></div><div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 16</b><span>Wed</span></div><div class="name">Onam</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="oct">
+      <p class="month-label">OCTOBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 02</b><span>Fri</span></div><div class="name">Gandhi Jayanti</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 24</b><span>Sat</span></div><div class="name">Dussehra</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="nov">
+      <p class="month-label">NOVEMBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Nov 14</b><span>Sat</span></div><div class="name">Diwali</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="dec">
+      <p class="month-label">DECEMBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
+    </div>
+  </div>
+  <script>
+    function filterHolidayMonth(monthKey, el) {
+      if (el) {
+        const pills = el.parentElement.querySelectorAll('.pill');
+        pills.forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+      }
+      const groups = document.querySelectorAll('.hol-month-group');
+      groups.forEach(g => {
+        if (monthKey === 'all' || g.getAttribute('data-month') === monthKey) {
+          g.style.display = 'block';
+        } else {
+          g.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -4122,6 +4233,47 @@ function renderPermissionApprovals() {
   frame.addEventListener('load', function() {
     var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
     if (!doc) return;
+
+    var navGlowStyle = doc.createElement('style');
+    navGlowStyle.textContent = `
+      .bottom-nav {
+        transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease !important;
+      }
+      .bottom-nav:hover {
+        box-shadow: 0 -4px 20px rgba(47, 107, 255, 0.18), 0 0 15px rgba(47, 107, 255, 0.12) !important;
+        border-top-color: rgba(47, 107, 255, 0.4) !important;
+      }
+      .bottom-nav .tab {
+        position: relative !important;
+        padding: 6px 8px !important;
+        border-radius: 12px !important;
+        transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease !important;
+      }
+      .bottom-nav .tab:hover {
+        color: var(--primary, #2F6BFF) !important;
+        background: rgba(47, 107, 255, 0.09) !important;
+        box-shadow: 0 0 14px rgba(47, 107, 255, 0.25), inset 0 0 10px rgba(47, 107, 255, 0.1) !important;
+        transform: translateY(-2px) !important;
+      }
+      .bottom-nav .tab .icon {
+        transition: transform 0.25s ease !important;
+      }
+      .bottom-nav .tab:hover .icon {
+        transform: scale(1.08) !important;
+      }
+      .bottom-nav .tab .icon svg {
+        transition: stroke 0.25s ease, filter 0.25s ease !important;
+      }
+      .bottom-nav .tab:hover .icon svg {
+        stroke: var(--primary, #2F6BFF) !important;
+        filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.65)) !important;
+      }
+      .bottom-nav .tab.active .icon svg {
+        stroke: var(--primary, #2F6BFF) !important;
+        filter: drop-shadow(0 0 4px rgba(47, 107, 255, 0.4)) !important;
+      }
+    `;
+    if (doc.head) doc.head.appendChild(navGlowStyle);
 
     if (currentTpl === 'tpl-LeaveApprovalDetail') {
       var p = PERSON_DATA[SELECTED_PERSON] || PERSON_DATA['priya'];

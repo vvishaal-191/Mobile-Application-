@@ -12,7 +12,17 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [durationText, setDurationText] = useState('2 Hours');
   const [reason, setReason] = useState('');
-  const [manager, setManager] = useState('Rahul Sharma (Team Lead)');
+  const MANAGERS = [
+    'Rahul Sharma (Team Lead)',
+    'Priya Verma (HR Manager)',
+    'Suresh Kumar (Engineering Manager)',
+  ];
+
+  const handleCycleManager = () => {
+    const currentIndex = MANAGERS.indexOf(manager);
+    const nextIndex = (currentIndex + 1) % MANAGERS.length;
+    setManager(MANAGERS[nextIndex]);
+  };
 
   const parseTimeToMinutes = (timeStr) => {
     if (!timeStr) return null;
@@ -160,7 +170,7 @@ export default function ApplyPermissionScreen({ navigation }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Approving Manager</Text>
-          <TouchableOpacity style={styles.selectBox}>
+          <TouchableOpacity style={styles.selectBox} onPress={handleCycleManager}>
             <Text style={styles.selectText}>{manager}</Text>
             <Feather name="chevron-down" size={18} color="#6B7280" />
           </TouchableOpacity>

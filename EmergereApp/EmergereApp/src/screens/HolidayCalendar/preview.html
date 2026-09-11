@@ -7,18 +7,107 @@
 <div class="screen">
   <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Holiday Calendar</h1></div>
   <p class="subtitle">Company & optional holidays 2026</p>
-  <div class="pill-tabs">
-    <div class="pill active" onclick="activatePill(this,'.pill-tabs .pill')">Holidays</div>
+  <div class="pill-tabs" style="overflow-x:auto; padding-bottom:8px; white-space:nowrap; -webkit-overflow-scrolling:touch;">
+    <div class="pill active" onclick="filterHolidayMonth('all', this)">All</div>
+    <div class="pill" onclick="filterHolidayMonth('jan', this)">Jan</div>
+    <div class="pill" onclick="filterHolidayMonth('feb', this)">Feb</div>
+    <div class="pill" onclick="filterHolidayMonth('mar', this)">Mar</div>
+    <div class="pill" onclick="filterHolidayMonth('apr', this)">Apr</div>
+    <div class="pill" onclick="filterHolidayMonth('may', this)">May</div>
+    <div class="pill" onclick="filterHolidayMonth('jun', this)">Jun</div>
+    <div class="pill" onclick="filterHolidayMonth('jul', this)">Jul</div>
+    <div class="pill" onclick="filterHolidayMonth('aug', this)">Aug</div>
+    <div class="pill" onclick="filterHolidayMonth('sep', this)">Sep</div>
+    <div class="pill" onclick="filterHolidayMonth('oct', this)">Oct</div>
+    <div class="pill" onclick="filterHolidayMonth('nov', this)">Nov</div>
+    <div class="pill" onclick="filterHolidayMonth('dec', this)">Dec</div>
   </div>
-  <p class="month-label">SEPTEMBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 10</b><span>Wed</span></div><div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span></div></div>
-  <p class="month-label">OCTOBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 02</b><span>Fri</span></div><div class="name">Gandhi Jayanti</div><span class="badge info">National</span></div></div>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 24</b><span>Sat</span></div><div class="name">Dussehra</div><span class="badge purple">Festival</span></div></div>
-  <p class="month-label">NOVEMBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Nov 14</b><span>Sat</span></div><div class="name">Diwali</div><span class="badge purple">Festival</span></div></div>
-  <p class="month-label">DECEMBER 2026</p>
-  <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
+  <div id="holiday-list-container">
+    <div class="hol-month-group" data-month="jan">
+      <p class="month-label">JANUARY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 01</b><span>Thu</span></div><div class="name">New Year's Day</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 15</b><span>Thu</span></div><div class="name">Makar Sankranti / Pongal</div><span class="badge purple">Festival</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 26</b><span>Mon</span></div><div class="name">Republic Day</div><span class="badge info">National</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="feb">
+      <p class="month-label">FEBRUARY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Feb 15</b><span>Sun</span></div><div class="name">Maha Shivratri</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="mar">
+      <p class="month-label">MARCH 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 03</b><span>Tue</span></div><div class="name">Holi / Dhulandi</div><span class="badge purple">Festival</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 20</b><span>Fri</span></div><div class="name">Id-ul-Fitr (Ramzan)</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="apr">
+      <p class="month-label">APRIL 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 03</b><span>Fri</span></div><div class="name">Good Friday</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 14</b><span>Tue</span></div><div class="name">Ambedkar Jayanti / Tamil New Year</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="may">
+      <p class="month-label">MAY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 01</b><span>Fri</span></div><div class="name">May Day / Labour Day</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 27</b><span>Wed</span></div><div class="name">Bakrid / Id-ul-Zuha</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="jun">
+      <p class="month-label">JUNE 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jun 26</b><span>Fri</span></div><div class="name">Muharram</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="jul">
+      <p class="month-label">JULY 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jul 26</b><span>Sun</span></div><div class="name">Regional Holiday</div><span class="badge purple">Optional</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="aug">
+      <p class="month-label">AUGUST 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 15</b><span>Sat</span></div><div class="name">Independence Day</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 26</b><span>Wed</span></div><div class="name">Milad-un-Nabi</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="sep">
+      <p class="month-label">SEPTEMBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 10</b><span>Wed</span></div><div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 16</b><span>Wed</span></div><div class="name">Onam</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="oct">
+      <p class="month-label">OCTOBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 02</b><span>Fri</span></div><div class="name">Gandhi Jayanti</div><span class="badge info">National</span></div></div>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 24</b><span>Sat</span></div><div class="name">Dussehra</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="nov">
+      <p class="month-label">NOVEMBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Nov 14</b><span>Sat</span></div><div class="name">Diwali</div><span class="badge purple">Festival</span></div></div>
+    </div>
+
+    <div class="hol-month-group" data-month="dec">
+      <p class="month-label">DECEMBER 2026</p>
+      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
+    </div>
+  </div>
+  <script>
+    function filterHolidayMonth(monthKey, el) {
+      if (el) {
+        const pills = el.parentElement.querySelectorAll('.pill');
+        pills.forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+      }
+      const groups = document.querySelectorAll('.hol-month-group');
+      groups.forEach(g => {
+        if (monthKey === 'all' || g.getAttribute('data-month') === monthKey) {
+          g.style.display = 'block';
+        } else {
+          g.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </div>
 <div class="bottom-nav">
   <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
