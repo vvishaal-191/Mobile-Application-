@@ -1315,7 +1315,7 @@
           <h1 class="greeting">Hello, Vikram Rathore!</h1>
           <p class="date">Thu, Sep 03 2026</p>
 
-          <div class="card">
+          <div class="card" id="dash-attendance-card">
             <div class="attendance-row">
               <div class="status"><span class="status-dot"></span>Checked In at 09:15 AM</div>
               <button class="chip-btn danger">Check Out</button>
@@ -1331,7 +1331,7 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card" id="dash-leave-balance-card">
             <h3>Leave Balances</h3>
             <div class="balance">
               <div class="balance-head"><span>Casual Leave</span><span class="value">8/12 Days</span></div>
@@ -2838,7 +2838,7 @@
           if (approvalsTpl) {
             var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
             var newId = 'emp-new-' + Date.now();
-            var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending" style="border:2px solid #2F6BFF;">'
+            var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
               + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
               + '<hr/>'
               + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
@@ -7800,11 +7800,27 @@
         .btn-approve {
           background: #DFF7EC;
           color: var(--success);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-approve:hover {
+          background: #c9f3e0;
+          box-shadow: 0 2px 10px rgba(31, 174, 110, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-reject {
           background: var(--danger-bg);
           color: var(--danger);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-reject:hover {
+          background: #fad5d5;
+          box-shadow: 0 2px 10px rgba(229, 72, 77, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-row {
@@ -8662,6 +8678,14 @@
         }
 
 
+        .card, .emp-card, .card:hover, .emp-card:hover {
+          border: 1px solid var(--border) !important;
+          border-color: var(--border) !important;
+          box-shadow: none !important;
+          transform: none !important;
+          cursor: default !important;
+        }
+
         .emp-card {
           padding: 16px;
         }
@@ -9187,11 +9211,27 @@
         .btn-approve {
           background: #DFF7EC;
           color: var(--success);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-approve:hover {
+          background: #c9f3e0;
+          box-shadow: 0 2px 10px rgba(31, 174, 110, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-reject {
           background: var(--danger-bg);
           color: var(--danger);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-reject:hover {
+          background: #fad5d5;
+          box-shadow: 0 2px 10px rgba(229, 72, 77, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-row {
@@ -9963,10 +10003,40 @@
               border-radius: 10px !important;
               background: rgba(47, 107, 255, 0.06) !important;
             }
+            /* Cards, Quick Actions & Item Containers Glow Hover */
+            .card, .request-card, .req-card, .member-card, .team-card, .employee-card, .hol-card, .quick-action, .stat-card, .action-card, .item-card {
+              transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease !important;
+            }
+            .card:hover, .request-card:hover, .req-card:hover, .member-card:hover, .team-card:hover, .employee-card:hover, .hol-card:hover, .quick-action:hover, .stat-card:hover, .action-card:hover, .item-card:hover {
+              border-color: var(--primary, #2F6BFF) !important;
+              box-shadow: 0 0 20px rgba(47, 107, 255, 0.32), 0 6px 18px rgba(47, 107, 255, 0.18), inset 0 0 10px rgba(47, 107, 255, 0.06) !important;
+              transform: translateY(-3px) !important;
+              cursor: pointer !important;
+            }
+            /* Leave Approvals & Overview Cards - No Glow & No Highlight */
+            .approval-card, .approval-card:hover, .overview-card, .overview-card:hover {
+              border: 1px solid var(--border, #E5E7EB) !important;
+              border-color: var(--border, #E5E7EB) !important;
+              box-shadow: none !important;
+              transform: none !important;
+              cursor: default !important;
+            }
           `;
           if (doc.head) doc.head.appendChild(navGlowStyle);
 
           if (currentTpl === 'tpl-LeaveApprovalDetail') {
+            var detailNoGlowStyle = doc.createElement('style');
+            detailNoGlowStyle.textContent = `
+              .card, .emp-card, .card:hover, .emp-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(detailNoGlowStyle);
+
             var p = PERSON_DATA[SELECTED_PERSON] || PERSON_DATA['priya'];
             var elName = doc.getElementById('lad-name'); if (elName) elName.textContent = p.name;
             var elRole = doc.getElementById('lad-role'); if (elRole) elRole.textContent = p.role;
@@ -9980,6 +10050,52 @@
             var elReason = doc.getElementById('lad-reason'); if (elReason) elReason.textContent = p.reason;
             var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle;
             var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath;
+          }
+
+          if (currentTpl === 'tpl-MyAttendance') {
+            var attendNoGlowStyle = doc.createElement('style');
+            attendNoGlowStyle.textContent = `
+              #details-card, #details-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(attendNoGlowStyle);
+          }
+
+          if (currentTpl === 'tpl-EmployeeDashboard') {
+            var dashNoGlowStyle = doc.createElement('style');
+            dashNoGlowStyle.textContent = `
+              #dash-attendance-card, #dash-attendance-card:hover,
+              #dash-leave-balance-card, #dash-leave-balance-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(dashNoGlowStyle);
+          }
+
+          if (currentTpl === 'tpl-MyProfile') {
+            var profileNoGlowStyle = doc.createElement('style');
+            profileNoGlowStyle.textContent = `
+              .card, .card:hover,
+              .profile-card, .profile-card:hover,
+              .status-card, .status-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+                background: var(--surface, #FFFFFF) !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(profileNoGlowStyle);
           }
 
           var tabs = doc.querySelectorAll('.bottom-nav .tab');
@@ -10050,7 +10166,7 @@
                 if (approvalsTpl) {
                   var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
                   var newId = 'emp-new-' + Date.now();
-                  var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending" style="border:2px solid #2F6BFF;">'
+                  var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
                     + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
                     + '<hr/>'
                     + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'

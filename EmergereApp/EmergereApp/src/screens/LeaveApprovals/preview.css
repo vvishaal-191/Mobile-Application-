@@ -1,8 +1,16 @@
-.approval-card{padding:16px;margin:0 20px 16px;}
+.approval-card, .approval-card:hover {
+  padding: 16px;
+  margin: 0 20px 16px;
+  border: 1px solid var(--border) !important;
+  border-color: var(--border) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
 .top-row{display:flex;justify-content:space-between;align-items:flex-start;}
 .emp-row{display:flex;gap:12px;align-items:center;}
 .emp-row p{margin:2px 0 0;color:var(--text-secondary);font-size:13px;}
-hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .detail-row{display:flex;justify-content:space-between;margin-bottom:8px;}
 .detail-row span{color:var(--text-secondary);}
 .btn-row{display:flex;gap:12px;margin-top:12px;padding:0;}
+

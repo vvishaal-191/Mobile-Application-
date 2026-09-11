@@ -1,3 +1,10 @@
+.card, .emp-card, .card:hover, .emp-card:hover {
+  border: 1px solid var(--border) !important;
+  border-color: var(--border) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: default !important;
+}
 .emp-card{padding:16px;}
 .emp-row{display:flex;gap:12px;align-items:center;}
 .avatar.big{width:56px;height:56px;border-radius:28px;font-size:20px;}
@@ -19,3 +26,4 @@
 .btn-row{padding:0 20px 20px;}
 .outline-reject{flex:1;background:#fff;border:1.5px solid var(--danger-bg);color:var(--danger);border-radius:999px;}
 .btn-row .btn-primary{border-radius:999px;}
+
