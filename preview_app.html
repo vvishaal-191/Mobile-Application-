@@ -9847,6 +9847,12 @@
       document.addEventListener('DOMContentLoaded', function () {
         var currentTpl = 'tpl-Login';
 
+        // ── Shared Permission-Request State ─────────────────────────────
+        // Each entry: { id, type, date, duration, reason, status ('pending'|'approved'|'rejected') }
+        if (!window.PERM_STATE) {
+          window.PERM_STATE = [];
+        }
+
         function toggleMobileMenu() {
           var sb = document.getElementById('sidebar');
           var ov = document.getElementById('sidebar-overlay');
@@ -10182,6 +10188,178 @@
                 }
                 loadScreen('tpl-LeaveApprovals');
               });
+            }
+          }
+
+          // ── Apply Permission: save to shared state & navigate ──────────
+          if (currentTpl === 'tpl-ApplyPermission') {
+            var iframeWin = frame.contentWindow;
+            if (iframeWin) {
+              iframeWin.handleApplyPermissionSubmit = function () {
+                var permDateInput  = doc.getElementById('perm-date-input');
+                var permTypeSelect = doc.getElementById('perm-type-select');
+                var durationInput  = doc.getElementById('perm-duration-input');
+                var reasonText     = doc.getElementById('perm-reason-text');
+
+                var rawDate   = permDateInput  ? permDateInput.value  : '2026-09-04';
+                var months    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var dp = rawDate.split('-');
+                var fmtDate = dp.length === 3 ? (dp[2] + '-' + (months[parseInt(dp[1],10)-1]||'Sep') + '-' + dp[0]) : rawDate;
+
+                var pType     = permTypeSelect ? permTypeSelect.value : 'Early Going';
+                var pDuration = durationInput  ? (durationInput.value.trim() || '2 Hours') : '2 Hours';
+                var pReason   = reasonText     ? (reasonText.value.trim()   || 'Personal work / checkup') : 'Personal work / checkup';
+
+                if (!pReason) { alert('Please enter a reason.'); return; }
+
+                var newId = 'perm-' + Date.now();
+                var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending' };
+                window.parent.PERM_STATE.unshift(entry);
+
+                window.parent.loadScreen('tpl-PermissionApprovals');
+              };
+            }
+          }
+
+          // ── Permission Approvals: inject new requests & wire approve/reject ──
+          if (currentTpl === 'tpl-PermissionApprovals') {
+            // Inject any pending requests from PERM_STATE that don't already exist in the DOM
+            var paList = doc.getElementById('permission-approvals-list');
+            if (paList) {
+              window.PERM_STATE.forEach(function (req) {
+                if (!paList.querySelector('[data-perm-id="' + req.id + '"]')) {
+                  var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
+                  var actionHtml = req.status === 'pending'
+                    ? '<div class="btn-row"><button class="btn btn-reject" onclick="processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>'
+                    : '<div style="text-align:right;margin-top:8px;"><span class="badge ' + (req.status === 'approved' ? 'success' : 'danger') + '">' + (req.status === 'approved' ? 'Approved' : 'Rejected') + '</span></div>';
+                  var cardHtml = '<div class="card approval-card" data-perm-id="' + req.id + '" data-status="' + req.status + '" data-type="' + req.type + '" data-date="' + req.date + '">'
+                    + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>' + req.type + '</p></div></div><span class="badge ' + tone + '">' + req.type + '</span></div>'
+                    + '<hr/>'
+                    + '<div class="detail-row"><span>Date</span><b>' + req.date + '</b></div>'
+                    + '<div class="detail-row"><span>Duration</span><b>' + req.duration + '</b></div>'
+                    + '<div class="detail-row"><span>Reason</span><b>' + req.reason + '</b></div>'
+                    + '<div class="card-action-wrap">' + actionHtml + '</div>'
+                    + '</div>';
+                  paList.insertAdjacentHTML('afterbegin', cardHtml);
+                }
+              });
+            }
+
+            // Override processPermAction to also persist back to PERM_STATE
+            var iframeWin2 = frame.contentWindow;
+            if (iframeWin2) {
+              var _origProcessPerm = iframeWin2.processPermAction;
+              iframeWin2.processPermAction = function (id, newStatus) {
+                if (typeof _origProcessPerm === 'function') _origProcessPerm(id, newStatus);
+                // Update PERM_STATE
+                window.PERM_STATE.forEach(function (req) {
+                  if (req.id === id) req.status = newStatus;
+                });
+                // Add notification to parent-level queue
+                if (!window.PERM_NOTIFICATIONS) window.PERM_NOTIFICATIONS = [];
+                var req = window.PERM_STATE.find ? window.PERM_STATE.find(function(r){ return r.id === id; }) : null;
+                if (req) {
+                  window.PERM_NOTIFICATIONS.unshift({
+                    status: newStatus,
+                    type: req.type,
+                    date: req.date
+                  });
+                }
+              };
+            }
+          }
+
+          // ── Manager Dashboard: inject pending permission request card ─────
+          if (currentTpl === 'tpl-ManagerDashboard') {
+            var pendingPerms = window.PERM_STATE.filter(function(r){ return r.status === 'pending'; });
+            if (pendingPerms.length > 0) {
+              var screen2 = doc.querySelector('.screen');
+              if (screen2) {
+                var labelEl = doc.createElement('p');
+                labelEl.className = 'section-label';
+                labelEl.textContent = 'PENDING PERMISSION REQUESTS';
+                screen2.appendChild(labelEl);
+                pendingPerms.forEach(function(req) {
+                  var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
+                  var div = doc.createElement('div');
+                  div.className = 'card req-card';
+                  div.style.cursor = 'pointer';
+                  div.innerHTML = '<div class="req-row"><div><b>Vikram Rathore</b><p>' + req.type + ' &bull; ' + req.date + ' (' + req.duration + ')</p></div><span class="badge warning">Pending</span></div>';
+                  div.addEventListener('click', function(){
+                    if (window.parent && window.parent.loadScreen) window.parent.loadScreen('tpl-PermissionApprovals');
+                  });
+                  screen2.appendChild(div);
+                });
+              }
+              // Update the Perm. Approvals badge count
+              var permBadgeEl = doc.querySelector('.quick-action .qbadge:last-of-type');
+              var qActions = doc.querySelectorAll('.quick-action');
+              qActions.forEach(function(qa) {
+                if (qa.textContent.indexOf('Perm') !== -1) {
+                  var qb = qa.querySelector('.qbadge');
+                  if (qb) qb.textContent = pendingPerms.length + 2; // existing 2 + new
+                }
+              });
+            }
+          }
+
+          // ── Notifications: prepend permission approval/rejection items ─────
+          if (currentTpl === 'tpl-Notifications') {
+            if (window.PERM_NOTIFICATIONS && window.PERM_NOTIFICATIONS.length > 0) {
+              var notifContainer = doc.getElementById('notif-container');
+              if (notifContainer) {
+                window.PERM_NOTIFICATIONS.forEach(function(notif) {
+                  var isApprove = notif.status === 'approved';
+                  var div = doc.createElement('div');
+                  div.className = 'card notif-card unread';
+                  div.innerHTML = '<div class="notif-row">'
+                    + '<span class="ico-wrap ' + (isApprove ? 'success' : 'danger') + '">' + (isApprove ? '✓' : '✕') + '</span>'
+                    + '<div class="notif-text">'
+                    + '<p>Permission Request ' + (isApprove ? 'Approved' : 'Rejected') + '</p>'
+                    + '<small>Your ' + notif.type + ' permission request for ' + notif.date + ' was ' + (isApprove ? 'Approved ✅' : 'Rejected ❌') + ' by Rahul Sharma.</small>'
+                    + '</div>'
+                    + '<span class="dot"></span>'
+                    + '<span class="close-item-btn" onclick="removeSingleNotif(this)" title="Delete">✕</span>'
+                    + '</div>';
+                  notifContainer.insertBefore(div, notifContainer.firstChild);
+                });
+              }
+            }
+          }
+
+          // ── Employee Dashboard: show submitted permission in Pending Requests ─
+          if (currentTpl === 'tpl-EmployeeDashboard') {
+            var myPerms = window.PERM_STATE;
+            if (myPerms && myPerms.length > 0) {
+              var latestPerm = myPerms[0];
+              var sectionLabel = doc.querySelector('.section-label');
+              if (sectionLabel) {
+                // Find or create the pending requests section
+                var permCard = doc.getElementById('emp-dash-perm-card');
+                if (!permCard) {
+                  var statusClass = latestPerm.status === 'approved' ? 'success' : latestPerm.status === 'rejected' ? 'danger' : 'warning';
+                  var statusText  = latestPerm.status === 'approved' ? 'Approved' : latestPerm.status === 'rejected' ? 'Rejected' : 'Pending';
+                  var pendingSection = doc.querySelector('.section-label');
+                  if (pendingSection) {
+                    var newPermCardHtml = '<div class="card request-card" id="emp-dash-perm-card">'
+                      + '<div class="request-row"><div>'
+                      + '<b>' + latestPerm.type + ' (' + latestPerm.duration + ')</b>'
+                      + '<p>' + latestPerm.date + ' &bull; ' + latestPerm.reason.slice(0,40) + (latestPerm.reason.length > 40 ? '...' : '') + '</p>'
+                      + '</div><span id="dash-perm-status-badge" class="badge ' + statusClass + '">' + statusText + '</span></div>'
+                      + '</div>';
+                    pendingSection.insertAdjacentHTML('afterend', newPermCardHtml);
+                  }
+                } else {
+                  // Update existing card status badge
+                  var badgeEl = doc.getElementById('dash-perm-status-badge');
+                  if (badgeEl) {
+                    var sc = latestPerm.status === 'approved' ? 'success' : latestPerm.status === 'rejected' ? 'danger' : 'warning';
+                    var st = latestPerm.status === 'approved' ? 'Approved' : latestPerm.status === 'rejected' ? 'Rejected' : 'Pending';
+                    badgeEl.className = 'badge ' + sc;
+                    badgeEl.textContent = st;
+                  }
+                }
+              }
             }
           }
 
