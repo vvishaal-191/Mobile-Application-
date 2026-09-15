@@ -59,6 +59,11 @@ export default StyleSheet.create({
     borderRadius: radius.pill,
     paddingVertical: spacing.lg,
     alignItems: 'center',
+    shadowColor: colors.danger,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 1,
   },
   rejectText: { color: colors.danger, fontWeight: '800' },
   approveBtn: {
@@ -67,6 +72,11 @@ export default StyleSheet.create({
     borderRadius: radius.pill,
     paddingVertical: spacing.lg,
     alignItems: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 2,
   },
   approveText: { color: '#fff', fontWeight: '800' },
 });

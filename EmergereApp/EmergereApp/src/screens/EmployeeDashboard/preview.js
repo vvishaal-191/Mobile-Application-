@@ -32,7 +32,12 @@ if (btnCheckIn) {
       window.parent.CHECKED_IN = true;
       window.parent.EMPLOYMENT_STATUS = 'Active';
       window.parent.ATTENDANCE_STATUS = 'Checked In';
+      if (typeof window.parent.loadScreen === 'function') {
+        window.parent.loadScreen('tpl-MyProfile');
+        return;
+      }
     }
+    window.location.href = '../MyProfile/preview.html?status=Active';
   });
 }
 
@@ -43,11 +48,6 @@ if (btnCheckOut) {
       window.parent.CHECKED_IN = false;
       window.parent.EMPLOYMENT_STATUS = 'Inactive';
       window.parent.ATTENDANCE_STATUS = 'Checked Out';
-      if (typeof window.parent.loadScreen === 'function') {
-        window.parent.loadScreen('tpl-MyProfile');
-        return;
-      }
     }
-    window.location.href = '../MyProfile/preview.html?status=Inactive';
   });
 }

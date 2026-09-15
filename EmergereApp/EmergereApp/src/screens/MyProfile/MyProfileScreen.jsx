@@ -12,12 +12,16 @@ import styles from './MyProfileScreen.styles';
 export default function MyProfileScreen({ navigation, route }) {
   const [isEditing, setIsEditing] = useState(false);
   const [employmentStatus, setEmploymentStatus] = useState(
-    route?.params?.employmentStatus || 'Active'
+    route?.params?.employmentStatus ||
+      (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS) ||
+      'Active'
   );
 
   useEffect(() => {
     if (route?.params?.employmentStatus) {
       setEmploymentStatus(route.params.employmentStatus);
+    } else if (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS) {
+      setEmploymentStatus(global.EMPLOYMENT_STATUS);
     }
   }, [route?.params?.employmentStatus]);
 

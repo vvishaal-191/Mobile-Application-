@@ -53,12 +53,14 @@ const SCREENS = {
 };
 
 export default function App() {
-  const [stack, setStack] = useState(['Login']);
+  const [stack, setStack] = useState([{ name: 'Login', params: {} }]);
   const current = stack[stack.length - 1];
+  const currentName = typeof current === 'string' ? current : current?.name || 'Login';
+  const currentParams = typeof current === 'object' && current ? current.params || {} : {};
 
-  const navigate = useCallback((screenKey) => {
+  const navigate = useCallback((screenKey, params = {}) => {
     if (SCREENS[screenKey]) {
-      setStack((prev) => [...prev, screenKey]);
+      setStack((prev) => [...prev, { name: screenKey, params }]);
     }
   }, []);
 
@@ -66,11 +68,11 @@ export default function App() {
     setStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
   }, []);
 
-  const Screen = SCREENS[current] || LoginScreen;
+  const Screen = SCREENS[currentName] || LoginScreen;
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Screen navigation={{ navigate, goBack }} />
+      <Screen navigation={{ navigate, goBack }} route={{ params: currentParams }} />
     </SafeAreaView>
   );
 }

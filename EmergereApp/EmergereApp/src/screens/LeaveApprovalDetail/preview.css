@@ -1,9 +1,11 @@
-.card, .emp-card, .card:hover, .emp-card:hover {
-  border: 1px solid var(--border) !important;
-  border-color: var(--border) !important;
-  box-shadow: none !important;
-  transform: none !important;
-  cursor: default !important;
+.card, .emp-card {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease !important;
+}
+.card:hover, .emp-card:hover {
+  border-color: rgba(47, 107, 255, 0.35) !important;
+  box-shadow: 0 3px 12px rgba(47, 107, 255, 0.08), 0 0 8px rgba(47, 107, 255, 0.05) !important;
+  transform: translateY(-1.5px) !important;
+  cursor: pointer !important;
 }
 .emp-card{padding:16px;}
 .emp-row{display:flex;gap:12px;align-items:center;}
@@ -24,6 +26,40 @@
 .remarks-label{display:block;padding:0 20px;font-weight:700;margin-bottom:8px;}
 .remarks-input{margin:0 20px 16px;width:calc(100% - 40px);min-height:80px;}
 .btn-row{padding:0 20px 20px;}
-.outline-reject{flex:1;background:#fff;border:1.5px solid var(--danger-bg);color:var(--danger);border-radius:999px;}
-.btn-row .btn-primary{border-radius:999px;}
+.outline-reject{
+  flex:1;
+  background:#fff;
+  border:1.5px solid var(--danger-bg);
+  color:var(--danger);
+  border-radius:999px;
+  cursor:pointer;
+  transition:all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.outline-reject:hover {
+  background:#FFF5F5 !important;
+  border-color:rgba(229, 72, 77, 0.4) !important;
+  color:#D63036 !important;
+  box-shadow:0 2px 10px rgba(229, 72, 77, 0.18), 0 0 6px rgba(229, 72, 77, 0.1) !important;
+  transform:translateY(-1px) !important;
+  cursor:pointer !important;
+}
+.outline-reject:active {
+  transform:translateY(0) !important;
+  box-shadow:0 1px 4px rgba(229, 72, 77, 0.12) !important;
+}
+.btn-row .btn-primary{
+  border-radius:999px;
+  cursor:pointer;
+  transition:all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.25s ease;
+}
+.btn-row .btn-primary:hover {
+  background:#255FE6 !important;
+  box-shadow:0 3px 12px rgba(47, 107, 255, 0.26), 0 0 8px rgba(47, 107, 255, 0.15) !important;
+  transform:translateY(-1px) !important;
+  cursor:pointer !important;
+}
+.btn-row .btn-primary:active {
+  transform:translateY(0) !important;
+  box-shadow:0 1px 6px rgba(47, 107, 255, 0.2) !important;
+}
 

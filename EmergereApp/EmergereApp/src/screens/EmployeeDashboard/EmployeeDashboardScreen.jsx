@@ -41,15 +41,30 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
   const [checkedIn, setCheckedIn] = useState(true);
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const go = (screen) => {
+    if (screen === 'Profile' || screen === 'More' || screen === 'MyProfile') {
+      const status = (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS)
+        ? global.EMPLOYMENT_STATUS
+        : (checkedIn ? 'Active' : 'Inactive');
+      navigation && navigation.navigate('MyProfile', { employmentStatus: status });
+    } else {
+      navigation && navigation.navigate(screen);
+    }
+  };
 
   const handleCheckIn = () => {
     setCheckedIn(true);
+    if (typeof global !== 'undefined') {
+      global.EMPLOYMENT_STATUS = 'Active';
+    }
+    navigation && navigation.navigate('MyProfile', { employmentStatus: 'Active' });
   };
 
   const handleCheckOut = () => {
     setCheckedIn(false);
-    navigation && navigation.navigate('MyProfile', { employmentStatus: 'Inactive' });
+    if (typeof global !== 'undefined') {
+      global.EMPLOYMENT_STATUS = 'Inactive';
+    }
   };
 
   useEffect(() => {
