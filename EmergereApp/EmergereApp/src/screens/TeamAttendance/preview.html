@@ -6,7 +6,16 @@
 <div class="statusbar"><span>09:41</span><span class="status-icons" style="display:inline-flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="8" width="3" height="3" rx="0.8"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0" width="3" height="11" rx="0.8"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-3.8-3.8a5.5 5.5 0 0 1 7.6 0 .8.8 0 0 0 1.1-1.1 7.1 7.1 0 0 0-9.8 0 .8.8 0 0 0 1.1 1.1zm-3.1-3.1a9.9 9.9 0 0 1 14 0 .8.8 0 1 0 1.1-1.1 11.5 11.5 0 0 0-16.2 0 .8.8 0 0 0 1.1 1.1z"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x="0.75" y="0.75" width="17.5" height="9.5" rx="2.75" stroke-width="1.5"/><rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M20 3.5v4" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><div><h1>Team Attendance</h1><p>Real-time Status</p></div></div>
-  <div class="date-nav"><span>‹</span><b>Sep 03, 2026</b><span>›</span></div>
+  <div class="date-nav">
+    <span style="cursor:pointer; user-select:none;" onclick="changeTeamDate(-1)">‹</span>
+    <label class="center-date-btn" id="team-date-btn" style="position:relative; cursor:pointer; background:#E7EEFF; color:#2F6BFF; padding:8px 20px; border-radius:999px; font-weight:800; font-size:15px; margin:0; display:inline-flex; align-items:center; justify-content:center; user-select:none; transition:background 0.2s ease, box-shadow 0.2s ease;">
+      <span id="team-date-text">Sep 03, 2026</span>
+      <input type="date" id="team-date-input" value="2026-09-03"
+        style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;"
+        onchange="onTeamDatePick(this.value)" onclick="try{this.showPicker()}catch(e){}" />
+    </label>
+    <span style="cursor:pointer; user-select:none;" onclick="changeTeamDate(1)">›</span>
+  </div>
   <div class="summary-row"><span style="color:#1FAE6E">9 Present</span><span style="color:#2F6BFF">2 Leave</span><span style="color:#8B5CF6">1 WFH</span><span style="color:#E5484D">0 Absent</span></div>
   <p class="section-label">TEAM MEMBERS (5)</p>
   <div class="card member-card"><div class="member-row"><div class="avatar">PS</div><div class="member-info"><b>Priya Sharma</b><p>Check-In: 09:15 AM</p></div><span class="badge success">Present</span></div></div>

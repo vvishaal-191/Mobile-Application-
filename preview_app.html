@@ -7601,10 +7601,13 @@
             <span
               style="cursor:pointer; font-weight:bold; font-size:20px; padding:4px 14px; user-select:none; color:var(--text);"
               onclick="changeTeamDate(-1)">‹</span>
-            <div
-              style="background:#E7EEFF; color:#2F6BFF; padding:8px 20px; border-radius:999px; font-weight:800; font-size:15px; margin:0;">
+            <label class="center-date-btn" id="team-date-btn"
+              style="position:relative; cursor:pointer; background:#E7EEFF; color:#2F6BFF; padding:8px 20px; border-radius:999px; font-weight:800; font-size:15px; margin:0; display:inline-flex; align-items:center; justify-content:center; user-select:none; transition:background 0.2s ease, box-shadow 0.2s ease;">
               <span id="team-date-text">Sep 03, 2026</span>
-            </div>
+              <input type="date" id="team-date-input" value="2026-09-03"
+                style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;"
+                onchange="onTeamDatePick(this.value)" onclick="try{this.showPicker()}catch(e){}" />
+            </label>
             <span
               style="cursor:pointer; font-weight:bold; font-size:20px; padding:4px 14px; user-select:none; color:var(--text);"
               onclick="changeTeamDate(1)">›</span>
@@ -7728,6 +7731,45 @@
           });
         }
         document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
+
+        const monthsShortArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let activeTeamDateObj = new Date(2026, 8, 3); // Sep 3, 2026
+
+        function formatTeamDateString(d) {
+          const mStr = monthsShortArr[d.getMonth()];
+          const dayStr = String(d.getDate()).padStart(2, '0');
+          const yrStr = d.getFullYear();
+          return `${mStr} ${dayStr}, ${yrStr}`;
+        }
+
+        function updateTeamDateNavDisplay() {
+          const textEl = document.getElementById('team-date-text');
+          if (textEl) textEl.textContent = formatTeamDateString(activeTeamDateObj);
+          const inputEl = document.getElementById('team-date-input');
+          if (inputEl) {
+            const yyyy = activeTeamDateObj.getFullYear();
+            const mm = String(activeTeamDateObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(activeTeamDateObj.getDate()).padStart(2, '0');
+            inputEl.value = `${yyyy}-${mm}-${dd}`;
+          }
+        }
+
+        function changeTeamDate(deltaDays) {
+          activeTeamDateObj.setDate(activeTeamDateObj.getDate() + deltaDays);
+          updateTeamDateNavDisplay();
+        }
+
+        function onTeamDatePick(val) {
+          if (!val) return;
+          const parts = val.split('-');
+          if (parts.length === 3) {
+            const yr = parseInt(parts[0], 10);
+            const mo = parseInt(parts[1], 10) - 1;
+            const da = parseInt(parts[2], 10);
+            activeTeamDateObj = new Date(yr, mo, da);
+            updateTeamDateNavDisplay();
+          }
+        }
       </script>
     </body>
 
@@ -10595,6 +10637,26 @@
                 }
               });
             });
+          }
+
+          if (currentTpl === 'tpl-TeamAttendance') {
+            var teamDateInput = doc.getElementById('team-date-input');
+            var teamDateText = doc.getElementById('team-date-text');
+            if (teamDateInput) {
+              teamDateInput.addEventListener('change', function () {
+                if (!this.value) return;
+                var parts = this.value.split('-');
+                if (parts.length === 3) {
+                  var yr = parseInt(parts[0], 10);
+                  var mo = parseInt(parts[1], 10) - 1;
+                  var da = parseInt(parts[2], 10);
+                  var monthsArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                  var mStr = monthsArr[mo];
+                  var dayStr = String(da).padStart(2, '0');
+                  if (teamDateText) teamDateText.textContent = mStr + ' ' + dayStr + ', ' + yr;
+                }
+              });
+            }
           }
         });
 
