@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Emergere HRMS",
-    "slug": "emergere-app",
+    "name": "Mobile Application",
+    "slug": "mobile-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",

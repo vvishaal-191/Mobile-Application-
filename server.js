@@ -56,7 +56,7 @@ const localIp = getLocalIp();
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n==================================================`);
-  console.log(` Emergere HRMS Application Server Started!`);
+  console.log(` Mobile Application Server Started!`);
   console.log(` 🚀 On Computer Browser: http://localhost:${PORT}`);
   console.log(` 📱 On Mobile Phone Browser: http://${localIp}:${PORT}`);
   console.log(`==================================================\n`);

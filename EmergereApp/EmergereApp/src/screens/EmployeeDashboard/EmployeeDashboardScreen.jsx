@@ -76,7 +76,7 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         <Text style={styles.companyName}>IT Solutions Pvt. Ltd.</Text>
 
         <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>Hello, Vikram Rathore!</Text>
+          <Text style={styles.greeting}>Hello, Priya Sharma</Text>
           <Text style={styles.date}>Thu, Sep 03 2026</Text>
         </View>
 

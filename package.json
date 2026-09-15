@@ -1,7 +1,7 @@
 {
   "name": "emergere-hrms-workspace",
   "version": "1.0.0",
-  "description": "Emergere HRMS Mobile & Web Application Workspace",
+  "description": "Mobile & Web Application Workspace",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
