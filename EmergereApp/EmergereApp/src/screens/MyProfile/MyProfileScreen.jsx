@@ -1,5 +1,5 @@
 // src/screens/MyProfile/MyProfileScreen.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Avatar from '../../components/Avatar';
@@ -9,8 +9,17 @@ import ScreenHeader from '../../components/ScreenHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './MyProfileScreen.styles';
 
-export default function MyProfileScreen({ navigation }) {
+export default function MyProfileScreen({ navigation, route }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [employmentStatus, setEmploymentStatus] = useState(
+    route?.params?.employmentStatus || 'Active'
+  );
+
+  useEffect(() => {
+    if (route?.params?.employmentStatus) {
+      setEmploymentStatus(route.params.employmentStatus);
+    }
+  }, [route?.params?.employmentStatus]);
 
   const [profileHeader, setProfileHeader] = useState({
     name: 'Priya Sharma',
@@ -136,7 +145,10 @@ export default function MyProfileScreen({ navigation }) {
         <Card style={styles.statusCard}>
           <View style={styles.statusRow}>
             <Text style={styles.statusLabel}>Employment Status</Text>
-            <StatusBadge label="Active" tone="success" />
+            <StatusBadge
+              label={employmentStatus}
+              tone={employmentStatus === 'Active' ? 'success' : 'danger'}
+            />
           </View>
         </Card>
 

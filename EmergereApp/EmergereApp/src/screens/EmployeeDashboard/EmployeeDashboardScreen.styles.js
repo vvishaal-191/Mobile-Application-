@@ -53,6 +53,18 @@ export default StyleSheet.create({
   statusDotRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   statusDot: { width: 10, height: 10, borderRadius: 5 },
   attendanceText: { fontSize: 16, fontWeight: '700', color: colors.textPrimary },
+  btnGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  checkInBtn: {
+    backgroundColor: colors.successBg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+  },
+  checkInText: { color: colors.success, fontWeight: '700' },
   checkOutBtn: {
     backgroundColor: colors.dangerBg,
     paddingHorizontal: spacing.md,

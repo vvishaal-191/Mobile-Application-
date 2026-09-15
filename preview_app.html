@@ -1264,11 +1264,29 @@
           border-radius: 999px;
           padding: 8px 14px;
           font-weight: 700;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s ease;
         }
 
         .chip-btn.danger {
           background: var(--danger-bg);
           color: var(--danger);
+        }
+
+        .chip-btn.danger:hover {
+          background: #FDD8DC;
+          box-shadow: 0 2px 8px rgba(229, 72, 77, 0.18);
+        }
+
+        .chip-btn.success {
+          background: var(--success-bg);
+          color: var(--success);
+        }
+
+        .chip-btn.success:hover {
+          background: #D1F3E2;
+          box-shadow: 0 2px 8px rgba(31, 174, 110, 0.18);
         }
 
         hr {
@@ -1386,8 +1404,11 @@
 
           <div class="card" id="dash-attendance-card">
             <div class="attendance-row">
-              <div class="status"><span class="status-dot"></span>Checked In at 09:15 AM</div>
-              <button class="chip-btn danger">Check Out</button>
+              <div class="status" id="dash-attendance-status"><span class="status-dot" id="dash-status-dot"></span><span id="dash-status-text">Checked In</span></div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="chip-btn success" id="btn-check-in">Check In</button>
+                <button class="chip-btn danger" id="btn-check-out">Check Out</button>
+              </div>
             </div>
             <hr />
             <div class="stats-row">
@@ -6165,6 +6186,11 @@
           color: var(--success);
         }
 
+        .badge.danger {
+          background: var(--danger-bg);
+          color: var(--danger);
+        }
+
         .btn {
           border: none;
           border-radius: 14px;
@@ -6390,7 +6416,7 @@
           </div>
 
           <div class="card status-card">
-            <div class="status-row"><b>Employment Status</b><span class="badge success">Active</span></div>
+            <div class="status-row"><b>Employment Status</b><span class="badge success" id="profile-emp-status">Active</span></div>
           </div>
 
           <!-- JOB INFORMATION CARD -->
@@ -10046,6 +10072,9 @@
           closeMobileMenu();
         }
         window.loadScreen = loadScreen;
+        window.EMPLOYMENT_STATUS = 'Active';
+        window.CHECKED_IN = true;
+        window.ATTENDANCE_STATUS = 'Checked In';
 
         var frame = document.getElementById('frame');
         frame.addEventListener('load', function () {
@@ -10195,8 +10224,59 @@
                 transform: none !important;
                 cursor: default !important;
               }
+              .chip-btn.success:hover {
+                background: #D1F3E2 !important;
+                box-shadow: 0 2px 8px rgba(31, 174, 110, 0.22) !important;
+                transform: translateY(-1px) !important;
+              }
+              .chip-btn.danger:hover {
+                background: #FDD8DC !important;
+                box-shadow: 0 2px 8px rgba(229, 72, 77, 0.22) !important;
+                transform: translateY(-1px) !important;
+              }
+              .chip-btn:active {
+                transform: translateY(0) !important;
+              }
             `;
             if (doc.head) doc.head.appendChild(dashNoGlowStyle);
+
+            var statusDot = doc.getElementById('dash-status-dot');
+            var statusText = doc.getElementById('dash-status-text');
+            var btnCheckIn = doc.getElementById('btn-check-in');
+            var btnCheckOut = doc.getElementById('btn-check-out');
+
+            function syncDashAttendanceUI() {
+              if (statusDot) {
+                statusDot.style.background = window.CHECKED_IN ? 'var(--success, #1FAE6E)' : 'var(--danger, #E5484D)';
+              }
+              if (statusText) {
+                statusText.textContent = window.CHECKED_IN ? (window.ATTENDANCE_STATUS || 'Checked In') : 'Checked Out';
+              }
+            }
+            syncDashAttendanceUI();
+
+            if (btnCheckIn) {
+              btnCheckIn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.CHECKED_IN = true;
+                window.EMPLOYMENT_STATUS = 'Active';
+                window.ATTENDANCE_STATUS = 'Checked In';
+                syncDashAttendanceUI();
+              };
+            }
+
+            if (btnCheckOut) {
+              btnCheckOut.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.CHECKED_IN = false;
+                window.EMPLOYMENT_STATUS = 'Inactive';
+                window.ATTENDANCE_STATUS = 'Checked Out';
+                syncDashAttendanceUI();
+                loadScreen('tpl-MyProfile');
+              };
+            }
           }
 
           if (currentTpl === 'tpl-MyProfile') {
@@ -10212,8 +10292,35 @@
                 cursor: default !important;
                 background: var(--surface, #FFFFFF) !important;
               }
+              .badge.danger {
+                background: var(--danger-bg, #FEECEE) !important;
+                color: var(--danger, #E5484D) !important;
+              }
+              .badge.success {
+                background: var(--success-bg, #E3F8EE) !important;
+                color: var(--success, #1FAE6E) !important;
+              }
             `;
             if (doc.head) doc.head.appendChild(profileNoGlowStyle);
+
+            var empStatusEl = doc.getElementById('profile-emp-status');
+            if (!empStatusEl) {
+              var badges = doc.querySelectorAll('.status-card .badge, .status-row .badge');
+              if (badges.length > 0) empStatusEl = badges[0];
+            }
+            if (empStatusEl) {
+              var currentStatus = window.EMPLOYMENT_STATUS || 'Active';
+              empStatusEl.textContent = currentStatus;
+              if (currentStatus === 'Active') {
+                empStatusEl.className = 'badge success';
+                empStatusEl.style.background = 'var(--success-bg, #E3F8EE)';
+                empStatusEl.style.color = 'var(--success, #1FAE6E)';
+              } else {
+                empStatusEl.className = 'badge danger';
+                empStatusEl.style.background = 'var(--danger-bg, #FEECEE)';
+                empStatusEl.style.color = 'var(--danger, #E5484D)';
+              }
+            }
           }
 
           var tabs = doc.querySelectorAll('.bottom-nav .tab');

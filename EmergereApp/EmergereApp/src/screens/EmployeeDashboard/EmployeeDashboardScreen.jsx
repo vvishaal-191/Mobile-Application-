@@ -43,13 +43,27 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
 
   const go = (screen) => navigation && navigation.navigate(screen);
 
+  const handleCheckIn = () => {
+    setCheckedIn(true);
+  };
+
+  const handleCheckOut = () => {
+    setCheckedIn(false);
+    navigation && navigation.navigate('MyProfile', { employmentStatus: 'Inactive' });
+  };
+
   useEffect(() => {
-    if (route && route.params && route.params.newStatus) {
-      const { requestId, newStatus } = route.params;
-      const tone = newStatus === 'Approved' ? 'success' : 'danger';
-      setRequests((prev) =>
-        prev.map((req) => (req.id === (requestId || '1') ? { ...req, status: newStatus, tone } : req))
-      );
+    if (route && route.params) {
+      if (route.params.newStatus) {
+        const { requestId, newStatus } = route.params;
+        const tone = newStatus === 'Approved' ? 'success' : 'danger';
+        setRequests((prev) =>
+          prev.map((req) => (req.id === (requestId || '1') ? { ...req, status: newStatus, tone } : req))
+        );
+      }
+      if (route.params.checkedIn !== undefined) {
+        setCheckedIn(route.params.checkedIn);
+      }
     }
   }, [route?.params]);
 
@@ -90,17 +104,25 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                 ]}
               />
               <Text style={styles.attendanceText}>
-                {checkedIn ? 'Checked In at 09:15 AM' : 'Not Checked In'}
+                {checkedIn ? 'Checked In' : 'Checked Out'}
               </Text>
             </View>
-            <TouchableOpacity
-              style={styles.checkOutBtn}
-              onPress={() => setCheckedIn(!checkedIn)}
-            >
-              <Text style={styles.checkOutText}>
-                {checkedIn ? 'Check Out' : 'Check In'}
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.btnGroup}>
+              <TouchableOpacity
+                style={styles.checkInBtn}
+                onPress={handleCheckIn}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.checkInText}>Check In</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.checkOutBtn}
+                onPress={handleCheckOut}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.checkOutText}>Check Out</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.divider} />
           <View style={styles.statsRow}>

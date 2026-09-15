@@ -9,8 +9,11 @@
 .attendance-row{display:flex;justify-content:space-between;align-items:center;}
 .status{display:flex;align-items:center;gap:8px;font-weight:700;}
 .status-dot{width:10px;height:10px;border-radius:5px;background:var(--success);}
-.chip-btn{border:none;border-radius:999px;padding:8px 14px;font-weight:700;}
+.chip-btn{border:none;border-radius:999px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s ease;}
 .chip-btn.danger{background:var(--danger-bg);color:var(--danger);}
+.chip-btn.danger:hover{background:#FDD8DC;box-shadow:0 2px 8px rgba(229,72,77,0.18);}
+.chip-btn.success{background:var(--success-bg);color:var(--success);}
+.chip-btn.success:hover{background:#D1F3E2;box-shadow:0 2px 8px rgba(31,174,110,0.18);}
 hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .stats-row{display:flex;justify-content:space-between;}
 .stats-row small{color:var(--text-secondary);}

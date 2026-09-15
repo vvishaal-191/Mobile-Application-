@@ -20,8 +20,11 @@
 
     <div class="card">
       <div class="attendance-row">
-        <div class="status"><span class="status-dot"></span>Checked In at 09:15 AM</div>
-        <button class="chip-btn danger">Check Out</button>
+        <div class="status" id="dash-attendance-status"><span class="status-dot" id="dash-status-dot"></span><span id="dash-status-text">Checked In</span></div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="chip-btn success" id="btn-check-in">Check In</button>
+          <button class="chip-btn danger" id="btn-check-out">Check Out</button>
+        </div>
       </div>
       <hr/>
       <div class="stats-row">
