@@ -77,9 +77,6 @@ export default function MyAttendanceScreen({ navigation }) {
             <Text style={styles.filterActiveText}>{monthLabel}</Text>
             <Feather name="chevron-down" size={14} color="#2F6BFF" style={{ marginLeft: 4 }} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterPill}>
-            <Text style={styles.filterText}>All Statuses</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.legendRow}>
