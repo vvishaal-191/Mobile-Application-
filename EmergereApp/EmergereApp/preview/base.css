@@ -33,6 +33,7 @@ body{
 }
 .header h1{font-size:22px; font-weight:800; color:var(--text); margin:0;}
 .header p{font-size:13px; color:var(--text-secondary); margin:2px 0 0;}
+.mini-logo{width:26px; height:26px; object-fit:contain; border-radius:4px;}
 
 /* Card */
 .card, .request-card, .req-card, .member-card, .team-card, .employee-card, .hol-card, .stat-card, .action-card, .item-card {

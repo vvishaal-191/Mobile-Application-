@@ -1,6 +1,7 @@
-.mini-logo{width:26px;height:26px;}
-.header{align-items:center;}
-.header p{margin:2px 0 0;}
+.mini-logo{width:26px;height:26px;object-fit:contain;border-radius:4px;margin-top:1px;flex-shrink:0;}
+.header{align-items:flex-start;}
+.header h1{line-height:1.2;margin:0;}
+.header p{margin:2px 0 0;line-height:1.2;}
 .greeting-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0 20px;margin:16px 0;}
 .greeting-row h2{margin:0;font-size:22px;}
 .date{color:var(--text-secondary);margin:4px 0 0;}

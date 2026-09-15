@@ -96,7 +96,7 @@ visually in sync:
 8. Holiday Calendar
 9. Notifications
 10. My Profile
-11. Manager Dashboard ("Manager Hub")
+11. Manager Dashboard ("Manager Dashboard")
 12. Team Attendance
 13. Leave Approvals
 14. Leave Approval Detail

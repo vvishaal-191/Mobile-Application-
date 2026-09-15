@@ -9,13 +9,19 @@ export default StyleSheet.create({
     paddingTop: 60,
     justifyContent: 'center',
   },
+  logo: {
+    width: 72,
+    height: 72,
+    borderRadius: 18,
+    marginBottom: 24,
+  },
   logoBadge: {
     width: 64,
     height: 64,
     borderRadius: 20,
     backgroundColor: '#D3D3D3',
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     marginBottom: 24,
   },
   logoIcon: {

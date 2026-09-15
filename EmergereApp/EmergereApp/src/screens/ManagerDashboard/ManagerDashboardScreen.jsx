@@ -85,10 +85,10 @@ export default function ManagerDashboardScreen({ navigation, route }) {
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerRow}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
             <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
             <View>
-              <Text style={styles.headerTitle}>Manager Hub</Text>
+              <Text style={styles.headerTitle}>Manager Dashboard</Text>
               <Text style={styles.headerSubtitle}>Emergere IT Solutions</Text>
             </View>
           </View>

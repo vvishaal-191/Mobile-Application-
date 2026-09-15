@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
+  Image,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import styles from './LoginScreen.styles';
@@ -67,9 +68,11 @@ export default function LoginScreen({ navigation }) {
     >
       <StatusBar barStyle="light-content" backgroundColor="#0D47B5" />
 
-      <View style={styles.logoBadge}>
-        <View style={styles.logoIcon} />
-      </View>
+      <Image
+        source={require('../../../assets/emergere-logo.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
 
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Log in to manage leaves & attendance</Text>

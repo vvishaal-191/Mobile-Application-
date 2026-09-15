@@ -3,7 +3,7 @@
 An HRMS mobile application built with React Native and HTML preview interface.
 
 ## Features
-- Manager Hub & Employee Dashboard
+- Manager Dashboard & Employee Dashboard
 - Leave Approvals & Permission Approvals
 - Team Attendance & My Attendance Tracking
 - Holiday Calendar
