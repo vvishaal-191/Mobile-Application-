@@ -43,6 +43,7 @@ export default StyleSheet.create({
     marginBottom: spacing.lg,
   },
   greeting: { fontSize: 24, fontWeight: '800', color: colors.textPrimary },
+  roleSubtitle: { fontSize: 13, fontWeight: '500', color: colors.textSecondary, marginTop: 4 },
   date: { color: colors.textSecondary, marginTop: 4 },
   attendanceCard: { marginHorizontal: spacing.lg, marginBottom: spacing.lg },
   attendanceRow: {

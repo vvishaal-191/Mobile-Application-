@@ -1186,6 +1186,14 @@
           font-weight: 800;
         }
 
+        .dash-role-meta {
+          padding: 0 20px;
+          color: var(--text-secondary);
+          margin: 4px 0 0;
+          font-size: 13px;
+          font-weight: 500;
+        }
+
         .date {
           padding: 0 20px;
           color: var(--text-secondary);
@@ -1352,7 +1360,8 @@
                 class="dot"></span></div>
           </div>
           <p class="company">IT Solutions Pvt. Ltd.</p>
-          <h1 class="greeting">Hello, Vikram Rathore!</h1>
+          <h1 class="greeting" id="dash-greeting">Hello, Priya Sharma</h1>
+          <p class="dash-role-meta" id="dash-role-meta"><span id="dash-role-text">Senior Software Engineer</span> &bull; <span id="dash-id-text">EMP-2024-0156</span></p>
           <p class="date">Thu, Sep 03 2026</p>
 
           <div class="card" id="dash-attendance-card">
@@ -6504,6 +6513,19 @@
         }
 
         function cancelProfileEdit() {
+          const p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
+          if (p) {
+            if (document.getElementById('edit-profile-name') && p.name) document.getElementById('edit-profile-name').value = p.name;
+            if (document.getElementById('edit-profile-role') && p.role) document.getElementById('edit-profile-role').value = p.role;
+            if (document.getElementById('edit-profile-id') && p.employeeId) document.getElementById('edit-profile-id').value = p.employeeId;
+            if (document.getElementById('input-dept') && p.department) document.getElementById('input-dept').value = p.department;
+            if (document.getElementById('input-team') && p.team) document.getElementById('input-team').value = p.team;
+            if (document.getElementById('input-manager') && p.reportingManager) document.getElementById('input-manager').value = p.reportingManager;
+            if (document.getElementById('input-location') && p.workLocation) document.getElementById('input-location').value = p.workLocation;
+            if (document.getElementById('input-date') && p.joiningDate) document.getElementById('input-date').value = p.joiningDate;
+            if (document.getElementById('input-email') && p.email) document.getElementById('input-email').value = p.email;
+            if (document.getElementById('input-phone') && p.phone) document.getElementById('input-phone').value = p.phone;
+          }
           document.getElementById('profile-view-mode').style.display = 'block';
           document.getElementById('profile-edit-mode').style.display = 'none';
           document.getElementById('job-read-mode').style.display = 'block';
@@ -6550,7 +6572,71 @@
           document.getElementById('val-email').textContent = email;
           document.getElementById('val-phone').textContent = phone;
 
-          cancelProfileEdit();
+          const profileData = {
+            name: name,
+            role: role,
+            employeeId: id,
+            initials: initials,
+            department: dept,
+            team: team,
+            reportingManager: mgr,
+            workLocation: loc,
+            joiningDate: date,
+            email: email,
+            phone: phone
+          };
+
+          window.USER_PROFILE = profileData;
+          if (window.parent) {
+            window.parent.USER_PROFILE = profileData;
+            if (window.parent.PERSON_DATA && window.parent.PERSON_DATA['priya']) {
+              window.parent.PERSON_DATA['priya'].name = name;
+              window.parent.PERSON_DATA['priya'].role = role;
+              window.parent.PERSON_DATA['priya'].empId = id;
+              window.parent.PERSON_DATA['priya'].initials = initials;
+              window.parent.PERSON_DATA['priya'].contact = phone;
+            }
+          }
+
+          try {
+            sessionStorage.setItem('USER_PROFILE', JSON.stringify(profileData));
+          } catch(e) {}
+
+          var pDoc = (window.parent && window.parent.document) || document;
+          var empTpl = pDoc.getElementById('tpl-EmployeeDashboard');
+          if (empTpl) {
+            var tplHtml = empTpl.innerHTML;
+            tplHtml = tplHtml.replace(/<h1 class="greeting"[^>]*>[\s\S]*?<\/h1>/i, '<h1 class="greeting" id="dash-greeting">Hello, ' + name + '</h1>');
+            if (tplHtml.indexOf('dash-role-meta') !== -1) {
+              tplHtml = tplHtml.replace(/<p class="dash-role-meta"[^>]*>[\s\S]*?<\/p>/i, '<p class="dash-role-meta" id="dash-role-meta"><span id="dash-role-text">' + role + '</span> &bull; <span id="dash-id-text">' + id + '</span></p>');
+            } else {
+              tplHtml = tplHtml.replace(/(<h1 class="greeting"[^>]*>[\s\S]*?<\/h1>)/i, '$1\n          <p class="dash-role-meta" id="dash-role-meta"><span id="dash-role-text">' + role + '</span> &bull; <span id="dash-id-text">' + id + '</span></p>');
+            }
+            empTpl.innerHTML = tplHtml;
+          }
+
+          var profTpl = pDoc.getElementById('tpl-MyProfile');
+          if (profTpl) {
+            var pHtml = profTpl.innerHTML;
+            pHtml = pHtml.replace(/<h2 id="profile-name-display"[^>]*>[\s\S]*?<\/h2>/i, '<h2 id="profile-name-display">' + name + '</h2>');
+            pHtml = pHtml.replace(/<p class="role" id="profile-role-display"[^>]*>[\s\S]*?<\/p>/i, '<p class="role" id="profile-role-display">' + role + '</p>');
+            pHtml = pHtml.replace(/<span class="id-chip" id="profile-id-display"[^>]*>[\s\S]*?<\/span>/i, '<span class="id-chip" id="profile-id-display">' + id + '</span>');
+            pHtml = pHtml.replace(/<div class="avatar big" id="profile-avatar-display"[^>]*>[\s\S]*?<\/div>/i, '<div class="avatar big" id="profile-avatar-display">' + initials + '</div>');
+            pHtml = pHtml.replace(/id="edit-profile-name" value="[^"]*"/i, 'id="edit-profile-name" value="' + name.replace(/"/g, '&quot;') + '"');
+            pHtml = pHtml.replace(/id="edit-profile-role" value="[^"]*"/i, 'id="edit-profile-role" value="' + role.replace(/"/g, '&quot;') + '"');
+            pHtml = pHtml.replace(/id="edit-profile-id" value="[^"]*"/i, 'id="edit-profile-id" value="' + id.replace(/"/g, '&quot;') + '"');
+            profTpl.innerHTML = pHtml;
+          }
+
+          document.getElementById('profile-view-mode').style.display = 'block';
+          document.getElementById('profile-edit-mode').style.display = 'none';
+          document.getElementById('job-read-mode').style.display = 'block';
+          document.getElementById('job-edit-mode').style.display = 'none';
+          document.getElementById('contact-read-mode').style.display = 'block';
+          document.getElementById('contact-edit-mode').style.display = 'none';
+
+          document.getElementById('profile-edit-btn-wrap').style.display = 'block';
+          document.getElementById('profile-save-cancel-wrap').style.display = 'none';
         }
       </script>
     </body>
@@ -9998,6 +10084,28 @@
   <script>
     var currentTpl = 'tpl-Login';
 
+    // ── Shared User Profile State ──────────────────────────────────
+    var savedProfile = null;
+    try {
+      savedProfile = JSON.parse(sessionStorage.getItem('USER_PROFILE'));
+    } catch (e) {}
+
+    if (!window.USER_PROFILE) {
+      window.USER_PROFILE = savedProfile || {
+        name: 'Priya Sharma',
+        role: 'Senior Software Engineer',
+        employeeId: 'EMP-2024-0156',
+        initials: 'PS',
+        department: 'IT',
+        team: 'Development',
+        reportingManager: 'Rahul Sharma',
+        workLocation: 'Bangalore',
+        joiningDate: 'Mar 15, 2022',
+        email: 'priya.sharma@emergere.com',
+        phone: '+91 98765 43210'
+      };
+    }
+
     function toggleMobileMenu() {
       var sb = document.getElementById('sidebar');
       var ov = document.getElementById('sidebar-overlay');
@@ -10271,6 +10379,26 @@
       }
 
       if (currentTpl === 'tpl-EmployeeDashboard') {
+        var prof = window.USER_PROFILE;
+        if (prof) {
+          var greetingEl = doc.getElementById('dash-greeting') || doc.querySelector('.greeting');
+          if (greetingEl && prof.name) {
+            greetingEl.textContent = 'Hello, ' + prof.name;
+          }
+          var roleTextEl = doc.getElementById('dash-role-text');
+          var idTextEl = doc.getElementById('dash-id-text');
+          if (roleTextEl && prof.role) roleTextEl.textContent = prof.role;
+          if (idTextEl && prof.employeeId) idTextEl.textContent = prof.employeeId;
+          if (!roleTextEl && greetingEl) {
+            var roleMeta = doc.createElement('p');
+            roleMeta.className = 'dash-role-meta';
+            roleMeta.id = 'dash-role-meta';
+            roleMeta.style.cssText = 'padding:0 20px; color:var(--text-secondary); margin:4px 0 0; font-size:13px; font-weight:500;';
+            roleMeta.innerHTML = '<span id="dash-role-text">' + (prof.role || 'Senior Software Engineer') + '</span> &bull; <span id="dash-id-text">' + (prof.employeeId || 'EMP-2024-0156') + '</span>';
+            greetingEl.insertAdjacentElement('afterend', roleMeta);
+          }
+        }
+
         var dashNoGlowStyle = doc.createElement('style');
         dashNoGlowStyle.textContent = `
           #dash-attendance-card, #dash-attendance-card:hover,
@@ -10359,6 +10487,33 @@
           }
         `;
         if (doc.head) doc.head.appendChild(profileNoGlowStyle);
+
+        var prof = window.USER_PROFILE;
+        if (prof) {
+          if (doc.getElementById('profile-name-display') && prof.name) doc.getElementById('profile-name-display').textContent = prof.name;
+          if (doc.getElementById('profile-role-display') && prof.role) doc.getElementById('profile-role-display').textContent = prof.role;
+          if (doc.getElementById('profile-id-display') && prof.employeeId) doc.getElementById('profile-id-display').textContent = prof.employeeId;
+          if (doc.getElementById('profile-avatar-display') && prof.initials) doc.getElementById('profile-avatar-display').textContent = prof.initials;
+          if (doc.getElementById('edit-profile-name') && prof.name) doc.getElementById('edit-profile-name').value = prof.name;
+          if (doc.getElementById('edit-profile-role') && prof.role) doc.getElementById('edit-profile-role').value = prof.role;
+          if (doc.getElementById('edit-profile-id') && prof.employeeId) doc.getElementById('edit-profile-id').value = prof.employeeId;
+
+          if (doc.getElementById('val-dept') && prof.department) doc.getElementById('val-dept').textContent = prof.department;
+          if (doc.getElementById('val-team') && prof.team) doc.getElementById('val-team').textContent = prof.team;
+          if (doc.getElementById('val-manager') && prof.reportingManager) doc.getElementById('val-manager').textContent = prof.reportingManager;
+          if (doc.getElementById('val-location') && prof.workLocation) doc.getElementById('val-location').textContent = prof.workLocation;
+          if (doc.getElementById('val-date') && prof.joiningDate) doc.getElementById('val-date').textContent = prof.joiningDate;
+          if (doc.getElementById('input-dept') && prof.department) doc.getElementById('input-dept').value = prof.department;
+          if (doc.getElementById('input-team') && prof.team) doc.getElementById('input-team').value = prof.team;
+          if (doc.getElementById('input-manager') && prof.reportingManager) doc.getElementById('input-manager').value = prof.reportingManager;
+          if (doc.getElementById('input-location') && prof.workLocation) doc.getElementById('input-location').value = prof.workLocation;
+          if (doc.getElementById('input-date') && prof.joiningDate) doc.getElementById('input-date').value = prof.joiningDate;
+
+          if (doc.getElementById('val-email') && prof.email) doc.getElementById('val-email').textContent = prof.email;
+          if (doc.getElementById('val-phone') && prof.phone) doc.getElementById('val-phone').textContent = prof.phone;
+          if (doc.getElementById('input-email') && prof.email) doc.getElementById('input-email').value = prof.email;
+          if (doc.getElementById('input-phone') && prof.phone) doc.getElementById('input-phone').value = prof.phone;
+        }
 
         var empStatusEl = doc.getElementById('profile-emp-status');
         if (!empStatusEl) {

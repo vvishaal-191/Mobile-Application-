@@ -102,6 +102,19 @@ function enableProfileEdit() {
 }
 
 function cancelProfileEdit() {
+  const p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
+  if (p) {
+    if (document.getElementById('edit-profile-name') && p.name) document.getElementById('edit-profile-name').value = p.name;
+    if (document.getElementById('edit-profile-role') && p.role) document.getElementById('edit-profile-role').value = p.role;
+    if (document.getElementById('edit-profile-id') && p.employeeId) document.getElementById('edit-profile-id').value = p.employeeId;
+    if (document.getElementById('input-dept') && p.department) document.getElementById('input-dept').value = p.department;
+    if (document.getElementById('input-team') && p.team) document.getElementById('input-team').value = p.team;
+    if (document.getElementById('input-manager') && p.reportingManager) document.getElementById('input-manager').value = p.reportingManager;
+    if (document.getElementById('input-location') && p.workLocation) document.getElementById('input-location').value = p.workLocation;
+    if (document.getElementById('input-date') && p.joiningDate) document.getElementById('input-date').value = p.joiningDate;
+    if (document.getElementById('input-email') && p.email) document.getElementById('input-email').value = p.email;
+    if (document.getElementById('input-phone') && p.phone) document.getElementById('input-phone').value = p.phone;
+  }
   document.getElementById('profile-view-mode').style.display = 'block';
   document.getElementById('profile-edit-mode').style.display = 'none';
   document.getElementById('job-read-mode').style.display = 'block';
@@ -148,7 +161,85 @@ function saveProfileEdit() {
   document.getElementById('val-email').textContent = email;
   document.getElementById('val-phone').textContent = phone;
 
+  const profileData = {
+    name: name,
+    role: role,
+    employeeId: id,
+    initials: initials,
+    department: dept,
+    team: team,
+    reportingManager: mgr,
+    workLocation: loc,
+    joiningDate: date,
+    email: email,
+    phone: phone
+  };
+
+  window.USER_PROFILE = profileData;
+  if (window.parent) {
+    window.parent.USER_PROFILE = profileData;
+  }
+  try {
+    sessionStorage.setItem('USER_PROFILE', JSON.stringify(profileData));
+  } catch(e) {}
+
   cancelProfileEdit();
 }
+
+(function loadSavedProfile() {
+  let p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
+  if (!p) {
+    try {
+      const stored = sessionStorage.getItem('USER_PROFILE');
+      if (stored) p = JSON.parse(stored);
+    } catch(e) {}
+  }
+  if (p) {
+    window.USER_PROFILE = p;
+    if (p.name) {
+      if (document.getElementById('profile-name-display')) document.getElementById('profile-name-display').textContent = p.name;
+      if (document.getElementById('edit-profile-name')) document.getElementById('edit-profile-name').value = p.name;
+    }
+    if (p.role) {
+      if (document.getElementById('profile-role-display')) document.getElementById('profile-role-display').textContent = p.role;
+      if (document.getElementById('edit-profile-role')) document.getElementById('edit-profile-role').value = p.role;
+    }
+    if (p.employeeId) {
+      if (document.getElementById('profile-id-display')) document.getElementById('profile-id-display').textContent = p.employeeId;
+      if (document.getElementById('edit-profile-id')) document.getElementById('edit-profile-id').value = p.employeeId;
+    }
+    if (p.initials && document.getElementById('profile-avatar-display')) {
+      document.getElementById('profile-avatar-display').textContent = p.initials;
+    }
+    if (p.department) {
+      if (document.getElementById('val-dept')) document.getElementById('val-dept').textContent = p.department;
+      if (document.getElementById('input-dept')) document.getElementById('input-dept').value = p.department;
+    }
+    if (p.team) {
+      if (document.getElementById('val-team')) document.getElementById('val-team').textContent = p.team;
+      if (document.getElementById('input-team')) document.getElementById('input-team').value = p.team;
+    }
+    if (p.reportingManager) {
+      if (document.getElementById('val-manager')) document.getElementById('val-manager').textContent = p.reportingManager;
+      if (document.getElementById('input-manager')) document.getElementById('input-manager').value = p.reportingManager;
+    }
+    if (p.workLocation) {
+      if (document.getElementById('val-location')) document.getElementById('val-location').textContent = p.workLocation;
+      if (document.getElementById('input-location')) document.getElementById('input-location').value = p.workLocation;
+    }
+    if (p.joiningDate) {
+      if (document.getElementById('val-date')) document.getElementById('val-date').textContent = p.joiningDate;
+      if (document.getElementById('input-date')) document.getElementById('input-date').value = p.joiningDate;
+    }
+    if (p.email) {
+      if (document.getElementById('val-email')) document.getElementById('val-email').textContent = p.email;
+      if (document.getElementById('input-email')) document.getElementById('input-email').value = p.email;
+    }
+    if (p.phone) {
+      if (document.getElementById('val-phone')) document.getElementById('val-phone').textContent = p.phone;
+      if (document.getElementById('input-phone')) document.getElementById('input-phone').value = p.phone;
+    }
+  }
+})();
 </script>
 </body></html>

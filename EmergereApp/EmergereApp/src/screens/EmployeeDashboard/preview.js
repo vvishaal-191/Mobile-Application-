@@ -51,3 +51,23 @@ if (btnCheckOut) {
     }
   });
 }
+
+(function syncUserProfile() {
+  let prof = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
+  if (!prof) {
+    try {
+      const stored = sessionStorage.getItem('USER_PROFILE');
+      if (stored) prof = JSON.parse(stored);
+    } catch(e) {}
+  }
+  if (prof) {
+    const greetingEl = document.getElementById('dash-greeting') || document.querySelector('.greeting');
+    if (greetingEl && prof.name) {
+      greetingEl.textContent = 'Hello, ' + prof.name;
+    }
+    const roleTextEl = document.getElementById('dash-role-text');
+    const idTextEl = document.getElementById('dash-id-text');
+    if (roleTextEl && prof.role) roleTextEl.textContent = prof.role;
+    if (idTextEl && prof.employeeId) idTextEl.textContent = prof.employeeId;
+  }
+})();

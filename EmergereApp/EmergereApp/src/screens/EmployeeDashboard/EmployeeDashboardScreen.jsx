@@ -40,6 +40,13 @@ const INITIAL_REQUESTS = [
 export default function EmployeeDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
   const [checkedIn, setCheckedIn] = useState(true);
+  const [userProfile, setUserProfile] = useState(
+    (typeof global !== 'undefined' && global.USER_PROFILE) || {
+      name: 'Priya Sharma',
+      role: 'Senior Software Engineer',
+      employeeId: 'EMP-2024-0156',
+    }
+  );
 
   const go = (screen) => {
     if (screen === 'Profile' || screen === 'More' || screen === 'MyProfile') {
@@ -68,6 +75,9 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
   };
 
   useEffect(() => {
+    if (typeof global !== 'undefined' && global.USER_PROFILE) {
+      setUserProfile(global.USER_PROFILE);
+    }
     if (route && route.params) {
       if (route.params.newStatus) {
         const { requestId, newStatus } = route.params;
@@ -78,6 +88,9 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
       }
       if (route.params.checkedIn !== undefined) {
         setCheckedIn(route.params.checkedIn);
+      }
+      if (route.params.userProfile) {
+        setUserProfile(route.params.userProfile);
       }
     }
   }, [route?.params]);
@@ -105,7 +118,8 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         <Text style={styles.companyName}>IT Solutions Pvt. Ltd.</Text>
 
         <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>Hello, Priya Sharma</Text>
+          <Text style={styles.greeting}>Hello, {userProfile.name || 'Priya Sharma'}</Text>
+          <Text style={styles.roleSubtitle}>{userProfile.role || 'Senior Software Engineer'} • {userProfile.employeeId || 'EMP-2024-0156'}</Text>
           <Text style={styles.date}>Thu, Sep 03 2026</Text>
         </View>
 

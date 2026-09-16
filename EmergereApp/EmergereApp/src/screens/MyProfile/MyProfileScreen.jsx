@@ -23,25 +23,53 @@ export default function MyProfileScreen({ navigation, route }) {
     } else if (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS) {
       setEmploymentStatus(global.EMPLOYMENT_STATUS);
     }
+    if (typeof global !== 'undefined' && global.USER_PROFILE) {
+      const p = global.USER_PROFILE;
+      setProfileHeader({
+        name: p.name || 'Priya Sharma',
+        role: p.role || 'Senior Software Engineer',
+        employeeId: p.employeeId || 'EMP-2024-0156',
+      });
+      setJobInfo({
+        department: p.department || 'IT',
+        team: p.team || 'Development',
+        reportingManager: p.reportingManager || 'Rahul Sharma',
+        workLocation: p.workLocation || 'Bangalore',
+        joiningDate: p.joiningDate || 'Mar 15, 2022',
+      });
+      setContactInfo({
+        email: p.email || 'priya.sharma@emergere.com',
+        phone: p.phone || '+91 98765 43210',
+      });
+    }
   }, [route?.params?.employmentStatus]);
 
-  const [profileHeader, setProfileHeader] = useState({
-    name: 'Priya Sharma',
-    role: 'Senior Software Engineer',
-    employeeId: 'EMP-2024-0156',
+  const [profileHeader, setProfileHeader] = useState(() => {
+    const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+    return {
+      name: p.name || 'Priya Sharma',
+      role: p.role || 'Senior Software Engineer',
+      employeeId: p.employeeId || 'EMP-2024-0156',
+    };
   });
 
-  const [jobInfo, setJobInfo] = useState({
-    department: 'IT',
-    team: 'Development',
-    reportingManager: 'Rahul Sharma',
-    workLocation: 'Bangalore',
-    joiningDate: 'Mar 15, 2022',
+  const [jobInfo, setJobInfo] = useState(() => {
+    const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+    return {
+      department: p.department || 'IT',
+      team: p.team || 'Development',
+      reportingManager: p.reportingManager || 'Rahul Sharma',
+      workLocation: p.workLocation || 'Bangalore',
+      joiningDate: p.joiningDate || 'Mar 15, 2022',
+    };
   });
 
-  const [contactInfo, setContactInfo] = useState({
-    email: 'priya.sharma@emergere.com',
-    phone: '+91 98765 43210',
+  const [contactInfo, setContactInfo] = useState(() => {
+    const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+    return {
+      email: p.email || 'priya.sharma@emergere.com',
+      phone: p.phone || '+91 98765 43210',
+    };
   });
 
   const [editProfileHeaderForm, setEditProfileHeaderForm] = useState({ ...profileHeader });
@@ -69,6 +97,24 @@ export default function MyProfileScreen({ navigation, route }) {
     setJobInfo({ ...editJobForm });
     setContactInfo({ ...editContactForm });
     setIsEditing(false);
+
+    const updatedProfile = {
+      name: editProfileHeaderForm.name,
+      role: editProfileHeaderForm.role,
+      employeeId: editProfileHeaderForm.employeeId,
+      initials: getInitials(editProfileHeaderForm.name),
+      department: editJobForm.department,
+      team: editJobForm.team,
+      reportingManager: editJobForm.reportingManager,
+      workLocation: editJobForm.workLocation,
+      joiningDate: editJobForm.joiningDate,
+      email: editContactForm.email,
+      phone: editContactForm.phone,
+    };
+
+    if (typeof global !== 'undefined') {
+      global.USER_PROFILE = updatedProfile;
+    }
   };
 
   const handleCancelPress = () => {
