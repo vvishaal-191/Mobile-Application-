@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <title>Emergere App — Screen Previews</title>
   <style>
     * {
@@ -39,6 +40,56 @@
       color: #fff;
       font-size: 16px;
       margin: 4px 8px 16px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 4px 8px 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2A3447;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 4px 8px 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2A3447;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 6px;
     }
 
     .sidebar-brand {
@@ -321,23 +372,13 @@
           color: #FFFFFF;
         }
 
-        .logo-badge {
-          width: 64px;
-          height: 64px;
-          border-radius: 20px;
-          background: #D3D3D3;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        .login-logo {
+          width: 72px;
+          height: 72px;
+          object-fit: contain;
           margin-bottom: 24px;
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        }
-
-        .logo-icon {
-          width: 32px;
-          height: 32px;
-          background: #0D47B5;
-          border-radius: 8px;
+          border-radius: 18px;
+          filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
         }
 
         h1.welcome {
@@ -759,6 +800,13 @@
             loadScreen('tpl-EmployeeDashboard');
           }
         }
+      </script>
+      <script>
+        // Screen-specific preview JS
+        document.addEventListener('DOMContentLoaded', () => {
+          console.log('Login preview ready');
+        });
+
       </script>
     </body>
 
@@ -1308,12 +1356,12 @@
           transform: translateY(-2px);
         }
 
-        .request-card {
+        .card.request-card {
           transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
           cursor: pointer;
         }
 
-        .request-card:hover {
+        .card.request-card:hover {
           border-color: var(--primary);
           box-shadow: 0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);
           transform: translateY(-2px);
@@ -1416,7 +1464,7 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card" id="dash-leave-balance-card">
             <h3>Leave Balances</h3>
             <div class="balance">
               <div class="balance-head"><span>Casual Leave</span><span class="value">8/12 Days</span></div>
@@ -1562,6 +1610,7 @@
           var pWin = (winRef.parent && winRef.parent !== winRef) ? winRef.parent : winRef;
           var cardId = reqId || card.id;
 
+          // 1. Remove from dynamic leave requests
           if (pWin.EMP_LEAVE_REQUESTS) {
             pWin.EMP_LEAVE_REQUESTS = pWin.EMP_LEAVE_REQUESTS.filter(function(r) {
               return String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id;
@@ -1573,11 +1622,13 @@
             });
           }
 
+          // 2. Remove from permission state if applicable
           if (card.id === 'emp-dash-perm-card' || cardId === 'perm') {
             if (pWin.PERM_STATE) pWin.PERM_STATE = [];
             if (winRef.PERM_STATE) winRef.PERM_STATE = [];
           }
 
+          // 3. Mark card ID as deleted so tab navigation preserves deletion
           if (card.id) {
             pWin.DELETED_REQUEST_IDS = pWin.DELETED_REQUEST_IDS || [];
             if (pWin.DELETED_REQUEST_IDS.indexOf(card.id) === -1) {
@@ -1589,6 +1640,7 @@
             }
           }
 
+          // 4. Smooth fade/collapse animation & remove
           card.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
           card.style.opacity = '0';
           card.style.transform = 'scale(0.92) translateY(-8px)';
@@ -1950,6 +2002,8 @@
         .mini-logo {
           width: 26px;
           height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .month {
@@ -2416,15 +2470,6 @@
           border-radius: 16px;
           padding: 16px;
           margin: 0 20px 16px;
-          transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-        }
-
-        .card:hover,
-        .hol-card:hover {
-          border-color: var(--primary);
-          box-shadow: 0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);
-          transform: translateY(-2px);
-          cursor: pointer;
         }
 
         /* Badge */
@@ -2470,7 +2515,6 @@
           font-weight: 700;
           text-align: center;
           cursor: pointer;
-          transition: all 0.25s ease;
         }
 
         .btn-primary {
@@ -2652,6 +2696,8 @@
         .mini-logo {
           width: 26px;
           height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .date-input-wrap {
@@ -2742,12 +2788,6 @@
           }
         }
 
-        .subtitle {
-          padding: 0 20px;
-          color: var(--text-secondary);
-          margin: 4px 0 16px;
-        }
-
         .time-input-wrap {
           position: relative;
           display: flex;
@@ -2796,6 +2836,12 @@
           height: 100%;
           opacity: 0;
           cursor: pointer;
+        }
+
+        .subtitle {
+          padding: 0 20px;
+          color: var(--text-secondary);
+          margin: 4px 0 16px;
         }
 
         .field {
@@ -2995,30 +3041,63 @@
           var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
           var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
           var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
-          var approvingManager = managerEl ? managerEl.value : 'Rahul Sharma (Team Lead)';
+
+          // Read employee profile from parent window (set via Profile/Dashboard)
+          var store = window.parent || window;
+          var empProf = store.USER_PROFILE || {};
+          var empName = empProf.name || 'Employee';
+          var empInitials = empProf.initials ||
+            (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2));
+          var empId = empProf.employeeId || '';
+          var empRole = empProf.role || '';
+
+          var defaultMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+          var approvingManager = managerEl ? managerEl.value : defaultMgr;
           var reason = reasonEl ? reasonEl.value.trim() : '';
 
-          var store = window.parent || window;
-          store.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager };
+          // Share data with parent frame
+          var newId = 'leave-' + Date.now();
+          var reqObj = {
+            id: newId,
+            leaveType: leaveType,
+            fromDate: fromDate,
+            toDate: toDate,
+            daysText: daysText,
+            reason: reason,
+            approvingManager: approvingManager,
+            employeeName: empName,
+            employeeInitials: empInitials,
+            employeeId: empId,
+            employeeRole: empRole,
+            status: 'pending'
+          };
+          store.lastLeaveRequest = reqObj;
 
+          // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it
+          if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
+          store.EMP_LEAVE_REQUESTS.unshift(reqObj);
+
+          // Inject a new pending card at the top of the Leave Approvals list in the template
           var parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
           var approvalsTpl = parentDoc.getElementById('tpl-LeaveApprovals');
           if (approvalsTpl) {
             var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
-            var newId = 'emp-new-' + Date.now();
             var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
-              + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+              + '<div class="top-row"><div class="emp-row"><div class="avatar">' + empInitials + '</div><div><b>' + empName + '</b><p>' + empId + '</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
               + '<hr/>'
-              + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' – ' + toDate + ')</b></div>'
+              + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
               + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
               + '<div class="card-action-wrap" id="action-wrap-' + newId + '">'
               + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\', \'approved\')">Approve</button></div>'
               + '</div></div>';
             var tplHtml = approvalsTpl.innerHTML;
-            tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
-            approvalsTpl.innerHTML = tplHtml;
+            if (tplHtml.indexOf(newId) === -1) {
+              tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
+              approvalsTpl.innerHTML = tplHtml;
+            }
           }
 
+          // Navigate to Leave Approvals
           if (window.parent && window.parent.loadScreen) {
             window.parent.loadScreen('tpl-LeaveApprovals');
           }
@@ -3301,6 +3380,18 @@
         .btn-primary {
           background: var(--primary);
           color: #fff;
+          transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+          background: var(--primary-dark);
+          box-shadow: 0 8px 24px rgba(47, 107, 255, 0.45);
+          transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+          transform: translateY(0);
+          box-shadow: 0 4px 12px rgba(47, 107, 255, 0.3);
         }
 
         .btn-approve {
@@ -3426,6 +3517,25 @@
           color: var(--text);
           background: var(--surface);
           font-family: inherit;
+          transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+        }
+
+        input:hover,
+        textarea:hover,
+        select:hover,
+        .field:hover input,
+        .field:hover textarea,
+        .field:hover select {
+          border-color: var(--primary);
+          box-shadow: 0 0 14px rgba(47, 107, 255, 0.3), 0 0 0 3.5px rgba(47, 107, 255, 0.15);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 18px rgba(47, 107, 255, 0.4), 0 0 0 4px rgba(47, 107, 255, 0.2);
         }
 
         .select-wrap {
@@ -3466,11 +3576,14 @@
         .field {
           padding: 0 20px;
           margin-bottom: 18px;
+          transition: transform 0.2s ease;
         }
 
         .mini-logo {
-          width: 22px;
-          height: 22px;
+          width: 26px;
+          height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .subtitle {
@@ -3565,8 +3678,8 @@
             </div>
           </div>
 
-          <div class="field"><label class="field-label">Duration *</label><input type="text" id="perm-duration-input"
-              value="2 Hours" placeholder="E.g., 2 Hours"
+          <div class="field"><label class="field-label">Duration *</label>
+            <input type="text" id="perm-duration-input" value="2 Hours" placeholder="E.g., 2 Hours"
               style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit;" />
           </div>
           <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4"
@@ -4047,6 +4160,8 @@
         .mini-logo {
           width: 26px;
           height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .subtitle {
@@ -4623,6 +4738,8 @@
         .mini-logo {
           width: 26px;
           height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .subtitle {
@@ -5270,6 +5387,15 @@
           border-radius: 16px;
           padding: 16px;
           margin: 0 20px 16px;
+          transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+        }
+
+        .card:hover,
+        .hol-card:hover {
+          border-color: var(--primary);
+          box-shadow: 0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);
+          transform: translateY(-2px);
+          cursor: pointer;
         }
 
         /* Badge */
@@ -5464,6 +5590,8 @@
         .mini-logo {
           width: 26px;
           height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .subtitle {
@@ -5532,8 +5660,7 @@
             <h1>Holiday Calendar</h1>
           </div>
           <p class="subtitle">Company & optional holidays 2026</p>
-          <div class="pill-tabs"
-            style="overflow-x:auto; padding-bottom:8px; white-space:nowrap; -webkit-overflow-scrolling:touch;">
+          <div class="pill-tabs" style="overflow-x:auto; padding-bottom:8px; white-space:nowrap; -webkit-overflow-scrolling:touch;">
             <div class="pill active" onclick="filterHolidayMonth('all', this)">All</div>
             <div class="pill" onclick="filterHolidayMonth('jan', this)">Jan</div>
             <div class="pill" onclick="filterHolidayMonth('feb', this)">Feb</div>
@@ -5551,170 +5678,70 @@
           <div id="holiday-list-container">
             <div class="hol-month-group" data-month="jan">
               <p class="month-label">JANUARY 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Jan 01</b><span>Thu</span></div>
-                  <div class="name">New Year's Day</div><span class="badge info">National</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Jan 15</b><span>Thu</span></div>
-                  <div class="name">Makar Sankranti / Pongal</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Jan 26</b><span>Mon</span></div>
-                  <div class="name">Republic Day</div><span class="badge info">National</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 01</b><span>Thu</span></div><div class="name">New Year's Day</div><span class="badge info">National</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 15</b><span>Thu</span></div><div class="name">Makar Sankranti / Pongal</div><span class="badge purple">Festival</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 26</b><span>Mon</span></div><div class="name">Republic Day</div><span class="badge info">National</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="feb">
               <p class="month-label">FEBRUARY 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Feb 15</b><span>Sun</span></div>
-                  <div class="name">Maha Shivratri</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Feb 15</b><span>Sun</span></div><div class="name">Maha Shivratri</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="mar">
               <p class="month-label">MARCH 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Mar 03</b><span>Tue</span></div>
-                  <div class="name">Holi / Dhulandi</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Mar 20</b><span>Fri</span></div>
-                  <div class="name">Id-ul-Fitr (Ramzan)</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 03</b><span>Tue</span></div><div class="name">Holi / Dhulandi</div><span class="badge purple">Festival</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 20</b><span>Fri</span></div><div class="name">Id-ul-Fitr (Ramzan)</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="apr">
               <p class="month-label">APRIL 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Apr 03</b><span>Fri</span></div>
-                  <div class="name">Good Friday</div><span class="badge info">National</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Apr 14</b><span>Tue</span></div>
-                  <div class="name">Ambedkar Jayanti / Tamil New Year</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 03</b><span>Fri</span></div><div class="name">Good Friday</div><span class="badge info">National</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 14</b><span>Tue</span></div><div class="name">Ambedkar Jayanti / Tamil New Year</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="may">
               <p class="month-label">MAY 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>May 01</b><span>Fri</span></div>
-                  <div class="name">May Day / Labour Day</div><span class="badge info">National</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>May 27</b><span>Wed</span></div>
-                  <div class="name">Bakrid / Id-ul-Zuha</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 01</b><span>Fri</span></div><div class="name">May Day / Labour Day</div><span class="badge info">National</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 27</b><span>Wed</span></div><div class="name">Bakrid / Id-ul-Zuha</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="jun">
               <p class="month-label">JUNE 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Jun 26</b><span>Fri</span></div>
-                  <div class="name">Muharram</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jun 26</b><span>Fri</span></div><div class="name">Muharram</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="jul">
               <p class="month-label">JULY 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Jul 26</b><span>Sun</span></div>
-                  <div class="name">Regional Holiday</div><span class="badge purple">Optional</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jul 26</b><span>Sun</span></div><div class="name">Regional Holiday</div><span class="badge purple">Optional</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="aug">
               <p class="month-label">AUGUST 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Aug 15</b><span>Sat</span></div>
-                  <div class="name">Independence Day</div><span class="badge info">National</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Aug 26</b><span>Wed</span></div>
-                  <div class="name">Milad-un-Nabi</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 15</b><span>Sat</span></div><div class="name">Independence Day</div><span class="badge info">National</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 26</b><span>Wed</span></div><div class="name">Milad-un-Nabi</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="sep">
               <p class="month-label">SEPTEMBER 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Sep 10</b><span>Wed</span></div>
-                  <div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Sep 16</b><span>Wed</span></div>
-                  <div class="name">Onam</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 10</b><span>Wed</span></div><div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 16</b><span>Wed</span></div><div class="name">Onam</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="oct">
               <p class="month-label">OCTOBER 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Oct 02</b><span>Fri</span></div>
-                  <div class="name">Gandhi Jayanti</div><span class="badge info">National</span>
-                </div>
-              </div>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Oct 24</b><span>Sat</span></div>
-                  <div class="name">Dussehra</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 02</b><span>Fri</span></div><div class="name">Gandhi Jayanti</div><span class="badge info">National</span></div></div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 24</b><span>Sat</span></div><div class="name">Dussehra</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="nov">
               <p class="month-label">NOVEMBER 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Nov 14</b><span>Sat</span></div>
-                  <div class="name">Diwali</div><span class="badge purple">Festival</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Nov 14</b><span>Sat</span></div><div class="name">Diwali</div><span class="badge purple">Festival</span></div></div>
             </div>
 
             <div class="hol-month-group" data-month="dec">
               <p class="month-label">DECEMBER 2026</p>
-              <div class="card hol-card">
-                <div class="hol-row">
-                  <div class="date-block"><b>Dec 25</b><span>Fri</span></div>
-                  <div class="name">Christmas</div><span class="badge info">National</span>
-                </div>
-              </div>
+              <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
             </div>
           </div>
           <script>
@@ -5973,6 +6000,8 @@
         .mini-logo {
           width: 26px;
           height: 26px;
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .recent-row {
@@ -8225,11 +8254,27 @@
         .btn-approve {
           background: #DFF7EC;
           color: var(--success);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-approve:hover {
+          background: #c9f3e0;
+          box-shadow: 0 2px 10px rgba(31, 174, 110, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-reject {
           background: var(--danger-bg);
           color: var(--danger);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-reject:hover {
+          background: #fad5d5;
+          box-shadow: 0 2px 10px rgba(229, 72, 77, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-row {
@@ -8660,7 +8705,27 @@
 
           const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
 
-          // Update tpl-EmployeeDashboard template in DOM
+          // ── 1. Update EMP_LEAVE_REQUESTS so dashboard reflects status on re-navigation ──
+          if (store.EMP_LEAVE_REQUESTS && store.EMP_LEAVE_REQUESTS.length > 0) {
+            store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+              // Match by explicit id or by leave type + date
+              if (String(req.id) === String(id)
+                || (req.leaveType && req.leaveType === lType && req.fromDate && req.fromDate === fromDate)
+                || (req.leaveType && req.leaveType === lType)) {
+                req.status = newStatus;
+              }
+            });
+          }
+
+          // ── 2. Push to EMP_STATUS_UPDATES so the frame-load handler can patch live badges ──
+          store.EMP_STATUS_UPDATES = store.EMP_STATUS_UPDATES || [];
+          // Remove any stale entry for same id then push fresh
+          store.EMP_STATUS_UPDATES = store.EMP_STATUS_UPDATES.filter(function(u) { return String(u.id) !== String(id); });
+          store.EMP_STATUS_UPDATES.push({ id: id, status: newStatus, lType: lType, fromDate: fromDate });
+          // Also store the "last decision" for the static Casual Leave card (emp-dash-casual-leave-badge)
+          store.lastLeaveDecision = { status: newStatus, labelText: labelText, lType: lType, fromDate: fromDate, icoClass: icoClass, icoChar: icoChar, msgText: msgText, badgeClass: badgeClass };
+
+          // ── 3. Update tpl-EmployeeDashboard template in DOM ──
           const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
           if (empTpl) {
             let tplHtml = empTpl.innerHTML;
@@ -8668,17 +8733,60 @@
               /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
               '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
             );
+            // Also patch any dynamic emp-req-badge with matching leave type
+            if (store.EMP_LEAVE_REQUESTS) {
+              store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+                if (req.status === newStatus && (req.leaveType === lType || String(req.id) === String(id))) {
+                  var reqBadgeRe = new RegExp('<span[^>]*id="emp-req-badge-' + req.id + '"[^>]*>[\\s\\S]*?<\\/span>');
+                  tplHtml = tplHtml.replace(reqBadgeRe, '<span id="emp-req-badge-' + req.id + '" class="' + badgeClass + '">' + labelText + '</span>');
+                }
+              });
+            }
             empTpl.innerHTML = tplHtml;
           }
 
-          // Update live element if currently rendered
+          // ── 4. Update live elements if Employee Dashboard is currently visible ──
           const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
           if (liveEmpBadge) {
             liveEmpBadge.className = badgeClass;
             liveEmpBadge.textContent = labelText;
           }
+          // Also update any live dynamic badge
+          if (store.EMP_LEAVE_REQUESTS) {
+            store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+              if (req.status === newStatus && (req.leaveType === lType || String(req.id) === String(id))) {
+                var liveDynBadge = parentDoc.getElementById('emp-req-badge-' + req.id);
+                if (liveDynBadge) {
+                  liveDynBadge.className = badgeClass;
+                  liveDynBadge.textContent = labelText;
+                }
+              }
+            });
+          }
 
-          // Inject dynamic notification into tpl-Notifications template
+          // ── 5. Patch the live iframe if the employee dashboard is loaded in it ──
+          var mainFrame = parentDoc.getElementById('screen-frame');
+          if (mainFrame && mainFrame.contentDocument) {
+            var frameDoc = mainFrame.contentDocument;
+            var frameBadge = frameDoc.getElementById('emp-dash-casual-leave-badge');
+            if (frameBadge) {
+              frameBadge.className = badgeClass;
+              frameBadge.textContent = labelText;
+            }
+            if (store.EMP_LEAVE_REQUESTS) {
+              store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+                if (req.status === newStatus && (req.leaveType === lType || String(req.id) === String(id))) {
+                  var fd = frameDoc.getElementById('emp-req-badge-' + req.id);
+                  if (fd) {
+                    fd.className = badgeClass;
+                    fd.textContent = labelText;
+                  }
+                }
+              });
+            }
+          }
+
+          // ── 6. Inject dynamic notification into tpl-Notifications template ──
           const notifTpl = parentDoc.getElementById('tpl-Notifications');
           if (notifTpl) {
             const notifCard = '<div class="card notif-card unread" id="dynamic-leave-notif">'
@@ -8694,8 +8802,6 @@
               notifTpl.innerHTML = tplHtml;
             }
           }
-
-          store.lastLeaveDecision = { status: newStatus, labelText, lType, fromDate, icoClass, icoChar, msgText };
 
           updateLeaveTabCounts();
           renderLeaveApprovals();
@@ -9086,6 +9192,14 @@
         }
 
 
+        .card, .emp-card, .card:hover, .emp-card:hover {
+          border: 1px solid var(--border) !important;
+          border-color: var(--border) !important;
+          box-shadow: none !important;
+          transform: none !important;
+          cursor: default !important;
+        }
+
         .emp-card {
           padding: 16px;
         }
@@ -9196,38 +9310,10 @@
           border: 1.5px solid var(--danger-bg);
           color: var(--danger);
           border-radius: 999px;
-          cursor: pointer;
-          transition: all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease, background 0.25s ease;
-        }
-
-        .outline-reject:hover {
-          background: #FFF5F5;
-          border-color: rgba(229, 72, 77, 0.4);
-          color: #D63036;
-          box-shadow: 0 2px 10px rgba(229, 72, 77, 0.18), 0 0 6px rgba(229, 72, 77, 0.1);
-          transform: translateY(-1px);
-        }
-
-        .outline-reject:active {
-          transform: translateY(0);
-          box-shadow: 0 1px 4px rgba(229, 72, 77, 0.12);
         }
 
         .btn-row .btn-primary {
           border-radius: 999px;
-          cursor: pointer;
-          transition: all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.25s ease;
-        }
-
-        .btn-row .btn-primary:hover {
-          background: #255FE6;
-          box-shadow: 0 3px 12px rgba(47, 107, 255, 0.26), 0 0 8px rgba(47, 107, 255, 0.15);
-          transform: translateY(-1px);
-        }
-
-        .btn-row .btn-primary:active {
-          transform: translateY(0);
-          box-shadow: 0 1px 6px rgba(47, 107, 255, 0.2);
         }
       </style>
     </head>
@@ -9639,11 +9725,27 @@
         .btn-approve {
           background: #DFF7EC;
           color: var(--success);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-approve:hover {
+          background: #c9f3e0;
+          box-shadow: 0 2px 10px rgba(31, 174, 110, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-reject {
           background: var(--danger-bg);
           color: var(--danger);
+          transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-reject:hover {
+          background: #fad5d5;
+          box-shadow: 0 2px 10px rgba(229, 72, 77, 0.22);
+          transform: translateY(-1px);
+          cursor: pointer;
         }
 
         .btn-row {
@@ -10081,173 +10183,201 @@
         }
 
         function syncPermTime(type, val) {
-          const displayId = type === 'start' ? 'perm-start-time-display' : 'perm-end-time-display';
-          const displayEl = document.getElementById(displayId);
-          if (displayEl && val) {
-            displayEl.value = formatTime12H(val);
+            const displayId = type === 'start' ? 'perm-start-time-display' : 'perm-end-time-display';
+            const displayEl = document.getElementById(displayId);
+            if (displayEl && val) {
+              displayEl.value = formatTime12H(val);
+            }
+            calcPermDuration();
           }
-          calcPermDuration();
-        }
 
-        function openTimePicker(pickerId) {
-          const picker = document.getElementById(pickerId);
-          if (picker) {
-            if (typeof picker.showPicker === 'function') {
-              try {
-                picker.showPicker();
-              } catch (e) {
+          function openTimePicker(pickerId) {
+            const picker = document.getElementById(pickerId);
+            if (picker) {
+              if (typeof picker.showPicker === 'function') {
+                try {
+                  picker.showPicker();
+                } catch (e) {
+                  picker.click();
+                }
+              } else {
                 picker.click();
               }
-            } else {
-              picker.click();
             }
           }
-        }
 
-        let lastPermRequest = null;
+          let lastPermRequest = null;
 
-        function handleApplyPermissionSubmit() {
-          const permDateInput = document.getElementById('perm-date-input');
-          const permTypeSelect = document.getElementById('perm-type-select');
-          const startTimeInput = document.getElementById('perm-start-time');
-          const endTimeInput = document.getElementById('perm-end-time');
-          const durationInput = document.getElementById('perm-duration-input') || document.getElementById('perm-duration-box');
-          const reasonText = document.getElementById('perm-reason-text');
+          function handleApplyPermissionSubmit() {
+            const permDateInput = document.getElementById('perm-date-input');
+            const permTypeSelect = document.getElementById('perm-type-select');
+            const startTimeInput = document.getElementById('perm-start-time');
+            const endTimeInput = document.getElementById('perm-end-time');
+            const durationInput = document.getElementById('perm-duration-input') || document.getElementById('perm-duration-box');
+            const reasonText = document.getElementById('perm-reason-text');
 
-          const rawDate = permDateInput ? permDateInput.value : '2026-09-04';
-          const formattedDate = formatDateDisplay(rawDate);
-          const pType = permTypeSelect ? permTypeSelect.value : 'Early Going';
-          const startTimeDisplay = document.getElementById('perm-start-time-display');
-          const endTimeDisplay = document.getElementById('perm-end-time-display');
-          const rawStart = startTimeInput ? startTimeInput.value : '15:00';
-          const rawEnd = endTimeInput ? endTimeInput.value : '17:00';
-          const pStart = startTimeDisplay ? startTimeDisplay.value : formatTime12H(rawStart);
-          const pEnd = endTimeDisplay ? endTimeDisplay.value : formatTime12H(rawEnd);
-          const pDuration = durationInput ? (durationInput.value ? durationInput.value.trim() : durationInput.textContent.replace(' (Auto-calculated)', '')) : '2 Hours';
-          const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
+            const rawDate = permDateInput ? permDateInput.value : '2026-09-04';
+            const formattedDate = formatDateDisplay(rawDate);
+            const pType = permTypeSelect ? permTypeSelect.value : 'Early Going';
+            const startTimeDisplay = document.getElementById('perm-start-time-display');
+            const endTimeDisplay = document.getElementById('perm-end-time-display');
+            const rawStart = startTimeInput ? startTimeInput.value : '15:00';
+            const rawEnd = endTimeInput ? endTimeInput.value : '17:00';
+            const pStart = startTimeDisplay ? startTimeDisplay.value : formatTime12H(rawStart);
+            const pEnd = endTimeDisplay ? endTimeDisplay.value : formatTime12H(rawEnd);
+            const pDuration = durationInput ? (durationInput.value ? durationInput.value.trim() : durationInput.textContent.replace(' (Auto-calculated)', '')) : '2 Hours';
+            const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
 
-          const newId = 'perm-' + Date.now();
+            // Read employee profile from parent window
+            const store = window.parent || window;
+            const empProf = (store.USER_PROFILE) || {};
+            const empName = empProf.name || 'Employee';
+            const empInitials = empProf.initials ||
+              (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2));
+            const empId = empProf.employeeId || '';
 
-          lastPermRequest = {
-            id: newId,
-            type: pType,
-            date: formattedDate,
-            start: pStart,
-            end: pEnd,
-            duration: pDuration,
-            reason: pReason,
-            status: 'pending'
-          };
+            const newId = 'perm-' + Date.now();
 
-          // Prepend card to #permission-approvals-list
-          const listContainer = document.getElementById('permission-approvals-list');
-          if (listContainer) {
-            const badgeTone = pType === 'Late Coming' ? 'purple' : pType === 'Early Going' ? 'warning' : 'info';
-            const newCardHtml = `
-      <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}">
-        <div class="top-row"><div class="emp-row"><div class="avatar">JD</div><div><b>John Doe</b><p>${pType}</p></div></div><span class="badge ${badgeTone}">${pType}</span></div>
-        <hr/>
-        <div class="detail-row"><span>Schedule</span><b>${formattedDate} (${pStart} - ${pEnd})</b></div>
-        <div class="detail-row"><span>Duration</span><b>${pDuration}</b></div>
-        <div class="detail-row"><span>Reason</span><b>${pReason}</b></div>
-        <div class="card-action-wrap">
-          <div class="btn-row">
-            <button class="btn btn-reject" onclick="processPermAction('${newId}', 'rejected')">Reject</button>
-            <button class="btn btn-approve" onclick="processPermAction('${newId}', 'approved')">Approve</button>
-          </div>
+            lastPermRequest = {
+              id: newId,
+              type: pType,
+              date: formattedDate,
+              start: pStart,
+              end: pEnd,
+              duration: pDuration,
+              reason: pReason,
+              status: 'pending',
+              employeeName: empName,
+              employeeInitials: empInitials,
+              employeeId: empId
+            };
+
+            // Push to shared PERM_STATE so PermissionApprovals template can use it
+            if (!store.PERM_STATE) store.PERM_STATE = [];
+            store.PERM_STATE.unshift(lastPermRequest);
+
+            // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it
+            if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
+            store.EMP_LEAVE_REQUESTS.unshift({
+              id: newId,
+              leaveType: pType,
+              fromDate: formattedDate,
+              daysText: pDuration,
+              reason: pReason,
+              isPermission: true,
+              employeeName: empName,
+              status: 'pending'
+            });
+
+            // Prepend card to #permission-approvals-list
+            const listContainer = document.getElementById('permission-approvals-list');
+            if (listContainer) {
+              const badgeTone = pType === 'Late Coming' ? 'purple' : pType === 'Early Going' ? 'warning' : 'info';
+              const newCardHtml = `
+    <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}">
+      <div class="top-row"><div class="emp-row"><div class="avatar">${empInitials}</div><div><b>${empName}</b><p>${pType}</p></div></div><span class="badge ${badgeTone}">${pType}</span></div>
+      <hr/>
+      <div class="detail-row"><span>Schedule</span><b>${formattedDate} (${pStart} - ${pEnd})</b></div>
+      <div class="detail-row"><span>Duration</span><b>${pDuration}</b></div>
+      <div class="detail-row"><span>Reason</span><b>${pReason}</b></div>
+      <div class="card-action-wrap">
+        <div class="btn-row">
+          <button class="btn btn-reject" onclick="processPermAction('${newId}', 'rejected')">Reject</button>
+          <button class="btn btn-approve" onclick="processPermAction('${newId}', 'approved')">Approve</button>
         </div>
       </div>
-    `;
-            listContainer.insertAdjacentHTML('afterbegin', newCardHtml);
-          }
-
-          updatePermTabCounts();
-          currentPermTab = 'pending';
-          renderPermissionApprovals();
-
-          if (window.parent && window.parent.loadScreen) {
-            window.parent.loadScreen('tpl-PermissionApprovals');
-          } else if (typeof loadScreen === 'function') {
-            loadScreen('tpl-PermissionApprovals');
-          }
-        }
-
-        function processPermAction(id, newStatus) {
-          const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
-          let pType = 'Permission';
-          let pDate = '04-Sep-2026';
-
-          if (card) {
-            card.setAttribute('data-status', newStatus);
-            pType = card.getAttribute('data-type') || (card.querySelector('.emp-row p') ? card.querySelector('.emp-row p').textContent : 'Permission');
-            const scheduleEl = card.querySelector('.detail-row b');
-            if (scheduleEl) {
-              pDate = scheduleEl.textContent.split(' ')[0] || '04-Sep-2026';
+    </div>
+  `;
+              listContainer.insertAdjacentHTML('afterbegin', newCardHtml);
             }
-            const actionWrap = card.querySelector('.card-action-wrap');
-            if (actionWrap) {
-              if (newStatus === 'approved') {
-                actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
-              } else {
-                actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+
+            updatePermTabCounts();
+            currentPermTab = 'pending';
+            renderPermissionApprovals();
+
+            if (window.parent && window.parent.loadScreen) {
+              window.parent.loadScreen('tpl-PermissionApprovals');
+            } else if (typeof loadScreen === 'function') {
+              loadScreen('tpl-PermissionApprovals');
+            }
+          }
+
+          function processPermAction(id, newStatus) {
+            const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
+            let pType = 'Permission';
+            let pDate = '04-Sep-2026';
+
+            if (card) {
+              card.setAttribute('data-status', newStatus);
+              pType = card.getAttribute('data-type') || (card.querySelector('.emp-row p') ? card.querySelector('.emp-row p').textContent : 'Permission');
+              const scheduleEl = card.querySelector('.detail-row b');
+              if (scheduleEl) {
+                pDate = scheduleEl.textContent.split(' ')[0] || '04-Sep-2026';
               }
+              const actionWrap = card.querySelector('.card-action-wrap');
+              if (actionWrap) {
+                if (newStatus === 'approved') {
+                  actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
+                } else {
+                  actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+                }
+              }
+            } else if (lastPermRequest && lastPermRequest.id === id) {
+              pType = lastPermRequest.type;
+              pDate = lastPermRequest.date;
             }
-          } else if (lastPermRequest && lastPermRequest.id === id) {
-            pType = lastPermRequest.type;
-            pDate = lastPermRequest.date;
-          }
 
-          updatePermTabCounts();
-          renderPermissionApprovals();
+            updatePermTabCounts();
+            renderPermissionApprovals();
 
-          // Add notification item
-          const notifContainer = document.getElementById('notif-container');
-          if (notifContainer) {
-            const isApprove = newStatus === 'approved';
-            const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for ${pType} (${pDate}) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
-            notifContainer.insertAdjacentHTML('afterbegin', notifHtml);
-          }
-
-          // Update Employee Dashboard badge if present
-          const dashBadge = document.getElementById('dash-perm-status-badge');
-          if (dashBadge) {
-            dashBadge.textContent = newStatus === 'approved' ? 'Approved' : 'Rejected';
-            dashBadge.className = 'badge ' + (newStatus === 'approved' ? 'success' : 'danger');
-          }
-        }
-
-        function updatePermTabCounts() {
-          const pending = document.querySelectorAll('#permission-approvals-list .approval-card[data-status="pending"]').length;
-          const approved = document.querySelectorAll('#permission-approvals-list .approval-card[data-status="approved"]').length;
-          const rejected = document.querySelectorAll('#permission-approvals-list .approval-card[data-status="rejected"]').length;
-
-          const countPending = document.getElementById('perm-count-pending');
-          const countApproved = document.getElementById('perm-count-approved');
-          const countRejected = document.getElementById('perm-count-rejected');
-
-          if (countPending) countPending.textContent = pending;
-          if (countApproved) countApproved.textContent = approved;
-          if (countRejected) countRejected.textContent = rejected;
-        }
-
-        function renderPermissionApprovals() {
-          let visibleCount = 0;
-          const cards = document.querySelectorAll('#permission-approvals-list .approval-card');
-          cards.forEach(card => {
-            const status = card.getAttribute('data-status');
-            if (status === currentPermTab) {
-              card.style.display = 'block';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
+            // Add notification item
+            const notifContainer = document.getElementById('notif-container');
+            if (notifContainer) {
+              const isApprove = newStatus === 'approved';
+              const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for ${pType} (${pDate}) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
+              notifContainer.insertAdjacentHTML('afterbegin', notifHtml);
             }
-          });
 
-          const msg = document.getElementById('no-perm-msg');
-          if (msg) {
-            msg.style.display = visibleCount === 0 ? 'block' : 'none';
+            // Update Employee Dashboard badge if present
+            const dashBadge = document.getElementById('dash-perm-status-badge');
+            if (dashBadge) {
+              dashBadge.textContent = newStatus === 'approved' ? 'Approved' : 'Rejected';
+              dashBadge.className = 'badge ' + (newStatus === 'approved' ? 'success' : 'danger');
+            }
           }
-        }
+
+          function updatePermTabCounts() {
+            const pending = document.querySelectorAll('#permission-approvals-list .approval-card[data-status="pending"]').length;
+            const approved = document.querySelectorAll('#permission-approvals-list .approval-card[data-status="approved"]').length;
+            const rejected = document.querySelectorAll('#permission-approvals-list .approval-card[data-status="rejected"]').length;
+
+            const countPending = document.getElementById('perm-count-pending');
+            const countApproved = document.getElementById('perm-count-approved');
+            const countRejected = document.getElementById('perm-count-rejected');
+
+            if (countPending) countPending.textContent = pending;
+            if (countApproved) countApproved.textContent = approved;
+            if (countRejected) countRejected.textContent = rejected;
+          }
+
+          function renderPermissionApprovals() {
+            let visibleCount = 0;
+            const cards = document.querySelectorAll('#permission-approvals-list .approval-card');
+            cards.forEach(card => {
+              const status = card.getAttribute('data-status');
+              if (status === currentPermTab) {
+                card.style.display = 'block';
+                visibleCount++;
+              } else {
+                card.style.display = 'none';
+              }
+            });
+
+            const msg = document.getElementById('no-perm-msg');
+            if (msg) {
+              msg.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+          }
 
       </script>
     </body>
@@ -10256,592 +10386,963 @@
   </template>
 
   <script>
-    var currentTpl = 'tpl-Login';
+      document.addEventListener('DOMContentLoaded', function () {
+        var currentTpl = 'tpl-Login';
 
-    // ── Shared User Profile State ──────────────────────────────────
-    var savedProfile = null;
-    try {
-      savedProfile = JSON.parse(sessionStorage.getItem('USER_PROFILE'));
-    } catch (e) {}
-
-    if (!window.USER_PROFILE) {
-      window.USER_PROFILE = savedProfile || {
-        name: 'Priya Sharma',
-        role: 'Senior Software Engineer',
-        employeeId: 'EMP-2024-0156',
-        initials: 'PS',
-        department: 'IT',
-        team: 'Development',
-        reportingManager: 'Rahul Sharma',
-        workLocation: 'Bangalore',
-        joiningDate: 'Mar 15, 2022',
-        email: 'priya.sharma@emergere.com',
-        phone: '+91 98765 43210'
-      };
-    }
-
-    function toggleMobileMenu() {
-      var sb = document.getElementById('sidebar');
-      var ov = document.getElementById('sidebar-overlay');
-      if (sb && ov) {
-        sb.classList.toggle('open');
-        ov.classList.toggle('open');
-      }
-    }
-
-    function closeMobileMenu() {
-      var sb = document.getElementById('sidebar');
-      var ov = document.getElementById('sidebar-overlay');
-      if (sb && ov) {
-        sb.classList.remove('open');
-        ov.classList.remove('open');
-      }
-    }
-
-    var SELECTED_PERSON = 'priya';
-    var PERSON_DATA = {
-      'priya': {
-        initials: 'PS',
-        name: 'Priya Sharma',
-        role: 'Senior Software Engineer',
-        empId: 'EMP-2024-0156',
-        leaveType: 'Casual Leave',
-        fromDate: 'Sep 10, 2026',
-        toDate: 'Sep 11, 2026',
-        totalDays: '2 Days',
-        contact: '+91 98765 43210',
-        reason: "Family function - attending sister's wedding ceremony in Bangalore.",
-        subtitle: 'Casual Leave Application',
-        appliedPath: 'Priya (Applied)'
-      },
-      'sneha': {
-        initials: 'SG',
-        name: 'Sneha Gupta',
-        role: 'Product Designer',
-        empId: 'EMP-2024-0210',
-        leaveType: 'Earned Leave',
-        fromDate: 'Sep 15, 2026',
-        toDate: 'Sep 19, 2026',
-        totalDays: '5 Days',
-        contact: '+91 91234 56789',
-        reason: 'Personal leave - annual family vacation to Kerala with family.',
-        subtitle: 'Earned Leave Application',
-        appliedPath: 'Sneha (Applied)'
-      },
-      'amit': {
-        initials: 'AP',
-        name: 'Amit Patel',
-        role: 'Backend Engineer',
-        empId: 'EMP-2024-0089',
-        leaveType: 'Sick Leave',
-        fromDate: 'Sep 12, 2026',
-        toDate: 'Sep 12, 2026',
-        totalDays: '1 Day',
-        contact: '+91 99887 76655',
-        reason: 'Medical appointment & doctor advised rest.',
-        subtitle: 'Sick Leave Application',
-        appliedPath: 'Amit (Applied)'
-      }
-    };
-
-    function loadScreen(tplId, personKey) {
-      if (personKey) {
-        SELECTED_PERSON = personKey;
-      }
-      var tpl = document.getElementById(tplId);
-      if (!tpl) return;
-      currentTpl = tplId;
-      var frame = document.getElementById('frame');
-      frame.srcdoc = tpl.innerHTML;
-      document.querySelectorAll('.nav-btn').forEach(function (b) {
-        b.classList.toggle('active', b.getAttribute('data-tpl') === tplId);
-      });
-      closeMobileMenu();
-    }
-    window.loadScreen = loadScreen;
-    window.EMPLOYMENT_STATUS = 'Active';
-    window.CHECKED_IN = true;
-    window.ATTENDANCE_STATUS = 'Checked In';
-
-    var frame = document.getElementById('frame');
-    frame.addEventListener('load', function () {
-      var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
-      if (!doc) return;
-
-      var navGlowStyle = doc.createElement('style');
-      navGlowStyle.textContent = `
-      .bottom-nav {
-        transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease !important;
-      }
-      .bottom-nav:hover {
-        box-shadow: 0 -4px 20px rgba(47, 107, 255, 0.18), 0 0 15px rgba(47, 107, 255, 0.12) !important;
-        border-top-color: rgba(47, 107, 255, 0.4) !important;
-      }
-      .bottom-nav .tab {
-        position: relative !important;
-        padding: 6px 8px !important;
-        border-radius: 12px !important;
-        transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease !important;
-      }
-      .bottom-nav .tab:hover {
-        color: var(--primary, #2F6BFF) !important;
-        background: rgba(47, 107, 255, 0.09) !important;
-        box-shadow: 0 0 14px rgba(47, 107, 255, 0.25), inset 0 0 10px rgba(47, 107, 255, 0.1) !important;
-        transform: translateY(-2px) !important;
-      }
-      .bottom-nav .tab .icon {
-        transition: transform 0.25s ease !important;
-      }
-      .bottom-nav .tab:hover .icon {
-        transform: scale(1.08) !important;
-      }
-      .bottom-nav .tab .icon svg {
-        transition: stroke 0.25s ease, filter 0.25s ease !important;
-      }
-      .bottom-nav .tab:hover .icon svg {
-        stroke: var(--primary, #2F6BFF) !important;
-        filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.65)) !important;
-      }
-      .bottom-nav .tab.active .icon svg {
-        stroke: var(--primary, #2F6BFF) !important;
-        filter: drop-shadow(0 0 4px rgba(47, 107, 255, 0.4)) !important;
-      }
-      .date-cell {
-        position: relative !important;
-        cursor: pointer !important;
-        border-radius: 10px !important;
-        transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease !important;
-        border: 1.5px solid transparent;
-      }
-      .date-cell:hover {
-        background: rgba(47, 107, 255, 0.12) !important;
-        border-color: rgba(47, 107, 255, 0.45) !important;
-        box-shadow: 0 0 14px rgba(47, 107, 255, 0.35), inset 0 0 8px rgba(47, 107, 255, 0.15) !important;
-        transform: translateY(-2px) scale(1.05) !important;
-        z-index: 10 !important;
-      }
-      .date-cell:hover .num {
-        color: var(--primary, #2F6BFF) !important;
-        font-weight: 800 !important;
-        text-shadow: 0 0 8px rgba(47, 107, 255, 0.4) !important;
-      }
-      .date-cell .dot {
-        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-      }
-      .date-cell:hover .dot {
-        transform: scale(1.35) !important;
-        box-shadow: 0 0 6px currentColor !important;
-      }
-      .date-cell.selected {
-        border: 1.5px solid var(--primary, #2F6BFF) !important;
-        border-radius: 10px !important;
-        background: rgba(47, 107, 255, 0.06) !important;
-      }
-      /* Cards, Quick Actions & Item Containers Glow Hover */
-      .card, .request-card, .req-card, .member-card, .team-card, .employee-card, .hol-card, .quick-action, .stat-card, .action-card, .item-card {
-        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease !important;
-      }
-      .card:hover, .request-card:hover, .req-card:hover, .member-card:hover, .team-card:hover, .employee-card:hover, .hol-card:hover, .quick-action:hover, .stat-card:hover, .action-card:hover, .item-card:hover {
-        border-color: var(--primary, #2F6BFF) !important;
-        box-shadow: 0 0 20px rgba(47, 107, 255, 0.32), 0 6px 18px rgba(47, 107, 255, 0.18), inset 0 0 10px rgba(47, 107, 255, 0.06) !important;
-        transform: translateY(-3px) !important;
-        cursor: pointer !important;
-      }
-      /* Leave Approvals Cards - Subtle Soft Glow Hover */
-      .approval-card {
-        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease !important;
-      }
-      .approval-card:hover {
-        border-color: rgba(47, 107, 255, 0.35) !important;
-        box-shadow: 0 3px 12px rgba(47, 107, 255, 0.1), 0 0 8px rgba(47, 107, 255, 0.06) !important;
-        transform: translateY(-1.5px) !important;
-        cursor: pointer !important;
-      }
-      .overview-card, .overview-card:hover {
-        border: 1px solid var(--border, #E5E7EB) !important;
-        border-color: var(--border, #E5E7EB) !important;
-        box-shadow: none !important;
-        transform: none !important;
-        cursor: default !important;
-      }
-      /* Approve & Reject Buttons - Subtle Soft Glow Hover */
-      .btn-approve {
-        transition: all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease !important;
-        cursor: pointer !important;
-      }
-      .btn-approve:hover {
-        background: #D1F5E4 !important;
-        box-shadow: 0 2px 10px rgba(31, 174, 110, 0.22), 0 0 6px rgba(31, 174, 110, 0.14) !important;
-        transform: translateY(-1px) !important;
-      }
-      .btn-approve:active {
-        transform: translateY(0) !important;
-        box-shadow: 0 1px 4px rgba(31, 174, 110, 0.12) !important;
-      }
-      .btn-reject {
-        transition: all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease !important;
-        cursor: pointer !important;
-      }
-      .btn-reject:hover {
-        background: #FDD8DC !important;
-        box-shadow: 0 2px 10px rgba(229, 72, 77, 0.2), 0 0 6px rgba(229, 72, 77, 0.12) !important;
-        transform: translateY(-1px) !important;
-      }
-      .btn-reject:active {
-        transform: translateY(0) !important;
-        box-shadow: 0 1px 4px rgba(229, 72, 77, 0.12) !important;
-      }
-    `;
-      if (doc.head) doc.head.appendChild(navGlowStyle);
-
-      if (currentTpl === 'tpl-LeaveApprovalDetail') {
-        var detailNoGlowStyle = doc.createElement('style');
-        detailNoGlowStyle.textContent = `
-        .card, .emp-card {
-          transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease !important;
-        }
-        .card:hover, .emp-card:hover {
-          border-color: rgba(47, 107, 255, 0.35) !important;
-          box-shadow: 0 3px 12px rgba(47, 107, 255, 0.08), 0 0 8px rgba(47, 107, 255, 0.05) !important;
-          transform: translateY(-1.5px) !important;
-          cursor: pointer !important;
-        }
-        .outline-reject {
-          transition: all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease, background 0.25s ease !important;
-          cursor: pointer !important;
-        }
-        .outline-reject:hover {
-          background: #FFF5F5 !important;
-          border-color: rgba(229, 72, 77, 0.4) !important;
-          color: #D63036 !important;
-          box-shadow: 0 2px 10px rgba(229, 72, 77, 0.18), 0 0 6px rgba(229, 72, 77, 0.1) !important;
-          transform: translateY(-1px) !important;
-        }
-        .outline-reject:active {
-          transform: translateY(0) !important;
-          box-shadow: 0 1px 4px rgba(229, 72, 77, 0.12) !important;
-        }
-        .btn-row .btn-primary {
-          transition: all 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.25s ease !important;
-          cursor: pointer !important;
-        }
-        .btn-row .btn-primary:hover {
-          background: #255FE6 !important;
-          box-shadow: 0 3px 12px rgba(47, 107, 255, 0.26), 0 0 8px rgba(47, 107, 255, 0.15) !important;
-          transform: translateY(-1px) !important;
-        }
-        .btn-row .btn-primary:active {
-          transform: translateY(0) !important;
-          box-shadow: 0 1px 6px rgba(47, 107, 255, 0.2) !important;
-        }
-      `;
-        if (doc.head) doc.head.appendChild(detailNoGlowStyle);
-
-        var p = PERSON_DATA[SELECTED_PERSON] || PERSON_DATA['priya'];
-        var elName = doc.getElementById('lad-name'); if (elName) elName.textContent = p.name;
-        var elRole = doc.getElementById('lad-role'); if (elRole) elRole.textContent = p.role;
-        var elEmpId = doc.getElementById('lad-empid'); if (elEmpId) elEmpId.textContent = p.empId;
-        var elAvatar = doc.getElementById('lad-avatar'); if (elAvatar) elAvatar.textContent = p.initials;
-        var elLeaveType = doc.getElementById('lad-leavetype'); if (elLeaveType) elLeaveType.textContent = p.leaveType;
-        var elFromDate = doc.getElementById('lad-fromdate'); if (elFromDate) elFromDate.textContent = p.fromDate;
-        var elToDate = doc.getElementById('lad-todate'); if (elToDate) elToDate.textContent = p.toDate;
-        var elTotalDays = doc.getElementById('lad-totaldays'); if (elTotalDays) elTotalDays.textContent = p.totalDays;
-        var elContact = doc.getElementById('lad-contact'); if (elContact) elContact.textContent = p.contact;
-        var elReason = doc.getElementById('lad-reason'); if (elReason) elReason.textContent = p.reason;
-        var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle;
-        var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath;
-      }
-
-      if (currentTpl === 'tpl-EmployeeDashboard') {
-        var prof = window.USER_PROFILE;
-        if (prof) {
-          var greetingEl = doc.getElementById('dash-greeting') || doc.querySelector('.greeting');
-          if (greetingEl && prof.name) {
-            greetingEl.textContent = 'Hello, ' + prof.name;
-          }
-          var roleTextEl = doc.getElementById('dash-role-text');
-          var idTextEl = doc.getElementById('dash-id-text');
-          if (roleTextEl && prof.role) roleTextEl.textContent = prof.role;
-          if (idTextEl && prof.employeeId) idTextEl.textContent = prof.employeeId;
-          if (!roleTextEl && greetingEl) {
-            var roleMeta = doc.createElement('p');
-            roleMeta.className = 'dash-role-meta';
-            roleMeta.id = 'dash-role-meta';
-            roleMeta.style.cssText = 'padding:0 20px; color:var(--text-secondary); margin:4px 0 0; font-size:13px; font-weight:500;';
-            roleMeta.innerHTML = '<span id="dash-role-text">' + (prof.role || 'Senior Software Engineer') + '</span> &bull; <span id="dash-id-text">' + (prof.employeeId || 'EMP-2024-0156') + '</span>';
-            greetingEl.insertAdjacentElement('afterend', roleMeta);
-          }
+        // ── Shared Permission-Request State ─────────────────────────────
+        // Each entry: { id, type, date, duration, reason, status ('pending'|'approved'|'rejected') }
+        if (!window.PERM_STATE) {
+          window.PERM_STATE = [];
         }
 
-        var dashNoGlowStyle = doc.createElement('style');
-        dashNoGlowStyle.textContent = `
-          #dash-attendance-card, #dash-attendance-card:hover,
-          #dash-leave-balance-card, #dash-leave-balance-card:hover {
-            border: 1px solid var(--border, #E5E7EB) !important;
-            border-color: var(--border, #E5E7EB) !important;
-            box-shadow: none !important;
-            transform: none !important;
-            cursor: default !important;
-          }
-          .chip-btn.success:hover {
-            background: #D1F3E2 !important;
-            box-shadow: 0 2px 8px rgba(31, 174, 110, 0.22) !important;
-            transform: translateY(-1px) !important;
-          }
-          .chip-btn.danger:hover {
-            background: #FDD8DC !important;
-            box-shadow: 0 2px 8px rgba(229, 72, 77, 0.22) !important;
-            transform: translateY(-1px) !important;
-          }
-          .chip-btn:active {
-            transform: translateY(0) !important;
-          }
-        `;
-        if (doc.head) doc.head.appendChild(dashNoGlowStyle);
-
-        var statusDot = doc.getElementById('dash-status-dot');
-        var statusText = doc.getElementById('dash-status-text');
-        var btnCheckIn = doc.getElementById('btn-check-in');
-        var btnCheckOut = doc.getElementById('btn-check-out');
-
-        function syncDashAttendanceUI() {
-          if (statusDot) {
-            statusDot.style.background = window.CHECKED_IN ? 'var(--success, #1FAE6E)' : 'var(--danger, #E5484D)';
-          }
-          if (statusText) {
-            statusText.textContent = window.CHECKED_IN ? (window.ATTENDANCE_STATUS || 'Checked In') : 'Checked Out';
-          }
-        }
-        syncDashAttendanceUI();
-
-        if (btnCheckIn) {
-          btnCheckIn.onclick = function (e) {
-            e.preventDefault();
+        window.deleteEmpRequest = function (btn, e, reqId) {
+          if (e) {
             e.stopPropagation();
-            window.CHECKED_IN = true;
-            window.EMPLOYMENT_STATUS = 'Active';
-            window.ATTENDANCE_STATUS = 'Checked In';
-            syncDashAttendanceUI();
-            loadScreen('tpl-MyProfile');
-          };
-        }
-
-        if (btnCheckOut) {
-          btnCheckOut.onclick = function (e) {
             e.preventDefault();
-            e.stopPropagation();
-            window.CHECKED_IN = false;
-            window.EMPLOYMENT_STATUS = 'Inactive';
-            window.ATTENDANCE_STATUS = 'Checked Out';
-            syncDashAttendanceUI();
-          };
-        }
-      }
-
-      if (currentTpl === 'tpl-MyProfile') {
-        var profileNoGlowStyle = doc.createElement('style');
-        profileNoGlowStyle.textContent = `
-          .card, .card:hover,
-          .profile-card, .profile-card:hover,
-          .status-card, .status-card:hover {
-            border: 1px solid var(--border, #E5E7EB) !important;
-            border-color: var(--border, #E5E7EB) !important;
-            box-shadow: none !important;
-            transform: none !important;
-            cursor: default !important;
-            background: var(--surface, #FFFFFF) !important;
           }
-          .badge.danger {
-            background: var(--danger-bg, #FEECEE) !important;
-            color: var(--danger, #E5484D) !important;
+          var card = btn ? btn.closest('.request-card') : null;
+          if (!card) return;
+
+          var docRef = card.ownerDocument || document;
+          var winRef = docRef.defaultView || window;
+          var pWin = (winRef.parent && winRef.parent !== winRef) ? winRef.parent : winRef;
+          var cardId = reqId || card.id;
+
+          // 1. Remove from dynamic leave requests
+          if (pWin.EMP_LEAVE_REQUESTS) {
+            pWin.EMP_LEAVE_REQUESTS = pWin.EMP_LEAVE_REQUESTS.filter(function(r) {
+              return String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id;
+            });
           }
-          .badge.success {
-            background: var(--success-bg, #E3F8EE) !important;
-            color: var(--success, #1FAE6E) !important;
+          if (winRef.EMP_LEAVE_REQUESTS) {
+            winRef.EMP_LEAVE_REQUESTS = winRef.EMP_LEAVE_REQUESTS.filter(function(r) {
+              return String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id;
+            });
           }
-        `;
-        if (doc.head) doc.head.appendChild(profileNoGlowStyle);
 
-        var prof = window.USER_PROFILE;
-        if (prof) {
-          if (doc.getElementById('profile-name-display') && prof.name) doc.getElementById('profile-name-display').textContent = prof.name;
-          if (doc.getElementById('profile-role-display') && prof.role) doc.getElementById('profile-role-display').textContent = prof.role;
-          if (doc.getElementById('profile-id-display') && prof.employeeId) doc.getElementById('profile-id-display').textContent = prof.employeeId;
-          if (doc.getElementById('profile-avatar-display') && prof.initials) doc.getElementById('profile-avatar-display').textContent = prof.initials;
-          if (doc.getElementById('edit-profile-name') && prof.name) doc.getElementById('edit-profile-name').value = prof.name;
-          if (doc.getElementById('edit-profile-role') && prof.role) doc.getElementById('edit-profile-role').value = prof.role;
-          if (doc.getElementById('edit-profile-id') && prof.employeeId) doc.getElementById('edit-profile-id').value = prof.employeeId;
-
-          if (doc.getElementById('val-dept') && prof.department) doc.getElementById('val-dept').textContent = prof.department;
-          if (doc.getElementById('val-team') && prof.team) doc.getElementById('val-team').textContent = prof.team;
-          if (doc.getElementById('val-manager') && prof.reportingManager) doc.getElementById('val-manager').textContent = prof.reportingManager;
-          if (doc.getElementById('val-location') && prof.workLocation) doc.getElementById('val-location').textContent = prof.workLocation;
-          if (doc.getElementById('val-date') && prof.joiningDate) doc.getElementById('val-date').textContent = prof.joiningDate;
-          if (doc.getElementById('input-dept') && prof.department) doc.getElementById('input-dept').value = prof.department;
-          if (doc.getElementById('input-team') && prof.team) doc.getElementById('input-team').value = prof.team;
-          if (doc.getElementById('input-manager') && prof.reportingManager) doc.getElementById('input-manager').value = prof.reportingManager;
-          if (doc.getElementById('input-location') && prof.workLocation) doc.getElementById('input-location').value = prof.workLocation;
-          if (doc.getElementById('input-date') && prof.joiningDate) doc.getElementById('input-date').value = prof.joiningDate;
-
-          if (doc.getElementById('val-email') && prof.email) doc.getElementById('val-email').textContent = prof.email;
-          if (doc.getElementById('val-phone') && prof.phone) doc.getElementById('val-phone').textContent = prof.phone;
-          if (doc.getElementById('input-email') && prof.email) doc.getElementById('input-email').value = prof.email;
-          if (doc.getElementById('input-phone') && prof.phone) doc.getElementById('input-phone').value = prof.phone;
-        }
-
-        var empStatusEl = doc.getElementById('profile-emp-status');
-        if (!empStatusEl) {
-          var badges = doc.querySelectorAll('.status-card .badge, .status-row .badge');
-          if (badges.length > 0) empStatusEl = badges[0];
-        }
-        if (empStatusEl) {
-          var currentStatus = window.EMPLOYMENT_STATUS || 'Active';
-          empStatusEl.textContent = currentStatus;
-          if (currentStatus === 'Active') {
-            empStatusEl.className = 'badge success';
-            empStatusEl.style.background = 'var(--success-bg, #E3F8EE)';
-            empStatusEl.style.color = 'var(--success, #1FAE6E)';
-          } else {
-            empStatusEl.className = 'badge danger';
-            empStatusEl.style.background = 'var(--danger-bg, #FEECEE)';
-            empStatusEl.style.color = 'var(--danger, #E5484D)';
+          // 2. Remove from permission state if applicable
+          if (card.id === 'emp-dash-perm-card' || cardId === 'perm') {
+            if (pWin.PERM_STATE) pWin.PERM_STATE = [];
+            if (winRef.PERM_STATE) winRef.PERM_STATE = [];
           }
-        }
-      }
 
-      var tabs = doc.querySelectorAll('.bottom-nav .tab');
-      var tabMap = {
-        'dashboard': 'tpl-EmployeeDashboard',
-        'attendance': 'tpl-MyAttendance',
-        'apply': 'tpl-ApplyLeave',
-        'history': 'tpl-LeaveHistory',
-        'more': 'tpl-MyProfile',
-        'profile': 'tpl-MyProfile'
-      };
-      tabs.forEach(function (tab) {
-        tab.style.cursor = 'pointer';
-        tab.addEventListener('click', function (e) {
-          var label = tab.textContent.toLowerCase();
-          for (var key in tabMap) {
-            if (label.indexOf(key) !== -1) {
-              loadScreen(tabMap[key]);
-              break;
+          // 3. Mark card ID as deleted so tab navigation preserves deletion
+          if (card.id) {
+            pWin.DELETED_REQUEST_IDS = pWin.DELETED_REQUEST_IDS || [];
+            if (pWin.DELETED_REQUEST_IDS.indexOf(card.id) === -1) {
+              pWin.DELETED_REQUEST_IDS.push(card.id);
+            }
+            winRef.DELETED_REQUEST_IDS = winRef.DELETED_REQUEST_IDS || [];
+            if (winRef.DELETED_REQUEST_IDS.indexOf(card.id) === -1) {
+              winRef.DELETED_REQUEST_IDS.push(card.id);
             }
           }
-        });
-      });
 
-      var backBtns = doc.querySelectorAll('.back-btn, [class*="back"]');
-      backBtns.forEach(function (btn) {
-        btn.style.cursor = 'pointer';
-        btn.addEventListener('click', function () {
-          if (currentTpl.indexOf('Manager') !== -1 || currentTpl === 'tpl-TeamAttendance' || currentTpl === 'tpl-LeaveApprovals' || currentTpl === 'tpl-PermissionApprovals' || currentTpl === 'tpl-LeaveApprovalDetail') {
-            loadScreen('tpl-ManagerDashboard');
-          } else {
-            loadScreen('tpl-EmployeeDashboard');
-          }
-        });
-      });
+          // 4. Smooth fade/collapse animation & remove
+          card.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.92) translateY(-8px)';
+          setTimeout(function() {
+            card.remove();
+            var allCards = docRef.querySelectorAll('.request-card');
+            var count = allCards.length;
+            var label = docRef.getElementById('emp-dash-requests-label') || docRef.querySelector('.section-label');
+            if (label) {
+              label.textContent = 'RECENT REQUESTS (' + count + ')';
+            }
+          }, 220);
+        };
 
-      if (currentTpl === 'tpl-Login') {
-        var loginBtn = doc.querySelector('button.btn-primary, .btn-primary');
-        if (loginBtn) {
-          loginBtn.style.cursor = 'pointer';
-          loginBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            loadScreen('tpl-EmployeeDashboard');
-          });
+        // ── Shared User Profile State ──────────────────────────────────
+        var savedProfile = null;
+        try {
+          savedProfile = JSON.parse(sessionStorage.getItem('USER_PROFILE'));
+        } catch (e) {}
+
+        if (!window.USER_PROFILE) {
+          window.USER_PROFILE = savedProfile || {
+            name: 'Priya Sharma',
+            role: 'Senior Software Engineer',
+            employeeId: 'EMP-2024-0156',
+            initials: 'PS',
+            department: 'IT',
+            team: 'Development',
+            reportingManager: 'Rahul Sharma',
+            workLocation: 'Bangalore',
+            joiningDate: 'Mar 15, 2022',
+            email: 'priya.sharma@emergere.com',
+            phone: '+91 98765 43210'
+          };
         }
-      }
 
-      if (currentTpl === 'tpl-ApplyLeave') {
-        var submitBtn = doc.getElementById('leave-submit-btn') || doc.querySelector('.btn-primary.full');
-        if (submitBtn) {
-          submitBtn.style.cursor = 'pointer';
-          submitBtn.addEventListener('click', function (e) {
-            var leaveTypeEl = doc.getElementById('leave-type-select');
-            var fromDateEl = doc.getElementById('from-date-display');
-            var toDateEl = doc.getElementById('to-date-display');
-            var daysEl = doc.getElementById('days-count-box');
-            var managerEl = doc.getElementById('leave-manager-select');
-            var reasonEl = doc.getElementById('leave-reason-text');
+        function toggleMobileMenu() {
+          var sb = document.getElementById('sidebar');
+          var ov = document.getElementById('sidebar-overlay');
+          if (sb && ov) {
+            sb.classList.toggle('open');
+            ov.classList.toggle('open');
+          }
+        }
+        window.toggleMobileMenu = toggleMobileMenu;
 
-            var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
-            var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
-            var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
-            var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
-            var approvingManager = managerEl ? managerEl.value : 'Rahul Sharma (Team Lead)';
-            var reason = reasonEl ? reasonEl.value.trim() : '';
+        function closeMobileMenu() {
+          var sb = document.getElementById('sidebar');
+          var ov = document.getElementById('sidebar-overlay');
+          if (sb && ov) {
+            sb.classList.remove('open');
+            ov.classList.remove('open');
+          }
+        }
+        window.closeMobileMenu = closeMobileMenu;
 
-            window.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager };
+        var SELECTED_PERSON = 'priya';
+        var PERSON_DATA = {
+          'priya': {
+            initials: 'PS',
+            name: 'Priya Sharma',
+            role: 'Senior Software Engineer',
+            empId: 'EMP-2024-0156',
+            leaveType: 'Casual Leave',
+            fromDate: 'Sep 10, 2026',
+            toDate: 'Sep 11, 2026',
+            totalDays: '2 Days',
+            contact: '+91 98765 43210',
+            reason: "Family function - attending sister's wedding ceremony in Bangalore.",
+            subtitle: 'Casual Leave Application',
+            appliedPath: 'Priya (Applied)'
+          },
+          'sneha': {
+            initials: 'SG',
+            name: 'Sneha Gupta',
+            role: 'Product Designer',
+            empId: 'EMP-2024-0210',
+            leaveType: 'Earned Leave',
+            fromDate: 'Sep 15, 2026',
+            toDate: 'Sep 19, 2026',
+            totalDays: '5 Days',
+            contact: '+91 91234 56789',
+            reason: 'Personal leave - annual family vacation to Kerala with family.',
+            subtitle: 'Earned Leave Application',
+            appliedPath: 'Sneha (Applied)'
+          },
+          'amit': {
+            initials: 'AP',
+            name: 'Amit Patel',
+            role: 'Backend Engineer',
+            empId: 'EMP-2024-0089',
+            leaveType: 'Sick Leave',
+            fromDate: 'Sep 12, 2026',
+            toDate: 'Sep 12, 2026',
+            totalDays: '1 Day',
+            contact: '+91 99887 76655',
+            reason: 'Medical appointment & doctor advised rest.',
+            subtitle: 'Sick Leave Application',
+            appliedPath: 'Amit (Applied)'
+          }
+        };
 
-            var approvalsTpl = document.getElementById('tpl-LeaveApprovals');
-            if (approvalsTpl) {
-              var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
-              var newId = 'emp-new-' + Date.now();
-              var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
-                + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
-                + '<hr/>'
-                + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
-                + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
-                + '<div class="card-action-wrap">'
-                + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\',\'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\',\'approved\')">Approve</button></div>'
-                + '</div></div>';
-              var tplHtml = approvalsTpl.innerHTML;
-              if (tplHtml.indexOf(newId) === -1) {
-                tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
-                approvalsTpl.innerHTML = tplHtml;
+        function loadScreen(tplId, personKey) {
+          if (personKey) {
+            SELECTED_PERSON = personKey;
+          }
+          var tpl = document.getElementById(tplId);
+          if (!tpl) return;
+          currentTpl = tplId;
+          var frame = document.getElementById('frame');
+          frame.srcdoc = tpl.innerHTML;
+          document.querySelectorAll('.nav-btn').forEach(function (b) {
+            b.classList.toggle('active', b.getAttribute('data-tpl') === tplId);
+          });
+          closeMobileMenu();
+        }
+        window.loadScreen = loadScreen;
+        window.EMPLOYMENT_STATUS = 'Active';
+        window.CHECKED_IN = true;
+        window.ATTENDANCE_STATUS = 'Checked In';
+
+        var frame = document.getElementById('frame');
+        frame.addEventListener('load', function () {
+          var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
+          if (!doc) return;
+
+          var navGlowStyle = doc.createElement('style');
+          navGlowStyle.textContent = `
+            .bottom-nav {
+              transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease !important;
+            }
+            .bottom-nav:hover {
+              box-shadow: 0 -4px 20px rgba(47, 107, 255, 0.18), 0 0 15px rgba(47, 107, 255, 0.12) !important;
+              border-top-color: rgba(47, 107, 255, 0.4) !important;
+            }
+            .bottom-nav .tab {
+              position: relative !important;
+              padding: 6px 8px !important;
+              border-radius: 12px !important;
+              transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease !important;
+            }
+            .bottom-nav .tab:hover {
+              color: var(--primary, #2F6BFF) !important;
+              background: rgba(47, 107, 255, 0.09) !important;
+              box-shadow: 0 0 14px rgba(47, 107, 255, 0.25), inset 0 0 10px rgba(47, 107, 255, 0.1) !important;
+              transform: translateY(-2px) !important;
+            }
+            .bottom-nav .tab .icon {
+              transition: transform 0.25s ease !important;
+            }
+            .bottom-nav .tab:hover .icon {
+              transform: scale(1.08) !important;
+            }
+            .bottom-nav .tab .icon svg {
+              transition: stroke 0.25s ease, filter 0.25s ease !important;
+            }
+            .bottom-nav .tab:hover .icon svg {
+              stroke: var(--primary, #2F6BFF) !important;
+              filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.65)) !important;
+            }
+            .bottom-nav .tab.active .icon svg {
+              stroke: var(--primary, #2F6BFF) !important;
+              filter: drop-shadow(0 0 4px rgba(47, 107, 255, 0.4)) !important;
+            }
+            .date-cell {
+              position: relative !important;
+              cursor: pointer !important;
+              border-radius: 10px !important;
+              transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease !important;
+              border: 1.5px solid transparent;
+            }
+            .date-cell:hover {
+              background: rgba(47, 107, 255, 0.12) !important;
+              border-color: rgba(47, 107, 255, 0.45) !important;
+              box-shadow: 0 0 14px rgba(47, 107, 255, 0.35), inset 0 0 8px rgba(47, 107, 255, 0.15) !important;
+              transform: translateY(-2px) scale(1.05) !important;
+              z-index: 10 !important;
+            }
+            .date-cell:hover .num {
+              color: var(--primary, #2F6BFF) !important;
+              font-weight: 800 !important;
+              text-shadow: 0 0 8px rgba(47, 107, 255, 0.4) !important;
+            }
+            .date-cell .dot {
+              transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            }
+            .date-cell:hover .dot {
+              transform: scale(1.35) !important;
+              box-shadow: 0 0 6px currentColor !important;
+            }
+            .date-cell.selected {
+              border: 1.5px solid var(--primary, #2F6BFF) !important;
+              border-radius: 10px !important;
+              background: rgba(47, 107, 255, 0.06) !important;
+            }
+            /* Cards, Quick Actions & Item Containers Glow Hover */
+            .card, .request-card, .req-card, .member-card, .team-card, .employee-card, .hol-card, .quick-action, .stat-card, .action-card, .item-card {
+              transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease !important;
+            }
+            .card:hover, .request-card:hover, .req-card:hover, .member-card:hover, .team-card:hover, .employee-card:hover, .hol-card:hover, .quick-action:hover, .stat-card:hover, .action-card:hover, .item-card:hover {
+              border-color: var(--primary, #2F6BFF) !important;
+              box-shadow: 0 0 20px rgba(47, 107, 255, 0.32), 0 6px 18px rgba(47, 107, 255, 0.18), inset 0 0 10px rgba(47, 107, 255, 0.06) !important;
+              transform: translateY(-3px) !important;
+              cursor: pointer !important;
+            }
+            /* Leave Approvals & Overview Cards - No Glow & No Highlight */
+            .approval-card, .approval-card:hover, .overview-card, .overview-card:hover {
+              border: 1px solid var(--border, #E5E7EB) !important;
+              border-color: var(--border, #E5E7EB) !important;
+              box-shadow: none !important;
+              transform: none !important;
+              cursor: default !important;
+            }
+            .request-actions {
+              display: flex !important;
+              align-items: center !important;
+              gap: 8px !important;
+              flex-shrink: 0 !important;
+            }
+            .btn-cancel-req {
+              background: transparent !important;
+              border: none !important;
+              color: var(--text-muted, #9AA3B2) !important;
+              cursor: pointer !important;
+              padding: 4px !important;
+              border-radius: 50% !important;
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              line-height: 1 !important;
+              transition: all 0.2s ease !important;
+              flex-shrink: 0 !important;
+              outline: none !important;
+            }
+            .btn-cancel-req:hover {
+              color: var(--danger, #E5484D) !important;
+              background: var(--danger-bg, #FCE4E4) !important;
+              transform: scale(1.15) !important;
+            }
+            .btn-cancel-req:active {
+              transform: scale(0.95) !important;
+            }
+          `;
+          if (doc.head) doc.head.appendChild(navGlowStyle);
+
+          if (currentTpl === 'tpl-LeaveApprovalDetail') {
+            var detailNoGlowStyle = doc.createElement('style');
+            detailNoGlowStyle.textContent = `
+              .card, .emp-card, .card:hover, .emp-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(detailNoGlowStyle);
+
+            var p = PERSON_DATA[SELECTED_PERSON] || PERSON_DATA['priya'];
+            var elName = doc.getElementById('lad-name'); if (elName) elName.textContent = p.name;
+            var elRole = doc.getElementById('lad-role'); if (elRole) elRole.textContent = p.role;
+            var elEmpId = doc.getElementById('lad-empid'); if (elEmpId) elEmpId.textContent = p.empId;
+            var elAvatar = doc.getElementById('lad-avatar'); if (elAvatar) elAvatar.textContent = p.initials;
+            var elLeaveType = doc.getElementById('lad-leavetype'); if (elLeaveType) elLeaveType.textContent = p.leaveType;
+            var elFromDate = doc.getElementById('lad-fromdate'); if (elFromDate) elFromDate.textContent = p.fromDate;
+            var elToDate = doc.getElementById('lad-todate'); if (elToDate) elToDate.textContent = p.toDate;
+            var elTotalDays = doc.getElementById('lad-totaldays'); if (elTotalDays) elTotalDays.textContent = p.totalDays;
+            var elContact = doc.getElementById('lad-contact'); if (elContact) elContact.textContent = p.contact;
+            var elReason = doc.getElementById('lad-reason'); if (elReason) elReason.textContent = p.reason;
+            var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle;
+            var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath;
+          }
+
+          if (currentTpl === 'tpl-MyAttendance') {
+            var attendNoGlowStyle = doc.createElement('style');
+            attendNoGlowStyle.textContent = `
+              #details-card, #details-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(attendNoGlowStyle);
+          }
+
+          if (currentTpl === 'tpl-EmployeeDashboard') {
+            var dashNoGlowStyle = doc.createElement('style');
+            dashNoGlowStyle.textContent = `
+              #dash-attendance-card, #dash-attendance-card:hover,
+              #dash-leave-balance-card, #dash-leave-balance-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+              }
+              .chip-btn.success:hover {
+                background: #D1F3E2 !important;
+                box-shadow: 0 2px 8px rgba(31, 174, 110, 0.22) !important;
+                transform: translateY(-1px) !important;
+              }
+              .chip-btn.danger:hover {
+                background: #FDD8DC !important;
+                box-shadow: 0 2px 8px rgba(229, 72, 77, 0.22) !important;
+                transform: translateY(-1px) !important;
+              }
+              .chip-btn:active {
+                transform: translateY(0) !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(dashNoGlowStyle);
+
+            var statusDot = doc.getElementById('dash-status-dot');
+            var statusText = doc.getElementById('dash-status-text');
+            var btnCheckIn = doc.getElementById('btn-check-in');
+            var btnCheckOut = doc.getElementById('btn-check-out');
+
+            function syncDashAttendanceUI() {
+              if (statusDot) {
+                statusDot.style.background = window.CHECKED_IN ? 'var(--success, #1FAE6E)' : 'var(--danger, #E5484D)';
+              }
+              if (statusText) {
+                statusText.textContent = window.CHECKED_IN ? (window.ATTENDANCE_STATUS || 'Checked In') : 'Checked Out';
               }
             }
-            loadScreen('tpl-LeaveApprovals');
-          });
-        }
-      }
+            syncDashAttendanceUI();
 
-      if (currentTpl === 'tpl-LeaveApprovals') {
-        doc.querySelectorAll('.approval-card, .card').forEach(function (card) {
-          card.style.cursor = 'pointer';
-          card.addEventListener('click', function (e) {
-            if (e.target.tagName !== 'BUTTON') {
-              var nameEl = card.querySelector('b');
-              var nameText = nameEl ? nameEl.textContent : '';
-              var key = 'priya';
-              if (nameText.indexOf('Sneha') !== -1) key = 'sneha';
-              else if (nameText.indexOf('Amit') !== -1) key = 'amit';
-              loadScreen('tpl-LeaveApprovalDetail', key);
+            if (btnCheckIn) {
+              btnCheckIn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.CHECKED_IN = true;
+                window.EMPLOYMENT_STATUS = 'Active';
+                window.ATTENDANCE_STATUS = 'Checked In';
+                syncDashAttendanceUI();
+              };
             }
+
+            if (btnCheckOut) {
+              btnCheckOut.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.CHECKED_IN = false;
+                window.EMPLOYMENT_STATUS = 'Inactive';
+                window.ATTENDANCE_STATUS = 'Checked Out';
+                syncDashAttendanceUI();
+                loadScreen('tpl-MyProfile');
+              };
+            }
+          }
+
+          if (currentTpl === 'tpl-MyProfile') {
+            var profileNoGlowStyle = doc.createElement('style');
+            profileNoGlowStyle.textContent = `
+              .card, .card:hover,
+              .profile-card, .profile-card:hover,
+              .status-card, .status-card:hover {
+                border: 1px solid var(--border, #E5E7EB) !important;
+                border-color: var(--border, #E5E7EB) !important;
+                box-shadow: none !important;
+                transform: none !important;
+                cursor: default !important;
+                background: var(--surface, #FFFFFF) !important;
+              }
+              .badge.danger {
+                background: var(--danger-bg, #FEECEE) !important;
+                color: var(--danger, #E5484D) !important;
+              }
+              .badge.success {
+                background: var(--success-bg, #E3F8EE) !important;
+                color: var(--success, #1FAE6E) !important;
+              }
+            `;
+            if (doc.head) doc.head.appendChild(profileNoGlowStyle);
+
+            var empStatusEl = doc.getElementById('profile-emp-status');
+            if (!empStatusEl) {
+              var badges = doc.querySelectorAll('.status-card .badge, .status-row .badge');
+              if (badges.length > 0) empStatusEl = badges[0];
+            }
+            if (empStatusEl) {
+              var currentStatus = window.EMPLOYMENT_STATUS || 'Active';
+              empStatusEl.textContent = currentStatus;
+              if (currentStatus === 'Active') {
+                empStatusEl.className = 'badge success';
+                empStatusEl.style.background = 'var(--success-bg, #E3F8EE)';
+                empStatusEl.style.color = 'var(--success, #1FAE6E)';
+              } else {
+                empStatusEl.className = 'badge danger';
+                empStatusEl.style.background = 'var(--danger-bg, #FEECEE)';
+                empStatusEl.style.color = 'var(--danger, #E5484D)';
+              }
+            }
+          }
+
+          var tabs = doc.querySelectorAll('.bottom-nav .tab');
+          var tabMap = {
+            'dashboard': 'tpl-EmployeeDashboard',
+            'attendance': 'tpl-MyAttendance',
+            'apply': 'tpl-ApplyLeave',
+            'history': 'tpl-LeaveHistory',
+            'more': 'tpl-MyProfile',
+            'profile': 'tpl-MyProfile'
+          };
+          tabs.forEach(function (tab) {
+            tab.style.cursor = 'pointer';
+            tab.addEventListener('click', function () {
+              var label = tab.textContent.toLowerCase();
+              for (var key in tabMap) {
+                if (label.indexOf(key) !== -1) {
+                  loadScreen(tabMap[key]);
+                  break;
+                }
+              }
+            });
+          });
+
+          var backBtns = doc.querySelectorAll('.back-btn, [class*="back"]');
+          backBtns.forEach(function (btn) {
+            btn.style.cursor = 'pointer';
+            btn.addEventListener('click', function () {
+              if (currentTpl.indexOf('Manager') !== -1 || currentTpl === 'tpl-TeamAttendance' || currentTpl === 'tpl-LeaveApprovals' || currentTpl === 'tpl-PermissionApprovals' || currentTpl === 'tpl-LeaveApprovalDetail') {
+                loadScreen('tpl-ManagerDashboard');
+              } else {
+                loadScreen('tpl-EmployeeDashboard');
+              }
+            });
+          });
+
+          if (currentTpl === 'tpl-Login') {
+            var loginBtn = doc.querySelector('button.btn-primary, .btn-primary');
+            if (loginBtn) {
+              loginBtn.style.cursor = 'pointer';
+              loginBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                loadScreen('tpl-EmployeeDashboard');
+              });
+            }
+          }
+
+          if (currentTpl === 'tpl-ApplyLeave') {
+            // Pre-fill Approving Manager from USER_PROFILE.reportingManager
+            var leaveManagerEl = doc.getElementById('leave-manager-select');
+            if (leaveManagerEl && window.USER_PROFILE && window.USER_PROFILE.reportingManager) {
+              var reportMgr = window.USER_PROFILE.reportingManager;
+              // Find option that starts with the manager name
+              var leaveOpts = leaveManagerEl.querySelectorAll('option');
+              var leaveMatched = false;
+              leaveOpts.forEach(function(opt) {
+                if (opt.value.toLowerCase().indexOf(reportMgr.toLowerCase().split(' ')[0]) !== -1) {
+                  leaveManagerEl.value = opt.value;
+                  leaveMatched = true;
+                }
+              });
+              // If no match found, set first option or add one
+              if (!leaveMatched && leaveOpts.length > 0) {
+                leaveManagerEl.value = leaveOpts[0].value;
+              }
+            }
+            var submitBtn = doc.getElementById('leave-submit-btn') || doc.querySelector('.btn-primary.full');
+            if (submitBtn) {
+              submitBtn.style.cursor = 'pointer';
+              submitBtn.addEventListener('click', function () {
+                var leaveTypeEl = doc.getElementById('leave-type-select');
+                var fromDateEl = doc.getElementById('from-date-display');
+                var toDateEl = doc.getElementById('to-date-display');
+                var daysEl = doc.getElementById('days-count-box');
+                var managerEl = doc.getElementById('leave-manager-select');
+                var reasonEl = doc.getElementById('leave-reason-text');
+
+                var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
+                var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
+                var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
+                var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
+                var approvingManager = managerEl ? managerEl.value : (window.USER_PROFILE && window.USER_PROFILE.reportingManager ? window.USER_PROFILE.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)');
+                var reason = reasonEl ? reasonEl.value.trim() : '';
+
+                // Grab employee details from USER_PROFILE
+                var empProf = window.USER_PROFILE || {};
+                var empName = empProf.name || 'Priya Sharma';
+                var empInitials = empProf.initials || (empName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                var empId = empProf.employeeId || 'EMP-2024-0156';
+                var empRole = empProf.role || 'Software Engineer';
+
+                window.lastLeaveRequest = { id: 'leave-' + Date.now(), leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager, employeeName: empName, employeeInitials: empInitials, employeeId: empId };
+
+                // Store for employee dashboard display
+                if (!window.EMP_LEAVE_REQUESTS) window.EMP_LEAVE_REQUESTS = [];
+                window.EMP_LEAVE_REQUESTS.unshift(window.lastLeaveRequest);
+
+                var approvalsTpl = document.getElementById('tpl-LeaveApprovals');
+                if (approvalsTpl) {
+                  var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
+                  var newId = window.lastLeaveRequest.id;
+                  var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
+                    + '<div class="top-row"><div class="emp-row"><div class="avatar">' + empInitials + '</div><div><b>' + empName + '</b><p>' + empId + '</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+                    + '<hr/>'
+                    + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
+                    + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
+                    + '<div class="card-action-wrap">'
+                    + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\',\'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\',\'approved\')">Approve</button></div>'
+                    + '</div></div>';
+                  var tplHtml = approvalsTpl.innerHTML;
+                  if (tplHtml.indexOf(newId) === -1) {
+                    tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
+                    approvalsTpl.innerHTML = tplHtml;
+                  }
+                }
+                loadScreen('tpl-LeaveApprovals');
+              });
+            }
+          }
+
+          // ── Apply Permission: save to shared state & navigate ──────────
+          if (currentTpl === 'tpl-ApplyPermission') {
+            // Pre-fill Approving Manager from USER_PROFILE.reportingManager
+            var permManagerEl = doc.getElementById('perm-manager-select');
+            if (permManagerEl && window.USER_PROFILE && window.USER_PROFILE.reportingManager) {
+              var permReportMgr = window.USER_PROFILE.reportingManager;
+              var permOpts = permManagerEl.querySelectorAll('option');
+              var permMatched = false;
+              permOpts.forEach(function(opt) {
+                if (opt.value.toLowerCase().indexOf(permReportMgr.toLowerCase().split(' ')[0]) !== -1) {
+                  permManagerEl.value = opt.value;
+                  permMatched = true;
+                }
+              });
+              if (!permMatched && permOpts.length > 0) {
+                permManagerEl.value = permOpts[0].value;
+              }
+            }
+            var iframeWin = frame.contentWindow;
+            if (iframeWin) {
+              iframeWin.handleApplyPermissionSubmit = function () {
+                var permDateInput  = doc.getElementById('perm-date-input');
+                var permTypeSelect = doc.getElementById('perm-type-select');
+                var durationInput  = doc.getElementById('perm-duration-input');
+                var reasonText     = doc.getElementById('perm-reason-text');
+
+                var rawDate   = permDateInput  ? permDateInput.value  : '2026-09-04';
+                var months    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var dp = rawDate.split('-');
+                var fmtDate = dp.length === 3 ? (dp[2] + '-' + (months[parseInt(dp[1],10)-1]||'Sep') + '-' + dp[0]) : rawDate;
+
+                var pType     = permTypeSelect ? permTypeSelect.value : 'Early Going';
+                var pDuration = durationInput  ? (durationInput.value.trim() || '2 Hours') : '2 Hours';
+                var pReason   = reasonText     ? (reasonText.value.trim()   || 'Personal work / checkup') : 'Personal work / checkup';
+
+                if (!pReason) { alert('Please enter a reason.'); return; }
+
+                var newId = 'perm-' + Date.now();
+                var permProf = window.parent.USER_PROFILE || {};
+                var permEmpName = permProf.name || 'Priya Sharma';
+                var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                var permEmpId = permProf.employeeId || 'EMP-2024-0156';
+                var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending', employeeName: permEmpName, employeeInitials: permEmpInitials, employeeId: permEmpId };
+                window.parent.PERM_STATE.unshift(entry);
+
+                // Also store for employee dashboard
+                if (!window.parent.EMP_LEAVE_REQUESTS) window.parent.EMP_LEAVE_REQUESTS = [];
+                window.parent.EMP_LEAVE_REQUESTS.unshift({ id: newId, leaveType: pType, fromDate: fmtDate, daysText: pDuration, reason: pReason, isPermission: true, employeeName: permEmpName });
+
+                window.parent.loadScreen('tpl-PermissionApprovals');
+              };
+            }
+          }
+
+          // ── Permission Approvals: inject new requests & wire approve/reject ──
+          if (currentTpl === 'tpl-PermissionApprovals') {
+            // Inject any pending requests from PERM_STATE that don't already exist in the DOM
+            var paList = doc.getElementById('permission-approvals-list');
+            if (paList) {
+              window.PERM_STATE.forEach(function (req) {
+                if (!paList.querySelector('[data-perm-id="' + req.id + '"]')) {
+                  var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
+                  var actionHtml = req.status === 'pending'
+                    ? '<div class="btn-row"><button class="btn btn-reject" onclick="processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>'
+                    : '<div style="text-align:right;margin-top:8px;"><span class="badge ' + (req.status === 'approved' ? 'success' : 'danger') + '">' + (req.status === 'approved' ? 'Approved' : 'Rejected') + '</span></div>';
+                  var reqEmpName = req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee';
+                  var reqEmpInitials = req.employeeInitials || (reqEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                  var cardHtml = '<div class="card approval-card" data-perm-id="' + req.id + '" data-status="' + req.status + '" data-type="' + req.type + '" data-date="' + req.date + '">'
+                    + '<div class="top-row"><div class="emp-row"><div class="avatar">' + reqEmpInitials + '</div><div><b>' + reqEmpName + '</b><p>' + req.type + '</p></div></div><span class="badge ' + tone + '">' + req.type + '</span></div>'
+                    + '<hr/>'
+                    + '<div class="detail-row"><span>Date</span><b>' + req.date + '</b></div>'
+                    + '<div class="detail-row"><span>Duration</span><b>' + req.duration + '</b></div>'
+                    + '<div class="detail-row"><span>Reason</span><b>' + req.reason + '</b></div>'
+                    + '<div class="card-action-wrap">' + actionHtml + '</div>'
+                    + '</div>';
+                  paList.insertAdjacentHTML('afterbegin', cardHtml);
+                }
+              });
+            }
+
+            // Override processPermAction to also persist back to PERM_STATE
+            var iframeWin2 = frame.contentWindow;
+            if (iframeWin2) {
+              var _origProcessPerm = iframeWin2.processPermAction;
+              iframeWin2.processPermAction = function (id, newStatus) {
+                if (typeof _origProcessPerm === 'function') _origProcessPerm(id, newStatus);
+                // Update PERM_STATE
+                window.PERM_STATE.forEach(function (req) {
+                  if (req.id === id) req.status = newStatus;
+                });
+                // Add notification to parent-level queue
+                if (!window.PERM_NOTIFICATIONS) window.PERM_NOTIFICATIONS = [];
+                var req = window.PERM_STATE.find ? window.PERM_STATE.find(function(r){ return r.id === id; }) : null;
+                if (req) {
+                  // Update employee dashboard badge for this permission
+                  if (window.EMP_LEAVE_REQUESTS) {
+                    window.EMP_LEAVE_REQUESTS.forEach(function(r) {
+                      if (r.id === id) r.status = newStatus;
+                    });
+                  }
+                  window.PERM_NOTIFICATIONS.unshift({
+                    status: newStatus,
+                    type: req.type,
+                    date: req.date,
+                    managerName: (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager',
+                    employeeName: req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee'
+                  });
+                }
+              };
+            }
+          }
+
+          // ── Manager Dashboard: inject pending permission request card ─────
+          if (currentTpl === 'tpl-ManagerDashboard') {
+            var pendingPerms = window.PERM_STATE.filter(function(r){ return r.status === 'pending'; });
+            if (pendingPerms.length > 0) {
+              var screen2 = doc.querySelector('.screen');
+              if (screen2) {
+                var labelEl = doc.createElement('p');
+                labelEl.className = 'section-label';
+                labelEl.textContent = 'PENDING PERMISSION REQUESTS';
+                screen2.appendChild(labelEl);
+                pendingPerms.forEach(function(req) {
+                  var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
+                  var mgDashEmpName = req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee';
+                  var mgDashEmpInitials = req.employeeInitials || (mgDashEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                  var div = doc.createElement('div');
+                  div.className = 'card req-card';
+                  div.style.cursor = 'pointer';
+                  div.innerHTML = '<div class="req-row"><div><b>' + mgDashEmpName + '</b><p>' + req.type + ' &bull; ' + req.date + ' (' + req.duration + ')</p></div><span class="badge warning">Pending</span></div>';
+                  div.addEventListener('click', function(){
+                    if (window.parent && window.parent.loadScreen) window.parent.loadScreen('tpl-PermissionApprovals');
+                  });
+                  screen2.appendChild(div);
+                });
+              }
+              // Update the Perm. Approvals badge count
+              var permBadgeEl = doc.querySelector('.quick-action .qbadge:last-of-type');
+              var qActions = doc.querySelectorAll('.quick-action');
+              qActions.forEach(function(qa) {
+                if (qa.textContent.indexOf('Perm') !== -1) {
+                  var qb = qa.querySelector('.qbadge');
+                  if (qb) qb.textContent = pendingPerms.length + 2; // existing 2 + new
+                }
+              });
+            }
+          }
+
+          // ── Notifications: prepend permission approval/rejection items ─────
+          if (currentTpl === 'tpl-Notifications') {
+            if (window.PERM_NOTIFICATIONS && window.PERM_NOTIFICATIONS.length > 0) {
+              var notifContainer = doc.getElementById('notif-container');
+              if (notifContainer) {
+                window.PERM_NOTIFICATIONS.forEach(function(notif) {
+                  var isApprove = notif.status === 'approved';
+                  var div = doc.createElement('div');
+                  div.className = 'card notif-card unread';
+                  div.innerHTML = '<div class="notif-row">'
+                    + '<span class="ico-wrap ' + (isApprove ? 'success' : 'danger') + '">' + (isApprove ? '✓' : '✕') + '</span>'
+                    + '<div class="notif-text">'
+                    + '<p>Permission Request ' + (isApprove ? 'Approved' : 'Rejected') + '</p>'
+                    + '<small>Your ' + notif.type + ' permission request for ' + notif.date + ' was ' + (isApprove ? 'Approved ✅' : 'Rejected ❌') + ' by ' + (notif.managerName || (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager') + '.</small>'
+                    + '</div>'
+                    + '<span class="dot"></span>'
+                    + '<span class="close-item-btn" onclick="removeSingleNotif(this)" title="Delete">✕</span>'
+                    + '</div>';
+                  notifContainer.insertBefore(div, notifContainer.firstChild);
+                });
+              }
+            }
+          }
+
+          // ── Employee Dashboard: sync greeting & role/ID with USER_PROFILE ───
+          if (currentTpl === 'tpl-EmployeeDashboard') {
+            var prof = window.USER_PROFILE;
+            if (prof) {
+              var greetingEl = doc.getElementById('dash-greeting') || doc.querySelector('.greeting');
+              if (greetingEl && prof.name) {
+                greetingEl.textContent = 'Hello, ' + prof.name;
+              }
+              var roleTextEl = doc.getElementById('dash-role-text');
+              var idTextEl = doc.getElementById('dash-id-text');
+              if (roleTextEl && prof.role) roleTextEl.textContent = prof.role;
+              if (idTextEl && prof.employeeId) idTextEl.textContent = prof.employeeId;
+              if (!roleTextEl && greetingEl) {
+                var roleMeta = doc.createElement('p');
+                roleMeta.className = 'dash-role-meta';
+                roleMeta.id = 'dash-role-meta';
+                roleMeta.style.cssText = 'padding:0 20px; color:var(--text-secondary); margin:4px 0 0; font-size:13px; font-weight:500;';
+                roleMeta.innerHTML = '<span id="dash-role-text">' + (prof.role || 'Senior Software Engineer') + '</span> &bull; <span id="dash-id-text">' + (prof.employeeId || 'EMP-2024-0156') + '</span>';
+                greetingEl.insertAdjacentElement('afterend', roleMeta);
+              }
+            }
+
+            // Clean up any previously deleted static or dynamic cards
+            if (window.DELETED_REQUEST_IDS && window.DELETED_REQUEST_IDS.length > 0) {
+              window.DELETED_REQUEST_IDS.forEach(function(delId) {
+                var el = doc.getElementById(delId);
+                if (el) el.remove();
+              });
+            }
+
+            var cancelSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+            // Inject any newly submitted leave / permission requests from employee
+            var empReqs = window.EMP_LEAVE_REQUESTS || [];
+            if (empReqs.length > 0) {
+              var reqsSection = doc.getElementById('emp-dash-requests-label') || doc.querySelector('.section-label');
+              if (reqsSection) {
+                empReqs.forEach(function(req) {
+                  if (doc.getElementById('emp-req-' + req.id)) return; // already added
+                  if (window.DELETED_REQUEST_IDS && window.DELETED_REQUEST_IDS.indexOf('emp-req-' + req.id) !== -1) return;
+                  var sc = req.status === 'approved' ? 'success' : req.status === 'rejected' ? 'danger' : 'warning';
+                  var st = req.status === 'approved' ? 'Approved' : req.status === 'rejected' ? 'Rejected' : 'Pending';
+                  var cardHtml = '<div class="card request-card" id="emp-req-' + req.id + '">'
+                    + '<div class="request-row"><div>'
+                    + '<b>' + (req.leaveType || req.type || 'Request') + ' (' + (req.daysText || req.duration || '') + ')</b>'
+                    + '<p>' + (req.fromDate || req.date || '') + ' &bull; ' + ((req.reason || '').slice(0,40)) + '</p>'
+                    + '</div>'
+                    + '<div class="request-actions">'
+                    + '<span id="emp-req-badge-' + req.id + '" class="badge ' + sc + '">' + st + '</span>'
+                    + '<button type="button" class="btn-cancel-req" title="Cancel request" onclick="deleteEmpRequest(this, event, \'' + req.id + '\')">'
+                    + cancelSvg
+                    + '</button>'
+                    + '</div>'
+                    + '</div></div>';
+                  reqsSection.insertAdjacentHTML('afterend', cardHtml);
+                });
+              }
+            }
+
+            // Sync status updates for submitted requests (from manager approve/reject)
+            if (window.EMP_STATUS_UPDATES) {
+              window.EMP_STATUS_UPDATES.forEach(function(upd) {
+                var badge = doc.getElementById('emp-req-badge-' + upd.id);
+                if (badge) {
+                  badge.className = 'badge ' + (upd.status === 'approved' ? 'success' : 'danger');
+                  badge.textContent = upd.status === 'approved' ? 'Approved' : 'Rejected';
+                }
+              });
+            }
+
+            // Apply lastLeaveDecision to the static "Casual Leave" badge (emp-dash-casual-leave-badge)
+            if (window.lastLeaveDecision) {
+              var decision = window.lastLeaveDecision;
+              var staticBadge = doc.getElementById('emp-dash-casual-leave-badge');
+              if (staticBadge) {
+                staticBadge.className = decision.badgeClass || ('badge ' + (decision.status === 'approved' ? 'success' : 'danger'));
+                staticBadge.textContent = decision.labelText || (decision.status === 'approved' ? 'Approved' : 'Rejected');
+              }
+              // Also update any dynamic request cards whose leaveType matches
+              if (window.EMP_LEAVE_REQUESTS) {
+                window.EMP_LEAVE_REQUESTS.forEach(function(req) {
+                  if (req.leaveType === decision.lType && req.status === decision.status) {
+                    var dynBadge = doc.getElementById('emp-req-badge-' + req.id);
+                    if (dynBadge) {
+                      dynBadge.className = decision.badgeClass || ('badge ' + (decision.status === 'approved' ? 'success' : 'danger'));
+                      dynBadge.textContent = decision.labelText || (decision.status === 'approved' ? 'Approved' : 'Rejected');
+                    }
+                  }
+                });
+              }
+            }
+
+            var myPerms = window.PERM_STATE;
+            if (myPerms && myPerms.length > 0) {
+              var latestPerm = myPerms[0];
+              var sectionLabel = doc.querySelector('.section-label');
+              if (sectionLabel && (!window.DELETED_REQUEST_IDS || window.DELETED_REQUEST_IDS.indexOf('emp-dash-perm-card') === -1)) {
+                // Find or create the pending requests section
+                var permCard = doc.getElementById('emp-dash-perm-card');
+                if (!permCard) {
+                  var statusClass = latestPerm.status === 'approved' ? 'success' : latestPerm.status === 'rejected' ? 'danger' : 'warning';
+                  var statusText  = latestPerm.status === 'approved' ? 'Approved' : latestPerm.status === 'rejected' ? 'Rejected' : 'Pending';
+                  var pendingSection = doc.querySelector('.section-label');
+                  if (pendingSection) {
+                    var newPermCardHtml = '<div class="card request-card" id="emp-dash-perm-card">'
+                      + '<div class="request-row"><div>'
+                      + '<b>' + latestPerm.type + ' (' + latestPerm.duration + ')</b>'
+                      + '<p>' + latestPerm.date + ' &bull; ' + latestPerm.reason.slice(0,40) + (latestPerm.reason.length > 40 ? '...' : '') + '</p>'
+                      + '</div>'
+                      + '<div class="request-actions">'
+                      + '<span id="dash-perm-status-badge" class="badge ' + statusClass + '">' + statusText + '</span>'
+                      + '<button type="button" class="btn-cancel-req" title="Cancel request" onclick="deleteEmpRequest(this, event, \'perm\')">'
+                      + cancelSvg
+                      + '</button>'
+                      + '</div>'
+                      + '</div></div>';
+                    pendingSection.insertAdjacentHTML('afterend', newPermCardHtml);
+                  }
+                } else {
+                  // Update existing card status badge
+                  var badgeEl = doc.getElementById('dash-perm-status-badge');
+                  if (badgeEl) {
+                    var sc = latestPerm.status === 'approved' ? 'success' : latestPerm.status === 'rejected' ? 'danger' : 'warning';
+                    var st = latestPerm.status === 'approved' ? 'Approved' : latestPerm.status === 'rejected' ? 'Rejected' : 'Pending';
+                    badgeEl.className = 'badge ' + sc;
+                    badgeEl.textContent = st;
+                  }
+                }
+              }
+            }
+
+            // Always update the RECENT REQUESTS section label to exact count
+            var finalReqsLabel = doc.getElementById('emp-dash-requests-label') || doc.querySelector('.section-label');
+            if (finalReqsLabel) {
+              var totalCards = doc.querySelectorAll('.request-card').length;
+              finalReqsLabel.textContent = 'RECENT REQUESTS (' + totalCards + ')';
+            }
+            if (frame.contentWindow) {
+              frame.contentWindow.deleteEmpRequest = window.deleteEmpRequest;
+            }
+          }
+
+          // ── My Profile: populate with USER_PROFILE ───────────────────────
+          if (currentTpl === 'tpl-MyProfile') {
+            var prof = window.USER_PROFILE;
+            if (prof) {
+              if (doc.getElementById('profile-name-display') && prof.name) doc.getElementById('profile-name-display').textContent = prof.name;
+              if (doc.getElementById('profile-role-display') && prof.role) doc.getElementById('profile-role-display').textContent = prof.role;
+              if (doc.getElementById('profile-id-display') && prof.employeeId) doc.getElementById('profile-id-display').textContent = prof.employeeId;
+              if (doc.getElementById('profile-avatar-display') && prof.initials) doc.getElementById('profile-avatar-display').textContent = prof.initials;
+              if (doc.getElementById('edit-profile-name') && prof.name) doc.getElementById('edit-profile-name').value = prof.name;
+              if (doc.getElementById('edit-profile-role') && prof.role) doc.getElementById('edit-profile-role').value = prof.role;
+              if (doc.getElementById('edit-profile-id') && prof.employeeId) doc.getElementById('edit-profile-id').value = prof.employeeId;
+
+              if (doc.getElementById('val-dept') && prof.department) doc.getElementById('val-dept').textContent = prof.department;
+              if (doc.getElementById('val-team') && prof.team) doc.getElementById('val-team').textContent = prof.team;
+              if (doc.getElementById('val-manager') && prof.reportingManager) doc.getElementById('val-manager').textContent = prof.reportingManager;
+              if (doc.getElementById('val-location') && prof.workLocation) doc.getElementById('val-location').textContent = prof.workLocation;
+              if (doc.getElementById('val-date') && prof.joiningDate) doc.getElementById('val-date').textContent = prof.joiningDate;
+              if (doc.getElementById('input-dept') && prof.department) doc.getElementById('input-dept').value = prof.department;
+              if (doc.getElementById('input-team') && prof.team) doc.getElementById('input-team').value = prof.team;
+              if (doc.getElementById('input-manager') && prof.reportingManager) doc.getElementById('input-manager').value = prof.reportingManager;
+              if (doc.getElementById('input-location') && prof.workLocation) doc.getElementById('input-location').value = prof.workLocation;
+              if (doc.getElementById('input-date') && prof.joiningDate) doc.getElementById('input-date').value = prof.joiningDate;
+
+              if (doc.getElementById('val-email') && prof.email) doc.getElementById('val-email').textContent = prof.email;
+              if (doc.getElementById('val-phone') && prof.phone) doc.getElementById('val-phone').textContent = prof.phone;
+              if (doc.getElementById('input-email') && prof.email) doc.getElementById('input-email').value = prof.email;
+              if (doc.getElementById('input-phone') && prof.phone) doc.getElementById('input-phone').value = prof.phone;
+            }
+          }
+
+          if (currentTpl === 'tpl-LeaveApprovals') {
+            doc.querySelectorAll('.approval-card, .card').forEach(function (card) {
+              card.style.cursor = 'pointer';
+              card.addEventListener('click', function (e) {
+                if (e.target.tagName !== 'BUTTON') {
+                  var nameEl = card.querySelector('b');
+                  var nameText = nameEl ? nameEl.textContent : '';
+                  var key = 'priya';
+                  if (nameText.indexOf('Sneha') !== -1) key = 'sneha';
+                  else if (nameText.indexOf('Amit') !== -1) key = 'amit';
+                  loadScreen('tpl-LeaveApprovalDetail', key);
+                }
+              });
+            });
+          }
+
+          if (currentTpl === 'tpl-TeamAttendance') {
+            var teamDateInput = doc.getElementById('team-date-input');
+            var teamDateText = doc.getElementById('team-date-text');
+            if (teamDateInput) {
+              teamDateInput.addEventListener('change', function () {
+                if (!this.value) return;
+                var parts = this.value.split('-');
+                if (parts.length === 3) {
+                  var yr = parseInt(parts[0], 10);
+                  var mo = parseInt(parts[1], 10) - 1;
+                  var da = parseInt(parts[2], 10);
+                  var monthsArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                  var mStr = monthsArr[mo];
+                  var dayStr = String(da).padStart(2, '0');
+                  if (teamDateText) teamDateText.textContent = mStr + ' ' + dayStr + ', ' + yr;
+                }
+              });
+            }
+          }
+        });
+
+        document.querySelectorAll('.nav-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            loadScreen(btn.getAttribute('data-tpl'));
           });
         });
-      }
-      if (currentTpl === 'tpl-TeamAttendance') {
-        var teamDateInput = doc.getElementById('team-date-input');
-        var teamDateText = doc.getElementById('team-date-text');
-        if (teamDateInput) {
-          teamDateInput.addEventListener('change', function () {
-            if (!this.value) return;
-            var parts = this.value.split('-');
-            if (parts.length === 3) {
-              var yr = parseInt(parts[0], 10);
-              var mo = parseInt(parts[1], 10) - 1;
-              var da = parseInt(parts[2], 10);
-              var monthsArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-              var mStr = monthsArr[mo];
-              var dayStr = String(da).padStart(2, '0');
-              if (teamDateText) teamDateText.textContent = mStr + ' ' + dayStr + ', ' + yr;
-            }
-          });
-        }
-      }
-    });
 
-    document.querySelectorAll('.nav-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        loadScreen(btn.getAttribute('data-tpl'));
-      });
-    });
-
-    loadScreen('tpl-Login');
-  </script>
-</body>
-
+        loadScreen('tpl-Login');
+      }); // end DOMContentLoaded
+    </script>
+  </body>
 </html>

@@ -4,6 +4,7 @@
   "description": "Mobile & Web Application Workspace",
   "main": "server.js",
   "scripts": {
+    "build": "echo \"Ready for deployment\"",
     "start": "node server.js",
     "web": "node server.js",
     "dev": "node server.js",
