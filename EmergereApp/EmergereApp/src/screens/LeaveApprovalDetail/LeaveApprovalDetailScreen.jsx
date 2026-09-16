@@ -25,8 +25,11 @@ const DEFAULT_PERSON = {
 export default function LeaveApprovalDetailScreen({ navigation, route }) {
   const [remarks, setRemarks] = useState('');
   const person = route?.params?.person || DEFAULT_PERSON;
+  const initialDecision = route?.params?.decision || person.status || 'Pending';
+  const [decision, setDecision] = useState(initialDecision);
 
   const handleDecision = (status) => {
+    setDecision(status);
     const managerName =
       (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
       'Your Manager';
@@ -44,35 +47,46 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
       unread: true,
     };
 
-    // Push to global notifications store
+    // Push to global stores
     if (typeof global !== 'undefined') {
       if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
       global.NOTIFICATIONS.unshift(notification);
+      global.LAST_LEAVE_DECISION = {
+        id: person.id || '1',
+        status,
+        name: employeeName,
+        type: leaveType,
+      };
+      if (global.LEAVE_REQUESTS) {
+        global.LEAVE_REQUESTS = global.LEAVE_REQUESTS.map((r) =>
+          r.id === person.id ? { ...r, status: status.toLowerCase() } : r
+        );
+      }
     }
 
     if (navigation) {
-      // Update Manager Dashboard status
+      // Navigate to Manager Dashboard with updated status
       navigation.navigate('ManagerDashboard', {
         requestId: person.id || '1',
         newStatus: status,
         remarks: remarks,
       });
-      // Also update Employee Dashboard status
-      navigation.navigate('EmployeeDashboard', {
-        requestId: person.id || '1',
-        newStatus: status,
-      });
     }
   };
 
   const firstName = person.name ? person.name.split(' ')[0] : 'Employee';
+  const isApproved = decision.toLowerCase() === 'approved';
+  const isRejected = decision.toLowerCase() === 'rejected';
 
   return (
     <View style={styles.screen}>
       <ScreenHeader
         title="Request Detail"
         subtitle={`${person.leaveType || 'Leave'} Application`}
-        onBack={() => navigation && navigation.goBack()}
+        onBack={() => navigation && navigation.navigate('ManagerDashboard', {
+          requestId: person.id || '1',
+          newStatus: decision,
+        })}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -108,7 +122,13 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
           <View style={styles.pathRow}>
             <Text style={styles.pathDone}>{`${firstName} (Applied)`}</Text>
             <Text style={styles.pathArrow}>›</Text>
-            <Text style={styles.pathPending}>Manager (Pending)</Text>
+            {isApproved ? (
+              <Text style={[styles.pathDone, { color: '#1FAE6E', fontWeight: '700' }]}>Manager (Approved)</Text>
+            ) : isRejected ? (
+              <Text style={[styles.pathPending, { color: '#E5484D', fontWeight: '700' }]}>Manager (Rejected)</Text>
+            ) : (
+              <Text style={styles.pathPending}>Manager (Pending)</Text>
+            )}
             <Text style={styles.pathArrow}>›</Text>
             <Text style={styles.pathFuture}>HR Desk</Text>
           </View>
@@ -125,11 +145,21 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
         />
 
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.rejectBtn} onPress={() => handleDecision('Rejected')}>
-            <Text style={styles.rejectText}>Reject</Text>
+          <TouchableOpacity
+            style={[styles.rejectBtn, isRejected && { backgroundColor: '#E5484D' }]}
+            onPress={() => handleDecision('Rejected')}
+          >
+            <Text style={[styles.rejectText, isRejected && { color: '#FFFFFF' }]}>
+              {isRejected ? 'Rejected' : 'Reject'}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.approveBtn} onPress={() => handleDecision('Approved')}>
-            <Text style={styles.approveText}>Approve</Text>
+          <TouchableOpacity
+            style={[styles.approveBtn, isApproved && { backgroundColor: '#1FAE6E' }]}
+            onPress={() => handleDecision('Approved')}
+          >
+            <Text style={[styles.approveText, isApproved && { color: '#FFFFFF' }]}>
+              {isApproved ? 'Approved' : 'Approve'}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

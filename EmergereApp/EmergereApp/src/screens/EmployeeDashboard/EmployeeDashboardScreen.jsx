@@ -82,13 +82,21 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
     if (typeof global !== 'undefined' && global.USER_PROFILE) {
       setUserProfile(global.USER_PROFILE);
     }
+    if (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION) {
+      const dec = global.LAST_LEAVE_DECISION;
+      const tone = dec.status.toLowerCase() === 'approved' ? 'success' : 'danger';
+      const st = dec.status.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
+      setRequests((prev) =>
+        prev.map((req) => (req.id === (dec.id || '1') || (req.title && req.title.includes('Casual Leave')) ? { ...req, status: st, tone } : req))
+      );
+    }
     if (route && route.params) {
       // Manager approved / rejected a request — update its status in the list
       if (route.params.newStatus) {
         const { requestId, newStatus } = route.params;
         const tone = newStatus === 'Approved' ? 'success' : 'danger';
         setRequests((prev) =>
-          prev.map((req) => (req.id === (requestId || '1') ? { ...req, status: newStatus, tone } : req))
+          prev.map((req) => (req.id === (requestId || '1') || (req.title && req.title.includes('Casual Leave')) ? { ...req, status: newStatus, tone } : req))
         );
       }
       // Employee just submitted a leave request — prepend as Pending

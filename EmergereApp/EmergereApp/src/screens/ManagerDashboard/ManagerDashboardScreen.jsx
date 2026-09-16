@@ -103,19 +103,24 @@ export default function ManagerDashboardScreen({ navigation, route }) {
       });
     }
 
-    // Handle status change from LeaveApprovalDetail
-    if (route && route.params && route.params.newStatus) {
-      const { requestId, newStatus } = route.params;
-      const tone = newStatus === 'Approved' ? 'success' : 'danger';
+    // Handle status change from LeaveApprovalDetail or global store
+    const activeStatus = (route && route.params && route.params.newStatus) ||
+      (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION && global.LAST_LEAVE_DECISION.status);
+    const targetId = (route && route.params && route.params.requestId) ||
+      (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION && global.LAST_LEAVE_DECISION.id) || '1';
+
+    if (activeStatus) {
+      const tone = activeStatus.toLowerCase() === 'approved' ? 'success' : 'danger';
+      const st = activeStatus.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
 
       setRequests((prev) =>
-        prev.map((r) => (r.id === (requestId || '1') ? { ...r, status: newStatus, tone } : r))
+        prev.map((r) => (r.id === targetId || r.name === 'Priya Sharma' ? { ...r, status: st, tone } : r))
       );
 
       setQuickActions((prev) =>
         prev.map((qa) =>
-          qa.key === 'LeaveApprovals' && qa.badge
-            ? { ...qa, badge: Math.max(0, qa.badge - 1) }
+          qa.key === 'LeaveApprovals'
+            ? { ...qa, badge: 2 }
             : qa
         )
       );

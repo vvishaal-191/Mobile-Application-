@@ -95,10 +95,8 @@ export default function ApplyLeaveScreen({ navigation }) {
       global.LEAVE_REQUESTS.unshift(newRequest);
     }
 
-    // Navigate to Employee Dashboard to show the pending request, then to LeaveApprovals
-    // so the manager sees it. Because it's a simple stack navigator we do two sequential
-    // navigates — EmployeeDashboard first (adds to recent list), then LeaveApprovals.
-    go('EmployeeDashboard', { newLeaveRequest: newRequest });
+    // Navigate directly to Leave Approvals (Manager Approval page) upon submission
+    go('LeaveApprovals', { newLeaveRequest: newRequest });
   };
 
   return (

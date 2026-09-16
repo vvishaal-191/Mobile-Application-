@@ -3073,6 +3073,24 @@
           };
           store.lastLeaveRequest = reqObj;
 
+          if (!store.PERSON_DATA) store.PERSON_DATA = {};
+          store.PERSON_DATA[newId] = {
+            id: newId,
+            initials: empInitials,
+            name: empName,
+            role: empRole || 'Senior Software Engineer',
+            empId: empId || 'EMP-2024-0156',
+            leaveType: leaveType,
+            fromDate: fromDate,
+            toDate: toDate,
+            totalDays: daysText,
+            contact: empProf.phone || '+91 98765 43210',
+            reason: reason || 'Personal work',
+            subtitle: leaveType + ' Application',
+            appliedPath: empName + ' (Applied)',
+            status: 'pending'
+          };
+
           // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it
           if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
           store.EMP_LEAVE_REQUESTS.unshift(reqObj);
@@ -8673,25 +8691,37 @@
         }
 
         function processLeaveAction(id, newStatus) {
-          const card = document.querySelector(`.approval-card[data-leave-id="${id}"]`);
           const store = window.parent || window;
-          const leaveReq = store.lastLeaveRequest || {};
-          const lType = leaveReq.leaveType || 'Casual Leave';
-          const fromDate = leaveReq.fromDate || 'Sep 07';
+          const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
 
-          if (card) {
-            card.setAttribute('data-status', newStatus);
-            const actionWrap = card.querySelector('.card-action-wrap');
-            if (actionWrap) {
-              const isApprovedAction = newStatus === 'approved';
-              const statusBadge = isApprovedAction
-                ? '<span class="badge success">✓ Approved</span>'
-                : '<span class="badge danger">✕ Rejected</span>';
-              actionWrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:10px;">'
-                + statusBadge
-                + '<button class="btn btn-primary" style="padding:10px 22px;font-size:14px;border-radius:12px;" onclick="goToNotificationsAfterLeave(\'' + newStatus + '\')">Next →</button>'
-                + '</div>';
-            }
+          // 1. Identify target personKey and request info
+          let personKey = 'priya';
+          if (String(id) === '1') personKey = 'priya';
+          else if (String(id) === '2') personKey = 'amit';
+          else if (String(id) === '3') personKey = 'sneha';
+          else if (store.PERSON_DATA && store.PERSON_DATA[id]) personKey = id;
+          else if (store.lastLeaveRequest && String(store.lastLeaveRequest.id) === String(id)) personKey = id;
+
+          if (!store.PERSON_DATA) store.PERSON_DATA = {};
+          if (!store.PERSON_DATA[personKey] && store.lastLeaveRequest) {
+            const lr = store.lastLeaveRequest;
+            store.PERSON_DATA[personKey] = {
+              initials: lr.employeeInitials || 'PS',
+              name: lr.employeeName || 'Priya Sharma',
+              role: lr.employeeRole || 'Senior Software Engineer',
+              empId: lr.employeeId || 'EMP-2024-0156',
+              leaveType: lr.leaveType || 'Casual Leave',
+              fromDate: lr.fromDate || 'Sep 10, 2026',
+              toDate: lr.toDate || 'Sep 11, 2026',
+              totalDays: lr.daysText || '2 Days',
+              contact: '+91 98765 43210',
+              reason: lr.reason || "Family function - attending sister's wedding ceremony in Bangalore.",
+              subtitle: (lr.leaveType || 'Casual Leave') + ' Application',
+              appliedPath: (lr.employeeName || 'Priya') + ' (Applied)'
+            };
+          }
+          if (store.PERSON_DATA[personKey]) {
+            store.PERSON_DATA[personKey].status = newStatus;
           }
 
           const isApproved = newStatus === 'approved';
@@ -8699,63 +8729,107 @@
           const badgeClass = isApproved ? 'badge success' : 'badge danger';
           const icoClass = isApproved ? 'success' : 'danger';
           const icoChar = isApproved ? '✓' : '✕';
-          const msgText = isApproved
-            ? 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Approved</b> by the Manager'
-            : 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Rejected</b> by the Manager';
+          const pData = store.PERSON_DATA[personKey] || {};
+          const lType = pData.leaveType || 'Casual Leave';
+          const fromDate = pData.fromDate || 'Sep 10, 2026';
+          const empName = pData.name || 'Priya Sharma';
 
-          const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+          // 2. Mark card in local DOM if card exists
+          const card = document.querySelector(`.approval-card[data-leave-id="${id}"]`);
+          if (card) {
+            card.setAttribute('data-status', newStatus);
+          }
 
-          // ── 1. Update EMP_LEAVE_REQUESTS so dashboard reflects status on re-navigation ──
+          // 3. Save global decision state
+          store.LAST_LEAVE_DECISION = {
+            id: id,
+            personKey: personKey,
+            status: newStatus,
+            labelText: labelText,
+            badgeClass: badgeClass,
+            lType: lType,
+            fromDate: fromDate,
+            empName: empName
+          };
+          store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
+
+          // 4. Update EMP_LEAVE_REQUESTS store
           if (store.EMP_LEAVE_REQUESTS && store.EMP_LEAVE_REQUESTS.length > 0) {
             store.EMP_LEAVE_REQUESTS.forEach(function(req) {
-              // Match by explicit id or by leave type + date
               if (String(req.id) === String(id)
-                || (req.leaveType && req.leaveType === lType && req.fromDate && req.fromDate === fromDate)
-                || (req.leaveType && req.leaveType === lType)) {
+                || (req.leaveType && req.leaveType === lType && (personKey === 'priya' || String(id) === '1'))) {
                 req.status = newStatus;
               }
             });
           }
 
-          // ── 2. Push to EMP_STATUS_UPDATES so the frame-load handler can patch live badges ──
+          // 5. Update EMP_STATUS_UPDATES
           store.EMP_STATUS_UPDATES = store.EMP_STATUS_UPDATES || [];
-          // Remove any stale entry for same id then push fresh
           store.EMP_STATUS_UPDATES = store.EMP_STATUS_UPDATES.filter(function(u) { return String(u.id) !== String(id); });
           store.EMP_STATUS_UPDATES.push({ id: id, status: newStatus, lType: lType, fromDate: fromDate });
-          // Also store the "last decision" for the static Casual Leave card (emp-dash-casual-leave-badge)
-          store.lastLeaveDecision = { status: newStatus, labelText: labelText, lType: lType, fromDate: fromDate, icoClass: icoClass, icoChar: icoChar, msgText: msgText, badgeClass: badgeClass };
 
-          // ── 3. Update tpl-EmployeeDashboard template in DOM ──
+          // 6. Update tpl-ManagerDashboard template in DOM
+          const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
+          if (mgrTpl) {
+            let mgrHtml = mgrTpl.innerHTML;
+            if (personKey === 'priya' || String(id) === '1') {
+              mgrHtml = mgrHtml.replace(
+                /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
+                '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
+              );
+            }
+            mgrHtml = mgrHtml.replace(
+              /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
+              'class="qbadge" id="manager-dash-leave-badge">2'
+            );
+            mgrTpl.innerHTML = mgrHtml;
+          }
+
+          // Update live Manager Dashboard badge if currently visible
+          const liveMgrBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+          if (liveMgrBadge && (personKey === 'priya' || String(id) === '1')) {
+            liveMgrBadge.className = badgeClass;
+            liveMgrBadge.textContent = labelText;
+          }
+          const liveMgrCount = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
+          if (liveMgrCount) {
+            liveMgrCount.textContent = '2';
+          }
+
+          // 7. Update tpl-EmployeeDashboard template in DOM
           const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
           if (empTpl) {
-            let tplHtml = empTpl.innerHTML;
-            tplHtml = tplHtml.replace(
-              /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
-              '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
-            );
-            // Also patch any dynamic emp-req-badge with matching leave type
+            let empHtml = empTpl.innerHTML;
+            if (personKey === 'priya' || String(id) === '1' || lType === 'Casual Leave') {
+              empHtml = empHtml.replace(
+                /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
+                '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
+              );
+              if (isApproved) {
+                empHtml = empHtml.replace('8/12 Days', '6/12 Days');
+              }
+            }
             if (store.EMP_LEAVE_REQUESTS) {
               store.EMP_LEAVE_REQUESTS.forEach(function(req) {
                 if (req.status === newStatus && (req.leaveType === lType || String(req.id) === String(id))) {
                   var reqBadgeRe = new RegExp('<span[^>]*id="emp-req-badge-' + req.id + '"[^>]*>[\\s\\S]*?<\\/span>');
-                  tplHtml = tplHtml.replace(reqBadgeRe, '<span id="emp-req-badge-' + req.id + '" class="' + badgeClass + '">' + labelText + '</span>');
+                  empHtml = empHtml.replace(reqBadgeRe, '<span id="emp-req-badge-' + req.id + '" class="' + badgeClass + '">' + labelText + '</span>');
                 }
               });
             }
-            empTpl.innerHTML = tplHtml;
+            empTpl.innerHTML = empHtml;
           }
 
-          // ── 4. Update live elements if Employee Dashboard is currently visible ──
+          // Update live Employee Dashboard badges if currently visible
           const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
           if (liveEmpBadge) {
             liveEmpBadge.className = badgeClass;
             liveEmpBadge.textContent = labelText;
           }
-          // Also update any live dynamic badge
           if (store.EMP_LEAVE_REQUESTS) {
             store.EMP_LEAVE_REQUESTS.forEach(function(req) {
               if (req.status === newStatus && (req.leaveType === lType || String(req.id) === String(id))) {
-                var liveDynBadge = parentDoc.getElementById('emp-req-badge-' + req.id);
+                var liveDynBadge = parentDoc.getElementById('emp-req-badge-' + req.id) || document.getElementById('emp-req-badge-' + req.id);
                 if (liveDynBadge) {
                   liveDynBadge.className = badgeClass;
                   liveDynBadge.textContent = labelText;
@@ -8764,31 +8838,12 @@
             });
           }
 
-          // ── 5. Patch the live iframe if the employee dashboard is loaded in it ──
-          var mainFrame = parentDoc.getElementById('screen-frame');
-          if (mainFrame && mainFrame.contentDocument) {
-            var frameDoc = mainFrame.contentDocument;
-            var frameBadge = frameDoc.getElementById('emp-dash-casual-leave-badge');
-            if (frameBadge) {
-              frameBadge.className = badgeClass;
-              frameBadge.textContent = labelText;
-            }
-            if (store.EMP_LEAVE_REQUESTS) {
-              store.EMP_LEAVE_REQUESTS.forEach(function(req) {
-                if (req.status === newStatus && (req.leaveType === lType || String(req.id) === String(id))) {
-                  var fd = frameDoc.getElementById('emp-req-badge-' + req.id);
-                  if (fd) {
-                    fd.className = badgeClass;
-                    fd.textContent = labelText;
-                  }
-                }
-              });
-            }
-          }
-
-          // ── 6. Inject dynamic notification into tpl-Notifications template ──
+          // 8. Inject dynamic notification into tpl-Notifications template
           const notifTpl = parentDoc.getElementById('tpl-Notifications');
           if (notifTpl) {
+            const msgText = isApproved
+              ? 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Approved</b> by the Manager'
+              : 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Rejected</b> by the Manager';
             const notifCard = '<div class="card notif-card unread" id="dynamic-leave-notif">'
               + '<div class="notif-row">'
               + '<span class="ico-wrap ' + icoClass + '">' + icoChar + '</span>'
@@ -8796,15 +8851,26 @@
               + '<span class="dot"></span>'
               + '<span class="close-item-btn" onclick="this.closest(\'.notif-card\').remove()" title="Delete">✕</span>'
               + '</div></div>';
-            let tplHtml = notifTpl.innerHTML;
-            if (tplHtml.indexOf('dynamic-leave-notif') === -1) {
-              tplHtml = tplHtml.replace('<div id="notif-container">', '<div id="notif-container">' + notifCard);
-              notifTpl.innerHTML = tplHtml;
+            let notifHtml = notifTpl.innerHTML;
+            if (notifHtml.indexOf('dynamic-leave-notif') === -1) {
+              notifHtml = notifHtml.replace('<div id="notif-container">', '<div id="notif-container">' + notifCard);
+              notifTpl.innerHTML = notifHtml;
             }
           }
 
-          updateLeaveTabCounts();
-          renderLeaveApprovals();
+          // 9. Update Leave Tab counts
+          if (typeof updateLeaveTabCounts === 'function') {
+            updateLeaveTabCounts();
+          }
+
+          // 10. Direct navigation to the Request Detail page!
+          if (store.loadScreen) {
+            store.loadScreen('tpl-LeaveApprovalDetail', personKey);
+          } else if (window.parent && window.parent.loadScreen) {
+            window.parent.loadScreen('tpl-LeaveApprovalDetail', personKey);
+          } else if (typeof loadScreen === 'function') {
+            loadScreen('tpl-LeaveApprovalDetail', personKey);
+          }
         }
 
         function goToNotificationsAfterLeave(status) {
@@ -9337,7 +9403,7 @@
             </svg></span></div>
         <div class="screen">
           <div class="header">
-            <div class="back-btn">←</div>
+            <div class="back-btn" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-ManagerDashboard');else if(typeof loadScreen==='function')loadScreen('tpl-ManagerDashboard');">←</div>
             <div>
               <h1>Request Detail</h1>
               <p id="lad-subtitle">Casual Leave Application</p>
@@ -9370,15 +9436,15 @@
           <div class="card">
             <p class="section-title">APPROVAL PATH</p>
             <div class="path-row"><span class="done" id="lad-applied-path">Priya (Applied)</span>›<span
-                class="pending">Manager (Pending)</span>›<span class="future">HR Desk</span></div>
+                class="pending" id="lad-manager-path">Manager (Pending)</span>›<span class="future">HR Desk</span></div>
           </div>
 
           <label class="remarks-label">Manager Remarks (Optional)</label>
           <textarea class="remarks-input" rows="3" placeholder="Write any comments here..."></textarea>
 
-          <div class="btn-row">
-            <button class="btn outline-reject" onclick="handleDetailLeaveDecision('rejected')">Reject</button>
-            <button class="btn btn-primary" onclick="handleDetailLeaveDecision('approved')">Approve</button>
+          <div class="btn-row" id="lad-btn-row">
+            <button class="btn outline-reject" id="lad-btn-reject" onclick="handleDetailLeaveDecision('rejected')">Reject</button>
+            <button class="btn btn-primary" id="lad-btn-approve" onclick="handleDetailLeaveDecision('approved')">Approve</button>
           </div>
         </div>
         <div class="bottom-nav">
@@ -9414,14 +9480,10 @@
                 <line x1="4" y1="12" x2="20" y2="12"></line>
                 <line x1="4" y1="18" x2="20" y2="18"></line>
               </svg></span>Profile</div>
+          </div>
         </div>
-      </div>
       <script>
         // preview/shared.js
-        // Small reusable helpers for the static HTML previews (tab switching, etc).
-        // Real interactivity/state lives in the React Native .jsx files - these
-        // previews are just for visually checking the markup/CSS in a browser.
-
         function activatePill(el, groupSelector) {
           document.querySelectorAll(groupSelector).forEach((p) => p.classList.remove('active'));
           el.classList.add('active');
@@ -9437,7 +9499,6 @@
           document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.classList.remove('active'));
           el.classList.add('active');
         }
-
       </script>
       <script>
         function filterHistory(cat, el) {
@@ -9462,16 +9523,35 @@
           const labelText = isApproved ? 'Approved' : 'Rejected';
           const badgeClass = isApproved ? 'badge success' : 'badge danger';
 
+          const store = window.parent || window;
           const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+          const currentPerson = (store.SELECTED_PERSON) || 'priya';
+
+          if (!store.PERSON_DATA) store.PERSON_DATA = {};
+          if (store.PERSON_DATA[currentPerson]) {
+            store.PERSON_DATA[currentPerson].status = status;
+          }
+
+          store.LAST_LEAVE_DECISION = {
+            id: currentPerson === 'priya' ? '1' : currentPerson,
+            personKey: currentPerson,
+            status: status,
+            labelText: labelText,
+            badgeClass: badgeClass,
+            lType: (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType) || 'Casual Leave'
+          };
+          store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
 
           // 1. Update tpl-ManagerDashboard template element in outer document
           const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
           if (mgrTpl) {
             let tplHtml = mgrTpl.innerHTML;
-            tplHtml = tplHtml.replace(
-              /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
-              '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
-            );
+            if (currentPerson === 'priya' || currentPerson === '1') {
+              tplHtml = tplHtml.replace(
+                /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
+                '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
+              );
+            }
             tplHtml = tplHtml.replace(
               /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
               'class="qbadge" id="manager-dash-leave-badge">2'
@@ -9487,12 +9567,15 @@
               /<span[^>]*id="emp-dash-casual-leave-badge"[^>]*>[\s\S]*?<\/span>/,
               '<span id="emp-dash-casual-leave-badge" class="' + badgeClass + '">' + labelText + '</span>'
             );
+            if (isApproved) {
+              tplHtml = tplHtml.replace('8/12 Days', '6/12 Days');
+            }
             empTpl.innerHTML = tplHtml;
           }
 
           // 3. Update current active DOM elements if rendered
           const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
-          if (liveBadge) {
+          if (liveBadge && (currentPerson === 'priya' || currentPerson === '1')) {
             liveBadge.className = badgeClass;
             liveBadge.textContent = labelText;
           }
@@ -10710,6 +10793,53 @@
             var elReason = doc.getElementById('lad-reason'); if (elReason) elReason.textContent = p.reason;
             var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle;
             var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath;
+
+            // Update Approval Path node for Manager
+            var mgrPath = doc.getElementById('lad-manager-path');
+            var dec = (p && p.status) || (window.LAST_LEAVE_DECISION && (window.LAST_LEAVE_DECISION.personKey === SELECTED_PERSON || (SELECTED_PERSON === 'priya' && window.LAST_LEAVE_DECISION.personKey === 'priya')) ? window.LAST_LEAVE_DECISION.status : null);
+            if (mgrPath && dec && dec !== 'pending') {
+              if (dec === 'approved') {
+                mgrPath.className = 'done';
+                mgrPath.style.background = '#E3F8EE';
+                mgrPath.style.color = '#1FAE6E';
+                mgrPath.style.fontWeight = '700';
+                mgrPath.style.padding = '3px 10px';
+                mgrPath.style.borderRadius = '6px';
+                mgrPath.textContent = 'Manager (Approved)';
+              } else if (dec === 'rejected') {
+                mgrPath.className = 'danger';
+                mgrPath.style.background = '#FCE4E4';
+                mgrPath.style.color = '#E5484D';
+                mgrPath.style.fontWeight = '700';
+                mgrPath.style.padding = '3px 10px';
+                mgrPath.style.borderRadius = '6px';
+                mgrPath.textContent = 'Manager (Rejected)';
+              }
+            }
+
+            // Update decision action buttons if status is already decided
+            var btnRow = doc.getElementById('lad-btn-row');
+            if (btnRow && dec && dec !== 'pending') {
+              var isApp = dec === 'approved';
+              btnRow.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px;width:100%;">'
+                + '<div style="text-align:center;padding:12px;border-radius:12px;font-weight:700;font-size:15px;background:' + (isApp ? '#E3F8EE' : '#FCE4E4') + ';color:' + (isApp ? '#1FAE6E' : '#E5484D') + ';">'
+                + (isApp ? '✓ Approved by Manager' : '✕ Rejected by Manager')
+                + '</div>'
+                + '<div style="display:flex;gap:10px;">'
+                + '<button class="btn ' + (isApp ? 'outline-reject' : 'btn-primary') + '" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="handleDetailLeaveDecision(\'' + (isApp ? 'rejected' : 'approved') + '\')">Change to ' + (isApp ? 'Reject' : 'Approve') + '</button>'
+                + '<button class="btn btn-primary" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-ManagerDashboard\')">Done →</button>'
+                + '</div>'
+                + '</div>';
+            }
+
+            // Wire back button to return to Manager Dashboard
+            var backBtn = doc.querySelector('.back-btn');
+            if (backBtn) {
+              backBtn.style.cursor = 'pointer';
+              backBtn.onclick = function() {
+                loadScreen('tpl-ManagerDashboard');
+              };
+            }
           }
 
           if (currentTpl === 'tpl-MyAttendance') {
@@ -10925,7 +11055,26 @@
                 var empId = empProf.employeeId || 'EMP-2024-0156';
                 var empRole = empProf.role || 'Software Engineer';
 
-                window.lastLeaveRequest = { id: 'leave-' + Date.now(), leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager, employeeName: empName, employeeInitials: empInitials, employeeId: empId };
+                var newId = 'leave-' + Date.now();
+                window.lastLeaveRequest = { id: newId, leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager, employeeName: empName, employeeInitials: empInitials, employeeId: empId, employeeRole: empRole, status: 'pending' };
+
+                if (!window.PERSON_DATA) window.PERSON_DATA = {};
+                window.PERSON_DATA[newId] = {
+                  id: newId,
+                  initials: empInitials,
+                  name: empName,
+                  role: empRole,
+                  empId: empId,
+                  leaveType: leaveType,
+                  fromDate: fromDate,
+                  toDate: toDate,
+                  totalDays: daysText,
+                  contact: empProf.phone || '+91 98765 43210',
+                  reason: reason || 'Personal work',
+                  subtitle: leaveType + ' Application',
+                  appliedPath: empName + ' (Applied)',
+                  status: 'pending'
+                };
 
                 // Store for employee dashboard display
                 if (!window.EMP_LEAVE_REQUESTS) window.EMP_LEAVE_REQUESTS = [];
@@ -11066,8 +11215,50 @@
             }
           }
 
-          // ── Manager Dashboard: inject pending permission request card ─────
+          // ── Manager Dashboard: update leave decision status and inject requests ─────
           if (currentTpl === 'tpl-ManagerDashboard') {
+            // 1. Update Priya status badge if decided
+            var priyaBadge = doc.getElementById('dash-priya-status-badge');
+            var dec = window.LAST_LEAVE_DECISION;
+            if (priyaBadge && dec && (dec.personKey === 'priya' || dec.id === '1' || dec.lType === 'Casual Leave')) {
+              priyaBadge.className = dec.badgeClass || (dec.status === 'approved' ? 'badge success' : 'badge danger');
+              priyaBadge.textContent = dec.labelText || (dec.status === 'approved' ? 'Approved' : 'Rejected');
+            }
+
+            // 2. Decrement Leave Approvals badge counter if decided
+            var leaveBadge = doc.getElementById('manager-dash-leave-badge');
+            if (leaveBadge && dec) {
+              leaveBadge.textContent = '2';
+            }
+
+            // 3. Inject any newly submitted leave requests under Recent Requests
+            if (window.EMP_LEAVE_REQUESTS && window.EMP_LEAVE_REQUESTS.length > 0) {
+              var recReqSection = null;
+              doc.querySelectorAll('.section-label').forEach(function(el) {
+                if (el.textContent.indexOf('RECENT REQUESTS') !== -1) recReqSection = el;
+              });
+              if (recReqSection) {
+                window.EMP_LEAVE_REQUESTS.forEach(function(req) {
+                  if (doc.getElementById('mgr-dash-req-' + req.id)) return;
+                  var rStatus = req.status || 'pending';
+                  var rClass = rStatus === 'approved' ? 'badge success' : rStatus === 'rejected' ? 'badge danger' : 'badge warning';
+                  var rText = rStatus === 'approved' ? 'Approved' : rStatus === 'rejected' ? 'Rejected' : 'Pending';
+                  var reqCardHtml = '<div class="card req-card" id="mgr-dash-req-' + req.id + '" style="cursor:pointer;">'
+                    + '<div class="req-row"><div><b>' + (req.employeeName || 'Priya Sharma') + '</b>'
+                    + '<p>' + (req.leaveType || 'Leave') + ' &bull; ' + (req.fromDate || '') + ' (' + (req.daysText || '1 Day') + ')</p>'
+                    + '</div><span class="' + rClass + '">' + rText + '</span></div></div>';
+                  recReqSection.insertAdjacentHTML('afterend', reqCardHtml);
+                  var insertedEl = doc.getElementById('mgr-dash-req-' + req.id);
+                  if (insertedEl) {
+                    insertedEl.addEventListener('click', function() {
+                      loadScreen('tpl-LeaveApprovalDetail', req.id);
+                    });
+                  }
+                });
+              }
+            }
+
+            // 4. Existing pending permission requests
             var pendingPerms = window.PERM_STATE.filter(function(r){ return r.status === 'pending'; });
             if (pendingPerms.length > 0) {
               var screen2 = doc.querySelector('.screen');
@@ -11091,7 +11282,6 @@
                 });
               }
               // Update the Perm. Approvals badge count
-              var permBadgeEl = doc.querySelector('.quick-action .qbadge:last-of-type');
               var qActions = doc.querySelectorAll('.quick-action');
               qActions.forEach(function(qa) {
                 if (qa.textContent.indexOf('Perm') !== -1) {
@@ -11196,18 +11386,26 @@
               });
             }
 
-            // Apply lastLeaveDecision to the static "Casual Leave" badge (emp-dash-casual-leave-badge)
-            if (window.lastLeaveDecision) {
-              var decision = window.lastLeaveDecision;
+            // Apply lastLeaveDecision to the static "Casual Leave" badge and leave balance
+            if (window.lastLeaveDecision || window.LAST_LEAVE_DECISION) {
+              var decision = window.LAST_LEAVE_DECISION || window.lastLeaveDecision;
               var staticBadge = doc.getElementById('emp-dash-casual-leave-badge');
               if (staticBadge) {
                 staticBadge.className = decision.badgeClass || ('badge ' + (decision.status === 'approved' ? 'success' : 'danger'));
                 staticBadge.textContent = decision.labelText || (decision.status === 'approved' ? 'Approved' : 'Rejected');
               }
-              // Also update any dynamic request cards whose leaveType matches
+              if (decision.status === 'approved') {
+                var balValues = doc.querySelectorAll('#dash-leave-balance-card .value, .balance-head .value');
+                balValues.forEach(function(bv) {
+                  if (bv.textContent.indexOf('8/12') !== -1) {
+                    bv.textContent = '6/12 Days';
+                  }
+                });
+              }
+              // Also update any dynamic request cards
               if (window.EMP_LEAVE_REQUESTS) {
                 window.EMP_LEAVE_REQUESTS.forEach(function(req) {
-                  if (req.leaveType === decision.lType && req.status === decision.status) {
+                  if (String(req.id) === String(decision.id) || req.leaveType === decision.lType) {
                     var dynBadge = doc.getElementById('emp-req-badge-' + req.id);
                     if (dynBadge) {
                       dynBadge.className = decision.badgeClass || ('badge ' + (decision.status === 'approved' ? 'success' : 'danger'));

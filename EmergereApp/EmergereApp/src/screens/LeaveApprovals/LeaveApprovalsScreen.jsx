@@ -131,14 +131,36 @@ export default function LeaveApprovalsScreen({ navigation, route }) {
       unread: true,
     };
 
-    // Push to global notifications store
+    // Push to global stores
     if (typeof global !== 'undefined') {
       if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
       global.NOTIFICATIONS.unshift(notification);
+      global.LAST_LEAVE_DECISION = {
+        id,
+        status: 'Approved',
+        name: employeeName,
+        type: targetItem?.type || 'Casual Leave',
+      };
+      if (global.LEAVE_REQUESTS) {
+        global.LEAVE_REQUESTS = global.LEAVE_REQUESTS.map((r) =>
+          r.id === id ? { ...r, status: 'approved' } : r
+        );
+      }
     }
 
-    // Update status on Employee Dashboard
-    go('EmployeeDashboard', { requestId: id, newStatus: 'Approved' });
+    // Navigate to Request Detail page with Approved status
+    const updatedItem = {
+      ...(targetItem || {}),
+      id,
+      name: targetItem?.name || 'Priya Sharma',
+      initials: targetItem?.initials || 'PS',
+      empId: targetItem?.empId || 'EMP-2024-0156',
+      leaveType: targetItem?.type || 'Casual Leave',
+      reason: targetItem?.reason || '',
+      totalDays: targetItem?.duration || '2 Days',
+      status: 'Approved',
+    };
+    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Approved' });
   };
 
   const handleReject = (id) => {
@@ -159,14 +181,36 @@ export default function LeaveApprovalsScreen({ navigation, route }) {
       unread: true,
     };
 
-    // Push to global notifications store
+    // Push to global stores
     if (typeof global !== 'undefined') {
       if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
       global.NOTIFICATIONS.unshift(notification);
+      global.LAST_LEAVE_DECISION = {
+        id,
+        status: 'Rejected',
+        name: employeeName,
+        type: targetItem?.type || 'Casual Leave',
+      };
+      if (global.LEAVE_REQUESTS) {
+        global.LEAVE_REQUESTS = global.LEAVE_REQUESTS.map((r) =>
+          r.id === id ? { ...r, status: 'rejected' } : r
+        );
+      }
     }
 
-    // Update status on Employee Dashboard
-    go('EmployeeDashboard', { requestId: id, newStatus: 'Rejected' });
+    // Navigate to Request Detail page with Rejected status
+    const updatedItem = {
+      ...(targetItem || {}),
+      id,
+      name: targetItem?.name || 'Priya Sharma',
+      initials: targetItem?.initials || 'PS',
+      empId: targetItem?.empId || 'EMP-2024-0156',
+      leaveType: targetItem?.type || 'Casual Leave',
+      reason: targetItem?.reason || '',
+      totalDays: targetItem?.duration || '2 Days',
+      status: 'Rejected',
+    };
+    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Rejected' });
   };
 
   const filteredRequests = requests.filter((item) => item.status === activeTab);
