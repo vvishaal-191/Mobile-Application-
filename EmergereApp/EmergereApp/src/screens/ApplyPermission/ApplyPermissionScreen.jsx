@@ -18,6 +18,25 @@ const MANAGERS = [
   'Suresh Kumar (Engineering Manager)',
 ];
 
+/** Derive initials from a full name string */
+function getInitials(name) {
+  if (!name) return 'PS';
+  const parts = name.trim().split(' ').filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+}
+
+/** Read the reporting manager from global profile and match to a MANAGERS entry */
+function resolveDefaultManager() {
+  const profile =
+    (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+  const managerName = profile.reportingManager || 'Rahul Sharma';
+  const match = MANAGERS.find((m) =>
+    m.toLowerCase().startsWith(managerName.toLowerCase())
+  );
+  return match || MANAGERS[0];
+}
+
 export default function ApplyPermissionScreen({ navigation }) {
   const [date, setDate] = useState('04-Sep-2026');
   const [permissionType, setPermissionType] = useState('Early Going');
@@ -25,15 +44,9 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [durationText, setDurationText] = useState('2 Hours');
   const [reason, setReason] = useState('');
-  const [manager, setManager] = useState('Rahul Sharma (Team Lead)');
+  const [manager, setManager] = useState(resolveDefaultManager);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
-
-  const handleCycleManager = () => {
-    const currentIndex = MANAGERS.indexOf(manager);
-    const nextIndex = (currentIndex + 1) % MANAGERS.length;
-    setManager(MANAGERS[nextIndex]);
-  };
 
   const parseTimeToMinutes = (timeStr) => {
     if (!timeStr) return null;
@@ -79,20 +92,38 @@ export default function ApplyPermissionScreen({ navigation }) {
   };
 
   const handleSubmit = () => {
+    const profile =
+      (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+    const employeeName = profile.name || 'Priya Sharma';
+    const employeeInitials = profile.initials || getInitials(employeeName);
+
     const newRequest = {
       id: Date.now().toString(),
-      initials: 'PS',
-      name: 'Priya Sharma',
+      initials: employeeInitials,
+      name: employeeName,
       type: permissionType,
+      tag: permissionType,
+      tagTone: 'purple',
       schedule: `${date} (${startTime} - ${endTime})`,
       duration: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
       reason: reason || 'Personal work / Medical checkup',
       status: 'pending',
       typeTone: 'purple',
+      approvingManager: manager,
+      // for Employee Dashboard recent list
+      title: `${permissionType} (${durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours'})`,
+      subtitle: `${date} • ${reason || 'Personal Work'}`,
     };
 
+    // Push to shared global store so Manager Dashboard can pick it up
+    if (typeof global !== 'undefined') {
+      if (!global.PERMISSION_REQUESTS) global.PERMISSION_REQUESTS = [];
+      global.PERMISSION_REQUESTS.unshift(newRequest);
+    }
+
+    // Navigate to Employee Dashboard to show the pending request
     if (navigation) {
-      navigation.navigate('PermissionApprovals', { newPermissionRequest: newRequest });
+      navigation.navigate('EmployeeDashboard', { newPermissionRequest: newRequest });
     }
   };
 

@@ -1,5 +1,5 @@
 // src/screens/LeaveApprovals/LeaveApprovalsScreen.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Avatar from '../../components/Avatar';
 import Card from '../../components/Card';
@@ -67,11 +67,41 @@ const INITIAL_REQUESTS = [
   },
 ];
 
-export default function LeaveApprovalsScreen({ navigation }) {
+/** Helper: get manager name from global profile for notification text */
+function getManagerName() {
+  const profile = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+  return profile.reportingManager || 'Your Manager';
+}
+
+export default function LeaveApprovalsScreen({ navigation, route }) {
   const [activeTab, setActiveTab] = useState('pending');
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const go = (screen, params) => navigation && navigation.navigate(screen, params);
+
+  // Accept new leave submission from ApplyLeaveScreen
+  useEffect(() => {
+    if (route?.params?.newLeaveRequest) {
+      const newReq = route.params.newLeaveRequest;
+      setRequests((prev) => {
+        if (prev.some((r) => r.id === newReq.id)) return prev;
+        return [
+          {
+            id: newReq.id,
+            initials: newReq.initials || 'PS',
+            name: newReq.name || 'Employee',
+            empId: newReq.empId || '',
+            type: newReq.leaveType || newReq.type || 'Leave',
+            duration: newReq.duration || '1 Day',
+            reason: newReq.reason || '',
+            typeTone: newReq.typeTone || 'info',
+            status: 'pending',
+          },
+          ...prev,
+        ];
+      });
+    }
+  }, [route?.params?.newLeaveRequest]);
 
   const pendingCount = requests.filter((r) => r.status === 'pending').length;
   const approvedCount = requests.filter((r) => r.status === 'approved').length;
@@ -84,15 +114,59 @@ export default function LeaveApprovalsScreen({ navigation }) {
   ];
 
   const handleApprove = (id) => {
+    const targetItem = requests.find((r) => r.id === id);
     setRequests((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: 'approved' } : item))
     );
+
+    const managerName = getManagerName();
+    const employeeName = targetItem?.name || 'Employee';
+    const notification = {
+      id: Date.now().toString(),
+      icon: 'check-circle',
+      color: '#1FAE6E',
+      text: `Your ${targetItem?.type || 'Leave'} request was Approved by ${managerName}.`,
+      employeeName,
+      time: 'Just now',
+      unread: true,
+    };
+
+    // Push to global notifications store
+    if (typeof global !== 'undefined') {
+      if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
+      global.NOTIFICATIONS.unshift(notification);
+    }
+
+    // Update status on Employee Dashboard
+    go('EmployeeDashboard', { requestId: id, newStatus: 'Approved' });
   };
 
   const handleReject = (id) => {
+    const targetItem = requests.find((r) => r.id === id);
     setRequests((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: 'rejected' } : item))
     );
+
+    const managerName = getManagerName();
+    const employeeName = targetItem?.name || 'Employee';
+    const notification = {
+      id: Date.now().toString(),
+      icon: 'x-circle',
+      color: '#E5484D',
+      text: `Your ${targetItem?.type || 'Leave'} request was Rejected by ${managerName}.`,
+      employeeName,
+      time: 'Just now',
+      unread: true,
+    };
+
+    // Push to global notifications store
+    if (typeof global !== 'undefined') {
+      if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
+      global.NOTIFICATIONS.unshift(notification);
+    }
+
+    // Update status on Employee Dashboard
+    go('EmployeeDashboard', { requestId: id, newStatus: 'Rejected' });
   };
 
   const filteredRequests = requests.filter((item) => item.status === activeTab);

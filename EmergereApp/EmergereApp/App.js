@@ -3,6 +3,31 @@
 // project runs standalone. Swap this for React Navigation in a real app by
 // replacing `navigate`/`goBack` calls with `navigation.navigate` from
 // @react-navigation/native - the screens already call navigation that way.
+
+// ---------------------------------------------------------------------------
+// Global cross-screen stores (in-memory, analogous to a simple state manager)
+// ---------------------------------------------------------------------------
+if (typeof global !== 'undefined') {
+  if (!global.LEAVE_REQUESTS) global.LEAVE_REQUESTS = [];
+  if (!global.PERMISSION_REQUESTS) global.PERMISSION_REQUESTS = [];
+  if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
+  if (!global.USER_PROFILE) {
+    global.USER_PROFILE = {
+      name: 'Priya Sharma',
+      role: 'Senior Software Engineer',
+      employeeId: 'EMP-2024-0156',
+      initials: 'PS',
+      reportingManager: 'Rahul Sharma',
+      department: 'IT',
+      team: 'Development',
+      workLocation: 'Bangalore',
+      joiningDate: 'Mar 15, 2022',
+      email: 'priya.sharma@emergere.com',
+      phone: '+91 98765 43210',
+    };
+  }
+}
+
 import React, { useState, useCallback } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 

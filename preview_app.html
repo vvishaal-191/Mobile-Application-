@@ -1464,7 +1464,7 @@
               style="cursor:pointer; border:none; text-align:left;">✖️ View Holidays</button>
           </div>
 
-          <p class="section-label">PENDING REQUESTS (2)</p>
+          <p class="section-label" id="emp-dash-requests-label">RECENT REQUESTS</p>
           <div class="card request-card">
             <div class="request-row">
               <div><b>Casual Leave (1 Day)</b>
@@ -2930,21 +2930,49 @@
           var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
           var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
           var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
-          var approvingManager = managerEl ? managerEl.value : 'Rahul Sharma (Team Lead)';
+
+          // Read employee profile from parent window (set via Profile/Dashboard)
+          var store = window.parent || window;
+          var empProf = store.USER_PROFILE || {};
+          var empName = empProf.name || 'Employee';
+          var empInitials = empProf.initials ||
+            (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2));
+          var empId = empProf.employeeId || '';
+          var empRole = empProf.role || '';
+
+          var defaultMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+          var approvingManager = managerEl ? managerEl.value : defaultMgr;
           var reason = reasonEl ? reasonEl.value.trim() : '';
 
           // Share data with parent frame
-          var store = window.parent || window;
-          store.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager };
+          var newId = 'leave-' + Date.now();
+          var reqObj = {
+            id: newId,
+            leaveType: leaveType,
+            fromDate: fromDate,
+            toDate: toDate,
+            daysText: daysText,
+            reason: reason,
+            approvingManager: approvingManager,
+            employeeName: empName,
+            employeeInitials: empInitials,
+            employeeId: empId,
+            employeeRole: empRole,
+            status: 'pending'
+          };
+          store.lastLeaveRequest = reqObj;
+
+          // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it
+          if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
+          store.EMP_LEAVE_REQUESTS.unshift(reqObj);
 
           // Inject a new pending card at the top of the Leave Approvals list in the template
           var parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
           var approvalsTpl = parentDoc.getElementById('tpl-LeaveApprovals');
           if (approvalsTpl) {
             var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
-            var newId = 'emp-new-' + Date.now();
             var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
-              + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+              + '<div class="top-row"><div class="emp-row"><div class="avatar">' + empInitials + '</div><div><b>' + empName + '</b><p>' + empId + '</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
               + '<hr/>'
               + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
               + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
@@ -2952,8 +2980,10 @@
               + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\', \'approved\')">Approve</button></div>'
               + '</div></div>';
             var tplHtml = approvalsTpl.innerHTML;
-            tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
-            approvalsTpl.innerHTML = tplHtml;
+            if (tplHtml.indexOf(newId) === -1) {
+              tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
+              approvalsTpl.innerHTML = tplHtml;
+            }
           }
 
           // Navigate to Leave Approvals
@@ -10027,6 +10057,14 @@
             const pDuration = durationInput ? (durationInput.value ? durationInput.value.trim() : durationInput.textContent.replace(' (Auto-calculated)', '')) : '2 Hours';
             const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
 
+            // Read employee profile from parent window
+            const store = window.parent || window;
+            const empProf = (store.USER_PROFILE) || {};
+            const empName = empProf.name || 'Employee';
+            const empInitials = empProf.initials ||
+              (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2));
+            const empId = empProf.employeeId || '';
+
             const newId = 'perm-' + Date.now();
 
             lastPermRequest = {
@@ -10037,28 +10075,48 @@
               end: pEnd,
               duration: pDuration,
               reason: pReason,
-              status: 'pending'
+              status: 'pending',
+              employeeName: empName,
+              employeeInitials: empInitials,
+              employeeId: empId
             };
+
+            // Push to shared PERM_STATE so PermissionApprovals template can use it
+            if (!store.PERM_STATE) store.PERM_STATE = [];
+            store.PERM_STATE.unshift(lastPermRequest);
+
+            // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it
+            if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
+            store.EMP_LEAVE_REQUESTS.unshift({
+              id: newId,
+              leaveType: pType,
+              fromDate: formattedDate,
+              daysText: pDuration,
+              reason: pReason,
+              isPermission: true,
+              employeeName: empName,
+              status: 'pending'
+            });
 
             // Prepend card to #permission-approvals-list
             const listContainer = document.getElementById('permission-approvals-list');
             if (listContainer) {
               const badgeTone = pType === 'Late Coming' ? 'purple' : pType === 'Early Going' ? 'warning' : 'info';
               const newCardHtml = `
-      <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}">
-        <div class="top-row"><div class="emp-row"><div class="avatar">JD</div><div><b>John Doe</b><p>${pType}</p></div></div><span class="badge ${badgeTone}">${pType}</span></div>
-        <hr/>
-        <div class="detail-row"><span>Schedule</span><b>${formattedDate} (${pStart} - ${pEnd})</b></div>
-        <div class="detail-row"><span>Duration</span><b>${pDuration}</b></div>
-        <div class="detail-row"><span>Reason</span><b>${pReason}</b></div>
-        <div class="card-action-wrap">
-          <div class="btn-row">
-            <button class="btn btn-reject" onclick="processPermAction('${newId}', 'rejected')">Reject</button>
-            <button class="btn btn-approve" onclick="processPermAction('${newId}', 'approved')">Approve</button>
-          </div>
+    <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}">
+      <div class="top-row"><div class="emp-row"><div class="avatar">${empInitials}</div><div><b>${empName}</b><p>${pType}</p></div></div><span class="badge ${badgeTone}">${pType}</span></div>
+      <hr/>
+      <div class="detail-row"><span>Schedule</span><b>${formattedDate} (${pStart} - ${pEnd})</b></div>
+      <div class="detail-row"><span>Duration</span><b>${pDuration}</b></div>
+      <div class="detail-row"><span>Reason</span><b>${pReason}</b></div>
+      <div class="card-action-wrap">
+        <div class="btn-row">
+          <button class="btn btn-reject" onclick="processPermAction('${newId}', 'rejected')">Reject</button>
+          <button class="btn btn-approve" onclick="processPermAction('${newId}', 'approved')">Approve</button>
         </div>
       </div>
-    `;
+    </div>
+  `;
               listContainer.insertAdjacentHTML('afterbegin', newCardHtml);
             }
 
@@ -10566,6 +10624,24 @@
           }
 
           if (currentTpl === 'tpl-ApplyLeave') {
+            // Pre-fill Approving Manager from USER_PROFILE.reportingManager
+            var leaveManagerEl = doc.getElementById('leave-manager-select');
+            if (leaveManagerEl && window.USER_PROFILE && window.USER_PROFILE.reportingManager) {
+              var reportMgr = window.USER_PROFILE.reportingManager;
+              // Find option that starts with the manager name
+              var leaveOpts = leaveManagerEl.querySelectorAll('option');
+              var leaveMatched = false;
+              leaveOpts.forEach(function(opt) {
+                if (opt.value.toLowerCase().indexOf(reportMgr.toLowerCase().split(' ')[0]) !== -1) {
+                  leaveManagerEl.value = opt.value;
+                  leaveMatched = true;
+                }
+              });
+              // If no match found, set first option or add one
+              if (!leaveMatched && leaveOpts.length > 0) {
+                leaveManagerEl.value = leaveOpts[0].value;
+              }
+            }
             var submitBtn = doc.getElementById('leave-submit-btn') || doc.querySelector('.btn-primary.full');
             if (submitBtn) {
               submitBtn.style.cursor = 'pointer';
@@ -10581,17 +10657,28 @@
                 var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
                 var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
                 var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
-                var approvingManager = managerEl ? managerEl.value : 'Rahul Sharma (Team Lead)';
+                var approvingManager = managerEl ? managerEl.value : (window.USER_PROFILE && window.USER_PROFILE.reportingManager ? window.USER_PROFILE.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)');
                 var reason = reasonEl ? reasonEl.value.trim() : '';
 
-                window.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager };
+                // Grab employee details from USER_PROFILE
+                var empProf = window.USER_PROFILE || {};
+                var empName = empProf.name || 'Priya Sharma';
+                var empInitials = empProf.initials || (empName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                var empId = empProf.employeeId || 'EMP-2024-0156';
+                var empRole = empProf.role || 'Software Engineer';
+
+                window.lastLeaveRequest = { id: 'leave-' + Date.now(), leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager, employeeName: empName, employeeInitials: empInitials, employeeId: empId };
+
+                // Store for employee dashboard display
+                if (!window.EMP_LEAVE_REQUESTS) window.EMP_LEAVE_REQUESTS = [];
+                window.EMP_LEAVE_REQUESTS.unshift(window.lastLeaveRequest);
 
                 var approvalsTpl = document.getElementById('tpl-LeaveApprovals');
                 if (approvalsTpl) {
                   var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
-                  var newId = 'emp-new-' + Date.now();
+                  var newId = window.lastLeaveRequest.id;
                   var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
-                    + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>EMP-2024-0001</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+                    + '<div class="top-row"><div class="emp-row"><div class="avatar">' + empInitials + '</div><div><b>' + empName + '</b><p>' + empId + '</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
                     + '<hr/>'
                     + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
                     + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
@@ -10611,6 +10698,22 @@
 
           // ── Apply Permission: save to shared state & navigate ──────────
           if (currentTpl === 'tpl-ApplyPermission') {
+            // Pre-fill Approving Manager from USER_PROFILE.reportingManager
+            var permManagerEl = doc.getElementById('perm-manager-select');
+            if (permManagerEl && window.USER_PROFILE && window.USER_PROFILE.reportingManager) {
+              var permReportMgr = window.USER_PROFILE.reportingManager;
+              var permOpts = permManagerEl.querySelectorAll('option');
+              var permMatched = false;
+              permOpts.forEach(function(opt) {
+                if (opt.value.toLowerCase().indexOf(permReportMgr.toLowerCase().split(' ')[0]) !== -1) {
+                  permManagerEl.value = opt.value;
+                  permMatched = true;
+                }
+              });
+              if (!permMatched && permOpts.length > 0) {
+                permManagerEl.value = permOpts[0].value;
+              }
+            }
             var iframeWin = frame.contentWindow;
             if (iframeWin) {
               iframeWin.handleApplyPermissionSubmit = function () {
@@ -10631,8 +10734,16 @@
                 if (!pReason) { alert('Please enter a reason.'); return; }
 
                 var newId = 'perm-' + Date.now();
-                var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending' };
+                var permProf = window.parent.USER_PROFILE || {};
+                var permEmpName = permProf.name || 'Priya Sharma';
+                var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                var permEmpId = permProf.employeeId || 'EMP-2024-0156';
+                var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending', employeeName: permEmpName, employeeInitials: permEmpInitials, employeeId: permEmpId };
                 window.parent.PERM_STATE.unshift(entry);
+
+                // Also store for employee dashboard
+                if (!window.parent.EMP_LEAVE_REQUESTS) window.parent.EMP_LEAVE_REQUESTS = [];
+                window.parent.EMP_LEAVE_REQUESTS.unshift({ id: newId, leaveType: pType, fromDate: fmtDate, daysText: pDuration, reason: pReason, isPermission: true, employeeName: permEmpName });
 
                 window.parent.loadScreen('tpl-PermissionApprovals');
               };
@@ -10650,8 +10761,10 @@
                   var actionHtml = req.status === 'pending'
                     ? '<div class="btn-row"><button class="btn btn-reject" onclick="processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>'
                     : '<div style="text-align:right;margin-top:8px;"><span class="badge ' + (req.status === 'approved' ? 'success' : 'danger') + '">' + (req.status === 'approved' ? 'Approved' : 'Rejected') + '</span></div>';
+                  var reqEmpName = req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee';
+                  var reqEmpInitials = req.employeeInitials || (reqEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
                   var cardHtml = '<div class="card approval-card" data-perm-id="' + req.id + '" data-status="' + req.status + '" data-type="' + req.type + '" data-date="' + req.date + '">'
-                    + '<div class="top-row"><div class="emp-row"><div class="avatar">VR</div><div><b>Vikram Rathore</b><p>' + req.type + '</p></div></div><span class="badge ' + tone + '">' + req.type + '</span></div>'
+                    + '<div class="top-row"><div class="emp-row"><div class="avatar">' + reqEmpInitials + '</div><div><b>' + reqEmpName + '</b><p>' + req.type + '</p></div></div><span class="badge ' + tone + '">' + req.type + '</span></div>'
                     + '<hr/>'
                     + '<div class="detail-row"><span>Date</span><b>' + req.date + '</b></div>'
                     + '<div class="detail-row"><span>Duration</span><b>' + req.duration + '</b></div>'
@@ -10677,10 +10790,18 @@
                 if (!window.PERM_NOTIFICATIONS) window.PERM_NOTIFICATIONS = [];
                 var req = window.PERM_STATE.find ? window.PERM_STATE.find(function(r){ return r.id === id; }) : null;
                 if (req) {
+                  // Update employee dashboard badge for this permission
+                  if (window.EMP_LEAVE_REQUESTS) {
+                    window.EMP_LEAVE_REQUESTS.forEach(function(r) {
+                      if (r.id === id) r.status = newStatus;
+                    });
+                  }
                   window.PERM_NOTIFICATIONS.unshift({
                     status: newStatus,
                     type: req.type,
-                    date: req.date
+                    date: req.date,
+                    managerName: (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager',
+                    employeeName: req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee'
                   });
                 }
               };
@@ -10699,10 +10820,12 @@
                 screen2.appendChild(labelEl);
                 pendingPerms.forEach(function(req) {
                   var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
+                  var mgDashEmpName = req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee';
+                  var mgDashEmpInitials = req.employeeInitials || (mgDashEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
                   var div = doc.createElement('div');
                   div.className = 'card req-card';
                   div.style.cursor = 'pointer';
-                  div.innerHTML = '<div class="req-row"><div><b>Vikram Rathore</b><p>' + req.type + ' &bull; ' + req.date + ' (' + req.duration + ')</p></div><span class="badge warning">Pending</span></div>';
+                  div.innerHTML = '<div class="req-row"><div><b>' + mgDashEmpName + '</b><p>' + req.type + ' &bull; ' + req.date + ' (' + req.duration + ')</p></div><span class="badge warning">Pending</span></div>';
                   div.addEventListener('click', function(){
                     if (window.parent && window.parent.loadScreen) window.parent.loadScreen('tpl-PermissionApprovals');
                   });
@@ -10734,7 +10857,7 @@
                     + '<span class="ico-wrap ' + (isApprove ? 'success' : 'danger') + '">' + (isApprove ? '✓' : '✕') + '</span>'
                     + '<div class="notif-text">'
                     + '<p>Permission Request ' + (isApprove ? 'Approved' : 'Rejected') + '</p>'
-                    + '<small>Your ' + notif.type + ' permission request for ' + notif.date + ' was ' + (isApprove ? 'Approved ✅' : 'Rejected ❌') + ' by Rahul Sharma.</small>'
+                    + '<small>Your ' + notif.type + ' permission request for ' + notif.date + ' was ' + (isApprove ? 'Approved ✅' : 'Rejected ❌') + ' by ' + (notif.managerName || (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager') + '.</small>'
                     + '</div>'
                     + '<span class="dot"></span>'
                     + '<span class="close-item-btn" onclick="removeSingleNotif(this)" title="Delete">✕</span>'
@@ -10765,6 +10888,48 @@
                 roleMeta.innerHTML = '<span id="dash-role-text">' + (prof.role || 'Senior Software Engineer') + '</span> &bull; <span id="dash-id-text">' + (prof.employeeId || 'EMP-2024-0156') + '</span>';
                 greetingEl.insertAdjacentElement('afterend', roleMeta);
               }
+            }
+
+            // Inject any newly submitted leave / permission requests from employee
+            var empReqs = window.EMP_LEAVE_REQUESTS || [];
+            if (empReqs.length > 0) {
+              var reqsSection = doc.getElementById('emp-dash-requests-label') || doc.querySelector('.section-label');
+              if (reqsSection) {
+                // Update label count
+                var existingCards = doc.querySelectorAll('.request-card').length;
+                reqsSection.textContent = 'RECENT REQUESTS (' + (existingCards + empReqs.length) + ')';
+
+                empReqs.forEach(function(req) {
+                  if (doc.getElementById('emp-req-' + req.id)) return; // already added
+                  var sc = req.status === 'approved' ? 'success' : req.status === 'rejected' ? 'danger' : 'warning';
+                  var st = req.status === 'approved' ? 'Approved' : req.status === 'rejected' ? 'Rejected' : 'Pending';
+                  var cardHtml = '<div class="card request-card" id="emp-req-' + req.id + '">'
+                    + '<div class="request-row"><div>'
+                    + '<b>' + (req.leaveType || req.type || 'Request') + ' (' + (req.daysText || req.duration || '') + ')</b>'
+                    + '<p>' + (req.fromDate || req.date || '') + ' &bull; ' + ((req.reason || '').slice(0,40)) + '</p>'
+                    + '</div><span id="emp-req-badge-' + req.id + '" class="badge ' + sc + '">' + st + '</span></div>'
+                    + '</div>';
+                  reqsSection.insertAdjacentHTML('afterend', cardHtml);
+                });
+              }
+            } else {
+              // Update the static section label to reflect actual count
+              var staticLabel = doc.getElementById('emp-dash-requests-label') || doc.querySelector('.section-label');
+              if (staticLabel && !staticLabel.textContent.includes('(')) {
+                var staticCards = doc.querySelectorAll('.request-card').length;
+                staticLabel.textContent = 'RECENT REQUESTS (' + staticCards + ')';
+              }
+            }
+
+            // Sync status updates for submitted requests (from manager approve/reject)
+            if (window.EMP_STATUS_UPDATES) {
+              window.EMP_STATUS_UPDATES.forEach(function(upd) {
+                var badge = doc.getElementById('emp-req-badge-' + upd.id);
+                if (badge) {
+                  badge.className = 'badge ' + (upd.status === 'approved' ? 'success' : 'danger');
+                  badge.textContent = upd.status === 'approved' ? 'Approved' : 'Rejected';
+                }
+              });
             }
 
             var myPerms = window.PERM_STATE;

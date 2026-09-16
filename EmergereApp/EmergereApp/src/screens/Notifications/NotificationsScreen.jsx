@@ -45,6 +45,18 @@ export default function NotificationsScreen({ navigation, route }) {
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const go = (screen) => navigation && navigation.navigate(screen);
 
+  // On mount: merge any notifications pushed to the global store by approval flows
+  React.useEffect(() => {
+    const globalNotifs = (typeof global !== 'undefined' && global.NOTIFICATIONS) || [];
+    if (globalNotifs.length > 0) {
+      setNotifications((prev) => {
+        const existingIds = new Set(prev.map((n) => n.id));
+        const fresh = globalNotifs.filter((n) => !existingIds.has(n.id));
+        return fresh.length > 0 ? [...fresh, ...prev] : prev;
+      });
+    }
+  }, []);
+
   React.useEffect(() => {
     if (route?.params?.newNotification) {
       const newNotif = route.params.newNotification;

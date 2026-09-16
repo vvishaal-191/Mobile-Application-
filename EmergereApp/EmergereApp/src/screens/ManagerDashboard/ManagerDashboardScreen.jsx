@@ -63,6 +63,47 @@ export default function ManagerDashboardScreen({ navigation, route }) {
   const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   useEffect(() => {
+    // Sync any new leave/permission requests submitted by employees
+    const leaveReqs = (typeof global !== 'undefined' && global.LEAVE_REQUESTS) || [];
+    const permReqs = (typeof global !== 'undefined' && global.PERMISSION_REQUESTS) || [];
+
+    const allNew = [...leaveReqs, ...permReqs]
+      .filter((r) => r && r.id)
+      .map((r) => ({
+        id: r.id,
+        name: r.name || 'Employee',
+        role: r.role || '',
+        empId: r.empId || '',
+        initials: r.initials || 'EE',
+        leaveType: r.leaveType || r.type || 'Leave',
+        fromDate: r.fromDate || r.schedule || '',
+        toDate: r.toDate || '',
+        totalDays: r.totalDays || r.duration || '',
+        emergencyContact: r.emergencyContact || '',
+        reason: r.reason || '',
+        subtitle: r.subtitle || `${r.leaveType || r.type || 'Leave'} • ${r.fromDate || r.schedule || ''}`,
+        status: 'Pending',
+        tone: 'warning',
+      }));
+
+    if (allNew.length > 0) {
+      setRequests((prev) => {
+        const existingIds = new Set(prev.map((r) => r.id));
+        const fresh = allNew.filter((r) => !existingIds.has(r.id));
+        if (fresh.length === 0) return prev;
+        // Update leave approval badge count
+        setQuickActions((qa) =>
+          qa.map((action) =>
+            action.key === 'LeaveApprovals'
+              ? { ...action, badge: (action.badge || 0) + fresh.filter((r) => r.leaveType !== r.type).length || (action.badge || 0) + fresh.length }
+              : action
+          )
+        );
+        return [...fresh, ...prev];
+      });
+    }
+
+    // Handle status change from LeaveApprovalDetail
     if (route && route.params && route.params.newStatus) {
       const { requestId, newStatus } = route.params;
       const tone = newStatus === 'Approved' ? 'success' : 'danger';

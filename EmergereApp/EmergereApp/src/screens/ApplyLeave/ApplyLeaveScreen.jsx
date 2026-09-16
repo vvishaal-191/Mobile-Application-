@@ -13,17 +13,38 @@ const MANAGERS = [
   'Suresh Kumar (Engineering Manager)',
 ];
 
+/** Derive initials from a full name string */
+function getInitials(name) {
+  if (!name) return 'PS';
+  const parts = name.trim().split(' ').filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+}
+
+/** Read the reporting manager name from global profile and match it to a MANAGERS entry.
+ *  Returns the matching manager string, or the first manager if none found. */
+function resolveDefaultManager() {
+  const profile =
+    (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+  const managerName = profile.reportingManager || 'Rahul Sharma';
+  // Try to find a matching entry (partial match on name before parenthesis)
+  const match = MANAGERS.find((m) =>
+    m.toLowerCase().startsWith(managerName.toLowerCase())
+  );
+  return match || MANAGERS[0];
+}
+
 export default function ApplyLeaveScreen({ navigation }) {
   const [leaveType, setLeaveType] = useState('Casual Leave');
   const [fromDate, setFromDate] = useState('07-Sep-2026');
   const [toDate, setToDate] = useState('07-Sep-2026');
   const [reason, setReason] = useState('');
   const [daysCount, setDaysCount] = useState('1.0 Day (Auto-calculated)');
-  const [approvingManager, setApprovingManager] = useState('Rahul Sharma (Team Lead)');
+  const [approvingManager, setApprovingManager] = useState(resolveDefaultManager);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isLeaveTypeOpen, setIsLeaveTypeOpen] = useState(false);
 
-  const go = (screen) => navigation && navigation.navigate(screen);
+  const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   const toggleFromDate = () => {
     setFromDate(fromDate === '07-Sep-2026' ? '10-Sep-2026' : '07-Sep-2026');
@@ -37,6 +58,47 @@ export default function ApplyLeaveScreen({ navigation }) {
       setToDate('07-Sep-2026');
       setDaysCount('1.0 Day (Auto-calculated)');
     }
+  };
+
+  const handleSubmit = () => {
+    const profile =
+      (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+    const employeeName = profile.name || 'Priya Sharma';
+    const employeeInitials = profile.initials || getInitials(employeeName);
+    const employeeId = profile.employeeId || 'EMP-2024-0156';
+    const employeeRole = profile.role || 'Senior Software Engineer';
+
+    const newRequest = {
+      id: Date.now().toString(),
+      initials: employeeInitials,
+      name: employeeName,
+      empId: employeeId,
+      role: employeeRole,
+      type: leaveType,
+      leaveType: leaveType,
+      duration: `${daysCount.replace(' (Auto-calculated)', '')} (${fromDate} - ${toDate})`,
+      fromDate,
+      toDate,
+      totalDays: daysCount.replace(' (Auto-calculated)', ''),
+      reason: reason || 'Personal work',
+      status: 'pending',
+      typeTone: 'info',
+      // used in Employee Dashboard list
+      title: `${leaveType} (${daysCount.replace(' (Auto-calculated)', '')})`,
+      subtitle: `${fromDate} • ${reason || 'Personal Work'}`,
+      approvingManager,
+    };
+
+    // Push to shared global store so Manager Dashboard can pick it up
+    if (typeof global !== 'undefined') {
+      if (!global.LEAVE_REQUESTS) global.LEAVE_REQUESTS = [];
+      global.LEAVE_REQUESTS.unshift(newRequest);
+    }
+
+    // Navigate to Employee Dashboard to show the pending request, then to LeaveApprovals
+    // so the manager sees it. Because it's a simple stack navigator we do two sequential
+    // navigates — EmployeeDashboard first (adds to recent list), then LeaveApprovals.
+    go('EmployeeDashboard', { newLeaveRequest: newRequest });
   };
 
   return (
@@ -181,12 +243,12 @@ export default function ApplyLeaveScreen({ navigation }) {
           />
         </View>
 
-        <TouchableOpacity style={styles.submitBtn} onPress={() => go('LeaveHistory')}>
+        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
           <Text style={styles.submitText}>Submit Request</Text>
         </TouchableOpacity>
       </ScrollView>
 
-      <BottomNavBar active="Apply" onNavigate={go} />
+      <BottomNavBar active="Apply" onNavigate={(scr) => go(scr)} />
     </View>
   );
 }

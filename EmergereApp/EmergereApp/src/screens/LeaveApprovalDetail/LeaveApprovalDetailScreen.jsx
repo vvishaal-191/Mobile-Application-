@@ -27,12 +27,40 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
   const person = route?.params?.person || DEFAULT_PERSON;
 
   const handleDecision = (status) => {
-    // Navigate back to ManagerDashboard with decision status
+    const managerName =
+      (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
+      'Your Manager';
+    const employeeName = person.name || 'Employee';
+    const leaveType = person.leaveType || 'Leave';
+
+    // Build notification
+    const notification = {
+      id: Date.now().toString(),
+      icon: status === 'Approved' ? 'check-circle' : 'x-circle',
+      color: status === 'Approved' ? '#1FAE6E' : '#E5484D',
+      text: `Your ${leaveType} request was ${status} by ${managerName}.`,
+      employeeName,
+      time: 'Just now',
+      unread: true,
+    };
+
+    // Push to global notifications store
+    if (typeof global !== 'undefined') {
+      if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
+      global.NOTIFICATIONS.unshift(notification);
+    }
+
     if (navigation) {
+      // Update Manager Dashboard status
       navigation.navigate('ManagerDashboard', {
         requestId: person.id || '1',
-        newStatus: status, // 'Approved' or 'Rejected'
+        newStatus: status,
         remarks: remarks,
+      });
+      // Also update Employee Dashboard status
+      navigation.navigate('EmployeeDashboard', {
+        requestId: person.id || '1',
+        newStatus: status,
       });
     }
   };

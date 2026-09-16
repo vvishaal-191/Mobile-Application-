@@ -79,12 +79,48 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
       setUserProfile(global.USER_PROFILE);
     }
     if (route && route.params) {
+      // Manager approved / rejected a request — update its status in the list
       if (route.params.newStatus) {
         const { requestId, newStatus } = route.params;
         const tone = newStatus === 'Approved' ? 'success' : 'danger';
         setRequests((prev) =>
           prev.map((req) => (req.id === (requestId || '1') ? { ...req, status: newStatus, tone } : req))
         );
+      }
+      // Employee just submitted a leave request — prepend as Pending
+      if (route.params.newLeaveRequest) {
+        const req = route.params.newLeaveRequest;
+        setRequests((prev) => {
+          // Avoid duplicate if navigate is called twice
+          if (prev.some((r) => r.id === req.id)) return prev;
+          return [
+            {
+              id: req.id,
+              title: req.title || `${req.leaveType || req.type} (${req.totalDays || '1 Day'})`,
+              subtitle: req.subtitle || `${req.fromDate || ''} • ${req.reason || 'Leave request'}`,
+              status: 'Pending',
+              tone: 'warning',
+            },
+            ...prev,
+          ];
+        });
+      }
+      // Employee just submitted a permission request — prepend as Pending
+      if (route.params.newPermissionRequest) {
+        const req = route.params.newPermissionRequest;
+        setRequests((prev) => {
+          if (prev.some((r) => r.id === req.id)) return prev;
+          return [
+            {
+              id: req.id,
+              title: req.title || `${req.type} (${req.duration || '2 Hours'})`,
+              subtitle: req.subtitle || `${req.schedule || ''} • ${req.reason || 'Permission request'}`,
+              status: 'Pending',
+              tone: 'warning',
+            },
+            ...prev,
+          ];
+        });
       }
       if (route.params.checkedIn !== undefined) {
         setCheckedIn(route.params.checkedIn);

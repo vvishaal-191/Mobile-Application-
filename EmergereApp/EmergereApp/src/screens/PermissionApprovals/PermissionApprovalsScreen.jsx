@@ -1,5 +1,11 @@
 // src/screens/PermissionApprovals/PermissionApprovalsScreen.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+/** Helper: get manager name for notification text */
+function getManagerName() {
+  const profile = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+  return profile.reportingManager || 'Your Manager';
+}
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Avatar from '../../components/Avatar';
 import Card from '../../components/Card';
@@ -98,42 +104,60 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
   ];
 
   const handleApprove = (id) => {
+    const targetItem = requests.find((r) => r.id === id);
     setRequests((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: 'approved' } : item))
     );
-    const targetItem = requests.find((r) => r.id === id);
+
+    const managerName = getManagerName();
+    const notification = {
+      id: Date.now().toString(),
+      icon: 'check-circle',
+      color: '#1FAE6E',
+      text: `Your ${targetItem?.type || 'Permission'} request for ${targetItem?.schedule || 'today'} was Approved by ${managerName}.`,
+      employeeName: targetItem?.name || 'Employee',
+      time: 'Just now',
+      unread: true,
+    };
+
+    // Push to global notifications store
+    if (typeof global !== 'undefined') {
+      if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
+      global.NOTIFICATIONS.unshift(notification);
+    }
+
+    // Navigate to Employee Dashboard to update request status there
     if (navigation) {
-      navigation.navigate('Notifications', {
-        newNotification: {
-          id: Date.now().toString(),
-          title: `Permission Approved: ${targetItem?.type || 'Permission'}`,
-          desc: `Your ${targetItem?.type || 'Permission'} request for ${targetItem?.schedule || 'today'} was Approved by Rahul Sharma.`,
-          time: 'Just now',
-          icon: 'check-circle',
-          tone: 'success',
-          read: false,
-        },
-      });
+      navigation.navigate('EmployeeDashboard', { requestId: id, newStatus: 'Approved' });
     }
   };
 
   const handleReject = (id) => {
+    const targetItem = requests.find((r) => r.id === id);
     setRequests((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: 'rejected' } : item))
     );
-    const targetItem = requests.find((r) => r.id === id);
+
+    const managerName = getManagerName();
+    const notification = {
+      id: Date.now().toString(),
+      icon: 'x-circle',
+      color: '#E5484D',
+      text: `Your ${targetItem?.type || 'Permission'} request for ${targetItem?.schedule || 'today'} was Rejected by ${managerName}.`,
+      employeeName: targetItem?.name || 'Employee',
+      time: 'Just now',
+      unread: true,
+    };
+
+    // Push to global notifications store
+    if (typeof global !== 'undefined') {
+      if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
+      global.NOTIFICATIONS.unshift(notification);
+    }
+
+    // Navigate to Employee Dashboard to update request status there
     if (navigation) {
-      navigation.navigate('Notifications', {
-        newNotification: {
-          id: Date.now().toString(),
-          title: `Permission Rejected: ${targetItem?.type || 'Permission'}`,
-          desc: `Your ${targetItem?.type || 'Permission'} request for ${targetItem?.schedule || 'today'} was Rejected by Rahul Sharma.`,
-          time: 'Just now',
-          icon: 'x-circle',
-          tone: 'danger',
-          read: false,
-        },
-      });
+      navigation.navigate('EmployeeDashboard', { requestId: id, newStatus: 'Rejected' });
     }
   };
 
