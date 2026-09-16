@@ -86,30 +86,53 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
       const dec = global.LAST_LEAVE_DECISION;
       const tone = dec.status.toLowerCase() === 'approved' ? 'success' : 'danger';
       const st = dec.status.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
-      setRequests((prev) =>
-        prev.map((req) => (req.id === (dec.id || '1') || (req.title && req.title.includes('Casual Leave')) ? { ...req, status: st, tone } : req))
-      );
+      setRequests((prev) => {
+        const seen = new Set();
+        const updated = prev.map((req) =>
+          (req.id === (dec.id || '1') || (req.title && req.title.includes(dec.type || 'Casual Leave')))
+            ? { ...req, status: st, tone }
+            : req
+        );
+        return updated.filter((r) => {
+          const key = `${r.title}|${r.subtitle}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      });
     }
     if (route && route.params) {
       // Manager approved / rejected a request — update its status in the list
       if (route.params.newStatus) {
         const { requestId, newStatus } = route.params;
         const tone = newStatus === 'Approved' ? 'success' : 'danger';
-        setRequests((prev) =>
-          prev.map((req) => (req.id === (requestId || '1') || (req.title && req.title.includes('Casual Leave')) ? { ...req, status: newStatus, tone } : req))
-        );
+        setRequests((prev) => {
+          const seen = new Set();
+          const updated = prev.map((req) =>
+            (req.id === (requestId || '1') || (req.title && req.title.includes('Casual Leave')))
+              ? { ...req, status: newStatus, tone }
+              : req
+          );
+          return updated.filter((r) => {
+            const key = `${r.title}|${r.subtitle}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+        });
       }
-      // Employee just submitted a leave request — prepend as Pending
+      // Employee just submitted a leave request — prepend as Pending (display only once)
       if (route.params.newLeaveRequest) {
         const req = route.params.newLeaveRequest;
         setRequests((prev) => {
-          // Avoid duplicate if navigate is called twice
-          if (prev.some((r) => r.id === req.id)) return prev;
+          const title = req.title || `${req.leaveType || req.type} (${req.totalDays || '1 Day'})`;
+          const subtitle = req.subtitle || `${req.fromDate || ''} • ${req.reason || 'Leave request'}`;
+          if (prev.some((r) => r.id === req.id || (r.title === title && r.subtitle === subtitle))) return prev;
           return [
             {
               id: req.id,
-              title: req.title || `${req.leaveType || req.type} (${req.totalDays || '1 Day'})`,
-              subtitle: req.subtitle || `${req.fromDate || ''} • ${req.reason || 'Leave request'}`,
+              title,
+              subtitle,
               status: 'Pending',
               tone: 'warning',
             },
@@ -117,16 +140,18 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
           ];
         });
       }
-      // Employee just submitted a permission request — prepend as Pending
+      // Employee just submitted a permission request — prepend as Pending (display only once)
       if (route.params.newPermissionRequest) {
         const req = route.params.newPermissionRequest;
         setRequests((prev) => {
-          if (prev.some((r) => r.id === req.id)) return prev;
+          const title = req.title || `${req.type} (${req.duration || '2 Hours'})`;
+          const subtitle = req.subtitle || `${req.schedule || ''} • ${req.reason || 'Permission request'}`;
+          if (prev.some((r) => r.id === req.id || (r.title === title && r.subtitle === subtitle))) return prev;
           return [
             {
               id: req.id,
-              title: req.title || `${req.type} (${req.duration || '2 Hours'})`,
-              subtitle: req.subtitle || `${req.schedule || ''} • ${req.reason || 'Permission request'}`,
+              title,
+              subtitle,
               status: 'Pending',
               tone: 'warning',
             },
@@ -141,6 +166,16 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         setUserProfile(route.params.userProfile);
       }
     }
+    // De-duplicate requests to ensure each leave/permission is displayed only once
+    setRequests((prev) => {
+      const seen = new Set();
+      return prev.filter((r) => {
+        const key = `${r.title}|${r.subtitle}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    });
   }, [route?.params]);
 
   return (

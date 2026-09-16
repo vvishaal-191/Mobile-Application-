@@ -68,7 +68,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
     const permReqs = (typeof global !== 'undefined' && global.PERMISSION_REQUESTS) || [];
 
     const allNew = [...leaveReqs, ...permReqs]
-      .filter((r) => r && r.id)
+      .filter((r) => r && r.id && (r.status || 'Pending').toLowerCase() === 'pending')
       .map((r) => ({
         id: r.id,
         name: r.name || 'Employee',
@@ -110,11 +110,9 @@ export default function ManagerDashboardScreen({ navigation, route }) {
       (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION && global.LAST_LEAVE_DECISION.id) || '1';
 
     if (activeStatus) {
-      const tone = activeStatus.toLowerCase() === 'approved' ? 'success' : 'danger';
-      const st = activeStatus.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
-
+      // The approved or rejected request should NOT be displayed in the Manager Dashboard under Recent Requests.
       setRequests((prev) =>
-        prev.map((r) => (r.id === targetId || r.name === 'Priya Sharma' ? { ...r, status: st, tone } : r))
+        prev.filter((r) => r.id !== targetId && r.name !== (global.LAST_LEAVE_DECISION?.name || 'Priya Sharma') && r.status === 'Pending')
       );
 
       setQuickActions((prev) =>
