@@ -121,9 +121,9 @@ export default function ApplyPermissionScreen({ navigation }) {
       global.PERMISSION_REQUESTS.unshift(newRequest);
     }
 
-    // Navigate to Employee Dashboard to show the pending request
+    // Navigate to Permission Approvals page to show the pending request
     if (navigation) {
-      navigation.navigate('EmployeeDashboard', { newPermissionRequest: newRequest });
+      navigation.navigate('PermissionApprovals', { newPermissionRequest: newRequest });
     }
   };
 

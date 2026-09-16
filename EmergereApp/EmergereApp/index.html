@@ -10439,19 +10439,80 @@
             updatePermTabCounts();
             renderPermissionApprovals();
 
+            // Persist decision globally
+            const store = window.parent || window;
+            store.LAST_PERMISSION_DECISION = {
+              id: id,
+              status: newStatus,
+              type: pType,
+              date: pDate
+            };
+
+            if (store.PERM_STATE) {
+              store.PERM_STATE.forEach(function (req) {
+                if (req.id === id) req.status = newStatus;
+              });
+            }
+
+            if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
+            var foundEmpReq = false;
+            store.EMP_LEAVE_REQUESTS.forEach(function (r) {
+              if (r.id === id || (r.isPermission && r.leaveType === pType)) {
+                r.status = newStatus;
+                foundEmpReq = true;
+              }
+            });
+            if (!foundEmpReq) {
+              var empProf = store.USER_PROFILE || {};
+              store.EMP_LEAVE_REQUESTS.unshift({
+                id: id,
+                leaveType: pType,
+                fromDate: pDate,
+                daysText: (card && card.querySelector('.detail-row:nth-child(4) b') ? card.querySelector('.detail-row:nth-child(4) b').textContent : '30 Mins'),
+                reason: (card && card.querySelector('.detail-row:nth-child(5) b') ? card.querySelector('.detail-row:nth-child(5) b').textContent : 'Personal work'),
+                isPermission: true,
+                status: newStatus,
+                employeeName: empProf.name || 'Priya Sharma'
+              });
+            }
+
+            // Update Employee Dashboard template element in outer document
+            const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+            const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
+            if (empTpl) {
+              const isApp = newStatus === 'approved';
+              const bClass = isApp ? 'badge success' : 'badge danger';
+              const bText = isApp ? 'Approved' : 'Rejected';
+              let tplHtml = empTpl.innerHTML;
+              tplHtml = tplHtml.replace(
+                /<span[^>]*id="dash-perm-status-badge"[^>]*>[\s\S]*?<\/span>/,
+                '<span id="dash-perm-status-badge" class="' + bClass + '">' + bText + '</span>'
+              );
+              empTpl.innerHTML = tplHtml;
+            }
+
             // Add notification item
-            const notifContainer = document.getElementById('notif-container');
+            const notifContainer = document.getElementById('notif-container') || parentDoc.getElementById('notif-container');
             if (notifContainer) {
               const isApprove = newStatus === 'approved';
               const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for ${pType} (${pDate}) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
               notifContainer.insertAdjacentHTML('afterbegin', notifHtml);
             }
 
-            // Update Employee Dashboard badge if present
-            const dashBadge = document.getElementById('dash-perm-status-badge');
+            // Update Employee Dashboard badge if present in active DOM
+            const dashBadge = parentDoc.getElementById('dash-perm-status-badge') || document.getElementById('dash-perm-status-badge');
             if (dashBadge) {
               dashBadge.textContent = newStatus === 'approved' ? 'Approved' : 'Rejected';
               dashBadge.className = 'badge ' + (newStatus === 'approved' ? 'success' : 'danger');
+            }
+
+            // Navigate to Employee Dashboard page!
+            if (store.loadScreen) {
+              store.loadScreen('tpl-EmployeeDashboard');
+            } else if (window.parent && window.parent.loadScreen) {
+              window.parent.loadScreen('tpl-EmployeeDashboard');
+            } else if (typeof loadScreen === 'function') {
+              loadScreen('tpl-EmployeeDashboard');
             }
           }
 
@@ -11154,7 +11215,7 @@
               });
             }
 
-            // Override processPermAction to also persist back to PERM_STATE
+            // Override processPermAction to also persist back to PERM_STATE and navigate to Employee Dashboard
             var iframeWin2 = frame.contentWindow;
             if (iframeWin2) {
               var _origProcessPerm = iframeWin2.processPermAction;
@@ -11164,24 +11225,58 @@
                 window.PERM_STATE.forEach(function (req) {
                   if (req.id === id) req.status = newStatus;
                 });
-                // Add notification to parent-level queue
-                if (!window.PERM_NOTIFICATIONS) window.PERM_NOTIFICATIONS = [];
-                var req = window.PERM_STATE.find ? window.PERM_STATE.find(function(r){ return r.id === id; }) : null;
-                if (req) {
-                  // Update employee dashboard badge for this permission
-                  if (window.EMP_LEAVE_REQUESTS) {
-                    window.EMP_LEAVE_REQUESTS.forEach(function(r) {
-                      if (r.id === id) r.status = newStatus;
-                    });
+
+                var pType = 'Permission';
+                var pDate = '04-Sep-2026';
+                var pCard = doc.querySelector('#permission-approvals-list .approval-card[data-perm-id="' + id + '"]');
+                if (pCard) {
+                  pType = pCard.getAttribute('data-type') || (pCard.querySelector('.emp-row p') ? pCard.querySelector('.emp-row p').textContent : 'Permission');
+                  var scheduleEl = pCard.querySelector('.detail-row b');
+                  if (scheduleEl) pDate = scheduleEl.textContent.split(' ')[0] || '04-Sep-2026';
+                }
+
+                // Update EMP_LEAVE_REQUESTS
+                if (!window.EMP_LEAVE_REQUESTS) window.EMP_LEAVE_REQUESTS = [];
+                var foundEmpReq = false;
+                window.EMP_LEAVE_REQUESTS.forEach(function(r) {
+                  if (r.id === id || (r.isPermission && r.leaveType === pType)) {
+                    r.status = newStatus;
+                    foundEmpReq = true;
                   }
-                  window.PERM_NOTIFICATIONS.unshift({
+                });
+                if (!foundEmpReq) {
+                  var empProf = window.USER_PROFILE || {};
+                  window.EMP_LEAVE_REQUESTS.unshift({
+                    id: id,
+                    leaveType: pType,
+                    fromDate: pDate,
+                    daysText: (pCard && pCard.querySelector('.detail-row:nth-child(4) b') ? pCard.querySelector('.detail-row:nth-child(4) b').textContent : '30 Mins'),
+                    reason: (pCard && pCard.querySelector('.detail-row:nth-child(5) b') ? pCard.querySelector('.detail-row:nth-child(5) b').textContent : 'Personal work'),
+                    isPermission: true,
                     status: newStatus,
-                    type: req.type,
-                    date: req.date,
-                    managerName: (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager',
-                    employeeName: req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee'
+                    employeeName: empProf.name || 'Priya Sharma'
                   });
                 }
+
+                window.LAST_PERMISSION_DECISION = {
+                  id: id,
+                  status: newStatus,
+                  type: pType,
+                  date: pDate
+                };
+
+                // Add notification to parent-level queue
+                if (!window.PERM_NOTIFICATIONS) window.PERM_NOTIFICATIONS = [];
+                window.PERM_NOTIFICATIONS.unshift({
+                  status: newStatus,
+                  type: pType,
+                  date: pDate,
+                  managerName: (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager',
+                  employeeName: (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee'
+                });
+
+                // Navigate directly to Employee Dashboard
+                loadScreen('tpl-EmployeeDashboard');
               };
             }
           }
@@ -11490,6 +11585,33 @@
                   seenCardSigs[pSig] = doc.getElementById('emp-dash-perm-card');
                 }
               }
+            }
+
+            // 5b. Apply LAST_PERMISSION_DECISION to permission cards
+            if (window.LAST_PERMISSION_DECISION) {
+              var pDec = window.LAST_PERMISSION_DECISION;
+              var pDecClass = pDec.status.toLowerCase() === 'approved' ? 'badge success' : 'badge danger';
+              var pDecText = pDec.status.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
+
+              var staticPermCard = doc.getElementById('emp-static-req-2');
+              if (staticPermCard && (pDec.id === '2' || pDec.type === 'Early Going')) {
+                var spBadge = staticPermCard.querySelector('.badge');
+                if (spBadge) {
+                  spBadge.className = pDecClass;
+                  spBadge.textContent = pDecText;
+                }
+              }
+
+              doc.querySelectorAll('.request-card').forEach(function(c) {
+                var bEl = c.querySelector('b');
+                if (bEl && (bEl.textContent.indexOf(pDec.type || 'Permission') !== -1 || (pDec.id && c.id && c.id.indexOf(pDec.id) !== -1))) {
+                  var badgeEl = c.querySelector('.badge');
+                  if (badgeEl) {
+                    badgeEl.className = pDecClass;
+                    badgeEl.textContent = pDecText;
+                  }
+                }
+              });
             }
 
             // 6. Final pass: remove any duplicate request cards in the DOM

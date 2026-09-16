@@ -101,18 +101,64 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         });
       });
     }
+    if (typeof global !== 'undefined' && global.LAST_PERMISSION_DECISION) {
+      const pDec = global.LAST_PERMISSION_DECISION;
+      const tone = pDec.status.toLowerCase() === 'approved' ? 'success' : 'danger';
+      const st = pDec.status.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
+      setRequests((prev) => {
+        const seen = new Set();
+        let matched = false;
+        const updated = prev.map((req) => {
+          if (req.id === pDec.id || (req.title && (req.title.includes(pDec.type || 'Going') || req.title.includes('Late Coming')))) {
+            matched = true;
+            return { ...req, status: st, tone };
+          }
+          return req;
+        });
+        if (!matched && pDec.type) {
+          updated.unshift({
+            id: pDec.id || Date.now().toString(),
+            title: `${pDec.type} (${pDec.duration || '30 Mins'})`,
+            subtitle: `${pDec.schedule || 'Sep 04, 2026'} • Doctor Appointment`,
+            status: st,
+            tone,
+          });
+        }
+        return updated.filter((r) => {
+          const key = `${r.title}|${r.subtitle}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      });
+    }
     if (route && route.params) {
       // Manager approved / rejected a request — update its status in the list
       if (route.params.newStatus) {
-        const { requestId, newStatus } = route.params;
+        const { requestId, newStatus, isPermission, permissionType, duration } = route.params;
         const tone = newStatus === 'Approved' ? 'success' : 'danger';
         setRequests((prev) => {
           const seen = new Set();
-          const updated = prev.map((req) =>
-            (req.id === (requestId || '1') || (req.title && req.title.includes('Casual Leave')))
-              ? { ...req, status: newStatus, tone }
-              : req
-          );
+          let matched = false;
+          const updated = prev.map((req) => {
+            const isIdMatch = req.id === requestId;
+            const isLeaveMatch = !isPermission && (req.id === (requestId || '1') || (req.title && req.title.includes('Casual Leave')));
+            const isPermMatch = isPermission && (req.id === requestId || (req.title && (req.title.includes(permissionType || 'Going') || req.title.includes('Late Coming') || req.title.includes('Permission'))));
+            if (isIdMatch || isPermMatch || isLeaveMatch) {
+              matched = true;
+              return { ...req, status: newStatus, tone };
+            }
+            return req;
+          });
+          if (isPermission && !matched) {
+            updated.unshift({
+              id: requestId || Date.now().toString(),
+              title: `${permissionType || 'Permission'} (${duration || '30 Mins'})`,
+              subtitle: 'Sep 04, 2026 • Doctor Appointment',
+              status: newStatus,
+              tone,
+            });
+          }
           return updated.filter((r) => {
             const key = `${r.title}|${r.subtitle}`;
             if (seen.has(key)) return false;

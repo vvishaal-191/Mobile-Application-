@@ -120,15 +120,33 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       unread: true,
     };
 
-    // Push to global notifications store
+    // Push to global stores
     if (typeof global !== 'undefined') {
       if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
       global.NOTIFICATIONS.unshift(notification);
+      global.LAST_PERMISSION_DECISION = {
+        id,
+        status: 'Approved',
+        type: targetItem?.type || 'Permission',
+        schedule: targetItem?.schedule,
+        duration: targetItem?.duration,
+      };
+      if (global.PERMISSION_REQUESTS) {
+        global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
+          r.id === id ? { ...r, status: 'approved' } : r
+        );
+      }
     }
 
     // Navigate to Employee Dashboard to update request status there
     if (navigation) {
-      navigation.navigate('EmployeeDashboard', { requestId: id, newStatus: 'Approved' });
+      navigation.navigate('EmployeeDashboard', {
+        requestId: id,
+        newStatus: 'Approved',
+        isPermission: true,
+        permissionType: targetItem?.type || 'Permission',
+        duration: targetItem?.duration,
+      });
     }
   };
 
@@ -149,15 +167,33 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       unread: true,
     };
 
-    // Push to global notifications store
+    // Push to global stores
     if (typeof global !== 'undefined') {
       if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
       global.NOTIFICATIONS.unshift(notification);
+      global.LAST_PERMISSION_DECISION = {
+        id,
+        status: 'Rejected',
+        type: targetItem?.type || 'Permission',
+        schedule: targetItem?.schedule,
+        duration: targetItem?.duration,
+      };
+      if (global.PERMISSION_REQUESTS) {
+        global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
+          r.id === id ? { ...r, status: 'rejected' } : r
+        );
+      }
     }
 
     // Navigate to Employee Dashboard to update request status there
     if (navigation) {
-      navigation.navigate('EmployeeDashboard', { requestId: id, newStatus: 'Rejected' });
+      navigation.navigate('EmployeeDashboard', {
+        requestId: id,
+        newStatus: 'Rejected',
+        isPermission: true,
+        permissionType: targetItem?.type || 'Permission',
+        duration: targetItem?.duration,
+      });
     }
   };
 
