@@ -2145,26 +2145,6 @@
 
         renderCalendarGrid();
 
-        const monthsShortArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        let activeTeamDateObj = new Date(2026, 8, 3); // Sep 3, 2026
-
-        function formatTeamDateString(d) {
-          const mStr = monthsShortArr[d.getMonth()];
-          const dayStr = String(d.getDate()).padStart(2, '0');
-          const yrStr = d.getFullYear();
-          return `${mStr} ${dayStr}, ${yrStr}`;
-        }
-
-        function updateTeamDateNavDisplay() {
-          const textEl = document.getElementById('team-date-text');
-          if (textEl) textEl.textContent = formatTeamDateString(activeTeamDateObj);
-        }
-
-        function changeTeamDate(deltaDays) {
-          activeTeamDateObj.setDate(activeTeamDateObj.getDate() + deltaDays);
-          updateTeamDateNavDisplay();
-        }
-
         document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
 
       </script>
