@@ -27,3 +27,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .request-card:hover{border-color:var(--primary);box-shadow:0 0 16px rgba(47, 107, 255, 0.25), 0 4px 12px rgba(47, 107, 255, 0.12);transform:translateY(-2px);}
 .request-row{display:flex;justify-content:space-between;align-items:center;}
 .request-row p{margin:4px 0 0;color:var(--text-secondary);font-size:13px;}
+.request-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-cancel-req{background:transparent;border:none;color:var(--text-muted, #9AA3B2);cursor:pointer;padding:4px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;line-height:1;transition:all 0.2s ease;flex-shrink:0;outline:none;}
+.btn-cancel-req:hover{color:var(--danger, #E5484D);background:var(--danger-bg, #FCE4E4);transform:scale(1.15);}
+.btn-cancel-req:active{transform:scale(0.95);}

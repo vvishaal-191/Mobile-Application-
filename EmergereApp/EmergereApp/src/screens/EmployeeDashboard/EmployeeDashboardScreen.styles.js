@@ -121,4 +121,15 @@ export default StyleSheet.create({
   requestRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   requestTitle: { fontSize: 16, fontWeight: '700', color: colors.textPrimary },
   requestSubtitle: { color: colors.textSecondary, marginTop: 4, fontSize: 13 },
+  requestActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  cancelButton: {
+    padding: spacing.xs,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

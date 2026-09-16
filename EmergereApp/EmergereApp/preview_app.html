@@ -1330,6 +1330,39 @@
           color: var(--text-secondary);
           font-size: 13px;
         }
+
+        .request-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .btn-cancel-req {
+          background: transparent;
+          border: none;
+          color: var(--text-muted, #9AA3B2);
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 50%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+          outline: none;
+        }
+
+        .btn-cancel-req:hover {
+          color: var(--danger, #E5484D);
+          background: var(--danger-bg, #FCE4E4);
+          transform: scale(1.15);
+        }
+
+        .btn-cancel-req:active {
+          transform: scale(0.95);
+        }
       </style>
     </head>
 
@@ -1417,19 +1450,39 @@
               style="cursor:pointer; border:none; text-align:left;">✖️ View Holidays</button>
           </div>
 
-          <p class="section-label">PENDING REQUESTS (2)</p>
-          <div class="card request-card">
+          <p class="section-label" id="emp-dash-requests-label">RECENT REQUESTS</p>
+          <div class="card request-card" id="emp-static-req-1">
             <div class="request-row">
               <div><b>Casual Leave (1 Day)</b>
                 <p>Sep 07, 2026 • Personal Work</p>
-              </div><span id="emp-dash-casual-leave-badge" class="badge warning">Pending</span>
+              </div>
+              <div class="request-actions">
+                <span id="emp-dash-casual-leave-badge" class="badge warning">Pending</span>
+                <button type="button" class="btn-cancel-req" title="Cancel request" onclick="deleteEmpRequest(this, event, 'emp-static-req-1')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-          <div class="card request-card">
+          <div class="card request-card" id="emp-static-req-2">
             <div class="request-row">
               <div><b>Early Going (2 hrs)</b>
                 <p>Sep 04, 2026 • Doctor Appointment</p>
-              </div><span class="badge success">Approved</span>
+              </div>
+              <div class="request-actions">
+                <span class="badge success">Approved</span>
+                <button type="button" class="btn-cancel-req" title="Cancel request" onclick="deleteEmpRequest(this, event, 'emp-static-req-2')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1496,6 +1549,59 @@
           t.addEventListener('click', () => setActiveNav(t));
         });
 
+        function deleteEmpRequest(btn, e, reqId) {
+          if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+          var card = btn ? btn.closest('.request-card') : null;
+          if (!card) return;
+
+          var docRef = card.ownerDocument || document;
+          var winRef = docRef.defaultView || window;
+          var pWin = (winRef.parent && winRef.parent !== winRef) ? winRef.parent : winRef;
+          var cardId = reqId || card.id;
+
+          if (pWin.EMP_LEAVE_REQUESTS) {
+            pWin.EMP_LEAVE_REQUESTS = pWin.EMP_LEAVE_REQUESTS.filter(function(r) {
+              return String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id;
+            });
+          }
+          if (winRef.EMP_LEAVE_REQUESTS) {
+            winRef.EMP_LEAVE_REQUESTS = winRef.EMP_LEAVE_REQUESTS.filter(function(r) {
+              return String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id;
+            });
+          }
+
+          if (card.id === 'emp-dash-perm-card' || cardId === 'perm') {
+            if (pWin.PERM_STATE) pWin.PERM_STATE = [];
+            if (winRef.PERM_STATE) winRef.PERM_STATE = [];
+          }
+
+          if (card.id) {
+            pWin.DELETED_REQUEST_IDS = pWin.DELETED_REQUEST_IDS || [];
+            if (pWin.DELETED_REQUEST_IDS.indexOf(card.id) === -1) {
+              pWin.DELETED_REQUEST_IDS.push(card.id);
+            }
+            winRef.DELETED_REQUEST_IDS = winRef.DELETED_REQUEST_IDS || [];
+            if (winRef.DELETED_REQUEST_IDS.indexOf(card.id) === -1) {
+              winRef.DELETED_REQUEST_IDS.push(card.id);
+            }
+          }
+
+          card.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.92) translateY(-8px)';
+          setTimeout(function() {
+            card.remove();
+            var allCards = docRef.querySelectorAll('.request-card');
+            var count = allCards.length;
+            var label = docRef.getElementById('emp-dash-requests-label') || docRef.querySelector('.section-label');
+            if (label) {
+              label.textContent = 'RECENT REQUESTS (' + count + ')';
+            }
+          }, 220);
+        }
       </script>
     </body>
 

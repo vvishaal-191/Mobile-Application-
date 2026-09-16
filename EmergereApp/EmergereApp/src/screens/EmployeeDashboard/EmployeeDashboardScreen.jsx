@@ -74,6 +74,10 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
     }
   };
 
+  const handleDeleteRequest = (id) => {
+    setRequests((prev) => prev.filter((req) => req.id !== id));
+  };
+
   useEffect(() => {
     if (typeof global !== 'undefined' && global.USER_PROFILE) {
       setUserProfile(global.USER_PROFILE);
@@ -242,11 +246,21 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         {requests.map((req) => (
           <Card key={req.id} style={styles.requestCard}>
             <View style={styles.requestRow}>
-              <View>
+              <View style={{ flex: 1, paddingRight: 8 }}>
                 <Text style={styles.requestTitle}>{req.title}</Text>
                 <Text style={styles.requestSubtitle}>{req.subtitle}</Text>
               </View>
-              <StatusBadge label={req.status} tone={req.tone} />
+              <View style={styles.requestActions}>
+                <StatusBadge label={req.status} tone={req.tone} />
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => handleDeleteRequest(req.id)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  accessibilityLabel="Delete request"
+                >
+                  <Feather name="x-circle" size={18} color="#9AA3B2" />
+                </TouchableOpacity>
+              </View>
             </View>
           </Card>
         ))}

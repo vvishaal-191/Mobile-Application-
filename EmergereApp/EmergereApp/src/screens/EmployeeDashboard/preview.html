@@ -49,9 +49,29 @@
       <div class="quick-action">✖️ View Holidays</div>
     </div>
 
-    <p class="section-label">PENDING REQUESTS (2)</p>
-    <div class="card request-card"><div class="request-row"><div><b>Casual Leave (1 Day)</b><p>Sep 07, 2026 • Personal Work</p></div><span class="badge warning">Pending</span></div></div>
-    <div class="card request-card"><div class="request-row"><div><b>Early Going (2 hrs)</b><p>Sep 04, 2026 • Doctor Appointment</p></div><span class="badge success">Approved</span></div></div>
+    <p class="section-label" id="emp-dash-requests-label">RECENT REQUESTS (2)</p>
+    <div class="card request-card" id="emp-static-req-1">
+      <div class="request-row">
+        <div><b>Casual Leave (1 Day)</b><p>Sep 07, 2026 • Personal Work</p></div>
+        <div class="request-actions">
+          <span class="badge warning">Pending</span>
+          <button type="button" class="btn-cancel-req" title="Cancel request" onclick="deleteEmpRequest(this, event, 'emp-static-req-1')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card request-card" id="emp-static-req-2">
+      <div class="request-row">
+        <div><b>Early Going (2 hrs)</b><p>Sep 04, 2026 • Doctor Appointment</p></div>
+        <div class="request-actions">
+          <span class="badge success">Approved</span>
+          <button type="button" class="btn-cancel-req" title="Cancel request" onclick="deleteEmpRequest(this, event, 'emp-static-req-2')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="bottom-nav">
     <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>

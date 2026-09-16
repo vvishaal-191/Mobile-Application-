@@ -71,3 +71,35 @@ if (btnCheckOut) {
     if (idTextEl && prof.employeeId) idTextEl.textContent = prof.employeeId;
   }
 })();
+
+function deleteEmpRequest(btn, e, reqId) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const card = btn ? btn.closest('.request-card') : null;
+  if (!card) return;
+
+  const cardId = reqId || card.id;
+  const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+
+  if (pWin.EMP_LEAVE_REQUESTS) {
+    pWin.EMP_LEAVE_REQUESTS = pWin.EMP_LEAVE_REQUESTS.filter(r => String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id);
+  }
+  if (window.EMP_LEAVE_REQUESTS) {
+    window.EMP_LEAVE_REQUESTS = window.EMP_LEAVE_REQUESTS.filter(r => String(r.id) !== String(cardId) && ('emp-req-' + r.id) !== card.id);
+  }
+
+  card.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.92) translateY(-8px)';
+  setTimeout(() => {
+    card.remove();
+    const count = document.querySelectorAll('.request-card').length;
+    const label = document.getElementById('emp-dash-requests-label') || document.querySelector('.section-label');
+    if (label) {
+      label.textContent = 'RECENT REQUESTS (' + count + ')';
+    }
+  }, 220);
+}
+window.deleteEmpRequest = deleteEmpRequest;
