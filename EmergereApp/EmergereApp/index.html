@@ -3073,9 +3073,9 @@
           };
           store.lastLeaveRequest = reqObj;
 
-          if (!store.PERSON_DATA) store.PERSON_DATA = {};
-          store.PERSON_DATA[newId] = {
+          var leavePersonObj = {
             id: newId,
+            isPermission: false,
             initials: empInitials,
             name: empName,
             role: empRole || 'Senior Software Engineer',
@@ -3085,11 +3085,20 @@
             toDate: toDate,
             totalDays: daysText,
             contact: empProf.phone || '+91 98765 43210',
+            emergencyContact: empProf.phone || '+91 98765 43210',
+            approvingManager: approvingManager,
             reason: reason || 'Personal work',
             subtitle: leaveType + ' Application',
-            appliedPath: empName + ' (Applied)',
+            appliedPath: empName.split(' ')[0] + ' (Applied)',
             status: 'pending'
           };
+
+          if (!store.PERSON_DATA) store.PERSON_DATA = {};
+          store.PERSON_DATA[newId] = leavePersonObj;
+          store.PERSON_DATA['priya'] = leavePersonObj;
+          store.LATEST_REQUEST = leavePersonObj;
+          store.LATEST_LEAVE_REQUEST = leavePersonObj;
+          store.SELECTED_PERSON = newId;
 
           // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it (avoid duplicate)
           if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
@@ -3105,13 +3114,13 @@
           var approvalsTpl = parentDoc.getElementById('tpl-LeaveApprovals');
           if (approvalsTpl) {
             var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
-            var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending">'
+            var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + newId + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + newId + '\');">'
               + '<div class="top-row"><div class="emp-row"><div class="avatar">' + empInitials + '</div><div><b>' + empName + '</b><p>' + empId + '</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
               + '<hr/>'
               + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
               + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
               + '<div class="card-action-wrap" id="action-wrap-' + newId + '">'
-              + '<div class="btn-row"><button class="btn btn-reject" onclick="processLeaveAction(\'' + newId + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processLeaveAction(\'' + newId + '\', \'approved\')">Approve</button></div>'
+              + '<div class="btn-row"><button class="btn btn-reject" onclick="event.stopPropagation();processLeaveAction(\'' + newId + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="event.stopPropagation();processLeaveAction(\'' + newId + '\', \'approved\')">Approve</button></div>'
               + '</div></div>';
             var tplHtml = approvalsTpl.innerHTML;
             if (tplHtml.indexOf(newId) === -1) {
@@ -9428,14 +9437,14 @@
           </div>
 
           <div class="card">
-            <p class="section-title">LEAVE SPECIFICS</p>
-            <div class="detail-row"><span>Leave Type</span><b class="link" id="lad-leavetype">Casual Leave</b></div>
-            <div class="detail-row"><span>From Date</span><b id="lad-fromdate">Sep 10, 2026</b></div>
-            <div class="detail-row"><span>To Date</span><b id="lad-todate">Sep 11, 2026</b></div>
-            <div class="detail-row"><span>Total Days</span><b id="lad-totaldays">2 Days</b></div>
-            <div class="detail-row"><span>Emergency Contact</span><b id="lad-contact">+91 98765 43210</b></div>
+            <p class="section-title" id="lad-section-title">LEAVE SPECIFICS</p>
+            <div class="detail-row"><span id="lad-type-label">Leave Type</span><b class="link" id="lad-leavetype">Casual Leave</b></div>
+            <div class="detail-row"><span id="lad-from-label">From Date</span><b id="lad-fromdate">Sep 10, 2026</b></div>
+            <div class="detail-row" id="lad-row-todate"><span id="lad-to-label">To Date</span><b id="lad-todate">Sep 11, 2026</b></div>
+            <div class="detail-row"><span id="lad-duration-label">Total Days</span><b id="lad-totaldays">2 Days</b></div>
+            <div class="detail-row"><span id="lad-contact-label">Emergency Contact</span><b id="lad-contact">+91 98765 43210</b></div>
             <div class="reason-block">
-              <p class="reason-label">Reason for Leave</p>
+              <p class="reason-label" id="lad-reason-label">Reason for Leave</p>
               <p class="reason-text" id="lad-reason">Family function - attending sister's wedding ceremony in Bangalore.
               </p>
             </div>
@@ -9549,6 +9558,22 @@
             lType: (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType) || 'Casual Leave'
           };
           store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
+
+          if (store.PERSON_DATA && store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].isPermission) {
+            store.LAST_PERMISSION_DECISION = {
+              id: currentPerson,
+              status: status,
+              type: store.PERSON_DATA[currentPerson].leaveType || 'Permission',
+              date: store.PERSON_DATA[currentPerson].fromDate || '04-Sep-2026'
+            };
+            if (store.PERM_STATE) {
+              store.PERM_STATE.forEach(function(req) {
+                if (String(req.id) === String(currentPerson) || req.type === store.PERSON_DATA[currentPerson].leaveType) {
+                  req.status = status;
+                }
+              });
+            }
+          }
 
           // 1. Update tpl-ManagerDashboard template element in outer document (remove approved/rejected request)
           const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
@@ -10329,15 +10354,16 @@
             const pStart = startTimeDisplay ? startTimeDisplay.value : formatTime12H(rawStart);
             const pEnd = endTimeDisplay ? endTimeDisplay.value : formatTime12H(rawEnd);
             const pDuration = durationInput ? (durationInput.value ? durationInput.value.trim() : durationInput.textContent.replace(' (Auto-calculated)', '')) : '2 Hours';
-            const pReason = (reasonText && reasonText.value.trim()) ? reasonText.value.trim() : 'Personal work / checkup';
-
-            // Read employee profile from parent window
+             // Read employee profile from parent window
             const store = window.parent || window;
             const empProf = (store.USER_PROFILE) || {};
-            const empName = empProf.name || 'Employee';
+            const empName = empProf.name || 'Priya Sharma';
             const empInitials = empProf.initials ||
-              (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2));
-            const empId = empProf.employeeId || '';
+              (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2)) || 'PS';
+            const empId = empProf.employeeId || 'EMP-2024-0156';
+            const managerSelect = document.getElementById('perm-manager-select');
+            const defPermMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+            const pManager = managerSelect ? managerSelect.value : defPermMgr;
 
             const newId = 'perm-' + Date.now();
 
@@ -10352,8 +10378,45 @@
               status: 'pending',
               employeeName: empName,
               employeeInitials: empInitials,
-              employeeId: empId
+              employeeId: empId,
+              approvingManager: pManager
             };
+
+            const permPersonObj = {
+              id: newId,
+              isPermission: true,
+              type: pType,
+              leaveType: pType,
+              permissionType: pType,
+              date: formattedDate,
+              fromDate: formattedDate,
+              toDate: formattedDate,
+              start: pStart,
+              end: pEnd,
+              schedule: formattedDate + ' (' + pStart + ' - ' + pEnd + ')',
+              duration: pDuration,
+              totalDays: pDuration,
+              reason: pReason,
+              status: 'pending',
+              employeeName: empName,
+              name: empName,
+              employeeInitials: empInitials,
+              initials: empInitials,
+              employeeId: empId,
+              empId: empId,
+              role: empProf.role || 'Senior Software Engineer',
+              approvingManager: pManager,
+              contact: pManager,
+              emergencyContact: pManager,
+              subtitle: pType + ' Application',
+              appliedPath: empName.split(' ')[0] + ' (Applied)'
+            };
+            if (!store.PERSON_DATA) store.PERSON_DATA = {};
+            store.PERSON_DATA[newId] = permPersonObj;
+            store.PERSON_DATA['priya'] = permPersonObj;
+            store.LATEST_REQUEST = permPersonObj;
+            store.LATEST_PERMISSION_REQUEST = permPersonObj;
+            store.SELECTED_PERSON = newId;
 
             // Push to shared PERM_STATE so PermissionApprovals template can use it (avoid duplicate)
             if (!store.PERM_STATE) store.PERM_STATE = [];
@@ -10383,7 +10446,7 @@
             if (listContainer) {
               const badgeTone = pType === 'Late Coming' ? 'purple' : pType === 'Early Going' ? 'warning' : 'info';
               const newCardHtml = `
-    <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}">
+    <div class="card approval-card" data-perm-id="${newId}" data-status="pending" data-type="${pType}" data-date="${formattedDate}" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail', '${newId}');else if(typeof loadScreen==='function')loadScreen('tpl-LeaveApprovalDetail', '${newId}');">
       <div class="top-row"><div class="emp-row"><div class="avatar">${empInitials}</div><div><b>${empName}</b><p>${pType}</p></div></div><span class="badge ${badgeTone}">${pType}</span></div>
       <hr/>
       <div class="detail-row"><span>Schedule</span><b>${formattedDate} (${pStart} - ${pEnd})</b></div>
@@ -10391,12 +10454,11 @@
       <div class="detail-row"><span>Reason</span><b>${pReason}</b></div>
       <div class="card-action-wrap">
         <div class="btn-row">
-          <button class="btn btn-reject" onclick="processPermAction('${newId}', 'rejected')">Reject</button>
-          <button class="btn btn-approve" onclick="processPermAction('${newId}', 'approved')">Approve</button>
+          <button class="btn btn-reject" onclick="event.stopPropagation();processPermAction('${newId}', 'rejected')">Reject</button>
+          <button class="btn btn-approve" onclick="event.stopPropagation();processPermAction('${newId}', 'approved')">Approve</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
               listContainer.insertAdjacentHTML('afterbegin', newCardHtml);
             }
 
@@ -10710,6 +10772,7 @@
             appliedPath: 'Amit (Applied)'
           }
         };
+        window.PERSON_DATA = PERSON_DATA;
 
         function loadScreen(tplId, personKey) {
           if (personKey) {
@@ -10867,19 +10930,73 @@
             `;
             if (doc.head) doc.head.appendChild(detailNoGlowStyle);
 
-            var p = PERSON_DATA[SELECTED_PERSON] || PERSON_DATA['priya'];
+            var p = (SELECTED_PERSON && PERSON_DATA[SELECTED_PERSON]) || window.LATEST_REQUEST || PERSON_DATA['priya'];
+            var empProf = window.USER_PROFILE || {};
+            var dashboardEmpName = empProf.name || 'Priya Sharma';
+
+            // Employee name displayed on Request Detail must match Employee Dashboard exactly
+            if (!p.name || p.name === 'Priya Sharma' || p.name === dashboardEmpName || p.empId === (empProf.employeeId || 'EMP-2024-0156') || SELECTED_PERSON === 'priya' || p.isSelf) {
+              p.name = dashboardEmpName;
+              p.role = empProf.role || p.role || 'Senior Software Engineer';
+              p.empId = empProf.employeeId || p.empId || 'EMP-2024-0156';
+              p.initials = empProf.initials || (dashboardEmpName.trim().split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0, 2)) || 'PS';
+              p.appliedPath = dashboardEmpName.split(' ')[0] + ' (Applied)';
+            }
+
+            var isPerm = !!(p.isPermission || p.duration || p.type === 'Early Going' || p.type === 'Late Coming' || p.leaveType === 'Early Going' || p.leaveType === 'Late Coming' || p.permissionType);
+
             var elName = doc.getElementById('lad-name'); if (elName) elName.textContent = p.name;
             var elRole = doc.getElementById('lad-role'); if (elRole) elRole.textContent = p.role;
             var elEmpId = doc.getElementById('lad-empid'); if (elEmpId) elEmpId.textContent = p.empId;
             var elAvatar = doc.getElementById('lad-avatar'); if (elAvatar) elAvatar.textContent = p.initials;
-            var elLeaveType = doc.getElementById('lad-leavetype'); if (elLeaveType) elLeaveType.textContent = p.leaveType;
-            var elFromDate = doc.getElementById('lad-fromdate'); if (elFromDate) elFromDate.textContent = p.fromDate;
-            var elToDate = doc.getElementById('lad-todate'); if (elToDate) elToDate.textContent = p.toDate;
-            var elTotalDays = doc.getElementById('lad-totaldays'); if (elTotalDays) elTotalDays.textContent = p.totalDays;
-            var elContact = doc.getElementById('lad-contact'); if (elContact) elContact.textContent = p.contact;
-            var elReason = doc.getElementById('lad-reason'); if (elReason) elReason.textContent = p.reason;
-            var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle;
-            var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath;
+            var elSubtitle = doc.getElementById('lad-subtitle'); if (elSubtitle) elSubtitle.textContent = p.subtitle || ((p.leaveType || p.type || (isPerm ? 'Permission' : 'Leave')) + ' Application');
+            var elApplied = doc.getElementById('lad-applied-path'); if (elApplied) elApplied.textContent = p.appliedPath || (p.name.split(' ')[0] + ' (Applied)');
+
+            var elSecTitle = doc.getElementById('lad-section-title');
+            var elTypeLabel = doc.getElementById('lad-type-label');
+            var elLeaveType = doc.getElementById('lad-leavetype');
+            var elFromLabel = doc.getElementById('lad-from-label');
+            var elFromDate = doc.getElementById('lad-fromdate');
+            var elRowToDate = doc.getElementById('lad-row-todate');
+            var elToLabel = doc.getElementById('lad-to-label');
+            var elToDate = doc.getElementById('lad-todate');
+            var elDurLabel = doc.getElementById('lad-duration-label');
+            var elTotalDays = doc.getElementById('lad-totaldays');
+            var elContactLabel = doc.getElementById('lad-contact-label');
+            var elContact = doc.getElementById('lad-contact');
+            var elReasonLabel = doc.getElementById('lad-reason-label');
+            var elReason = doc.getElementById('lad-reason');
+
+            if (isPerm) {
+              if (elSecTitle) elSecTitle.textContent = 'PERMISSION SPECIFICS';
+              if (elTypeLabel) elTypeLabel.textContent = 'Permission Type';
+              if (elLeaveType) elLeaveType.textContent = p.leaveType || p.type || 'Early Going';
+              if (elFromLabel) elFromLabel.textContent = 'Date';
+              if (elFromDate) elFromDate.textContent = p.fromDate || p.date || 'Sep 04, 2026';
+              if (elRowToDate) elRowToDate.style.display = 'none';
+              if (elDurLabel) elDurLabel.textContent = 'Duration';
+              if (elTotalDays) elTotalDays.textContent = p.totalDays || p.duration || '2 Hours';
+              if (elContactLabel) elContactLabel.textContent = 'Approving Manager';
+              var defMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+              if (elContact) elContact.textContent = p.approvingManager || p.contact || defMgr;
+              if (elReasonLabel) elReasonLabel.textContent = 'Reason for Permission';
+              if (elReason) elReason.textContent = p.reason || 'Personal work / checkup';
+            } else {
+              if (elSecTitle) elSecTitle.textContent = 'LEAVE SPECIFICS';
+              if (elTypeLabel) elTypeLabel.textContent = 'Leave Type';
+              if (elLeaveType) elLeaveType.textContent = p.leaveType || 'Casual Leave';
+              if (elFromLabel) elFromLabel.textContent = 'From Date';
+              if (elFromDate) elFromDate.textContent = p.fromDate || 'Sep 10, 2026';
+              if (elRowToDate) elRowToDate.style.display = 'flex';
+              if (elToLabel) elToLabel.textContent = 'To Date';
+              if (elToDate) elToDate.textContent = p.toDate || 'Sep 11, 2026';
+              if (elDurLabel) elDurLabel.textContent = 'Total Days';
+              if (elTotalDays) elTotalDays.textContent = p.totalDays || '2 Days';
+              if (elContactLabel) elContactLabel.textContent = 'Emergency Contact';
+              if (elContact) elContact.textContent = p.emergencyContact || p.contact || empProf.phone || '+91 98765 43210';
+              if (elReasonLabel) elReasonLabel.textContent = 'Reason for Leave';
+              if (elReason) elReason.textContent = p.reason || "Family function - attending sister's wedding ceremony in Bangalore.";
+            }
 
             // Update Approval Path node for Manager
             var mgrPath = doc.getElementById('lad-manager-path');
@@ -11154,6 +11271,7 @@
                 var permTypeSelect = doc.getElementById('perm-type-select');
                 var durationInput  = doc.getElementById('perm-duration-input');
                 var reasonText     = doc.getElementById('perm-reason-text');
+                var permManagerEl  = doc.getElementById('perm-manager-select');
 
                 var rawDate   = permDateInput  ? permDateInput.value  : '2026-09-04';
                 var months    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -11169,9 +11287,12 @@
                 var newId = 'perm-' + Date.now();
                 var permProf = window.parent.USER_PROFILE || {};
                 var permEmpName = permProf.name || 'Priya Sharma';
-                var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
+                var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)) || 'PS';
                 var permEmpId = permProf.employeeId || 'EMP-2024-0156';
-                var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending', employeeName: permEmpName, employeeInitials: permEmpInitials, employeeId: permEmpId };
+                var defPermMgr = permProf.reportingManager ? permProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+                var pManager = permManagerEl ? permManagerEl.value : defPermMgr;
+
+                var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending', employeeName: permEmpName, employeeInitials: permEmpInitials, employeeId: permEmpId, approvingManager: pManager };
                 window.parent.PERM_STATE = window.parent.PERM_STATE || [];
                 var existsPerm = window.parent.PERM_STATE.some(function(p){ return p.type === pType && p.date === fmtDate && p.reason === pReason; });
                 if (!existsPerm) {
@@ -11183,6 +11304,36 @@
                 if (!existsEmpReq) {
                   window.parent.EMP_LEAVE_REQUESTS.unshift({ id: newId, leaveType: pType, fromDate: fmtDate, daysText: pDuration, reason: pReason, isPermission: true, employeeName: permEmpName });
                 }
+
+                var permPersonObj = {
+                  id: newId,
+                  isPermission: true,
+                  name: permEmpName,
+                  initials: permEmpInitials,
+                  role: permProf.role || 'Senior Software Engineer',
+                  empId: permEmpId,
+                  type: pType,
+                  leaveType: pType,
+                  permissionType: pType,
+                  date: fmtDate,
+                  fromDate: fmtDate,
+                  toDate: fmtDate,
+                  duration: pDuration,
+                  totalDays: pDuration,
+                  reason: pReason,
+                  approvingManager: pManager,
+                  contact: pManager,
+                  emergencyContact: pManager,
+                  subtitle: pType + ' Application',
+                  appliedPath: permEmpName.split(' ')[0] + ' (Applied)',
+                  status: 'pending'
+                };
+                if (!window.parent.PERSON_DATA) window.parent.PERSON_DATA = {};
+                window.parent.PERSON_DATA[newId] = permPersonObj;
+                window.parent.PERSON_DATA['priya'] = permPersonObj;
+                window.parent.LATEST_REQUEST = permPersonObj;
+                window.parent.LATEST_PERMISSION_REQUEST = permPersonObj;
+                window.parent.SELECTED_PERSON = newId;
 
                 window.parent.loadScreen('tpl-PermissionApprovals');
               };
@@ -11198,11 +11349,11 @@
                 if (!paList.querySelector('[data-perm-id="' + req.id + '"]')) {
                   var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
                   var actionHtml = req.status === 'pending'
-                    ? '<div class="btn-row"><button class="btn btn-reject" onclick="processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>'
+                    ? '<div class="btn-row"><button class="btn btn-reject" onclick="event.stopPropagation();processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="event.stopPropagation();processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>'
                     : '<div style="text-align:right;margin-top:8px;"><span class="badge ' + (req.status === 'approved' ? 'success' : 'danger') + '">' + (req.status === 'approved' ? 'Approved' : 'Rejected') + '</span></div>';
                   var reqEmpName = req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee';
                   var reqEmpInitials = req.employeeInitials || (reqEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
-                  var cardHtml = '<div class="card approval-card" data-perm-id="' + req.id + '" data-status="' + req.status + '" data-type="' + req.type + '" data-date="' + req.date + '">'
+                  var cardHtml = '<div class="card approval-card" data-perm-id="' + req.id + '" data-status="' + req.status + '" data-type="' + req.type + '" data-date="' + req.date + '" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + req.id + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + req.id + '\');">'
                     + '<div class="top-row"><div class="emp-row"><div class="avatar">' + reqEmpInitials + '</div><div><b>' + reqEmpName + '</b><p>' + req.type + '</p></div></div><span class="badge ' + tone + '">' + req.type + '</span></div>'
                     + '<hr/>'
                     + '<div class="detail-row"><span>Date</span><b>' + req.date + '</b></div>'
@@ -11636,6 +11787,30 @@
             if (frame.contentWindow) {
               frame.contentWindow.deleteEmpRequest = window.deleteEmpRequest;
             }
+
+            // Clicking any request card opens the Request Detail page with its details
+            doc.querySelectorAll('.request-card').forEach(function(card) {
+              card.style.cursor = 'pointer';
+              card.addEventListener('click', function(e) {
+                if (!e.target.closest('.btn-cancel-req')) {
+                  var reqId = card.getAttribute('data-req-id') || card.getAttribute('data-leave-id') || card.getAttribute('data-perm-id');
+                  if (reqId && window.PERSON_DATA && window.PERSON_DATA[reqId]) {
+                    loadScreen('tpl-LeaveApprovalDetail', reqId);
+                    return;
+                  }
+                  var bEl = card.querySelector('b');
+                  var bTitle = bEl ? bEl.textContent : '';
+                  var isPerm = bTitle.indexOf('Going') !== -1 || bTitle.indexOf('Coming') !== -1 || bTitle.indexOf('Permission') !== -1;
+                  if (isPerm && window.LATEST_PERMISSION_REQUEST) {
+                    loadScreen('tpl-LeaveApprovalDetail', window.LATEST_PERMISSION_REQUEST.id);
+                  } else if (!isPerm && window.LATEST_LEAVE_REQUEST) {
+                    loadScreen('tpl-LeaveApprovalDetail', window.LATEST_LEAVE_REQUEST.id);
+                  } else {
+                    loadScreen('tpl-LeaveApprovalDetail', 'priya');
+                  }
+                }
+              });
+            });
           }
 
           // ── My Profile: populate with USER_PROFILE ───────────────────────
@@ -11673,12 +11848,63 @@
               card.style.cursor = 'pointer';
               card.addEventListener('click', function (e) {
                 if (e.target.tagName !== 'BUTTON') {
+                  var leaveId = card.getAttribute('data-leave-id');
+                  if (leaveId && window.PERSON_DATA && window.PERSON_DATA[leaveId]) {
+                    loadScreen('tpl-LeaveApprovalDetail', leaveId);
+                    return;
+                  }
                   var nameEl = card.querySelector('b');
                   var nameText = nameEl ? nameEl.textContent : '';
                   var key = 'priya';
                   if (nameText.indexOf('Sneha') !== -1) key = 'sneha';
                   else if (nameText.indexOf('Amit') !== -1) key = 'amit';
                   loadScreen('tpl-LeaveApprovalDetail', key);
+                }
+              });
+            });
+          }
+
+          if (currentTpl === 'tpl-PermissionApprovals') {
+            doc.querySelectorAll('#permission-approvals-list .approval-card, .approval-card').forEach(function (card) {
+              card.style.cursor = 'pointer';
+              card.addEventListener('click', function (e) {
+                if (e.target.tagName !== 'BUTTON') {
+                  var permId = card.getAttribute('data-perm-id') || '1';
+                  if (!window.PERSON_DATA[permId]) {
+                    var cardName = card.querySelector('.emp-row b') ? card.querySelector('.emp-row b').textContent.trim() : 'Priya Sharma';
+                    var cardType = card.getAttribute('data-type') || (card.querySelector('.emp-row p') ? card.querySelector('.emp-row p').textContent.trim() : 'Early Going');
+                    var dateRow = card.querySelector('.detail-row:nth-child(3) b');
+                    var durRow = card.querySelector('.detail-row:nth-child(4) b');
+                    var rsnRow = card.querySelector('.detail-row:nth-child(5) b');
+                    var cardDate = dateRow ? dateRow.textContent.trim() : 'Sep 04, 2026';
+                    var cardDur = durRow ? durRow.textContent.trim() : '2 Hours';
+                    var cardRsn = rsnRow ? rsnRow.textContent.trim() : 'Doctor appointment checkup';
+                    var empProf = window.USER_PROFILE || {};
+                    var defMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+                    window.PERSON_DATA[permId] = {
+                      id: permId,
+                      isPermission: true,
+                      name: cardName,
+                      initials: card.querySelector('.avatar') ? card.querySelector('.avatar').textContent.trim() : 'PS',
+                      role: 'Senior Software Engineer',
+                      empId: 'EMP-2024-0156',
+                      type: cardType,
+                      leaveType: cardType,
+                      permissionType: cardType,
+                      fromDate: cardDate,
+                      toDate: cardDate,
+                      totalDays: cardDur,
+                      duration: cardDur,
+                      reason: cardRsn,
+                      contact: defMgr,
+                      approvingManager: defMgr,
+                      emergencyContact: defMgr,
+                      subtitle: cardType + ' Application',
+                      appliedPath: cardName.split(' ')[0] + ' (Applied)',
+                      status: card.getAttribute('data-status') || 'pending'
+                    };
+                  }
+                  loadScreen('tpl-LeaveApprovalDetail', permId);
                 }
               });
             });

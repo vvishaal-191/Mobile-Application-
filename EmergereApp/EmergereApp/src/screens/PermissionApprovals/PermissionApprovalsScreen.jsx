@@ -218,52 +218,102 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
           </Card>
         ) : (
           filteredRequests.map((item) => (
-            <Card key={item.id} style={styles.requestCard}>
-              <View style={styles.topRow}>
-                <View style={styles.employeeRow}>
-                  <Avatar initials={item.initials} size={48} />
-                  <View>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.subLabel}>{item.type}</Text>
+            <TouchableOpacity
+              key={item.id}
+              activeOpacity={0.85}
+              onPress={() =>
+                go('LeaveApprovalDetail', {
+                  person: {
+                    id: item.id,
+                    name: item.name,
+                    initials: item.initials,
+                    empId:
+                      item.empId ||
+                      (typeof global !== 'undefined' && global.USER_PROFILE?.employeeId) ||
+                      'EMP-2024-0156',
+                    role:
+                      item.role ||
+                      (typeof global !== 'undefined' && global.USER_PROFILE?.role) ||
+                      'Senior Software Engineer',
+                    isPermission: true,
+                    leaveType: item.type,
+                    permissionType: item.type,
+                    date: item.schedule
+                      ? item.schedule.split('(')[0].trim()
+                      : item.date || 'Sep 04, 2026',
+                    fromDate: item.schedule
+                      ? item.schedule.split('(')[0].trim()
+                      : item.date || 'Sep 04, 2026',
+                    schedule: item.schedule,
+                    duration: item.duration,
+                    totalDays: item.duration,
+                    reason: item.reason,
+                    approvingManager:
+                      item.approvingManager ||
+                      (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
+                      'Rahul Sharma (Team Lead)',
+                    emergencyContact:
+                      item.approvingManager ||
+                      (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
+                      'Rahul Sharma (Team Lead)',
+                    status: item.status,
+                  },
+                })
+              }
+            >
+              <Card style={styles.requestCard}>
+                <View style={styles.topRow}>
+                  <View style={styles.employeeRow}>
+                    <Avatar initials={item.initials} size={48} />
+                    <View>
+                      <Text style={styles.name}>{item.name}</Text>
+                      <Text style={styles.subLabel}>{item.type}</Text>
+                    </View>
                   </View>
+                  <StatusBadge label={item.tag} tone={item.tagTone} />
                 </View>
-                <StatusBadge label={item.tag} tone={item.tagTone} />
-              </View>
 
-              <View style={styles.divider} />
+                <View style={styles.divider} />
 
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Schedule</Text>
-                <Text style={styles.detailValue}>{item.schedule}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Duration</Text>
-                <Text style={styles.detailValueBold}>{item.duration}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Reason</Text>
-                <Text style={styles.detailValue}>{item.reason}</Text>
-              </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Schedule</Text>
+                  <Text style={styles.detailValue}>{item.schedule}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Duration</Text>
+                  <Text style={styles.detailValueBold}>{item.duration}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Reason</Text>
+                  <Text style={styles.detailValue}>{item.reason}</Text>
+                </View>
 
-              {item.status === 'pending' ? (
-                <View style={styles.actionsRow}>
-                  <TouchableOpacity style={styles.rejectBtn} onPress={() => handleReject(item.id)}>
-                    <Text style={styles.rejectText}>Reject</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.approveBtn} onPress={() => handleApprove(item.id)}>
-                    <Text style={styles.approveText}>Approve</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : item.status === 'approved' ? (
-                <View style={{ marginTop: 12, alignItems: 'flex-end' }}>
-                  <StatusBadge label="Approved" tone="success" />
-                </View>
-              ) : (
-                <View style={{ marginTop: 12, alignItems: 'flex-end' }}>
-                  <StatusBadge label="Rejected" tone="danger" />
-                </View>
-              )}
-            </Card>
+                {item.status === 'pending' ? (
+                  <View style={styles.actionsRow}>
+                    <TouchableOpacity
+                      style={styles.rejectBtn}
+                      onPress={() => handleReject(item.id)}
+                    >
+                      <Text style={styles.rejectText}>Reject</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.approveBtn}
+                      onPress={() => handleApprove(item.id)}
+                    >
+                      <Text style={styles.approveText}>Approve</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : item.status === 'approved' ? (
+                  <View style={{ marginTop: 12, alignItems: 'flex-end' }}>
+                    <StatusBadge label="Approved" tone="success" />
+                  </View>
+                ) : (
+                  <View style={{ marginTop: 12, alignItems: 'flex-end' }}>
+                    <StatusBadge label="Rejected" tone="danger" />
+                  </View>
+                )}
+              </Card>
+            </TouchableOpacity>
           ))
         )}
       </ScrollView>

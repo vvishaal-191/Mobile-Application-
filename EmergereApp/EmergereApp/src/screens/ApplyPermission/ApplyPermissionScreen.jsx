@@ -101,24 +101,41 @@ export default function ApplyPermissionScreen({ navigation }) {
       id: Date.now().toString(),
       initials: employeeInitials,
       name: employeeName,
+      empId: profile.employeeId || 'EMP-2024-0156',
+      role: profile.role || 'Senior Software Engineer',
+      isPermission: true,
       type: permissionType,
+      leaveType: permissionType,
+      permissionType: permissionType,
       tag: permissionType,
       tagTone: 'purple',
+      date: date,
+      fromDate: date,
+      toDate: date,
+      startTime,
+      endTime,
       schedule: `${date} (${startTime} - ${endTime})`,
       duration: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
+      totalDays: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
       reason: reason || 'Personal work / Medical checkup',
       status: 'pending',
       typeTone: 'purple',
       approvingManager: manager,
+      emergencyContact: manager,
+      contact: manager,
+      subtitle: `${permissionType} Application`,
+      appliedPath: `${employeeName.split(' ')[0]} (Applied)`,
       // for Employee Dashboard recent list
       title: `${permissionType} (${durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours'})`,
-      subtitle: `${date} • ${reason || 'Personal Work'}`,
+      subtitleReq: `${date} • ${reason || 'Personal Work'}`,
     };
 
-    // Push to shared global store so Manager Dashboard can pick it up
+    // Push to shared global store so Manager Dashboard and Request Detail can pick it up
     if (typeof global !== 'undefined') {
       if (!global.PERMISSION_REQUESTS) global.PERMISSION_REQUESTS = [];
       global.PERMISSION_REQUESTS.unshift(newRequest);
+      global.LATEST_REQUEST = newRequest;
+      global.LATEST_PERMISSION_REQUEST = newRequest;
     }
 
     // Navigate to Permission Approvals page to show the pending request

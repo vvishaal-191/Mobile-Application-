@@ -335,10 +335,59 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         {requests.map((req) => (
           <Card key={req.id} style={styles.requestCard}>
             <View style={styles.requestRow}>
-              <View style={{ flex: 1, paddingRight: 8 }}>
+              <TouchableOpacity
+                style={{ flex: 1, paddingRight: 8 }}
+                activeOpacity={0.7}
+                onPress={() => {
+                  const isPerm =
+                    req.title &&
+                    (req.title.includes('Going') ||
+                      req.title.includes('Coming') ||
+                      req.title.includes('Permission'));
+                  navigation.navigate('LeaveApprovalDetail', {
+                    person: {
+                      id: req.id,
+                      name: userProfile.name || 'Priya Sharma',
+                      initials: userProfile.initials || 'PS',
+                      empId: userProfile.employeeId || 'EMP-2024-0156',
+                      role: userProfile.role || 'Senior Software Engineer',
+                      isPermission: isPerm,
+                      leaveType: req.title ? req.title.split('(')[0].trim() : 'Casual Leave',
+                      permissionType: req.title ? req.title.split('(')[0].trim() : 'Early Going',
+                      totalDays:
+                        req.title && req.title.includes('(')
+                          ? req.title.split('(')[1].replace(')', '')
+                          : isPerm
+                          ? '2 Hours'
+                          : '1 Day',
+                      duration:
+                        req.title && req.title.includes('(')
+                          ? req.title.split('(')[1].replace(')', '')
+                          : isPerm
+                          ? '2 Hours'
+                          : '1 Day',
+                      fromDate: req.subtitle ? req.subtitle.split('•')[0].trim() : 'Sep 07, 2026',
+                      toDate: req.subtitle ? req.subtitle.split('•')[0].trim() : 'Sep 07, 2026',
+                      date: req.subtitle ? req.subtitle.split('•')[0].trim() : 'Sep 07, 2026',
+                      reason:
+                        req.subtitle && req.subtitle.includes('•')
+                          ? req.subtitle.split('•')[1].trim()
+                          : 'Personal work',
+                      approvingManager:
+                        (typeof global !== 'undefined' &&
+                          global.USER_PROFILE?.reportingManager) ||
+                        'Rahul Sharma (Team Lead)',
+                      emergencyContact:
+                        (typeof global !== 'undefined' && global.USER_PROFILE?.phone) ||
+                        '+91 98765 43210',
+                      status: req.status,
+                    },
+                  });
+                }}
+              >
                 <Text style={styles.requestTitle}>{req.title}</Text>
                 <Text style={styles.requestSubtitle}>{req.subtitle}</Text>
-              </View>
+              </TouchableOpacity>
               <View style={styles.requestActions}>
                 <StatusBadge label={req.status} tone={req.tone} />
                 <TouchableOpacity

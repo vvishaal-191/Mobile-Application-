@@ -76,10 +76,12 @@ export default function ApplyLeaveScreen({ navigation }) {
       role: employeeRole,
       type: leaveType,
       leaveType: leaveType,
+      isPermission: false,
       duration: `${daysCount.replace(' (Auto-calculated)', '')} (${fromDate} - ${toDate})`,
       fromDate,
       toDate,
       totalDays: daysCount.replace(' (Auto-calculated)', ''),
+      emergencyContact: profile.phone || '+91 98765 43210',
       reason: reason || 'Personal work',
       status: 'pending',
       typeTone: 'info',
@@ -87,12 +89,16 @@ export default function ApplyLeaveScreen({ navigation }) {
       title: `${leaveType} (${daysCount.replace(' (Auto-calculated)', '')})`,
       subtitle: `${fromDate} • ${reason || 'Personal Work'}`,
       approvingManager,
+      subtitleApp: `${leaveType} Application`,
+      appliedName: `${employeeName.split(' ')[0]} (Applied)`,
     };
 
-    // Push to shared global store so Manager Dashboard can pick it up
+    // Push to shared global store so Manager Dashboard and Request Detail can pick it up
     if (typeof global !== 'undefined') {
       if (!global.LEAVE_REQUESTS) global.LEAVE_REQUESTS = [];
       global.LEAVE_REQUESTS.unshift(newRequest);
+      global.LATEST_REQUEST = newRequest;
+      global.LATEST_LEAVE_REQUEST = newRequest;
     }
 
     // Navigate directly to Leave Approvals (Manager Approval page) upon submission
