@@ -5,6 +5,19 @@ import { Feather } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './ApplyPermissionScreen.styles';
 
+const PERMISSION_TYPES = [
+  'Early Going',
+  'Late Coming',
+  'Personal Work',
+  'Official Work',
+];
+
+const MANAGERS = [
+  'Rahul Sharma (Team Lead)',
+  'Priya Verma (HR Manager)',
+  'Suresh Kumar (Engineering Manager)',
+];
+
 export default function ApplyPermissionScreen({ navigation }) {
   const [date, setDate] = useState('04-Sep-2026');
   const [permissionType, setPermissionType] = useState('Early Going');
@@ -12,11 +25,9 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [durationText, setDurationText] = useState('2 Hours');
   const [reason, setReason] = useState('');
-  const MANAGERS = [
-    'Rahul Sharma (Team Lead)',
-    'Priya Verma (HR Manager)',
-    'Suresh Kumar (Engineering Manager)',
-  ];
+  const [manager, setManager] = useState('Rahul Sharma (Team Lead)');
+  const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
 
   const handleCycleManager = () => {
     const currentIndex = MANAGERS.indexOf(manager);
@@ -104,15 +115,45 @@ export default function ApplyPermissionScreen({ navigation }) {
               placeholder="DD-MMM-YYYY"
               placeholderTextColor="#9AA3B2"
             />
+            <Feather name="calendar" size={18} color="#111827" />
           </View>
         </View>
 
         <View style={styles.field}>
           <Text style={styles.label}>Permission Type *</Text>
-          <TouchableOpacity style={styles.selectBox}>
+          <TouchableOpacity
+            style={[styles.selectBox, isTypeOpen && styles.selectBoxActive]}
+            onPress={() => {
+              setIsTypeOpen(!isTypeOpen);
+              setIsManagerOpen(false);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.selectText}>{permissionType}</Text>
-            <Feather name="chevron-down" size={18} color="#6B7280" />
+            <Feather name={isTypeOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
           </TouchableOpacity>
+          {isTypeOpen && (
+            <View style={styles.dropdownContainer}>
+              {PERMISSION_TYPES.map((t) => {
+                const isSelected = t === permissionType;
+                return (
+                  <TouchableOpacity
+                    key={t}
+                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                    onPress={() => {
+                      setPermissionType(t);
+                      setIsTypeOpen(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
+                      {t}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <View style={styles.row}>
@@ -170,10 +211,39 @@ export default function ApplyPermissionScreen({ navigation }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Approving Manager</Text>
-          <TouchableOpacity style={styles.selectBox} onPress={handleCycleManager}>
+          <TouchableOpacity
+            style={[styles.selectBox, isManagerOpen && styles.selectBoxActive]}
+            onPress={() => {
+              setIsManagerOpen(!isManagerOpen);
+              setIsTypeOpen(false);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.selectText}>{manager}</Text>
-            <Feather name="chevron-down" size={18} color="#6B7280" />
+            <Feather name={isManagerOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
           </TouchableOpacity>
+          {isManagerOpen && (
+            <View style={styles.dropdownContainer}>
+              {MANAGERS.map((m) => {
+                const isSelected = m === manager;
+                return (
+                  <TouchableOpacity
+                    key={m}
+                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                    onPress={() => {
+                      setManager(m);
+                      setIsManagerOpen(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
+                      {m}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>

@@ -6,3 +6,6 @@
 .auto-box{background:var(--info-bg);color:var(--primary);font-weight:700;border-radius:12px;padding:14px;}
 .upload-box{border:1.5px dashed var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--text-secondary);}
 .btn.full{width:calc(100% - 40px);margin:8px 20px 20px;}
+.select-wrap{position:relative;width:100%;}
+.select-wrap select{appearance:none;-webkit-appearance:none;-moz-appearance:none;padding-right:44px;cursor:pointer;}
+.select-wrap .select-chevron{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;display:flex;align-items:center;justify-content:center;pointer-events:none;color:#111827;}

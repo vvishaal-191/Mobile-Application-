@@ -7,12 +7,21 @@ import styles from './ApplyLeaveScreen.styles';
 
 const LEAVE_TYPES = ['Casual Leave', 'Sick Leave', 'Earned Leave', 'Privilege Leave'];
 
+const MANAGERS = [
+  'Rahul Sharma (Team Lead)',
+  'Priya Verma (HR Manager)',
+  'Suresh Kumar (Engineering Manager)',
+];
+
 export default function ApplyLeaveScreen({ navigation }) {
   const [leaveType, setLeaveType] = useState('Casual Leave');
   const [fromDate, setFromDate] = useState('07-Sep-2026');
   const [toDate, setToDate] = useState('07-Sep-2026');
   const [reason, setReason] = useState('');
   const [daysCount, setDaysCount] = useState('1.0 Day (Auto-calculated)');
+  const [approvingManager, setApprovingManager] = useState('Rahul Sharma (Team Lead)');
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
+  const [isLeaveTypeOpen, setIsLeaveTypeOpen] = useState(false);
 
   const go = (screen) => navigation && navigation.navigate(screen);
 
@@ -41,10 +50,48 @@ export default function ApplyLeaveScreen({ navigation }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Leave Type *</Text>
-          <TouchableOpacity style={styles.selectBox}>
+          <TouchableOpacity
+            style={[styles.selectBox, isLeaveTypeOpen && styles.selectBoxActive]}
+            onPress={() => {
+              setIsLeaveTypeOpen(!isLeaveTypeOpen);
+              setIsManagerOpen(false);
+            }}
+            activeOpacity={0.7}
+          >
             <Text style={styles.selectText}>{leaveType}</Text>
-            <Feather name="chevron-down" size={18} color="#6B7280" />
+            <Feather
+              name={isLeaveTypeOpen ? 'chevron-up' : 'chevron-down'}
+              size={18}
+              color="#111827"
+            />
           </TouchableOpacity>
+          {isLeaveTypeOpen && (
+            <View style={styles.dropdownContainer}>
+              {LEAVE_TYPES.map((lt) => {
+                const isSelected = lt === leaveType;
+                return (
+                  <TouchableOpacity
+                    key={lt}
+                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                    onPress={() => {
+                      setLeaveType(lt);
+                      setIsLeaveTypeOpen(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[
+                        styles.dropdownOptionText,
+                        isSelected && styles.dropdownOptionTextSelected,
+                      ]}
+                    >
+                      {lt}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <View style={styles.row}>
@@ -73,6 +120,52 @@ export default function ApplyLeaveScreen({ navigation }) {
           <View style={styles.autoBox}>
             <Text style={styles.autoText}>{daysCount}</Text>
           </View>
+        </View>
+
+        <View style={styles.field}>
+          <Text style={styles.label}>Approving Manager</Text>
+          <TouchableOpacity
+            style={[styles.selectBox, isManagerOpen && styles.selectBoxActive]}
+            onPress={() => {
+              setIsManagerOpen(!isManagerOpen);
+              setIsLeaveTypeOpen(false);
+            }}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.selectText}>{approvingManager}</Text>
+            <Feather
+              name={isManagerOpen ? 'chevron-up' : 'chevron-down'}
+              size={18}
+              color="#111827"
+            />
+          </TouchableOpacity>
+          {isManagerOpen && (
+            <View style={styles.dropdownContainer}>
+              {MANAGERS.map((mgr) => {
+                const isSelected = mgr === approvingManager;
+                return (
+                  <TouchableOpacity
+                    key={mgr}
+                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                    onPress={() => {
+                      setApprovingManager(mgr);
+                      setIsManagerOpen(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[
+                        styles.dropdownOptionText,
+                        isSelected && styles.dropdownOptionTextSelected,
+                      ]}
+                    >
+                      {mgr}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         <View style={styles.field}>

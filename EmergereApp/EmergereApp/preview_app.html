@@ -2754,12 +2754,19 @@
           </div>
           <p class="subtitle">Create new leave request</p>
           <div class="field"><label class="field-label">Leave Type *</label>
-            <select id="leave-type-select">
-              <option>Casual Leave</option>
-              <option>Sick Leave</option>
-              <option>Earned Leave</option>
-              <option>Privilege Leave</option>
-            </select>
+            <div class="select-wrap" style="position:relative;">
+              <select id="leave-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
+                <option>Casual Leave</option>
+                <option>Sick Leave</option>
+                <option>Earned Leave</option>
+                <option>Privilege Leave</option>
+              </select>
+              <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
           </div>
           <div class="field two-col">
             <div>
@@ -2789,6 +2796,20 @@
           </div>
           <div class="field"><label class="field-label">Number of Days</label>
             <div class="auto-box" id="days-count-box">1.0 Day (Auto-calculated)</div>
+          </div>
+          <div class="field"><label class="field-label">Approving Manager</label>
+            <div class="select-wrap" style="position:relative;">
+              <select id="leave-manager-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
+                <option value="Rahul Sharma (Team Lead)">Rahul Sharma (Team Lead)</option>
+                <option value="Priya Verma (HR Manager)">Priya Verma (HR Manager)</option>
+                <option value="Suresh Kumar (Engineering Manager)">Suresh Kumar (Engineering Manager)</option>
+              </select>
+              <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
           </div>
           <div class="field"><label class="field-label">Reason *</label><textarea id="leave-reason-text" rows="4"
               placeholder="Describe the reason for your leave..."></textarea></div>
@@ -2861,16 +2882,18 @@
           var fromDateEl = document.getElementById('from-date-display');
           var toDateEl = document.getElementById('to-date-display');
           var daysEl = document.getElementById('days-count-box');
+          var managerEl = document.getElementById('leave-manager-select');
           var reasonEl = document.getElementById('leave-reason-text');
 
           var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
           var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
           var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
           var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
+          var approvingManager = managerEl ? managerEl.value : 'Rahul Sharma (Team Lead)';
           var reason = reasonEl ? reasonEl.value.trim() : '';
 
           var store = window.parent || window;
-          store.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason };
+          store.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager };
 
           var parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
           var approvalsTpl = parentDoc.getElementById('tpl-LeaveApprovals');
@@ -3299,6 +3322,33 @@
           font-family: inherit;
         }
 
+        .select-wrap {
+          position: relative;
+          width: 100%;
+        }
+
+        .select-wrap select {
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          padding-right: 44px;
+          cursor: pointer;
+        }
+
+        .select-wrap .select-chevron {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+          color: #111827;
+        }
+
         label.field-label {
           font-size: 14px;
           font-weight: 600;
@@ -3393,12 +3443,21 @@
               style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;"
               onchange="calcPermDuration()" />
           </div>
-          <div class="field"><label class="field-label">Permission Type *</label><select id="perm-type-select">
-              <option>Early Going</option>
-              <option>Late Coming</option>
-              <option>Personal Work</option>
-              <option>Official Work</option>
-            </select></div>
+          <div class="field"><label class="field-label">Permission Type *</label>
+            <div class="select-wrap">
+              <select id="perm-type-select">
+                <option>Early Going</option>
+                <option>Late Coming</option>
+                <option>Personal Work</option>
+                <option>Official Work</option>
+              </select>
+              <div class="select-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
 
           <div class="field"><label class="field-label">Duration *</label><input type="text" id="perm-duration-input"
               value="2 Hours" placeholder="E.g., 2 Hours"
@@ -3406,11 +3465,20 @@
           </div>
           <div class="field"><label class="field-label">Reason *</label><textarea id="perm-reason-text" rows="4"
               placeholder="E.g., Medical checkup, personal work..."></textarea></div>
-          <div class="field"><label class="field-label">Approving Manager</label><select id="perm-manager-select">
-              <option>Rahul Sharma (Team Lead)</option>
-              <option>Priya Verma (HR Manager)</option>
-              <option>Suresh Kumar (Engineering Manager)</option>
-            </select></div>
+          <div class="field"><label class="field-label">Approving Manager</label>
+            <div class="select-wrap">
+              <select id="perm-manager-select">
+                <option>Rahul Sharma (Team Lead)</option>
+                <option>Priya Verma (HR Manager)</option>
+                <option>Suresh Kumar (Engineering Manager)</option>
+              </select>
+              <div class="select-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
           <button class="btn btn-primary full" onclick="handleApplyPermissionSubmit()">Submit Request</button>
         </div>
         <div class="bottom-nav">
@@ -10589,15 +10657,17 @@
             var fromDateEl = doc.getElementById('from-date-display');
             var toDateEl = doc.getElementById('to-date-display');
             var daysEl = doc.getElementById('days-count-box');
+            var managerEl = doc.getElementById('leave-manager-select');
             var reasonEl = doc.getElementById('leave-reason-text');
 
             var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
             var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
             var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
             var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
+            var approvingManager = managerEl ? managerEl.value : 'Rahul Sharma (Team Lead)';
             var reason = reasonEl ? reasonEl.value.trim() : '';
 
-            window.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason };
+            window.lastLeaveRequest = { leaveType: leaveType, fromDate: fromDate, toDate: toDate, daysText: daysText, reason: reason, approvingManager: approvingManager };
 
             var approvalsTpl = document.getElementById('tpl-LeaveApprovals');
             if (approvalsTpl) {

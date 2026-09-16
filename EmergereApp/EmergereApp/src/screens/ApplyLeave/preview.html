@@ -8,7 +8,17 @@
   <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Apply Leave</h1></div>
   <p class="subtitle">Create new leave request</p>
   <div class="field"><label class="field-label">Leave Type *</label>
-    <select><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Privilege Leave</option></select>
+    <div class="select-wrap" style="position:relative;">
+      <select id="leave-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500;">
+        <option>Casual Leave</option>
+        <option>Sick Leave</option>
+        <option>Earned Leave</option>
+        <option>Privilege Leave</option>
+      </select>
+      <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+    </div>
   </div>
   <div class="field two-col">
     <div>
@@ -33,6 +43,18 @@
     </div>
   </div>
   <div class="field"><label class="field-label">Number of Days</label><div class="auto-box">1.0 Day (Auto-calculated)</div></div>
+  <div class="field"><label class="field-label">Approving Manager</label>
+    <div class="select-wrap" style="position:relative;">
+      <select id="leave-manager-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500;">
+        <option value="Rahul Sharma (Team Lead)">Rahul Sharma (Team Lead)</option>
+        <option value="Priya Verma (HR Manager)">Priya Verma (HR Manager)</option>
+        <option value="Suresh Kumar (Engineering Manager)">Suresh Kumar (Engineering Manager)</option>
+      </select>
+      <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+    </div>
+  </div>
   <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
   <div class="field"><label class="field-label">Supporting Document</label><div class="upload-box">☁️ Click to upload (PDF, JPEG, max 5MB)</div></div>
   <div class="field"><label class="field-label">Contact Info During Leave</label><input placeholder="Emergency contact or location details"/></div>
