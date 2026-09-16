@@ -65,8 +65,8 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
     }
 
     if (navigation) {
-      // Navigate to Manager Dashboard with updated status
-      navigation.navigate('ManagerDashboard', {
+      // Navigate to Employee Dashboard with updated status
+      navigation.navigate('EmployeeDashboard', {
         requestId: person.id || '1',
         newStatus: status,
         remarks: remarks,
@@ -83,7 +83,7 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
       <ScreenHeader
         title="Request Detail"
         subtitle={`${person.leaveType || 'Leave'} Application`}
-        onBack={() => navigation && navigation.navigate('ManagerDashboard', {
+        onBack={() => navigation && navigation.navigate('EmployeeDashboard', {
           requestId: person.id || '1',
           newStatus: decision,
         })}

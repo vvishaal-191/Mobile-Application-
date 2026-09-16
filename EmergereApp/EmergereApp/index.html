@@ -9411,7 +9411,7 @@
             </svg></span></div>
         <div class="screen">
           <div class="header">
-            <div class="back-btn" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-ManagerDashboard');else if(typeof loadScreen==='function')loadScreen('tpl-ManagerDashboard');">←</div>
+            <div class="back-btn" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-EmployeeDashboard');else if(typeof loadScreen==='function')loadScreen('tpl-EmployeeDashboard');">←</div>
             <div>
               <h1>Request Detail</h1>
               <p id="lad-subtitle">Casual Leave Application</p>
@@ -9550,15 +9550,15 @@
           };
           store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
 
-          // 1. Update tpl-ManagerDashboard template element in outer document
+          // 1. Update tpl-ManagerDashboard template element in outer document (remove approved/rejected request)
           const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
           if (mgrTpl) {
             let tplHtml = mgrTpl.innerHTML;
-            if (currentPerson === 'priya' || currentPerson === '1') {
-              tplHtml = tplHtml.replace(
-                /<span[^>]*id="dash-priya-status-badge"[^>]*>[\s\S]*?<\/span>/,
-                '<span id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText + '</span>'
-              );
+            if (currentPerson === 'priya' || currentPerson === '1' || (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType === 'Casual Leave')) {
+              tplHtml = tplHtml.replace(/<div[^>]*id="mgr-dash-req-priya"[\s\S]*?<\/div>\s*<\/div>/, '');
+            }
+            if (currentPerson) {
+              tplHtml = tplHtml.replace(new RegExp('<div[^>]*id="mgr-dash-req-' + currentPerson + '"[\\s\\S]*?<\\/div>\\s*<\\/div>'), '');
             }
             tplHtml = tplHtml.replace(
               /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
@@ -9567,7 +9567,16 @@
             mgrTpl.innerHTML = tplHtml;
           }
 
-          // 2. Update tpl-EmployeeDashboard template element in outer document
+          // 2. Update EMP_LEAVE_REQUESTS store so Employee Dashboard reflects it
+          if (store.EMP_LEAVE_REQUESTS && store.EMP_LEAVE_REQUESTS.length > 0) {
+            store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+              if (String(req.id) === String(currentPerson) || (req.leaveType && req.leaveType === (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType) && (currentPerson === 'priya' || String(currentPerson) === '1'))) {
+                req.status = status;
+              }
+            });
+          }
+
+          // 3. Update tpl-EmployeeDashboard template element in outer document
           const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
           if (empTpl) {
             let tplHtml = empTpl.innerHTML;
@@ -9581,11 +9590,14 @@
             empTpl.innerHTML = tplHtml;
           }
 
-          // 3. Update current active DOM elements if rendered
-          const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
-          if (liveBadge && (currentPerson === 'priya' || currentPerson === '1')) {
-            liveBadge.className = badgeClass;
-            liveBadge.textContent = labelText;
+          // 4. Remove from live Manager Dashboard if rendered
+          const priyaMgrCard = parentDoc.getElementById('mgr-dash-req-priya') || document.getElementById('mgr-dash-req-priya');
+          if (priyaMgrCard && (currentPerson === 'priya' || currentPerson === '1')) {
+            priyaMgrCard.remove();
+          }
+          const liveMgrReqCard = parentDoc.getElementById('mgr-dash-req-' + currentPerson) || document.getElementById('mgr-dash-req-' + currentPerson);
+          if (liveMgrReqCard) {
+            liveMgrReqCard.remove();
           }
 
           const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
@@ -9599,11 +9611,11 @@
             liveQBadge.textContent = '2';
           }
 
-          // 4. Navigate back to Manager Dashboard
+          // 5. Navigate to Employee Dashboard page (not Manager Dashboard)
           if (window.parent && window.parent.loadScreen) {
-            window.parent.loadScreen('tpl-ManagerDashboard');
+            window.parent.loadScreen('tpl-EmployeeDashboard');
           } else if (typeof loadScreen === 'function') {
-            loadScreen('tpl-ManagerDashboard');
+            loadScreen('tpl-EmployeeDashboard');
           }
         }
 
@@ -10841,17 +10853,17 @@
                 + '</div>'
                 + '<div style="display:flex;gap:10px;">'
                 + '<button class="btn ' + (isApp ? 'outline-reject' : 'btn-primary') + '" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="handleDetailLeaveDecision(\'' + (isApp ? 'rejected' : 'approved') + '\')">Change to ' + (isApp ? 'Reject' : 'Approve') + '</button>'
-                + '<button class="btn btn-primary" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-ManagerDashboard\')">Done →</button>'
+                + '<button class="btn btn-primary" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-EmployeeDashboard\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-EmployeeDashboard\');">Done →</button>'
                 + '</div>'
                 + '</div>';
             }
 
-            // Wire back button to return to Manager Dashboard
+            // Wire back button to return to Employee Dashboard
             var backBtn = doc.querySelector('.back-btn');
             if (backBtn) {
               backBtn.style.cursor = 'pointer';
               backBtn.onclick = function() {
-                loadScreen('tpl-ManagerDashboard');
+                loadScreen('tpl-EmployeeDashboard');
               };
             }
           }
@@ -11346,6 +11358,7 @@
               var reqsSection = doc.getElementById('emp-dash-requests-label') || doc.querySelector('.section-label');
               if (reqsSection) {
                 empReqs.forEach(function(req) {
+                  if (doc.getElementById('emp-req-' + req.id)) return; // already added
                   if (window.DELETED_REQUEST_IDS && window.DELETED_REQUEST_IDS.indexOf('emp-req-' + req.id) !== -1) return;
                   var sc = req.status === 'approved' ? 'success' : req.status === 'rejected' ? 'danger' : 'warning';
                   var st = req.status === 'approved' ? 'Approved' : req.status === 'rejected' ? 'Rejected' : 'Pending';
@@ -11380,7 +11393,7 @@
                   // If not yet in DOM, insert once
                   var cardHtml = '<div class="card request-card" id="emp-req-' + req.id + '">'
                     + '<div class="request-row"><div>'
-                    + '<b>' + titleText + '</b>'
+                    + '<b>' + (req.leaveType || req.type || 'Request') + ' (' + (req.daysText || req.duration || '') + ')</b>'
                     + '<p>' + (req.fromDate || req.date || '') + ' &bull; ' + ((req.reason || '').slice(0,40)) + '</p>'
                     + '</div>'
                     + '<div class="request-actions">'
@@ -11396,7 +11409,7 @@
               }
             }
 
-            // 3. Sync status updates for submitted requests (from manager approve/reject)
+            // Sync status updates for submitted requests (from manager approve/reject)
             if (window.EMP_STATUS_UPDATES) {
               window.EMP_STATUS_UPDATES.forEach(function(upd) {
                 var badge = doc.getElementById('emp-req-badge-' + upd.id);
