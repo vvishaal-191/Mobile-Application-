@@ -19,54 +19,59 @@ document.addEventListener('DOMContentLoaded', () => {
   renderEmpList();
 });
 
+const EYE_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+const EYE_OFF_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="23" x2="23" y2="1"></line></svg>';
+
+function updatePasswordEyeVisibility(id) {
+  const input = document.getElementById(id || 'pwd');
+  if (!input) return;
+  const eyeBtn = document.getElementById(input.id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
+  if (!eyeBtn) return;
+  if (input.value && input.value.length > 0) {
+    eyeBtn.style.display = 'flex';
+    eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
+    eyeBtn.setAttribute('title', input.type === 'password' ? 'View password' : 'Hide password');
+  } else {
+    eyeBtn.style.display = 'none';
+  }
+}
+
+function toggleVisibility(id) {
+  const input = document.getElementById(id);
+  if (!input) return;
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  const eyeBtn = document.getElementById(id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
+  if (eyeBtn) {
+    eyeBtn.innerHTML = isPass ? EYE_OFF_SVG_ICON : EYE_SVG_ICON;
+    eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'View password');
+  }
+}
+
 function renderEmpList() {
   const container = document.getElementById('emp-list');
   if (!container) return;
 
   const empSectionHtml = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin:4px 2px 6px;">
-      <span style="font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Employee</span>
-      <span style="font-size:11px; font-weight:700; color:#1FAE6E; background:#E3F8EE; padding:2px 8px; border-radius:6px;">5 Accounts</span>
+    <div style="margin:2px 2px 5px;">
+      <span style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.8px;">Employee</span>
     </div>
     ${PREDEFINED_EMPLOYEES.map((emp, idx) => `
-      <div onclick="selectAccount('employee', ${idx})" style="display:flex; align-items:center; padding:10px 12px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.15s ease; margin-bottom:8px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#2F6BFF';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';">
-        <div style="width:38px; height:38px; border-radius:19px; background:#2F6BFF; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin-right:12px; flex-shrink:0;">
-          ${emp.initials}
-        </div>
-        <div style="flex:1; min-width:0;">
-          <div style="font-size:14px; font-weight:700; color:#1E293B; line-height:1.2;">${emp.name}</div>
-          <div style="font-size:11px; color:#64748B; margin-top:2px;">${emp.role} • ${emp.empId}</div>
-          <div style="font-size:12px; color:#2F6BFF; font-weight:600; margin-top:2px; word-break:break-all;">${emp.email}</div>
-          <div style="font-size:11px; color:#475569; margin-top:3px; display:flex; align-items:center; gap:4px;">
-            <span style="color:#64748B; font-weight:600;">Password:</span>
-            <span style="background:#E2E8F0; color:#0F172A; font-weight:700; padding:1px 6px; border-radius:4px;">${emp.password}</span>
-          </div>
-        </div>
-        <div style="color:#94A3B8; font-size:14px; margin-left:8px;">›</div>
+      <div onclick="selectAccount('employee', ${idx})" style="padding:8px 12px; border-radius:10px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.16s ease; margin-bottom:5px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#2F6BFF';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';this.style.transform='none';">
+        <div style="font-size:13px; font-weight:600; color:#1E293B; word-break:break-all; line-height:1.25;">${emp.email}</div>
+        <div style="font-size:12px; letter-spacing:2.5px; color:#64748B; margin-top:2px; font-weight:700; user-select:none;">••••••••</div>
       </div>
     `).join('')}
   `;
 
   const mgrSectionHtml = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin:14px 2px 6px;">
-      <span style="font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Manager</span>
-      <span style="font-size:11px; font-weight:700; color:#4F46E5; background:#EEF2FF; padding:2px 8px; border-radius:6px;">3 Accounts</span>
+    <div style="margin:8px 2px 5px;">
+      <span style="font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.8px;">Manager</span>
     </div>
     ${PREDEFINED_MANAGERS.map((mgr, idx) => `
-      <div onclick="selectAccount('manager', ${idx})" style="display:flex; align-items:center; padding:10px 12px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.15s ease; margin-bottom:8px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#6366F1';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';">
-        <div style="width:38px; height:38px; border-radius:19px; background:#6366F1; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin-right:12px; flex-shrink:0;">
-          ${mgr.initials}
-        </div>
-        <div style="flex:1; min-width:0;">
-          <div style="font-size:14px; font-weight:700; color:#1E293B; line-height:1.2;">${mgr.name}</div>
-          <div style="font-size:11px; color:#64748B; margin-top:2px;">${mgr.role} • ${mgr.empId}</div>
-          <div style="font-size:12px; color:#4F46E5; font-weight:600; margin-top:2px; word-break:break-all;">${mgr.email}</div>
-          <div style="font-size:11px; color:#475569; margin-top:3px; display:flex; align-items:center; gap:4px;">
-            <span style="color:#64748B; font-weight:600;">Password:</span>
-            <span style="background:#E2E8F0; color:#0F172A; font-weight:700; padding:1px 6px; border-radius:4px;">${mgr.password}</span>
-          </div>
-        </div>
-        <div style="color:#94A3B8; font-size:14px; margin-left:8px;">›</div>
+      <div onclick="selectAccount('manager', ${idx})" style="padding:8px 12px; border-radius:10px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.16s ease; margin-bottom:5px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#6366F1';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';this.style.transform='none';">
+        <div style="font-size:13px; font-weight:600; color:#1E293B; word-break:break-all; line-height:1.25;">${mgr.email}</div>
+        <div style="font-size:12px; letter-spacing:2.5px; color:#64748B; margin-top:2px; font-weight:700; user-select:none;">••••••••</div>
       </div>
     `).join('')}
   `;
@@ -82,25 +87,39 @@ function selectAccount(role, idx) {
   const errBox = document.getElementById('login-auth-err');
   const pwdErr = document.getElementById('pwd-error');
 
+  // Smooth fade-out transition
+  closeEmpModal();
+
   if (emailInput) emailInput.value = account.email;
-  if (pwdInput) pwdInput.value = account.password;
+  if (pwdInput) {
+    pwdInput.value = account.password;
+    pwdInput.type = 'password';
+    updatePasswordEyeVisibility('pwd');
+  }
   if (errBox) errBox.style.display = 'none';
   if (pwdErr) pwdErr.style.display = 'none';
-
-  closeEmpModal();
 }
 
 function openEmpModal() {
   const modal = document.getElementById('emp-modal');
   if (modal) {
-    modal.style.display = 'flex';
     renderEmpList();
+    modal.style.display = 'flex';
+    void modal.offsetWidth; // Force reflow for smooth transition
+    modal.classList.add('active');
+    modal.style.opacity = '1';
   }
 }
 
 function closeEmpModal() {
   const modal = document.getElementById('emp-modal');
-  if (modal) modal.style.display = 'none';
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 280);
+  }
 }
 
 function handleLogin() {

@@ -25,6 +25,69 @@
   border-radius: 20px; padding: 24px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
+
+/* Compact Credentials Popup Card with Opening Glow & Smooth Transition */
+.cred-modal-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 16px 16px 14px;
+  width: 100%;
+  max-width: 330px;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(147, 197, 253, 0.7);
+  box-shadow: 0 0 25px rgba(47, 107, 255, 0.35), 0 0 50px rgba(99, 102, 241, 0.2), 0 20px 45px rgba(0, 0, 0, 0.45);
+  color: #111827;
+  transform: scale(0.9) translateY(12px);
+  opacity: 0;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, box-shadow 0.32s ease;
+}
+
+.modal-overlay.active .cred-modal-card {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  animation: modalGlowPulse 1.2s ease-out;
+}
+
+@keyframes modalGlowPulse {
+  0% {
+    box-shadow: 0 0 0 rgba(47, 107, 255, 0), 0 10px 25px rgba(0,0,0,0.3);
+    border-color: rgba(96, 165, 250, 0.4);
+  }
+  45% {
+    box-shadow: 0 0 35px rgba(47, 107, 255, 0.65), 0 0 70px rgba(99, 102, 241, 0.35), 0 20px 45px rgba(0,0,0,0.45);
+    border-color: rgba(147, 197, 253, 1);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(47, 107, 255, 0.35), 0 0 50px rgba(99, 102, 241, 0.2), 0 20px 45px rgba(0, 0, 0, 0.45);
+    border-color: rgba(147, 197, 253, 0.7);
+  }
+}
+
+#emp-list {
+  max-height: 290px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#emp-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+#emp-list::-webkit-scrollbar-track {
+  background: #F1F5F9;
+  border-radius: 4px;
+}
+
+#emp-list::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+#emp-list::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
 .modal-head {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
 }

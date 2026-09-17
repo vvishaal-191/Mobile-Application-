@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   Modal,
   Image,
   ScrollView,
+  Animated,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import styles from './LoginScreen.styles';
@@ -109,8 +110,47 @@ export default function LoginScreen({ navigation }) {
   const [passwordError, setPasswordError] = useState('');
   const [authError, setAuthError] = useState('');
 
-  // Credentials Selection Modal state
+  // Credentials Selection Modal state with smooth fade-in transition
   const [showEmpModal, setShowEmpModal] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+
+  const openEmpModal = () => {
+    setShowEmpModal(true);
+    fadeAnim.setValue(0);
+    scaleAnim.setValue(0.9);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 280,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 65,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closeEmpModal = (callback) => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 0.92,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setShowEmpModal(false);
+      if (typeof callback === 'function') callback();
+    });
+  };
 
   // Forgot password modal state
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -119,11 +159,13 @@ export default function LoginScreen({ navigation }) {
   const [forgotError, setForgotError] = useState('');
 
   const handleSelectAccount = (account) => {
-    setEmail(account.email);
-    setPassword(account.password);
-    setAuthError('');
-    setPasswordError('');
-    setShowEmpModal(false);
+    closeEmpModal(() => {
+      setEmail(account.email);
+      setPassword(account.password);
+      setShowPassword(false); // password remains hidden/masked by default
+      setAuthError('');
+      setPasswordError('');
+    });
   };
 
   const handleLogin = () => {
@@ -269,7 +311,7 @@ export default function LoginScreen({ navigation }) {
           />
           <TouchableOpacity
             style={styles.searchBtn}
-            onPress={() => setShowEmpModal(true)}
+            onPress={openEmpModal}
             activeOpacity={0.7}
             accessibilityLabel="Select predefined employee email"
           >
@@ -292,13 +334,15 @@ export default function LoginScreen({ navigation }) {
             placeholderTextColor="#F2F2F2"
             secureTextEntry={!showPassword}
           />
-          <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
-            <Feather
-              name={showPassword ? 'eye-off' : 'eye'}
-              size={20}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
+          {password.length > 0 && (
+            <TouchableOpacity onPress={() => setShowPassword((v) => !v)} activeOpacity={0.7}>
+              <Feather
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={20}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
+          )}
         </View>
         {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
       </View>
@@ -399,90 +443,59 @@ export default function LoginScreen({ navigation }) {
         </View>
       </Modal>
 
-      {/* Credentials Selection Modal (Employee & Manager) */}
+      {/* Credentials Selection Modal (Employee & Manager) with Smooth Fade-In Transition */}
       <Modal
         visible={showEmpModal}
         transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowEmpModal(false)}
+        animationType="none"
+        onRequestClose={() => closeEmpModal()}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.empModalCard}>
+        <Animated.View style={[styles.modalOverlay, { opacity: fadeAnim }]}>
+          <Animated.View style={[styles.empModalCard, { transform: [{ scale: scaleAnim }] }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Login Credentials</Text>
-              <TouchableOpacity onPress={() => setShowEmpModal(false)}>
+              <Text style={styles.modalTitle}>Login Credentials</Text>
+              <TouchableOpacity onPress={() => closeEmpModal()}>
                 <Feather name="x" size={22} color="#6B7280" />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalSubtitle}>
-              Choose an account to sign in with predefined credentials:
-            </Text>
 
             <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator={false}>
               {/* Employee Credentials Section */}
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Employee</Text>
-                <View style={[styles.sectionBadge, styles.sectionBadgeEmp]}>
-                  <Text style={[styles.sectionBadgeText, styles.sectionBadgeEmpText]}>5 Accounts</Text>
-                </View>
               </View>
 
               {PREDEFINED_EMPLOYEES.map((emp) => (
                 <TouchableOpacity
                   key={emp.email}
-                  style={styles.empItem}
+                  style={styles.credCard}
                   onPress={() => handleSelectAccount(emp)}
                   activeOpacity={0.7}
                 >
-                  <View style={styles.empAvatar}>
-                    <Text style={styles.empAvatarText}>{emp.initials}</Text>
-                  </View>
-                  <View style={styles.empInfo}>
-                    <Text style={styles.empName}>{emp.name}</Text>
-                    <Text style={styles.empRole}>{emp.role} • {emp.empId}</Text>
-                    <Text style={styles.empEmail}>{emp.email}</Text>
-                    <View style={styles.empPasswordRow}>
-                      <Text style={styles.empPasswordLabel}>Password:</Text>
-                      <Text style={styles.empPasswordVal}>{emp.password}</Text>
-                    </View>
-                  </View>
-                  <Feather name="chevron-right" size={18} color="#94A3B8" />
+                  <Text style={styles.credEmail}>{emp.email}</Text>
+                  <Text style={styles.credMaskedPass}>••••••••</Text>
                 </TouchableOpacity>
               ))}
 
               {/* Manager Credentials Section */}
-              <View style={[styles.sectionHeader, { marginTop: 16 }]}>
+              <View style={[styles.sectionHeader, { marginTop: 14 }]}>
                 <Text style={styles.sectionTitle}>Manager</Text>
-                <View style={styles.sectionBadge}>
-                  <Text style={styles.sectionBadgeText}>3 Accounts</Text>
-                </View>
               </View>
 
               {PREDEFINED_MANAGERS.map((mgr) => (
                 <TouchableOpacity
                   key={mgr.email}
-                  style={styles.empItem}
+                  style={styles.credCard}
                   onPress={() => handleSelectAccount(mgr)}
                   activeOpacity={0.7}
                 >
-                  <View style={[styles.empAvatar, styles.empAvatarManager]}>
-                    <Text style={styles.empAvatarText}>{mgr.initials}</Text>
-                  </View>
-                  <View style={styles.empInfo}>
-                    <Text style={styles.empName}>{mgr.name}</Text>
-                    <Text style={styles.empRole}>{mgr.role} • {mgr.empId}</Text>
-                    <Text style={styles.empEmail}>{mgr.email}</Text>
-                    <View style={styles.empPasswordRow}>
-                      <Text style={styles.empPasswordLabel}>Password:</Text>
-                      <Text style={styles.empPasswordVal}>{mgr.password}</Text>
-                    </View>
-                  </View>
-                  <Feather name="chevron-right" size={18} color="#94A3B8" />
+                  <Text style={styles.credEmail}>{mgr.email}</Text>
+                  <Text style={styles.credMaskedPass}>••••••••</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
-        </View>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </KeyboardAvoidingView>
   );

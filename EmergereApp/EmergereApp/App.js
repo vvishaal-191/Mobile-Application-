@@ -90,6 +90,9 @@ const EMPLOYEE_RESTRICTED_SCREENS = [
 const MANAGER_RESTRICTED_SCREENS = [
   'EmployeeDashboard',
   'Notifications',
+  'LeaveHistory',
+  'History',
+  'MyRequests',
 ];
 
 export default function App() {

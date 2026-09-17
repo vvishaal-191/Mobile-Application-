@@ -570,6 +570,73 @@
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
+        /* Compact Credentials Popup Card with Opening Glow & Smooth Transition */
+        .cred-modal-card {
+          background: #FFFFFF;
+          border-radius: 20px;
+          padding: 16px 16px 14px;
+          width: 100%;
+          max-width: 330px;
+          max-height: 420px;
+          display: flex;
+          flex-direction: column;
+          border: 1.5px solid rgba(147, 197, 253, 0.7);
+          box-shadow: 0 0 25px rgba(47, 107, 255, 0.35), 0 0 50px rgba(99, 102, 241, 0.2), 0 20px 45px rgba(0, 0, 0, 0.45);
+          color: #111827;
+          transform: scale(0.9) translateY(12px);
+          opacity: 0;
+          transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, box-shadow 0.32s ease;
+        }
+
+        .modal-overlay.active .cred-modal-card {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+          animation: modalGlowPulse 1.2s ease-out;
+        }
+
+        @keyframes modalGlowPulse {
+          0% {
+            box-shadow: 0 0 0 rgba(47, 107, 255, 0), 0 10px 25px rgba(0,0,0,0.3);
+            border-color: rgba(96, 165, 250, 0.4);
+          }
+          45% {
+            box-shadow: 0 0 35px rgba(47, 107, 255, 0.65), 0 0 70px rgba(99, 102, 241, 0.35), 0 20px 45px rgba(0,0,0,0.45);
+            border-color: rgba(147, 197, 253, 1);
+          }
+          100% {
+            box-shadow: 0 0 25px rgba(47, 107, 255, 0.35), 0 0 50px rgba(99, 102, 241, 0.2), 0 20px 45px rgba(0, 0, 0, 0.45);
+            border-color: rgba(147, 197, 253, 0.7);
+          }
+        }
+
+        #app-emp-list, #emp-list {
+          max-height: 290px;
+          overflow-y: auto;
+          padding-right: 4px;
+        }
+
+        #app-emp-list::-webkit-scrollbar,
+        #emp-list::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        #app-emp-list::-webkit-scrollbar-track,
+        #emp-list::-webkit-scrollbar-track {
+          background: #F1F5F9;
+          border-radius: 4px;
+        }
+
+        #app-emp-list::-webkit-scrollbar-thumb,
+        #emp-list::-webkit-scrollbar-thumb {
+          background: #CBD5E1;
+          border-radius: 4px;
+        }
+
+        #app-emp-list::-webkit-scrollbar-thumb:hover,
+        #emp-list::-webkit-scrollbar-thumb:hover {
+          background: #94A3B8;
+        }
+
         .modal-head {
           display: flex;
           justify-content: space-between;
@@ -692,9 +759,11 @@
 
           <div class="field">
             <label class="field-label">Password *</label>
-            <div class="input-wrap">
-              <input type="password" id="login-pass" placeholder="Enter your password" />
-              <button class="eye-btn" onclick="toggleVisibility('login-pass')">👁</button>
+            <div class="input-wrap" style="position:relative; display:flex; align-items:center;">
+              <input type="password" id="login-pass" placeholder="Enter your password" oninput="updatePasswordEyeVisibility('login-pass')" style="padding-right:48px;" />
+              <button type="button" id="login-pass-eye" class="eye-btn" onclick="toggleVisibility('login-pass')" title="View password" style="display:none; position:absolute; right:12px; background:none; border:none; color:#FFFFFF; cursor:pointer; padding:6px; align-items:center; justify-content:center; transition:opacity 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
             </div>
             <div id="login-pass-err" class="error-msg"
               style="display:none; color:#FFD1D1; font-size:13px; font-weight:600; margin-top:6px;">
@@ -739,16 +808,15 @@
           </div>
         </div>
 
-        <!-- Predefined Employees & Managers Selection Modal -->
-        <div id="app-emp-modal" class="modal-overlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(13,23,42,0.8); z-index:1000; align-items:center; justify-content:center; padding:20px;">
-          <div class="modal-card" style="background:#FFFFFF; border-radius:24px; padding:24px; width:100%; max-width:380px; max-height:85vh; overflow-y:auto; box-shadow:0 20px 40px rgba(0,0,0,0.3); color:#111827;">
-            <div class="modal-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <h3 style="margin:0; font-size:18px; font-weight:800; color:#111827;">Select Login Credentials</h3>
-              <span class="modal-close" onclick="closeAppEmpModal()" style="font-size:20px; color:#6B7280; cursor:pointer; font-weight:bold;">✕</span>
+        <!-- Predefined Employees & Managers Selection Modal with Smooth Fade-In & Glow -->
+        <div id="app-emp-modal" class="modal-overlay" onclick="if(event.target===this)closeAppEmpModal()" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(13,23,42,0.72); z-index:1000; align-items:center; justify-content:center; padding:16px; opacity:0; transition:opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.3s ease; backdrop-filter:blur(5px);">
+          <div class="cred-modal-card">
+            <div class="modal-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:2px; flex-shrink:0;">
+              <h3 style="margin:0; font-size:16px; font-weight:800; color:#0F172A; letter-spacing:-0.2px;">Login Credentials</h3>
+              <span class="modal-close" onclick="closeAppEmpModal()" style="font-size:18px; color:#64748B; cursor:pointer; font-weight:bold; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:background 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">✕</span>
             </div>
-            <p class="modal-sub" style="margin:0 0 16px; font-size:13px; color:#6B7280;">Choose an account to sign in with predefined credentials:</p>
             
-            <div id="app-emp-list" style="display:flex; flex-direction:column; gap:8px;">
+            <div id="app-emp-list" style="display:flex; flex-direction:column; gap:2px;">
             </div>
           </div>
         </div>
@@ -759,10 +827,33 @@
           el.classList.add('active');
         }
 
+        const EYE_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        const EYE_OFF_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="23" x2="23" y2="1"></line></svg>';
+
+        function updatePasswordEyeVisibility(id) {
+          const input = document.getElementById(id || 'login-pass');
+          if (!input) return;
+          const eyeBtn = document.getElementById(input.id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
+          if (!eyeBtn) return;
+          if (input.value && input.value.length > 0) {
+            eyeBtn.style.display = 'flex';
+            eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
+            eyeBtn.setAttribute('title', input.type === 'password' ? 'View password' : 'Hide password');
+          } else {
+            eyeBtn.style.display = 'none';
+          }
+        }
+
         function toggleVisibility(id) {
           const input = document.getElementById(id);
           if (!input) return;
-          input.type = input.type === 'password' ? 'text' : 'password';
+          const isPass = input.type === 'password';
+          input.type = isPass ? 'text' : 'password';
+          const eyeBtn = document.getElementById(id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
+          if (eyeBtn) {
+            eyeBtn.innerHTML = isPass ? EYE_OFF_SVG_ICON : EYE_SVG_ICON;
+            eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'View password');
+          }
         }
 
         function setActiveNav(el) {
@@ -802,49 +893,25 @@
           if (!container) return;
 
           const empSectionHtml = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin:4px 2px 6px;">
-              <span style="font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Employee</span>
-              <span style="font-size:11px; font-weight:700; color:#1FAE6E; background:#E3F8EE; padding:2px 8px; border-radius:6px;">5 Accounts</span>
+            <div style="margin:2px 2px 5px;">
+              <span style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.8px;">Employee</span>
             </div>
             ${PREDEFINED_EMPLOYEES.map((emp, idx) => `
-              <div onclick="selectAppAccount('employee', ${idx})" style="display:flex; align-items:center; padding:10px 12px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.15s ease; margin-bottom:8px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#2F6BFF';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';">
-                <div style="width:38px; height:38px; border-radius:19px; background:#2F6BFF; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin-right:12px; flex-shrink:0;">
-                  ${emp.initials}
-                </div>
-                <div style="flex:1; min-width:0;">
-                  <div style="font-size:14px; font-weight:700; color:#1E293B; line-height:1.2;">${emp.name}</div>
-                  <div style="font-size:11px; color:#64748B; margin-top:2px;">${emp.role} &bull; ${emp.empId}</div>
-                  <div style="font-size:12px; color:#2F6BFF; font-weight:600; margin-top:2px; word-break:break-all;">${emp.email}</div>
-                  <div style="font-size:11px; color:#475569; margin-top:3px; display:flex; align-items:center; gap:4px;">
-                    <span style="color:#64748B; font-weight:600;">Password:</span>
-                    <span style="background:#E2E8F0; color:#0F172A; font-weight:700; padding:1px 6px; border-radius:4px;">${emp.password}</span>
-                  </div>
-                </div>
-                <div style="color:#94A3B8; font-size:14px; margin-left:8px;">&rsaquo;</div>
+              <div onclick="selectAppAccount('employee', ${idx})" style="padding:8px 12px; border-radius:10px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.16s ease; margin-bottom:5px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#2F6BFF';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';this.style.transform='none';">
+                <div style="font-size:13px; font-weight:600; color:#1E293B; word-break:break-all; line-height:1.25;">${emp.email}</div>
+                <div style="font-size:12px; letter-spacing:2.5px; color:#64748B; margin-top:2px; font-weight:700; user-select:none;">••••••••</div>
               </div>
             `).join('')}
           `;
 
           const mgrSectionHtml = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin:14px 2px 6px;">
-              <span style="font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Manager</span>
-              <span style="font-size:11px; font-weight:700; color:#4F46E5; background:#EEF2FF; padding:2px 8px; border-radius:6px;">3 Accounts</span>
+            <div style="margin:8px 2px 5px;">
+              <span style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.8px;">Manager</span>
             </div>
             ${PREDEFINED_MANAGERS.map((mgr, idx) => `
-              <div onclick="selectAppAccount('manager', ${idx})" style="display:flex; align-items:center; padding:10px 12px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.15s ease; margin-bottom:8px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#6366F1';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';">
-                <div style="width:38px; height:38px; border-radius:19px; background:#6366F1; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin-right:12px; flex-shrink:0;">
-                  ${mgr.initials}
-                </div>
-                <div style="flex:1; min-width:0;">
-                  <div style="font-size:14px; font-weight:700; color:#1E293B; line-height:1.2;">${mgr.name}</div>
-                  <div style="font-size:11px; color:#64748B; margin-top:2px;">${mgr.role} &bull; ${mgr.empId}</div>
-                  <div style="font-size:12px; color:#4F46E5; font-weight:600; margin-top:2px; word-break:break-all;">${mgr.email}</div>
-                  <div style="font-size:11px; color:#475569; margin-top:3px; display:flex; align-items:center; gap:4px;">
-                    <span style="color:#64748B; font-weight:600;">Password:</span>
-                    <span style="background:#E2E8F0; color:#0F172A; font-weight:700; padding:1px 6px; border-radius:4px;">${mgr.password}</span>
-                  </div>
-                </div>
-                <div style="color:#94A3B8; font-size:14px; margin-left:8px;">&rsaquo;</div>
+              <div onclick="selectAppAccount('manager', ${idx})" style="padding:8px 12px; border-radius:10px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.16s ease; margin-bottom:5px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#6366F1';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';this.style.transform='none';">
+                <div style="font-size:13px; font-weight:600; color:#1E293B; word-break:break-all; line-height:1.25;">${mgr.email}</div>
+                <div style="font-size:12px; letter-spacing:2.5px; color:#64748B; margin-top:2px; font-weight:700; user-select:none;">••••••••</div>
               </div>
             `).join('')}
           `;
@@ -854,15 +921,22 @@
 
         function openAppEmpModal() {
           const modal = document.getElementById('app-emp-modal');
-          if (modal) {
-            modal.style.display = 'flex';
-            renderAppEmpList();
-          }
+          if (!modal) return;
+          renderAppEmpList();
+          modal.style.display = 'flex';
+          void modal.offsetWidth; // Force reflow for smooth transition
+          modal.classList.add('active');
+          modal.style.opacity = '1';
         }
 
         function closeAppEmpModal() {
           const modal = document.getElementById('app-emp-modal');
-          if (modal) modal.style.display = 'none';
+          if (!modal) return;
+          modal.classList.remove('active');
+          modal.style.opacity = '0';
+          setTimeout(() => {
+            modal.style.display = 'none';
+          }, 280);
         }
 
         function selectAppAccount(role, idx) {
@@ -873,12 +947,18 @@
           const errBox = document.getElementById('login-auth-err');
           const pwdErr = document.getElementById('login-pass-err');
 
+          // Smooth fade-out transition
+          closeAppEmpModal();
+
           if (emailInput) emailInput.value = account.email;
-          if (pwdInput) pwdInput.value = account.password;
+          if (pwdInput) {
+            pwdInput.value = account.password;
+            pwdInput.type = 'password';
+            updatePasswordEyeVisibility('login-pass');
+          }
+
           if (errBox) errBox.style.display = 'none';
           if (pwdErr) pwdErr.style.display = 'none';
-
-          closeAppEmpModal();
         }
 
         function selectAppEmployee(idx) {
@@ -10891,7 +10971,6 @@
           'tpl-ApplyLeave',
           'tpl-ApplyPermission',
           'tpl-LeaveBalance',
-          'tpl-LeaveHistory',
           'tpl-HolidayCalendar',
           'tpl-MyProfile'
         ];
@@ -11004,7 +11083,11 @@
               return;
             }
             if (window.AUTH_USER.role === 'manager' && MANAGER_ALLOWED_SCREENS.indexOf(tplId) === -1) {
-              alert('Access Restricted: Manager account is not authorized to access Employee Dashboard or Notifications.');
+              if (tplId === 'tpl-LeaveHistory') {
+                alert('Access Restricted: Manager account is not authorized to access My Requests (History).');
+              } else {
+                alert('Access Restricted: Manager account is not authorized to access this employee-only screen.');
+              }
               return;
             }
           }
@@ -11666,6 +11749,8 @@
                 if (label.indexOf(key) !== -1) {
                   if (key === 'dashboard' && window.AUTH_USER && window.AUTH_USER.role === 'manager') {
                     loadScreen('tpl-ManagerDashboard');
+                  } else if (key === 'history' && window.AUTH_USER && window.AUTH_USER.role === 'manager') {
+                    alert('Access Restricted: Manager account is not authorized to access My Requests (History).');
                   } else {
                     loadScreen(tabMap[key]);
                   }
