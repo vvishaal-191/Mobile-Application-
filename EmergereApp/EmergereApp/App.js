@@ -89,14 +89,7 @@ const EMPLOYEE_RESTRICTED_SCREENS = [
 
 const MANAGER_RESTRICTED_SCREENS = [
   'EmployeeDashboard',
-  'Apply',
-  'ApplyLeave',
-  'applyLeave',
-  'RequestLeave',
-  'requestLeave',
-  'ApplyPermission',
-  'applyPermission',
-  'LeaveBalance',
+  'Notifications',
 ];
 
 export default function App() {
@@ -114,6 +107,11 @@ export default function App() {
       return;
     }
 
+    // Dynamic resolution for general Dashboard screen key
+    if (screenKey === 'Dashboard') {
+      screenKey = userRole === 'manager' ? 'ManagerDashboard' : 'EmployeeDashboard';
+    }
+
     // Role-based access control guard
     if (userRole === 'employee' && EMPLOYEE_RESTRICTED_SCREENS.includes(screenKey)) {
       console.warn(`[Access Denied] Employee role cannot access manager screen: ${screenKey}`);
@@ -121,7 +119,7 @@ export default function App() {
     }
 
     if (userRole === 'manager' && MANAGER_RESTRICTED_SCREENS.includes(screenKey)) {
-      console.warn(`[Access Denied] Manager role cannot access employee-only screen: ${screenKey}`);
+      console.warn(`[Access Denied] Manager role cannot access restricted screen: ${screenKey}`);
       return;
     }
 

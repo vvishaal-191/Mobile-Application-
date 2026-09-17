@@ -4,17 +4,27 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors, spacing } from '../theme/theme';
 
-// Bottom tab bar matching the 5-tab layout seen on every screen:
-// Dashboard | Attendance | Apply | History | More
+// Bottom tab bar matching the 5-tab layout:
+// Dashboard | Attendance | Apply | History | Profile
 const TABS = [
   { key: 'Dashboard', label: 'Dashboard', icon: 'grid' },
   { key: 'Attendance', label: 'Attendance', icon: 'calendar' },
   { key: 'Apply', label: 'Apply', icon: 'plus-circle' },
   { key: 'History', label: 'History', icon: 'clock' },
-  { key: 'Profile', label: 'More', icon: 'menu' },
+  { key: 'Profile', label: 'Profile', icon: 'menu' },
 ];
 
 export default function BottomNavBar({ active, onNavigate }) {
+  const handlePress = (tabKey) => {
+    if (!onNavigate) return;
+    if (tabKey === 'Dashboard') {
+      const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
+      onNavigate(isManager ? 'ManagerDashboard' : 'EmployeeDashboard');
+    } else {
+      onNavigate(tabKey);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {TABS.map((tab) => {
@@ -24,7 +34,7 @@ export default function BottomNavBar({ active, onNavigate }) {
             key={tab.key}
             style={styles.tab}
             activeOpacity={0.7}
-            onPress={() => onNavigate && onNavigate(tab.key)}
+            onPress={() => handlePress(tab.key)}
           >
             <Feather
               name={tab.icon}
