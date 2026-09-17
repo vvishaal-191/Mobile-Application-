@@ -298,6 +298,21 @@
       <span>Mobile Application</span>
       <span style="margin-left: auto; font-size: 18px; color: #9AA3B2; padding: 2px 6px; border-radius: 4px;" title="Close">✕</span>
     </div>
+    <div id="sidebar-user-box" style="display: none; background: #242E42; border-radius: 12px; padding: 12px; margin: 0 4px 14px; border: 1px solid #334155;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div id="sidebar-user-avatar" style="width: 36px; height: 36px; border-radius: 18px; background: #2F6BFF; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+          PS
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div id="sidebar-user-name" style="color: #fff; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Priya Sharma</div>
+          <div id="sidebar-user-role-badge" style="display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; margin-top: 2px; background: #E3F8EE; color: #1FAE6E;">EMPLOYEE</div>
+        </div>
+      </div>
+      <button type="button" id="sidebar-logout-btn" onclick="logoutUser()" style="width: 100%; margin-top: 10px; background: rgba(229, 72, 77, 0.15); border: 1px solid rgba(229, 72, 77, 0.3); color: #FF8588; border-radius: 8px; padding: 6px 0; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Log Out
+      </button>
+    </div>
     <button class="nav-btn active" data-tpl="tpl-Login">Login</button>
     <button class="nav-btn" data-tpl="tpl-EmployeeDashboard">Employee Dashboard</button>
     <button class="nav-btn" data-tpl="tpl-MyAttendance">My Attendance</button>
@@ -659,9 +674,20 @@
           <h1 class="welcome">Welcome Back</h1>
           <p class="subtitle">Log in to manage leaves & attendance</p>
 
+          <div id="login-auth-err" class="error-msg" style="display:none; background:rgba(252,228,228,0.95); color:#E5484D; padding:10px 14px; border-radius:12px; font-size:13px; font-weight:700; margin-bottom:16px; border:1px solid #F87171; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+          </div>
+
           <div class="field">
             <label class="field-label">Email Address *</label>
-            <input type="email" id="login-email" value="" placeholder="Enter your email address" />
+            <div class="input-wrap" style="position:relative; display:flex; align-items:center;">
+              <input type="email" id="login-email" value="" placeholder="Enter your email address" style="padding-right:52px;" />
+              <button type="button" class="search-btn" onclick="openAppEmpModal()" title="Select predefined employee email" style="position:absolute; right:8px; background:rgba(255,255,255,0.25); border:none; border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#FFFFFF; transition:background 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div class="field">
@@ -712,6 +738,20 @@
             </div>
           </div>
         </div>
+
+        <!-- Predefined Employees Selection Modal (Available ONLY for employees) -->
+        <div id="app-emp-modal" class="modal-overlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(13,23,42,0.8); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+          <div class="modal-card" style="background:#FFFFFF; border-radius:24px; padding:24px; width:100%; max-width:360px; box-shadow:0 20px 40px rgba(0,0,0,0.3); color:#111827;">
+            <div class="modal-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <h3 style="margin:0; font-size:18px; font-weight:800; color:#111827;">Select Employee Account</h3>
+              <span class="modal-close" onclick="closeAppEmpModal()" style="font-size:20px; color:#6B7280; cursor:pointer; font-weight:bold;">✕</span>
+            </div>
+            <p class="modal-sub" style="margin:0 0 16px; font-size:13px; color:#6B7280;">Choose from 5 predefined employee accounts to sign in:</p>
+            
+            <div id="app-emp-list" style="display:flex; flex-direction:column; gap:8px;">
+            </div>
+          </div>
+        </div>
       </div>
       <script>
         function activatePill(el, groupSelector) {
@@ -743,18 +783,152 @@
           }
         }
 
-        function handleAppLogin() {
+        const PREDEFINED_EMPLOYEES = [
+          { name: 'Priya Sharma', email: 'priya.sharma@emergere.com', role: 'Senior Software Engineer', empId: 'EMP-2024-0156', initials: 'PS', reportingManager: 'Rahul Sharma', phone: '+91 98765 43210' },
+          { name: 'Amit Patel', email: 'amit.patel@emergere.com', role: 'UI/UX Designer', empId: 'EMP-2024-0142', initials: 'AP', reportingManager: 'Rahul Sharma', phone: '+91 98765 43211' },
+          { name: 'Sneha Reddy', email: 'sneha.reddy@emergere.com', role: 'QA Engineer', empId: 'EMP-2024-0188', initials: 'SR', reportingManager: 'Rahul Sharma', phone: '+91 98765 43212' },
+          { name: 'Rohit Verma', email: 'rohit.verma@emergere.com', role: 'Backend Developer', empId: 'EMP-2024-0165', initials: 'RV', reportingManager: 'Rahul Sharma', phone: '+91 98765 43213' },
+          { name: 'Ananya Iyer', email: 'ananya.iyer@emergere.com', role: 'Frontend Developer', empId: 'EMP-2024-0173', initials: 'AI', reportingManager: 'Rahul Sharma', phone: '+91 98765 43214' }
+        ];
+
+        const MANAGER_CREDENTIALS = {
+          emails: ['manager@emergere.com', 'rahul.sharma@emergere.com'],
+          name: 'Rahul Sharma',
+          role: 'Engineering Lead / Manager',
+          empId: 'MGR-2024-0012',
+          initials: 'RS',
+          passwords: ['Manager@123', 'manager123']
+        };
+
+        function renderAppEmpList() {
+          const container = document.getElementById('app-emp-list');
+          if (!container) return;
+          container.innerHTML = PREDEFINED_EMPLOYEES.map((emp, idx) => `
+            <div onclick="selectAppEmployee(${idx})" style="display:flex; align-items:center; padding:10px 12px; border-radius:12px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.15s ease;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#2F6BFF';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';">
+              <div style="width:38px; height:38px; border-radius:19px; background:#2F6BFF; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin-right:12px; flex-shrink:0;">
+                ${emp.initials}
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:14px; font-weight:700; color:#1E293B; line-height:1.2;">${emp.name}</div>
+                <div style="font-size:11px; color:#64748B; margin-top:2px;">${emp.role} &bull; ${emp.empId}</div>
+                <div style="font-size:12px; color:#2F6BFF; font-weight:600; margin-top:2px; word-break:break-all;">${emp.email}</div>
+              </div>
+              <div style="color:#94A3B8; font-size:14px; margin-left:8px;">&rsaquo;</div>
+            </div>
+          `).join('');
+        }
+
+        function openAppEmpModal() {
+          const modal = document.getElementById('app-emp-modal');
+          if (modal) {
+            modal.style.display = 'flex';
+            renderAppEmpList();
+          }
+        }
+
+        function closeAppEmpModal() {
+          const modal = document.getElementById('app-emp-modal');
+          if (modal) modal.style.display = 'none';
+        }
+
+        function selectAppEmployee(idx) {
+          const emp = PREDEFINED_EMPLOYEES[idx];
+          if (!emp) return;
+          const emailInput = document.getElementById('login-email');
           const pwdInput = document.getElementById('login-pass');
+          const errBox = document.getElementById('login-auth-err');
           const pwdErr = document.getElementById('login-pass-err');
-          if (!pwdInput || pwdInput.value.length < 8) {
+
+          if (emailInput) emailInput.value = emp.email;
+          if (pwdInput) pwdInput.value = 'Employee@123';
+          if (errBox) errBox.style.display = 'none';
+          if (pwdErr) pwdErr.style.display = 'none';
+
+          closeAppEmpModal();
+        }
+
+        function handleAppLogin() {
+          const emailInput = document.getElementById('login-email');
+          const pwdInput = document.getElementById('login-pass');
+          const errBox = document.getElementById('login-auth-err');
+          const pwdErr = document.getElementById('login-pass-err');
+
+          if (errBox) errBox.style.display = 'none';
+          if (pwdErr) pwdErr.style.display = 'none';
+
+          const emailVal = emailInput ? emailInput.value.trim().toLowerCase() : '';
+          const pwdVal = pwdInput ? pwdInput.value.trim() : '';
+
+          if (!emailVal || !pwdVal) {
+            if (errBox) {
+              errBox.textContent = 'Please enter both email address and password.';
+              errBox.style.display = 'block';
+            }
+            return;
+          }
+
+          if (pwdVal.length < 8) {
             if (pwdErr) pwdErr.style.display = 'block';
             return;
           }
-          if (pwdErr) pwdErr.style.display = 'none';
-          if (window.parent && window.parent.loadScreen) {
-            window.parent.loadScreen('tpl-EmployeeDashboard');
-          } else if (typeof loadScreen === 'function') {
-            loadScreen('tpl-EmployeeDashboard');
+
+          // 1. Check Manager Credentials
+          const isManagerEmail = MANAGER_CREDENTIALS.emails.some(m => m.toLowerCase() === emailVal);
+          if (isManagerEmail) {
+            if (MANAGER_CREDENTIALS.passwords.includes(pwdVal)) {
+              if (window.parent && typeof window.parent.setAuthUser === 'function') {
+                window.parent.setAuthUser('manager', {
+                  name: MANAGER_CREDENTIALS.name,
+                  role: MANAGER_CREDENTIALS.role,
+                  employeeId: MANAGER_CREDENTIALS.empId,
+                  initials: MANAGER_CREDENTIALS.initials,
+                  email: emailVal,
+                  reportingManager: 'Board of Directors',
+                  phone: '+91 98765 00001'
+                });
+              }
+              if (window.parent && window.parent.loadScreen) {
+                window.parent.loadScreen('tpl-ManagerDashboard');
+              } else if (typeof loadScreen === 'function') {
+                loadScreen('tpl-ManagerDashboard');
+              }
+              return;
+            } else {
+              if (errBox) {
+                errBox.textContent = 'Invalid password for Manager account.';
+                errBox.style.display = 'block';
+              }
+              return;
+            }
+          }
+
+          // 2. Check 5 Predefined Employee Accounts
+          const matchedEmp = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal);
+          if (matchedEmp) {
+            const validPass = ['Employee@123', 'employee123', 'password123'];
+            if (validPass.includes(pwdVal)) {
+              if (window.parent && typeof window.parent.setAuthUser === 'function') {
+                window.parent.setAuthUser('employee', matchedEmp);
+              }
+              if (window.parent && window.parent.loadScreen) {
+                window.parent.loadScreen('tpl-EmployeeDashboard');
+              } else if (typeof loadScreen === 'function') {
+                loadScreen('tpl-EmployeeDashboard');
+              }
+              return;
+            } else {
+              if (errBox) {
+                errBox.textContent = 'Invalid password for employee account.';
+                errBox.style.display = 'block';
+              }
+              return;
+            }
+          }
+
+          // 3. Neither valid manager nor valid employee
+          if (errBox) {
+            errBox.textContent = 'Invalid email address or password. Click the search icon in the email field to pick an employee, or log in as Manager.';
+            errBox.style.display = 'block';
           }
         }
 
@@ -10652,7 +10826,143 @@
         };
         window.PERSON_DATA = PERSON_DATA;
 
+        var EMPLOYEE_ALLOWED_SCREENS = [
+          'tpl-Login',
+          'tpl-EmployeeDashboard',
+          'tpl-MyAttendance',
+          'tpl-ApplyLeave',
+          'tpl-ApplyPermission',
+          'tpl-LeaveBalance',
+          'tpl-LeaveHistory',
+          'tpl-HolidayCalendar',
+          'tpl-Notifications',
+          'tpl-MyProfile'
+        ];
+
+        var MANAGER_ALLOWED_SCREENS = [
+          'tpl-Login',
+          'tpl-ManagerDashboard',
+          'tpl-TeamAttendance',
+          'tpl-LeaveApprovals',
+          'tpl-LeaveApprovalDetail',
+          'tpl-PermissionApprovals',
+          'tpl-Notifications',
+          'tpl-MyProfile'
+        ];
+
+        window.AUTH_USER = null;
+
+        function updateNavRBAC() {
+          var userBox = document.getElementById('sidebar-user-box');
+          var avatarEl = document.getElementById('sidebar-user-avatar');
+          var nameEl = document.getElementById('sidebar-user-name');
+          var roleBadgeEl = document.getElementById('sidebar-user-role-badge');
+
+          if (window.AUTH_USER) {
+            if (userBox) userBox.style.display = 'block';
+            if (nameEl) nameEl.textContent = window.AUTH_USER.name || 'User';
+            if (avatarEl) avatarEl.textContent = window.AUTH_USER.initials || 'U';
+            if (roleBadgeEl) {
+              if (window.AUTH_USER.role === 'manager') {
+                roleBadgeEl.textContent = 'MANAGER';
+                roleBadgeEl.style.background = '#EEF2FF';
+                roleBadgeEl.style.color = '#4F46E5';
+              } else {
+                roleBadgeEl.textContent = 'EMPLOYEE';
+                roleBadgeEl.style.background = '#E3F8EE';
+                roleBadgeEl.style.color = '#1FAE6E';
+              }
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(function (btn) {
+              var screenTpl = btn.getAttribute('data-tpl');
+              if (screenTpl === 'tpl-Login') {
+                btn.style.display = 'none';
+                return;
+              }
+              if (window.AUTH_USER.role === 'employee') {
+                if (EMPLOYEE_ALLOWED_SCREENS.indexOf(screenTpl) !== -1) {
+                  btn.style.display = 'block';
+                  btn.removeAttribute('disabled');
+                  btn.style.opacity = '1';
+                } else {
+                  btn.style.display = 'none';
+                }
+              } else if (window.AUTH_USER.role === 'manager') {
+                if (MANAGER_ALLOWED_SCREENS.indexOf(screenTpl) !== -1) {
+                  btn.style.display = 'block';
+                  btn.removeAttribute('disabled');
+                  btn.style.opacity = '1';
+                } else {
+                  btn.style.display = 'none';
+                }
+              }
+            });
+          } else {
+            if (userBox) userBox.style.display = 'none';
+            document.querySelectorAll('.nav-btn').forEach(function (btn) {
+              btn.style.display = 'block';
+              btn.removeAttribute('disabled');
+              btn.style.opacity = '1';
+            });
+          }
+        }
+        window.updateNavRBAC = updateNavRBAC;
+
+        function setAuthUser(role, userObj) {
+          window.AUTH_USER = Object.assign({}, userObj, { role: role, jobTitle: userObj.role });
+          if (role === 'employee') {
+            window.USER_PROFILE = {
+              name: userObj.name || 'Priya Sharma',
+              role: userObj.role || 'Senior Software Engineer',
+              employeeId: userObj.empId || userObj.employeeId || 'EMP-2024-0156',
+              initials: userObj.initials || 'PS',
+              email: userObj.email || 'priya.sharma@emergere.com',
+              department: 'Engineering',
+              team: 'Mobile Development',
+              reportingManager: userObj.reportingManager || 'Rahul Sharma',
+              workLocation: 'Bangalore - Tech Park',
+              joiningDate: '15-Jan-2024',
+              phone: userObj.phone || '+91 98765 43210'
+            };
+          } else if (role === 'manager') {
+            window.USER_PROFILE = {
+              name: userObj.name || 'Rahul Sharma',
+              role: userObj.role || 'Engineering Lead / Manager',
+              employeeId: userObj.empId || userObj.employeeId || 'MGR-2024-0012',
+              initials: userObj.initials || 'RS',
+              email: userObj.email || 'manager@emergere.com',
+              department: 'Engineering',
+              team: 'Engineering Leadership',
+              reportingManager: 'Board of Directors',
+              workLocation: 'Bangalore - Tech Park',
+              joiningDate: '01-Jun-2022',
+              phone: userObj.phone || '+91 98765 00001'
+            };
+          }
+          updateNavRBAC();
+        }
+        window.setAuthUser = setAuthUser;
+
+        function logoutUser() {
+          window.AUTH_USER = null;
+          updateNavRBAC();
+          loadScreen('tpl-Login');
+        }
+        window.logoutUser = logoutUser;
+
         function loadScreen(tplId, personKey) {
+          if (window.AUTH_USER && tplId !== 'tpl-Login') {
+            if (window.AUTH_USER.role === 'employee' && EMPLOYEE_ALLOWED_SCREENS.indexOf(tplId) === -1) {
+              alert('Access Restricted: Employee account is not authorized to access Manager screens.');
+              return;
+            }
+            if (window.AUTH_USER.role === 'manager' && MANAGER_ALLOWED_SCREENS.indexOf(tplId) === -1) {
+              alert('Access Restricted: Manager account is not authorized to access Employee screens.');
+              return;
+            }
+          }
+
           if (personKey) {
             SELECTED_PERSON = personKey;
           }
@@ -10682,6 +10992,9 @@
               frame.contentWindow.openSidebar = openSidebar;
               frame.contentWindow.closeSidebar = closeSidebar;
               frame.contentWindow.loadScreen = loadScreen;
+              frame.contentWindow.setAuthUser = setAuthUser;
+              frame.contentWindow.logoutUser = logoutUser;
+              frame.contentWindow.AUTH_USER = window.AUTH_USER;
             }
           } catch (e) {}
 

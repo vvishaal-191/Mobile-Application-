@@ -79,6 +79,26 @@ const SCREENS = {
   PermissionApprovals: PermissionApprovalsScreen,
 };
 
+const EMPLOYEE_RESTRICTED_SCREENS = [
+  'ManagerDashboard',
+  'TeamAttendance',
+  'LeaveApprovals',
+  'LeaveApprovalDetail',
+  'PermissionApprovals',
+];
+
+const MANAGER_RESTRICTED_SCREENS = [
+  'EmployeeDashboard',
+  'Apply',
+  'ApplyLeave',
+  'applyLeave',
+  'RequestLeave',
+  'requestLeave',
+  'ApplyPermission',
+  'applyPermission',
+  'LeaveBalance',
+];
+
 export default function App() {
   const [stack, setStack] = useState([{ name: 'Login', params: {} }]);
   const current = stack[stack.length - 1];
@@ -86,6 +106,25 @@ export default function App() {
   const currentParams = typeof current === 'object' && current ? current.params || {} : {};
 
   const navigate = useCallback((screenKey, params = {}) => {
+    const userRole = typeof global !== 'undefined' ? global.USER_ROLE : null;
+
+    if (screenKey === 'Login') {
+      if (typeof global !== 'undefined') global.USER_ROLE = null;
+      setStack([{ name: 'Login', params: {} }]);
+      return;
+    }
+
+    // Role-based access control guard
+    if (userRole === 'employee' && EMPLOYEE_RESTRICTED_SCREENS.includes(screenKey)) {
+      console.warn(`[Access Denied] Employee role cannot access manager screen: ${screenKey}`);
+      return;
+    }
+
+    if (userRole === 'manager' && MANAGER_RESTRICTED_SCREENS.includes(screenKey)) {
+      console.warn(`[Access Denied] Manager role cannot access employee-only screen: ${screenKey}`);
+      return;
+    }
+
     if (SCREENS[screenKey]) {
       setStack((prev) => [...prev, { name: screenKey, params }]);
     }

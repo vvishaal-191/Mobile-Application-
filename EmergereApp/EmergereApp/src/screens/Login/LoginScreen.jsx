@@ -13,12 +13,73 @@ import {
 import { Feather } from '@expo/vector-icons';
 import styles from './LoginScreen.styles';
 
+const PREDEFINED_EMPLOYEES = [
+  {
+    name: 'Priya Sharma',
+    email: 'priya.sharma@emergere.com',
+    role: 'Senior Software Engineer',
+    empId: 'EMP-2024-0156',
+    initials: 'PS',
+    reportingManager: 'Rahul Sharma',
+    phone: '+91 98765 43210',
+  },
+  {
+    name: 'Amit Patel',
+    email: 'amit.patel@emergere.com',
+    role: 'UI/UX Designer',
+    empId: 'EMP-2024-0142',
+    initials: 'AP',
+    reportingManager: 'Rahul Sharma',
+    phone: '+91 98765 43211',
+  },
+  {
+    name: 'Sneha Reddy',
+    email: 'sneha.reddy@emergere.com',
+    role: 'QA Engineer',
+    empId: 'EMP-2024-0188',
+    initials: 'SR',
+    reportingManager: 'Rahul Sharma',
+    phone: '+91 98765 43212',
+  },
+  {
+    name: 'Rohit Verma',
+    email: 'rohit.verma@emergere.com',
+    role: 'Backend Developer',
+    empId: 'EMP-2024-0165',
+    initials: 'RV',
+    reportingManager: 'Rahul Sharma',
+    phone: '+91 98765 43213',
+  },
+  {
+    name: 'Ananya Iyer',
+    email: 'ananya.iyer@emergere.com',
+    role: 'Frontend Developer',
+    empId: 'EMP-2024-0173',
+    initials: 'AI',
+    reportingManager: 'Rahul Sharma',
+    phone: '+91 98765 43214',
+  },
+];
+
+const MANAGER_CREDENTIALS = {
+  emails: ['manager@emergere.com', 'rahul.sharma@emergere.com'],
+  name: 'Rahul Sharma',
+  role: 'Engineering Lead / Manager',
+  empId: 'MGR-2024-0012',
+  initials: 'RS',
+  passwords: ['Manager@123', 'manager123'],
+};
+
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [passwordError, setPasswordError] = useState('');
+  const [authError, setAuthError] = useState('');
+
+  // Employee Selection Modal state
+  const [showEmpModal, setShowEmpModal] = useState(false);
 
   // Forgot password modal state
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -26,13 +87,83 @@ export default function LoginScreen({ navigation }) {
   const [forgotContact, setForgotContact] = useState('');
   const [forgotError, setForgotError] = useState('');
 
+  const handleSelectEmployee = (emp) => {
+    setEmail(emp.email);
+    setPassword('Employee@123');
+    setAuthError('');
+    setPasswordError('');
+    setShowEmpModal(false);
+  };
+
   const handleLogin = () => {
-    if (!password || password.length < 8) {
-      setPasswordError('Password must contain a minimum of 8 characters.');
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedPass = password.trim();
+
+    setAuthError('');
+    setPasswordError('');
+
+    if (!trimmedEmail) {
+      setAuthError('Please enter your email address.');
       return;
     }
-    setPasswordError('');
-    navigation && navigation.navigate('EmployeeDashboard');
+
+    if (!trimmedPass) {
+      setAuthError('Please enter your password.');
+      return;
+    }
+
+    // Check Manager Credentials
+    const isManagerEmail = MANAGER_CREDENTIALS.emails.some((m) => m.toLowerCase() === trimmedEmail);
+    if (isManagerEmail) {
+      const isManagerPass = MANAGER_CREDENTIALS.passwords.includes(trimmedPass);
+      if (isManagerPass) {
+        if (typeof global !== 'undefined') {
+          global.USER_ROLE = 'manager';
+          global.USER_PROFILE = {
+            name: MANAGER_CREDENTIALS.name,
+            role: MANAGER_CREDENTIALS.role,
+            employeeId: MANAGER_CREDENTIALS.empId,
+            initials: MANAGER_CREDENTIALS.initials,
+            email: trimmedEmail,
+          };
+        }
+        navigation && navigation.navigate('ManagerDashboard');
+        return;
+      } else {
+        setAuthError('Invalid password for Manager account.');
+        return;
+      }
+    }
+
+    // Check Employee Credentials (5 predefined employee emails)
+    const matchedEmployee = PREDEFINED_EMPLOYEES.find(
+      (emp) => emp.email.toLowerCase() === trimmedEmail
+    );
+
+    if (matchedEmployee) {
+      // Valid employee passwords
+      const validEmployeePasswords = ['Employee@123', 'employee123', 'password123'];
+      if (validEmployeePasswords.includes(trimmedPass)) {
+        if (typeof global !== 'undefined') {
+          global.USER_ROLE = 'employee';
+          global.USER_PROFILE = {
+            ...matchedEmployee,
+            department: 'IT',
+            team: 'Development',
+            workLocation: 'Bangalore',
+            joiningDate: 'Mar 15, 2022',
+          };
+        }
+        navigation && navigation.navigate('EmployeeDashboard');
+        return;
+      } else {
+        setAuthError('Invalid password for employee account.');
+        return;
+      }
+    }
+
+    // Neither valid manager nor valid employee
+    setAuthError('Invalid email or password. Please use the search icon to select an employee account or enter manager credentials.');
   };
 
   const handleOpenForgotModal = () => {
@@ -77,17 +208,37 @@ export default function LoginScreen({ navigation }) {
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Log in to manage leaves & attendance</Text>
 
+      {!!authError && (
+        <View style={styles.authErrorBox}>
+          <Feather name="alert-circle" size={18} color="#E5484D" />
+          <Text style={styles.authErrorText}>{authError}</Text>
+        </View>
+      )}
+
       <View style={styles.field}>
         <Text style={styles.label}>Email Address *</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email address"
-          placeholderTextColor="#F2F2F2"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+        <View style={styles.emailRow}>
+          <TextInput
+            style={styles.emailInput}
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              setAuthError('');
+            }}
+            placeholder="Enter your email address"
+            placeholderTextColor="#F2F2F2"
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TouchableOpacity
+            style={styles.searchBtn}
+            onPress={() => setShowEmpModal(true)}
+            activeOpacity={0.7}
+            accessibilityLabel="Select predefined employee email"
+          >
+            <Feather name="search" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.field}>
@@ -207,6 +358,47 @@ export default function LoginScreen({ navigation }) {
                 <Text style={styles.modalConfirmBtnText}>Confirm</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Employee Selection Modal */}
+      <Modal
+        visible={showEmpModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowEmpModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.empModalCard}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Employee Account</Text>
+              <TouchableOpacity onPress={() => setShowEmpModal(false)}>
+                <Feather name="x" size={22} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.modalSubtitle}>
+              Choose from 5 predefined employee accounts to sign in:
+            </Text>
+
+            {PREDEFINED_EMPLOYEES.map((emp) => (
+              <TouchableOpacity
+                key={emp.email}
+                style={styles.empItem}
+                onPress={() => handleSelectEmployee(emp)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.empAvatar}>
+                  <Text style={styles.empAvatarText}>{emp.initials}</Text>
+                </View>
+                <View style={styles.empInfo}>
+                  <Text style={styles.empName}>{emp.name}</Text>
+                  <Text style={styles.empRole}>{emp.role} • {emp.empId}</Text>
+                  <Text style={styles.empEmail}>{emp.email}</Text>
+                </View>
+                <Feather name="chevron-right" size={18} color="#94A3B8" />
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       </Modal>
