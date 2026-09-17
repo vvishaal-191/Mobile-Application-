@@ -157,14 +157,6 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
       <ScreenHeader
         title="Request Detail"
         subtitle={subHeader}
-        onBack={() =>
-          navigation &&
-          navigation.navigate('EmployeeDashboard', {
-            requestId: person.id || '1',
-            newStatus: decision,
-            isPermission,
-          })
-        }
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
