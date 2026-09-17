@@ -1,6 +1,6 @@
 // src/screens/ApplyLeave/ApplyLeaveScreen.jsx
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, Modal, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './ApplyLeaveScreen.styles';
@@ -43,6 +43,8 @@ export default function ApplyLeaveScreen({ navigation }) {
   const [approvingManager, setApprovingManager] = useState(resolveDefaultManager);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isLeaveTypeOpen, setIsLeaveTypeOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submittedRequest, setSubmittedRequest] = useState(null);
 
   const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
@@ -101,8 +103,9 @@ export default function ApplyLeaveScreen({ navigation }) {
       global.LATEST_LEAVE_REQUEST = newRequest;
     }
 
-    // Navigate directly to Leave Approvals (Manager Approval page) upon submission
-    go('LeaveApprovals', { newLeaveRequest: newRequest });
+    // Show success confirmation popup
+    setSubmittedRequest(newRequest);
+    setShowSuccessModal(true);
   };
 
   return (
@@ -110,7 +113,7 @@ export default function ApplyLeaveScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerRow}>
           <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-          <Text style={styles.headerTitle}>Apply Leave</Text>
+          <Text style={styles.headerTitle}>Request Leave</Text>
         </View>
         <Text style={styles.subtitle}>Create new leave request</Text>
 
@@ -252,7 +255,101 @@ export default function ApplyLeaveScreen({ navigation }) {
         </TouchableOpacity>
       </ScrollView>
 
+      {/* Success Popup Modal */}
+      <Modal
+        visible={showSuccessModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowSuccessModal(false)}
+      >
+        <View style={modalStyles.overlay}>
+          <View style={modalStyles.card}>
+            <View style={modalStyles.iconWrap}>
+              <Feather name="check" size={32} color="#1FAE6E" />
+            </View>
+            <Text style={modalStyles.title}>Request Submitted!</Text>
+            <Text style={modalStyles.message}>Your leave request has been submitted successfully.</Text>
+            <TouchableOpacity
+              style={modalStyles.button}
+              onPress={() => {
+                setShowSuccessModal(false);
+                go('EmployeeDashboard', { newLeaveRequest: submittedRequest });
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={modalStyles.buttonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <BottomNavBar active="Apply" onNavigate={(scr) => go(scr)} />
     </View>
   );
 }
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    width: '100%',
+    maxWidth: 320,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  iconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#E3F8EE',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 6,
+    borderColor: '#F0FDF4',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#111827',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  message: {
+    fontSize: 14,
+    color: '#6B7280',
+    lineHeight: 20,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  button: {
+    backgroundColor: '#2F6BFF',
+    borderRadius: 12,
+    paddingVertical: 13,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#2F6BFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+});

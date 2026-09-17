@@ -60,6 +60,8 @@ const SCREENS = {
   Apply: ApplyLeaveScreen,
   ApplyLeave: ApplyLeaveScreen,
   applyLeave: ApplyLeaveScreen,
+  RequestLeave: ApplyLeaveScreen,
+  requestLeave: ApplyLeaveScreen,
   ApplyPermission: ApplyPermissionScreen,
   applyPermission: ApplyPermissionScreen,
   History: LeaveHistoryScreen,
