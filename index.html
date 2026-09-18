@@ -570,50 +570,7 @@
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        /* Compact Credentials Popup Card with Opening Glow & Smooth Transition */
-        .cred-modal-card {
-          background: #FFFFFF;
-          border-radius: 20px;
-          padding: 16px 16px 14px;
-          width: 100%;
-          max-width: 330px;
-          max-height: 420px;
-          display: flex;
-          flex-direction: column;
-          border: 1.5px solid rgba(147, 197, 253, 0.7);
-          box-shadow: 0 0 25px rgba(47, 107, 255, 0.35), 0 0 50px rgba(99, 102, 241, 0.2), 0 20px 45px rgba(0, 0, 0, 0.45);
-          color: #111827;
-          transform: scale(0.9) translateY(12px);
-          opacity: 0;
-          transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, box-shadow 0.32s ease;
-        }
 
-        .modal-overlay.active .cred-modal-card {
-          transform: scale(1) translateY(0);
-          opacity: 1;
-          animation: modalGlowPulse 1.2s ease-out;
-        }
-
-        @keyframes modalGlowPulse {
-          0% {
-            box-shadow: 0 0 0 rgba(47, 107, 255, 0), 0 10px 25px rgba(0,0,0,0.3);
-            border-color: rgba(96, 165, 250, 0.4);
-          }
-          45% {
-            box-shadow: 0 0 35px rgba(47, 107, 255, 0.65), 0 0 70px rgba(99, 102, 241, 0.35), 0 20px 45px rgba(0,0,0,0.45);
-            border-color: rgba(147, 197, 253, 1);
-          }
-          100% {
-            box-shadow: 0 0 25px rgba(47, 107, 255, 0.35), 0 0 50px rgba(99, 102, 241, 0.2), 0 20px 45px rgba(0, 0, 0, 0.45);
-            border-color: rgba(147, 197, 253, 0.7);
-          }
-        }
-
-        #app-emp-list, #emp-list {
-          max-height: 290px;
-          overflow-y: auto;
-          padding-right: 4px;
-        }
 
         #app-emp-list::-webkit-scrollbar,
         #emp-list::-webkit-scrollbar {
@@ -747,20 +704,14 @@
           <div class="field">
             <label class="field-label">Email Address *</label>
             <div class="input-wrap" style="position:relative; display:flex; align-items:center;">
-              <input type="email" id="login-email" value="" placeholder="Enter your email address" style="padding-right:52px;" />
-              <button type="button" class="search-btn" onclick="openAppEmpModal()" title="Select predefined employee email" style="position:absolute; right:8px; background:rgba(255,255,255,0.25); border:none; border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#FFFFFF; transition:background 0.2s;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </button>
+              <input type="email" id="login-email" value="" placeholder="Enter your email address" oninput="const err=document.getElementById('login-auth-err');if(err)err.style.display='none';" onkeydown="if(event.key==='Enter'){event.preventDefault();handleAppLogin();}" autocomplete="email" />
             </div>
           </div>
 
           <div class="field">
             <label class="field-label">Password *</label>
             <div class="input-wrap" style="position:relative; display:flex; align-items:center;">
-              <input type="password" id="login-pass" placeholder="Enter your password" oninput="updatePasswordEyeVisibility('login-pass')" style="padding-right:48px;" />
+              <input type="password" id="login-pass" placeholder="Enter your password" oninput="updatePasswordEyeVisibility('login-pass');const err=document.getElementById('login-auth-err');if(err)err.style.display='none';const pErr=document.getElementById('login-pass-err');if(pErr)pErr.style.display='none';" onkeydown="if(event.key==='Enter'){event.preventDefault();handleAppLogin();}" style="padding-right:48px;" autocomplete="current-password" />
               <button type="button" id="login-pass-eye" class="eye-btn" onclick="toggleVisibility('login-pass')" title="View password" style="display:none; position:absolute; right:12px; background:none; border:none; color:#FFFFFF; cursor:pointer; padding:6px; align-items:center; justify-content:center; transition:opacity 0.2s;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               </button>
@@ -808,18 +759,6 @@
           </div>
         </div>
 
-        <!-- Predefined Employees & Managers Selection Modal with Smooth Fade-In & Glow -->
-        <div id="app-emp-modal" class="modal-overlay" onclick="if(event.target===this)closeAppEmpModal()" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(13,23,42,0.72); z-index:1000; align-items:center; justify-content:center; padding:16px; opacity:0; transition:opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.3s ease; backdrop-filter:blur(5px);">
-          <div class="cred-modal-card">
-            <div class="modal-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:2px; flex-shrink:0;">
-              <h3 style="margin:0; font-size:16px; font-weight:800; color:#0F172A; letter-spacing:-0.2px;">Login Credentials</h3>
-              <span class="modal-close" onclick="closeAppEmpModal()" style="font-size:18px; color:#64748B; cursor:pointer; font-weight:bold; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:background 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">✕</span>
-            </div>
-            
-            <div id="app-emp-list" style="display:flex; flex-direction:column; gap:2px;">
-            </div>
-          </div>
-        </div>
       </div>
       <script>
         function activatePill(el, groupSelector) {
@@ -875,94 +814,22 @@
         }
 
         const PREDEFINED_EMPLOYEES = [
-          { name: 'Priya Sharma', email: 'priya.sharma@emergere.com', password: 'Employee@123', role: 'Senior Software Engineer', empId: 'EMP-2024-0156', initials: 'PS', reportingManager: 'Rahul Sharma', phone: '+91 98765 43210' },
-          { name: 'Amit Patel', email: 'amit.patel@emergere.com', password: 'Employee@123', role: 'UI/UX Designer', empId: 'EMP-2024-0142', initials: 'AP', reportingManager: 'Rahul Sharma', phone: '+91 98765 43211' },
-          { name: 'Sneha Reddy', email: 'sneha.reddy@emergere.com', password: 'Employee@123', role: 'QA Engineer', empId: 'EMP-2024-0188', initials: 'SR', reportingManager: 'Rahul Sharma', phone: '+91 98765 43212' },
-          { name: 'Rohit Verma', email: 'rohit.verma@emergere.com', password: 'Employee@123', role: 'Backend Developer', empId: 'EMP-2024-0165', initials: 'RV', reportingManager: 'Rahul Sharma', phone: '+91 98765 43213' },
-          { name: 'Ananya Iyer', email: 'ananya.iyer@emergere.com', password: 'Employee@123', role: 'Frontend Developer', empId: 'EMP-2024-0173', initials: 'AI', reportingManager: 'Rahul Sharma', phone: '+91 98765 43214' }
+          { name: 'John Doe', email: 'john@gmail.com', password: 'employee@123', role: 'Software Engineer', empId: 'EMP-2024-0101', initials: 'JD', phone: '+91 98765 11001', reportingManager: 'Vishnu Kumar' },
+          { name: 'Jack Ryan', email: 'jack@gmail.com', password: 'employee@123', role: 'QA Engineer', empId: 'EMP-2024-0102', initials: 'JR', phone: '+91 98765 11002', reportingManager: 'Ram Prasad' },
+          { name: 'Sneha Reddy', email: 'sneha@gmail.com', password: 'employee@123', role: 'UI/UX Designer', empId: 'EMP-2024-0103', initials: 'SR', phone: '+91 98765 11003', reportingManager: 'Rahul Sharma' }
         ];
 
         const PREDEFINED_MANAGERS = [
-          { name: 'Rahul Sharma', email: 'rahul.sharma@emergere.com', altEmail: 'manager@emergere.com', password: 'Manager@123', role: 'Engineering Lead / Manager', empId: 'MGR-2024-0012', initials: 'RS', reportingManager: 'Board of Directors', phone: '+91 98765 00001' },
-          { name: 'Vikram Malhotra', email: 'vikram.malhotra@emergere.com', password: 'Manager@123', role: 'Operations Manager', empId: 'MGR-2024-0008', initials: 'VM', reportingManager: 'Board of Directors', phone: '+91 98765 00002' },
-          { name: 'Neha Kapoor', email: 'neha.kapoor@emergere.com', password: 'Manager@123', role: 'Project & HR Manager', empId: 'MGR-2024-0015', initials: 'NK', reportingManager: 'Board of Directors', phone: '+91 98765 00003' }
+          { name: 'Vishnu Kumar', email: 'vishnu@gmail.com', password: 'manager@123', role: 'Engineering Manager', empId: 'MGR-2024-0010', initials: 'VK', phone: '+91 98765 22001', reportingManager: 'Director of Engineering' },
+          { name: 'Ram Prasad', email: 'ram@gmail.com', password: 'manager@123', role: 'Technical Lead / Manager', empId: 'MGR-2024-0011', initials: 'RP', phone: '+91 98765 22002', reportingManager: 'Director of Engineering' },
+          { name: 'Rahul Sharma', email: 'rahul@gmail.com', password: 'manager@123', role: 'Operations Manager', empId: 'MGR-2024-0012', initials: 'RS', phone: '+91 98765 22003', reportingManager: 'Vice President' }
         ];
 
-        function renderAppEmpList() {
-          const container = document.getElementById('app-emp-list');
-          if (!container) return;
-
-          const empSectionHtml = `
-            <div style="margin:2px 2px 5px;">
-              <span style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.8px;">Employee</span>
-            </div>
-            ${PREDEFINED_EMPLOYEES.map((emp, idx) => `
-              <div onclick="selectAppAccount('employee', ${idx})" style="padding:8px 12px; border-radius:10px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.16s ease; margin-bottom:5px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#2F6BFF';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';this.style.transform='none';">
-                <div style="font-size:13px; font-weight:600; color:#1E293B; word-break:break-all; line-height:1.25;">${emp.email}</div>
-                <div style="font-size:12px; letter-spacing:2.5px; color:#64748B; margin-top:2px; font-weight:700; user-select:none;">••••••••</div>
-              </div>
-            `).join('')}
-          `;
-
-          const mgrSectionHtml = `
-            <div style="margin:8px 2px 5px;">
-              <span style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.8px;">Manager</span>
-            </div>
-            ${PREDEFINED_MANAGERS.map((mgr, idx) => `
-              <div onclick="selectAppAccount('manager', ${idx})" style="padding:8px 12px; border-radius:10px; background:#F8FAFC; border:1px solid #E2E8F0; cursor:pointer; transition:all 0.16s ease; margin-bottom:5px;" onmouseover="this.style.background='#EEF2FF';this.style.borderColor='#6366F1';this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0';this.style.transform='none';">
-                <div style="font-size:13px; font-weight:600; color:#1E293B; word-break:break-all; line-height:1.25;">${mgr.email}</div>
-                <div style="font-size:12px; letter-spacing:2.5px; color:#64748B; margin-top:2px; font-weight:700; user-select:none;">••••••••</div>
-              </div>
-            `).join('')}
-          `;
-
-          container.innerHTML = empSectionHtml + mgrSectionHtml;
-        }
-
-        function openAppEmpModal() {
-          const modal = document.getElementById('app-emp-modal');
-          if (!modal) return;
-          renderAppEmpList();
-          modal.style.display = 'flex';
-          void modal.offsetWidth; // Force reflow for smooth transition
-          modal.classList.add('active');
-          modal.style.opacity = '1';
-        }
-
-        function closeAppEmpModal() {
-          const modal = document.getElementById('app-emp-modal');
-          if (!modal) return;
-          modal.classList.remove('active');
-          modal.style.opacity = '0';
-          setTimeout(() => {
-            modal.style.display = 'none';
-          }, 280);
-        }
-
-        function selectAppAccount(role, idx) {
-          const account = role === 'manager' ? PREDEFINED_MANAGERS[idx] : PREDEFINED_EMPLOYEES[idx];
-          if (!account) return;
-          const emailInput = document.getElementById('login-email');
-          const pwdInput = document.getElementById('login-pass');
-          const errBox = document.getElementById('login-auth-err');
-          const pwdErr = document.getElementById('login-pass-err');
-
-          // Smooth fade-out transition
-          closeAppEmpModal();
-
-          if (emailInput) emailInput.value = account.email;
-          if (pwdInput) {
-            pwdInput.value = account.password;
-            pwdInput.type = 'password';
-            updatePasswordEyeVisibility('login-pass');
-          }
-
-          if (errBox) errBox.style.display = 'none';
-          if (pwdErr) pwdErr.style.display = 'none';
-        }
-
-        function selectAppEmployee(idx) {
-          selectAppAccount('employee', idx);
+        function isPasswordMatch(expected, actual) {
+          if (!expected || !actual) return false;
+          var exp = String(expected).trim();
+          var act = String(actual).trim();
+          return exp === act || exp.toLowerCase() === act.toLowerCase();
         }
 
         function handleAppLogin() {
@@ -985,70 +852,45 @@
             return;
           }
 
-          if (pwdVal.length < 8) {
-            if (pwdErr) pwdErr.style.display = 'block';
+          // 1. Check Manager Credentials (vishnu@gmail.com, ram@gmail.com, rahul@gmail.com)
+          const matchedManager = PREDEFINED_MANAGERS.find(
+            m => m.email.toLowerCase() === emailVal
+          );
+          if (matchedManager && isPasswordMatch(matchedManager.password, pwdVal)) {
+            if (window.parent && typeof window.parent.setAuthUser === 'function') {
+              window.parent.setAuthUser('manager', matchedManager);
+            } else if (typeof setAuthUser === 'function') {
+              setAuthUser('manager', matchedManager);
+            }
+            if (window.parent && window.parent.loadScreen) {
+              window.parent.loadScreen('tpl-ManagerDashboard');
+            } else if (typeof loadScreen === 'function') {
+              loadScreen('tpl-ManagerDashboard');
+            }
             return;
           }
 
-          // 1. Check Manager Credentials (3 predefined manager accounts)
-          const matchedManager = PREDEFINED_MANAGERS.find(
-            m => m.email.toLowerCase() === emailVal || (m.altEmail && m.altEmail.toLowerCase() === emailVal)
+          // 2. Check Employee Credentials (john@gmail.com, jack@gmail.com, sneha@gmail.com)
+          const matchedEmp = PREDEFINED_EMPLOYEES.find(
+            e => e.email.toLowerCase() === emailVal
           );
-          if (matchedManager) {
-            const validPass = [matchedManager.password, 'Manager@123', 'manager123'];
-            if (validPass.includes(pwdVal)) {
-              if (window.parent && typeof window.parent.setAuthUser === 'function') {
-                window.parent.setAuthUser('manager', {
-                  name: matchedManager.name,
-                  role: matchedManager.role,
-                  employeeId: matchedManager.empId,
-                  initials: matchedManager.initials,
-                  email: matchedManager.email,
-                  reportingManager: matchedManager.reportingManager,
-                  phone: matchedManager.phone
-                });
-              }
-              if (window.parent && window.parent.loadScreen) {
-                window.parent.loadScreen('tpl-ManagerDashboard');
-              } else if (typeof loadScreen === 'function') {
-                loadScreen('tpl-ManagerDashboard');
-              }
-              return;
-            } else {
-              if (errBox) {
-                errBox.textContent = 'Invalid password for Manager account.';
-                errBox.style.display = 'block';
-              }
-              return;
+          if (matchedEmp && isPasswordMatch(matchedEmp.password, pwdVal)) {
+            if (window.parent && typeof window.parent.setAuthUser === 'function') {
+              window.parent.setAuthUser('employee', matchedEmp);
+            } else if (typeof setAuthUser === 'function') {
+              setAuthUser('employee', matchedEmp);
             }
+            if (window.parent && window.parent.loadScreen) {
+              window.parent.loadScreen('tpl-EmployeeDashboard');
+            } else if (typeof loadScreen === 'function') {
+              loadScreen('tpl-EmployeeDashboard');
+            }
+            return;
           }
 
-          // 2. Check 5 Predefined Employee Accounts
-          const matchedEmp = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal);
-          if (matchedEmp) {
-            const validPass = [matchedEmp.password, 'Employee@123', 'employee123', 'password123'];
-            if (validPass.includes(pwdVal)) {
-              if (window.parent && typeof window.parent.setAuthUser === 'function') {
-                window.parent.setAuthUser('employee', matchedEmp);
-              }
-              if (window.parent && window.parent.loadScreen) {
-                window.parent.loadScreen('tpl-EmployeeDashboard');
-              } else if (typeof loadScreen === 'function') {
-                loadScreen('tpl-EmployeeDashboard');
-              }
-              return;
-            } else {
-              if (errBox) {
-                errBox.textContent = 'Invalid password for employee account.';
-                errBox.style.display = 'block';
-              }
-              return;
-            }
-          }
-
-          // 3. Neither valid manager nor valid employee
+          // 3. Strict Validation Failed
           if (errBox) {
-            errBox.textContent = 'Invalid email address or password. Click the search icon in the email field to pick an employee or manager account.';
+            errBox.textContent = 'Invalid email address or password. Please check your credentials and try again.';
             errBox.style.display = 'block';
           }
         }
@@ -4084,64 +3926,116 @@
 
       </script>
       <script>
-
-        function openDetails(catType, title, date, duration, applied, reason, status, tone, remark) {
-          document.getElementById('m-cat').textContent = catType === 'leave' ? 'LEAVE REQUEST DETAILS' : 'PERMISSION REQUEST DETAILS';
-          document.getElementById('m-title').textContent = title;
-          document.getElementById('m-date').textContent = date;
-          document.getElementById('m-duration').textContent = duration;
-          document.getElementById('m-applied').textContent = applied;
-          document.getElementById('m-reason').textContent = reason;
-          document.getElementById('m-remark').textContent = remark;
-
-          const badge = document.getElementById('m-badge');
-          badge.textContent = status;
-          badge.className = 'badge ' + tone;
-
-          document.getElementById('details-modal').classList.add('open');
-        }
-
-        function closeDetails() {
-          document.getElementById('details-modal').classList.remove('open');
-        }
-
-        function closeDetailsModal(e) {
-          if (e.target.id === 'details-modal') {
-            closeDetails();
+        function calcPermDuration() {
+          var durationInput = document.getElementById('perm-duration-input');
+          var startInput = document.getElementById('perm-start-time');
+          var endInput = document.getElementById('perm-end-time');
+          if (startInput && endInput && startInput.value && endInput.value) {
+            var sParts = startInput.value.split(':').map(Number);
+            var eParts = endInput.value.split(':').map(Number);
+            var diff = (eParts[0] * 60 + eParts[1]) - (sParts[0] * 60 + sParts[1]);
+            if (diff < 0) diff += 24 * 60;
+            var hours = Math.floor(diff / 60);
+            var mins = diff % 60;
+            var text = '';
+            if (hours > 0 && mins > 0) text = hours + ' Hr ' + mins + ' Mins';
+            else if (hours > 0) text = hours + ' Hour' + (hours > 1 ? 's' : '');
+            else text = mins + ' Mins';
+            if (durationInput) durationInput.value = text;
+          } else if (durationInput && !durationInput.value) {
+            durationInput.value = '2 Hours';
           }
         }
+        window.calcPermDuration = calcPermDuration;
 
+        function handleApplyPermissionSubmit() {
+          var permDateInput  = document.getElementById('perm-date-input');
+          var permTypeSelect = document.getElementById('perm-type-select');
+          var durationInput  = document.getElementById('perm-duration-input');
+          var reasonText     = document.getElementById('perm-reason-text');
+          var permManagerEl  = document.getElementById('perm-manager-select');
 
-        function clearAllNotifications() {
-          const container = document.getElementById('notif-container');
-          if (container) {
-            container.innerHTML = '<div style="text-align:center; padding:50px 20px; color:#9AA3B2;"><div style="font-size:48px; margin-bottom:12px;">🔔</div><b style="font-size:16px; color:#111827; display:block; margin-bottom:4px;">No Notifications</b><p style="font-size:13px; color:#6B7280; margin:0;">All notifications have been cleared.</p></div>';
+          var rawDate   = permDateInput  ? permDateInput.value  : '2026-09-04';
+          var months    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          var dp = rawDate.split('-');
+          var fmtDate = dp.length === 3 ? (dp[2] + '-' + (months[parseInt(dp[1],10)-1]||'Sep') + '-' + dp[0]) : rawDate;
+
+          var pType     = permTypeSelect ? permTypeSelect.value : 'Early Going';
+          var pDuration = durationInput  ? (durationInput.value.trim() || '2 Hours') : '2 Hours';
+          var pReason   = reasonText     ? (reasonText.value.trim()   || 'Personal work / checkup') : 'Personal work / checkup';
+
+          if (!pReason) { alert('Please enter a reason.'); return; }
+
+          var newId = 'perm-' + Date.now();
+          var parentWin = window.parent || window;
+          var permProf = parentWin.USER_PROFILE || {};
+          var permEmpName = permProf.name || 'Priya Sharma';
+          var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)) || 'PS';
+          var permEmpId = permProf.employeeId || 'EMP-2024-0156';
+          var defPermMgr = permProf.reportingManager ? permProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+          var pManager = permManagerEl ? permManagerEl.value : defPermMgr;
+
+          var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending', employeeName: permEmpName, employeeInitials: permEmpInitials, employeeId: permEmpId, approvingManager: pManager };
+          if (!parentWin.PERM_STATE) parentWin.PERM_STATE = [];
+          var existsPerm = parentWin.PERM_STATE.some(function(p){ return p.type === pType && p.date === fmtDate && p.reason === pReason; });
+          if (!existsPerm) {
+            parentWin.PERM_STATE.unshift(entry);
           }
-          const btn = document.getElementById('clear-notif-btn');
-          if (btn) btn.style.display = 'none';
-        }
 
-        function filterHistory(cat, el) {
-          const pills = el.parentElement.querySelectorAll('.pill');
-          pills.forEach(p => p.classList.remove('active'));
-          el.classList.add('active');
+          if (!parentWin.EMP_LEAVE_REQUESTS) parentWin.EMP_LEAVE_REQUESTS = [];
+          var existsEmpReq = parentWin.EMP_LEAVE_REQUESTS.some(function(r){ return r.leaveType === pType && r.fromDate === fmtDate && r.reason === pReason; });
+          if (!existsEmpReq) {
+            parentWin.EMP_LEAVE_REQUESTS.unshift({ id: newId, leaveType: pType, fromDate: fmtDate, daysText: pDuration, reason: pReason, isPermission: true, employeeName: permEmpName, status: 'pending' });
+          }
 
-          const cards = document.querySelectorAll('.req-card');
-          cards.forEach(card => {
-            const type = card.getAttribute('data-type');
-            if (cat === 'all' || type === cat) {
-              card.style.display = 'block';
-            } else {
-              card.style.display = 'none';
-            }
-          });
+          var permPersonObj = {
+            id: newId,
+            isPermission: true,
+            type: pType,
+            leaveType: pType,
+            permissionType: pType,
+            name: permEmpName,
+            initials: permEmpInitials,
+            role: permProf.role || 'Senior Software Engineer',
+            empId: permEmpId,
+            employeeId: permEmpId,
+            employeeName: permEmpName,
+            employeeInitials: permEmpInitials,
+            status: 'pending',
+            date: fmtDate,
+            fromDate: fmtDate,
+            toDate: fmtDate,
+            duration: pDuration,
+            totalDays: pDuration,
+            reason: pReason,
+            approvingManager: pManager,
+            contact: pManager,
+            emergencyContact: pManager,
+            subtitle: pType + ' Application',
+            appliedPath: permEmpName.split(' ')[0] + ' (Applied)'
+          };
+          if (!parentWin.PERSON_DATA) parentWin.PERSON_DATA = {};
+          parentWin.PERSON_DATA[newId] = permPersonObj;
+          parentWin.PERSON_DATA['priya'] = permPersonObj;
+          parentWin.LATEST_REQUEST = permPersonObj;
+          parentWin.LATEST_PERMISSION_REQUEST = permPersonObj;
+          parentWin.SELECTED_PERSON = newId;
+
+          var modal = document.getElementById('perm-success-modal');
+          if (modal) {
+            modal.classList.add('show');
+          } else if (parentWin.loadScreen) {
+            parentWin.loadScreen('tpl-EmployeeDashboard');
+          }
         }
-        
+        window.handleApplyPermissionSubmit = handleApplyPermissionSubmit;
+
         function closePermSuccessModal() {
           var modal = document.getElementById('perm-success-modal');
           if (modal) modal.classList.remove('show');
-          if (window.parent && window.parent.loadScreen) {
-            window.parent.loadScreen('tpl-EmployeeDashboard');
+          var parentWin = window.parent || window;
+          if (parentWin.loadScreen) {
+            parentWin.loadScreen('tpl-EmployeeDashboard');
           } else if (typeof loadScreen === 'function') {
             loadScreen('tpl-EmployeeDashboard');
           }
@@ -5529,6 +5423,7 @@
             }
           });
         }
+        window.filterHistory = filterHistory;
 
         function toggleCardDetails(btn) {
           const card = btn.closest('.card') || btn.closest('.req-card');
@@ -5543,6 +5438,48 @@
             btn.textContent = 'View Details ›';
           }
         }
+        window.toggleCardDetails = toggleCardDetails;
+
+        function openDetails(catType, title, date, duration, applied, reason, status, tone, remark) {
+          var catEl = document.getElementById('m-cat');
+          if (catEl) catEl.textContent = catType === 'leave' ? 'LEAVE REQUEST DETAILS' : 'PERMISSION REQUEST DETAILS';
+          var tEl = document.getElementById('m-title');
+          if (tEl) tEl.textContent = title || '';
+          var dEl = document.getElementById('m-date');
+          if (dEl) dEl.textContent = date || '';
+          var durEl = document.getElementById('m-duration');
+          if (durEl) durEl.textContent = duration || '';
+          var appEl = document.getElementById('m-applied');
+          if (appEl) appEl.textContent = applied || '';
+          var rEl = document.getElementById('m-reason');
+          if (rEl) rEl.textContent = reason || '';
+          var remEl = document.getElementById('m-remark');
+          if (remEl) remEl.textContent = remark || '';
+
+          var badge = document.getElementById('m-badge');
+          if (badge) {
+            badge.textContent = status || '';
+            badge.className = 'badge ' + (tone || '');
+          }
+
+          var modal = document.getElementById('details-modal');
+          if (modal) modal.classList.add('open');
+        }
+        window.openDetails = openDetails;
+
+        function closeDetails() {
+          var modal = document.getElementById('details-modal');
+          if (modal) modal.classList.remove('open');
+        }
+        window.closeDetails = closeDetails;
+
+        function closeDetailsModal(e) {
+          if (e && e.target && e.target.id === 'details-modal') {
+            closeDetails();
+          }
+        }
+        window.closeDetailsModal = closeDetailsModal;
+
         document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.addEventListener('click', () => setActiveNav(t)));
       </script>
     </body>
@@ -6903,21 +6840,21 @@
 
             <!-- READ MODE -->
             <div id="contact-read-mode">
-              <div class="info-row"><span>Email</span><b id="val-email">priya.sharma@emergere.com</b></div>
+              <div class="info-row"><span>Email</span><b id="val-email">john@gmail.com</b></div>
               <div class="info-row"><span>Phone</span><b id="val-phone">+91 98765 43210</b></div>
             </div>
 
             <!-- EDIT MODE -->
             <div id="contact-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:8px;">
               <div class="edit-input-group"><label>Email</label><input type="email" id="input-email"
-                  value="priya.sharma@emergere.com"></div>
+                  value="john@gmail.com"></div>
               <div class="edit-input-group"><label>Phone</label><input type="text" id="input-phone"
                   value="+91 98765 43210"></div>
             </div>
           </div>
 
           <button class="btn logout-btn"
-            onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-Login')">Logout</button>
+            onclick="if(window.parent&&window.parent.logoutUser){window.parent.logoutUser();}else if(window.logoutUser){window.logoutUser();}else if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-Login');}">Logout</button>
         </div>
         <div class="bottom-nav">
           <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -10517,6 +10454,7 @@
             const pStart = startTimeDisplay ? startTimeDisplay.value : formatTime12H(rawStart);
             const pEnd = endTimeDisplay ? endTimeDisplay.value : formatTime12H(rawEnd);
             const pDuration = durationInput ? (durationInput.value ? durationInput.value.trim() : durationInput.textContent.replace(' (Auto-calculated)', '')) : '2 Hours';
+            const pReason = reasonText ? (reasonText.value.trim() || 'Personal work / checkup') : 'Personal work / checkup';
              // Read employee profile from parent window
             const store = window.parent || window;
             const empProf = (store.USER_PROFILE) || {};
@@ -10865,7 +10803,7 @@
             reportingManager: 'Rahul Sharma',
             workLocation: 'Bangalore',
             joiningDate: 'Mar 15, 2022',
-            email: 'priya.sharma@emergere.com',
+            email: 'john@gmail.com',
             phone: '+91 98765 43210'
           };
         }
@@ -11038,45 +10976,69 @@
           window.AUTH_USER = Object.assign({}, userObj, { role: role, jobTitle: userObj.role });
           if (role === 'employee') {
             window.USER_PROFILE = {
-              name: userObj.name || 'Priya Sharma',
+              name: userObj.name || 'John Doe',
               role: userObj.role || 'Senior Software Engineer',
-              employeeId: userObj.empId || userObj.employeeId || 'EMP-2024-0156',
-              initials: userObj.initials || 'PS',
-              email: userObj.email || 'priya.sharma@emergere.com',
+              employeeId: userObj.empId || userObj.employeeId || 'EMP-2024-0101',
+              initials: userObj.initials || 'JD',
+              email: userObj.email || 'john@gmail.com',
               department: 'Engineering',
               team: 'Mobile Development',
-              reportingManager: userObj.reportingManager || 'Rahul Sharma',
+              reportingManager: userObj.reportingManager || 'Vishnu Kumar',
               workLocation: 'Bangalore - Tech Park',
               joiningDate: '15-Jan-2024',
-              phone: userObj.phone || '+91 98765 43210'
+              phone: userObj.phone || '+91 98765 11001'
             };
           } else if (role === 'manager') {
             window.USER_PROFILE = {
-              name: userObj.name || 'Rahul Sharma',
+              name: userObj.name || 'Vishnu Kumar',
               role: userObj.role || 'Engineering Lead / Manager',
-              employeeId: userObj.empId || userObj.employeeId || 'MGR-2024-0012',
-              initials: userObj.initials || 'RS',
-              email: userObj.email || 'manager@emergere.com',
+              employeeId: userObj.empId || userObj.employeeId || 'MGR-2024-0010',
+              initials: userObj.initials || 'VK',
+              email: userObj.email || 'vishnu@gmail.com',
               department: 'Engineering',
               team: 'Engineering Leadership',
               reportingManager: 'Board of Directors',
               workLocation: 'Bangalore - Tech Park',
               joiningDate: '01-Jun-2022',
-              phone: userObj.phone || '+91 98765 00001'
+              phone: userObj.phone || '+91 98765 22001'
             };
           }
+          try {
+            sessionStorage.setItem('USER_PROFILE', JSON.stringify(window.USER_PROFILE));
+          } catch (e) {}
           updateNavRBAC();
+          try {
+            var frame = document.getElementById('frame');
+            if (frame && frame.contentWindow) {
+              frame.contentWindow.AUTH_USER = window.AUTH_USER;
+              frame.contentWindow.USER_PROFILE = window.USER_PROFILE;
+            }
+          } catch(e) {}
         }
         window.setAuthUser = setAuthUser;
 
         function logoutUser() {
           window.AUTH_USER = null;
+          try {
+            sessionStorage.removeItem('USER_PROFILE');
+          } catch (e) {}
           updateNavRBAC();
           loadScreen('tpl-Login');
         }
         window.logoutUser = logoutUser;
 
         function loadScreen(tplId, personKey) {
+          if (tplId === 'tpl-Login') {
+            window.AUTH_USER = null;
+            try {
+              sessionStorage.removeItem('USER_PROFILE');
+            } catch (e) {}
+            if (typeof updateNavRBAC === 'function') updateNavRBAC();
+          } else if (!window.AUTH_USER) {
+            alert('Please login to access this screen.');
+            loadScreen('tpl-Login');
+            return;
+          }
           if (window.AUTH_USER && tplId !== 'tpl-Login') {
             if (window.AUTH_USER.role === 'employee' && EMPLOYEE_ALLOWED_SCREENS.indexOf(tplId) === -1) {
               alert('Access Restricted: Employee account is not authorized to access Manager screens.');

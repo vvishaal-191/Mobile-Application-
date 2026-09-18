@@ -13,17 +13,17 @@ if (typeof global !== 'undefined') {
   if (!global.NOTIFICATIONS) global.NOTIFICATIONS = [];
   if (!global.USER_PROFILE) {
     global.USER_PROFILE = {
-      name: 'Priya Sharma',
+      name: 'John Doe',
       role: 'Senior Software Engineer',
-      employeeId: 'EMP-2024-0156',
-      initials: 'PS',
-      reportingManager: 'Rahul Sharma',
+      employeeId: 'EMP-2024-0101',
+      initials: 'JD',
+      reportingManager: 'Vishnu Kumar',
       department: 'IT',
       team: 'Development',
       workLocation: 'Bangalore',
       joiningDate: 'Mar 15, 2022',
-      email: 'priya.sharma@emergere.com',
-      phone: '+91 98765 43210',
+      email: 'john@gmail.com',
+      phone: '+91 98765 11001',
     };
   }
 }
@@ -107,6 +107,12 @@ export default function App() {
     if (screenKey === 'Login') {
       if (typeof global !== 'undefined') global.USER_ROLE = null;
       setStack([{ name: 'Login', params: {} }]);
+      return;
+    }
+
+    // Unauthenticated user guard
+    if (!userRole && screenKey !== 'Login') {
+      console.warn(`[Access Denied] Unauthenticated user cannot access screen: ${screenKey}`);
       return;
     }
 
