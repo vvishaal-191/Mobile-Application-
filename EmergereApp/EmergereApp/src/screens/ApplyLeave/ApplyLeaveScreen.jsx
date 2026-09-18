@@ -113,7 +113,7 @@ export default function ApplyLeaveScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerRow}>
           <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-          <Text style={styles.headerTitle}>Request Leave</Text>
+          <Text style={styles.headerTitle}>Apply Leave</Text>
         </View>
         <Text style={styles.subtitle}>Create new leave request</Text>
 

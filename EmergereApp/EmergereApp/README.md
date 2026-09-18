@@ -89,7 +89,7 @@ visually in sync:
 1. Login
 2. Employee Dashboard
 3. My Attendance
-4. Request Leave
+4. Apply Leave
 5. Apply Permission
 6. Leave Balance
 7. Leave & Permission History ("My Requests")
@@ -109,5 +109,5 @@ visually in sync:
 - Wire the demo arrays at the top of each screen (e.g. `LEAVE_BALANCES`,
   `PENDING`, `MEMBERS`) up to your real API/data layer.
 - Add form validation and date/time pickers (`@react-native-community/datetimepicker`)
-  to Request Leave / Apply Permission.
+  to Apply Leave / Apply Permission.
 - Add authentication state handling around the Login screen.

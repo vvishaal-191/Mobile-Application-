@@ -14,7 +14,7 @@ const LEAVE_BALANCES = [
 ];
 
 const QUICK_ACTIONS = [
-  { key: 'applyLeave', label: 'Request Leave', icon: 'plus-circle' },
+  { key: 'applyLeave', label: 'Apply Leave', icon: 'plus-circle' },
   { key: 'applyPermission', label: 'Apply Permission', icon: 'clock' },
   { key: 'viewAttendance', label: 'View Attendance', icon: 'calendar' },
   { key: 'viewHolidays', label: 'View Holidays', icon: 'x-circle' },
