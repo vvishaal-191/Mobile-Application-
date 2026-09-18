@@ -130,6 +130,7 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
         type: targetItem?.type || 'Permission',
         schedule: targetItem?.schedule,
         duration: targetItem?.duration,
+        name: targetItem?.name || 'Employee',
       };
       if (global.PERMISSION_REQUESTS) {
         global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
@@ -138,16 +139,27 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       }
     }
 
-    // Navigate to Employee Dashboard to update request status there
-    if (navigation) {
-      navigation.navigate('EmployeeDashboard', {
-        requestId: id,
-        newStatus: 'Approved',
-        isPermission: true,
-        permissionType: targetItem?.type || 'Permission',
-        duration: targetItem?.duration,
-      });
-    }
+    // Navigate to Request Detail (LeaveApprovalDetail) page with Approved status
+    const updatedItem = {
+      ...(targetItem || {}),
+      id,
+      name: targetItem?.name || 'Priya Sharma',
+      initials: targetItem?.initials || 'PS',
+      empId: targetItem?.empId || 'EMP-2024-0156',
+      role: targetItem?.role || 'Senior Software Engineer',
+      isPermission: true,
+      type: targetItem?.type || 'Permission',
+      leaveType: targetItem?.type || 'Permission',
+      permissionType: targetItem?.type || 'Permission',
+      schedule: targetItem?.schedule || 'Sep 04 (10:00 - 10:30 AM)',
+      duration: targetItem?.duration || '30 Mins',
+      totalDays: targetItem?.duration || '30 Mins',
+      reason: targetItem?.reason || 'Doctor appointment checkup',
+      emergencyContact: targetItem?.approvingManager || '+91 98765 22003',
+      approvingManager: targetItem?.approvingManager || 'Rahul Sharma (Team Lead)',
+      status: 'Approved',
+    };
+    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Approved' });
   };
 
   const handleReject = (id) => {
@@ -177,6 +189,7 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
         type: targetItem?.type || 'Permission',
         schedule: targetItem?.schedule,
         duration: targetItem?.duration,
+        name: targetItem?.name || 'Employee',
       };
       if (global.PERMISSION_REQUESTS) {
         global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
@@ -185,16 +198,27 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       }
     }
 
-    // Navigate to Employee Dashboard to update request status there
-    if (navigation) {
-      navigation.navigate('EmployeeDashboard', {
-        requestId: id,
-        newStatus: 'Rejected',
-        isPermission: true,
-        permissionType: targetItem?.type || 'Permission',
-        duration: targetItem?.duration,
-      });
-    }
+    // Navigate to Request Detail (LeaveApprovalDetail) page with Rejected status
+    const updatedItem = {
+      ...(targetItem || {}),
+      id,
+      name: targetItem?.name || 'Priya Sharma',
+      initials: targetItem?.initials || 'PS',
+      empId: targetItem?.empId || 'EMP-2024-0156',
+      role: targetItem?.role || 'Senior Software Engineer',
+      isPermission: true,
+      type: targetItem?.type || 'Permission',
+      leaveType: targetItem?.type || 'Permission',
+      permissionType: targetItem?.type || 'Permission',
+      schedule: targetItem?.schedule || 'Sep 04 (10:00 - 10:30 AM)',
+      duration: targetItem?.duration || '30 Mins',
+      totalDays: targetItem?.duration || '30 Mins',
+      reason: targetItem?.reason || 'Doctor appointment checkup',
+      emergencyContact: targetItem?.approvingManager || '+91 98765 22003',
+      approvingManager: targetItem?.approvingManager || 'Rahul Sharma (Team Lead)',
+      status: 'Rejected',
+    };
+    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Rejected' });
   };
 
   const filteredRequests = requests.filter((item) => item.status === activeTab);

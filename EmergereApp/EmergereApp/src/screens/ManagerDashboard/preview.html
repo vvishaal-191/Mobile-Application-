@@ -23,8 +23,8 @@
     <div class="quick-action">Team Calendar</div>
   </div>
   <p class="section-label">RECENT REQUESTS</p>
-  <div class="card req-card"><div class="req-row"><div><b>Priya Sharma</b><p>Casual Leave • Sep 10-11 (2 Days)</p></div><span class="badge warning">Pending</span></div></div>
-  <div class="card req-card"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span class="badge warning">Pending</span></div></div>
+  <div class="card req-card" id="mgr-dash-req-priya"><div class="req-row"><div><b>Priya Sharma</b><p id="dash-priya-subtitle">Casual Leave • Sep 10-11 (2 Days)</p></div><span class="badge warning" id="dash-priya-status-badge">Pending</span></div></div>
+  <div class="card req-card" id="mgr-dash-req-sneha"><div class="req-row"><div><b>Sneha Gupta</b><p>Earned Leave • Sep 15-19 (5 Days)</p></div><span class="badge warning" id="dash-sneha-status-badge">Pending</span></div></div>
 </div>
 <div class="bottom-nav">
   <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
@@ -36,4 +36,16 @@
 </div>
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const priyaStatus = params.get('priyaStatus') || params.get('status');
+if (priyaStatus && priyaStatus.toLowerCase() !== 'pending') {
+  const badge = document.getElementById('dash-priya-status-badge');
+  if (badge) {
+    const isApp = priyaStatus.toLowerCase() === 'approved';
+    badge.className = isApp ? 'badge success' : 'badge danger';
+    badge.textContent = isApp ? 'Approved' : 'Rejected';
+  }
+}
+</script>
 </body></html>

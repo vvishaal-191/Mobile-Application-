@@ -104,23 +104,74 @@ export default function ManagerDashboardScreen({ navigation, route }) {
     }
 
     // Handle status change from LeaveApprovalDetail or global store
-    const activeStatus = (route && route.params && route.params.newStatus) ||
-      (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION && global.LAST_LEAVE_DECISION.status);
-    const targetId = (route && route.params && route.params.requestId) ||
-      (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION && global.LAST_LEAVE_DECISION.id) || '1';
+    const routeDecision = route?.params?.newStatus;
+    const targetPerson = route?.params?.person;
+    const isPermission = route?.params?.isPermission;
+    const targetId = route?.params?.requestId || targetPerson?.id;
+
+    const leaveDec = typeof global !== 'undefined' ? global.LAST_LEAVE_DECISION : null;
+    const permDec = typeof global !== 'undefined' ? global.LAST_PERMISSION_DECISION : null;
+
+    const activeStatus = routeDecision || (leaveDec && leaveDec.status) || (permDec && permDec.status);
 
     if (activeStatus) {
-      // The approved or rejected request should NOT be displayed in the Manager Dashboard under Recent Requests.
-      setRequests((prev) =>
-        prev.filter((r) => r.id !== targetId && r.name !== (global.LAST_LEAVE_DECISION?.name || 'Priya Sharma') && r.status === 'Pending')
-      );
+      const isApproved = activeStatus.toLowerCase() === 'approved';
+      const statusText = isApproved ? 'Approved' : 'Rejected';
+      const tone = isApproved ? 'success' : 'danger';
 
+      setRequests((prev) => {
+        let matched = false;
+        const updated = prev.map((r) => {
+          const nameMatch = targetPerson?.name && r.name && r.name.toLowerCase() === targetPerson.name.toLowerCase();
+          const globalMatch = (leaveDec?.name && r.name && r.name.toLowerCase() === leaveDec.name.toLowerCase()) ||
+                              (permDec?.name && r.name && r.name.toLowerCase() === permDec.name.toLowerCase());
+          const idMatch = targetId && (r.id === targetId || (targetId === 'priya' && r.name === 'Priya Sharma') || (targetId === 'sneha' && r.name === 'Sneha Gupta'));
+
+          if ((idMatch && !targetPerson?.name) || nameMatch || (idMatch && (!r.leaveType || !targetPerson?.leaveType || r.leaveType === targetPerson.leaveType)) || (!targetId && globalMatch)) {
+            matched = true;
+            return {
+              ...r,
+              status: statusText,
+              tone: tone,
+            };
+          }
+          return r;
+        });
+
+        if (!matched && targetPerson) {
+          const newReq = {
+            id: targetPerson.id || Date.now().toString(),
+            name: targetPerson.name || 'Employee',
+            role: targetPerson.role || 'Team Member',
+            empId: targetPerson.empId || 'EMP-2024-0000',
+            initials: targetPerson.initials || 'EM',
+            leaveType: targetPerson.leaveType || targetPerson.type || (isPermission ? 'Permission' : 'Leave'),
+            fromDate: targetPerson.fromDate || targetPerson.schedule || '',
+            toDate: targetPerson.toDate || '',
+            totalDays: targetPerson.totalDays || targetPerson.duration || '1 Day',
+            emergencyContact: targetPerson.emergencyContact || '',
+            reason: targetPerson.reason || '',
+            subtitle: `${targetPerson.leaveType || targetPerson.type || 'Request'} • ${targetPerson.schedule || targetPerson.fromDate || 'Recent'}`,
+            status: statusText,
+            tone: tone,
+          };
+          return [newReq, ...updated];
+        }
+
+        return updated;
+      });
+
+      // Decrement badge count in Quick Actions
       setQuickActions((prev) =>
-        prev.map((qa) =>
-          qa.key === 'LeaveApprovals'
-            ? { ...qa, badge: 2 }
-            : qa
-        )
+        prev.map((qa) => {
+          if (qa.key === 'LeaveApprovals' && (leaveDec || (!isPermission && routeDecision))) {
+            return { ...qa, badge: 2 };
+          }
+          if (qa.key === 'PermissionApprovals' && (permDec || (isPermission && routeDecision))) {
+            return { ...qa, badge: 1 };
+          }
+          return qa;
+        })
       );
     }
   }, [route?.params]);
@@ -185,7 +236,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
           <TouchableOpacity
             key={r.id}
             activeOpacity={0.7}
-            onPress={() => go('LeaveApprovalDetail', { person: r })}
+            onPress={() => go('LeaveApprovalDetail', { person: r, decision: r.status })}
           >
             <Card style={styles.requestCard}>
               <View style={styles.requestRow}>

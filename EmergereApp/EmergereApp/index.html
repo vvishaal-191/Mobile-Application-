@@ -7537,7 +7537,7 @@
               Approvals <span class="qbadge" id="manager-dash-leave-badge">3</span></div>
             <div class="quick-action" style="cursor:pointer;"
               onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-PermissionApprovals')">
-              Perm. Approvals <span class="qbadge">2</span></div>
+              Perm. Approvals <span class="qbadge" id="manager-dash-perm-badge">2</span></div>
             <div class="quick-action" style="cursor:pointer;"
               onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-HolidayCalendar')">Team
               Calendar</div>
@@ -7556,7 +7556,7 @@
             <div class="req-row">
               <div><b>Sneha Gupta</b>
                 <p>Earned Leave • Sep 15-19 (5 Days)</p>
-              </div><span class="badge warning">Pending</span>
+              </div><span id="dash-sneha-status-badge" class="badge warning">Pending</span>
             </div>
           </div>
         </div>
@@ -8911,15 +8911,14 @@
           store.EMP_STATUS_UPDATES = store.EMP_STATUS_UPDATES.filter(function(u) { return String(u.id) !== String(id); });
           store.EMP_STATUS_UPDATES.push({ id: id, status: newStatus, lType: lType, fromDate: fromDate });
 
-          // 6. Update tpl-ManagerDashboard template: remove approved/rejected request from Recent Requests
+          // 6. Update tpl-ManagerDashboard template: reflect updated status on Recent Requests
           const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
           if (mgrTpl) {
             let mgrHtml = mgrTpl.innerHTML;
             if (personKey === 'priya' || String(id) === '1' || lType === 'Casual Leave') {
-              mgrHtml = mgrHtml.replace(/<div[^>]*id="mgr-dash-req-priya"[\s\S]*?<\/div>\s*<\/div>/, '');
-            }
-            if (id) {
-              mgrHtml = mgrHtml.replace(new RegExp('<div[^>]*id="mgr-dash-req-' + id + '"[\\s\\S]*?<\\/div>\\s*<\\/div>'), '');
+              mgrHtml = mgrHtml.replace(/id="dash-priya-status-badge"\s+class="[^"]*">[^<]*/, 'id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText);
+            } else if (personKey === 'sneha' || String(id) === '2' || lType === 'Earned Leave') {
+              mgrHtml = mgrHtml.replace(/id="dash-sneha-status-badge"\s+class="[^"]*">[^<]*/, 'id="dash-sneha-status-badge" class="' + badgeClass + '">' + labelText);
             }
             mgrHtml = mgrHtml.replace(
               /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
@@ -8928,14 +8927,16 @@
             mgrTpl.innerHTML = mgrHtml;
           }
 
-          // Remove from live Manager Dashboard if currently visible
-          const priyaMgrCard = parentDoc.getElementById('mgr-dash-req-priya') || document.getElementById('mgr-dash-req-priya');
-          if (priyaMgrCard && (personKey === 'priya' || String(id) === '1' || lType === 'Casual Leave')) {
-            priyaMgrCard.remove();
+          // Update on live Manager Dashboard if currently rendered
+          const priyaMgrBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+          if (priyaMgrBadge && (personKey === 'priya' || String(id) === '1' || lType === 'Casual Leave')) {
+            priyaMgrBadge.className = badgeClass;
+            priyaMgrBadge.textContent = labelText;
           }
-          const liveMgrReqCard = parentDoc.getElementById('mgr-dash-req-' + id) || document.getElementById('mgr-dash-req-' + id);
-          if (liveMgrReqCard) {
-            liveMgrReqCard.remove();
+          const snehaMgrBadge = parentDoc.getElementById('dash-sneha-status-badge') || document.getElementById('dash-sneha-status-badge');
+          if (snehaMgrBadge && (personKey === 'sneha' || String(id) === '2' || lType === 'Earned Leave')) {
+            snehaMgrBadge.className = badgeClass;
+            snehaMgrBadge.textContent = labelText;
           }
           const liveMgrCount = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
           if (liveMgrCount) {
@@ -9693,20 +9694,38 @@
             }
           }
 
-          // 1. Update tpl-ManagerDashboard template element in outer document (remove approved/rejected request)
+          // 1. Update tpl-ManagerDashboard template element in outer document
           const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
           if (mgrTpl) {
             let tplHtml = mgrTpl.innerHTML;
-            if (currentPerson === 'priya' || currentPerson === '1' || (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType === 'Casual Leave')) {
-              tplHtml = tplHtml.replace(/<div[^>]*id="mgr-dash-req-priya"[\s\S]*?<\/div>\s*<\/div>/, '');
+            const pObj = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
+            const pName = pObj.name || (currentPerson === 'priya' ? 'Priya Sharma' : currentPerson === 'sneha' ? 'Sneha Gupta' : 'Employee');
+            const pType = pObj.leaveType || pObj.type || (pObj.isPermission ? 'Permission' : 'Leave');
+            const pTime = pObj.schedule || (pObj.fromDate ? pObj.fromDate + ' (' + (pObj.totalDays || pObj.duration || '1 Day') + ')' : 'Recent');
+
+            if (currentPerson === 'priya' || currentPerson === '1' || pName === 'Priya Sharma') {
+              if (pObj.isPermission) {
+                tplHtml = tplHtml.replace(/id="dash-priya-status-badge"\s+class="[^"]*">[^<]*/, 'id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText);
+                tplHtml = tplHtml.replace(/<p>Casual Leave[^<]*<\/p>/, '<p>' + pType + ' • ' + (pObj.schedule || 'Sep 04 (10:00 - 10:30 AM)') + '</p>');
+              } else {
+                tplHtml = tplHtml.replace(/id="dash-priya-status-badge"\s+class="[^"]*">[^<]*/, 'id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText);
+              }
+            } else if (currentPerson === 'sneha' || pName === 'Sneha Gupta') {
+              tplHtml = tplHtml.replace(/id="dash-sneha-status-badge"\s+class="[^"]*">[^<]*/, 'id="dash-sneha-status-badge" class="' + badgeClass + '">' + labelText);
+            } else {
+              if (tplHtml.indexOf('mgr-dash-req-' + currentPerson) !== -1) {
+                tplHtml = tplHtml.replace(new RegExp('id="mgr-dash-badge-' + currentPerson + '"\\s+class="[^"]*">[^<]*'), 'id="mgr-dash-badge-' + currentPerson + '" class="' + badgeClass + '">' + labelText);
+              } else {
+                const newCardHtml = '<div class="card req-card" id="mgr-dash-req-' + currentPerson + '" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + currentPerson + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + currentPerson + '\');"><div class="req-row"><div><b>' + pName + '</b><p>' + pType + ' • ' + pTime + '</p></div><span id="mgr-dash-badge-' + currentPerson + '" class="' + badgeClass + '">' + labelText + '</span></div></div>';
+                tplHtml = tplHtml.replace('<p class="section-label">RECENT REQUESTS</p>', '<p class="section-label">RECENT REQUESTS</p>\n          ' + newCardHtml);
+              }
             }
-            if (currentPerson) {
-              tplHtml = tplHtml.replace(new RegExp('<div[^>]*id="mgr-dash-req-' + currentPerson + '"[\\s\\S]*?<\\/div>\\s*<\\/div>'), '');
+
+            if (pObj.isPermission) {
+              tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-perm-badge">[0-9]+/, 'class="qbadge" id="manager-dash-perm-badge">1');
+            } else {
+              tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-leave-badge">[0-9]+/, 'class="qbadge" id="manager-dash-leave-badge">2');
             }
-            tplHtml = tplHtml.replace(
-              /class="qbadge" id="manager-dash-leave-badge">[0-9]+/,
-              'class="qbadge" id="manager-dash-leave-badge">2'
-            );
             mgrTpl.innerHTML = tplHtml;
           }
 
@@ -9733,14 +9752,11 @@
             empTpl.innerHTML = tplHtml;
           }
 
-          // 4. Remove from live Manager Dashboard if rendered
-          const priyaMgrCard = parentDoc.getElementById('mgr-dash-req-priya') || document.getElementById('mgr-dash-req-priya');
-          if (priyaMgrCard && (currentPerson === 'priya' || currentPerson === '1')) {
-            priyaMgrCard.remove();
-          }
-          const liveMgrReqCard = parentDoc.getElementById('mgr-dash-req-' + currentPerson) || document.getElementById('mgr-dash-req-' + currentPerson);
-          if (liveMgrReqCard) {
-            liveMgrReqCard.remove();
+          // 4. Update status on live Manager Dashboard if rendered
+          const priyaMgrBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+          if (priyaMgrBadge && (currentPerson === 'priya' || currentPerson === '1')) {
+            priyaMgrBadge.className = badgeClass;
+            priyaMgrBadge.textContent = labelText;
           }
 
           const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
@@ -9754,11 +9770,29 @@
             liveQBadge.textContent = '2';
           }
 
-          // 5. Navigate to Employee Dashboard page (not Manager Dashboard)
-          if (window.parent && window.parent.loadScreen) {
-            window.parent.loadScreen('tpl-EmployeeDashboard');
-          } else if (typeof loadScreen === 'function') {
-            loadScreen('tpl-EmployeeDashboard');
+          // 5. Update the current Request Detail screen's approval path, banner, and buttons dynamically
+          const mgrPath = document.getElementById('lad-manager-path');
+          if (mgrPath) {
+            mgrPath.className = isApproved ? 'done' : 'danger';
+            mgrPath.style.background = isApproved ? '#E3F8EE' : '#FCE4E4';
+            mgrPath.style.color = isApproved ? '#1FAE6E' : '#E5484D';
+            mgrPath.style.fontWeight = '700';
+            mgrPath.style.padding = '3px 10px';
+            mgrPath.style.borderRadius = '6px';
+            mgrPath.textContent = isApproved ? 'Manager (Approved)' : 'Manager (Rejected)';
+          }
+
+          const btnRow = document.getElementById('lad-btn-row');
+          if (btnRow) {
+            btnRow.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px;width:100%;">'
+              + '<div style="text-align:center;padding:12px;border-radius:12px;font-weight:700;font-size:15px;background:' + (isApproved ? '#E3F8EE' : '#FCE4E4') + ';color:' + (isApproved ? '#1FAE6E' : '#E5484D') + ';">'
+              + (isApproved ? '✓ Approved by Manager' : '✕ Rejected by Manager')
+              + '</div>'
+              + '<div style="display:flex;gap:10px;">'
+              + '<button class="btn ' + (isApproved ? 'outline-reject' : 'btn-primary') + '" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="handleDetailLeaveDecision(\'' + (isApproved ? 'rejected' : 'approved') + '\')">Change to ' + (isApproved ? 'Reject' : 'Approve') + '</button>'
+              + '<button class="btn btn-primary" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-ManagerDashboard\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-ManagerDashboard\');">Done →</button>'
+              + '</div>'
+              + '</div>';
           }
         }
 
@@ -10197,7 +10231,7 @@
           </div>
 
           <div id="permission-approvals-list">
-            <div class="card approval-card" data-perm-id="1" data-status="pending">
+            <div class="card approval-card" data-perm-id="1" data-status="pending" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail', 'perm-1');else if(typeof loadScreen==='function')loadScreen('tpl-LeaveApprovalDetail', 'perm-1');">
               <div class="top-row">
                 <div class="emp-row">
                   <div class="avatar">PS</div>
@@ -10212,12 +10246,12 @@
               <div class="detail-row"><span>Reason</span><b>Doctor appointment checkup</b></div>
               <div class="card-action-wrap">
                 <div class="btn-row"><button class="btn btn-reject"
-                    onclick="processPermAction('1', 'rejected')">Reject</button><button class="btn btn-approve"
-                    onclick="processPermAction('1', 'approved')">Approve</button></div>
+                    onclick="event.stopPropagation();processPermAction('1', 'rejected')">Reject</button><button class="btn btn-approve"
+                    onclick="event.stopPropagation();processPermAction('1', 'approved')">Approve</button></div>
               </div>
             </div>
 
-            <div class="card approval-card" data-perm-id="2" data-status="pending">
+            <div class="card approval-card" data-perm-id="2" data-status="pending" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail', 'perm-2');else if(typeof loadScreen==='function')loadScreen('tpl-LeaveApprovalDetail', 'perm-2');">
               <div class="top-row">
                 <div class="emp-row">
                   <div class="avatar">DK</div>
@@ -10232,8 +10266,8 @@
               <div class="detail-row"><span>Reason</span><b>Personal family errand...</b></div>
               <div class="card-action-wrap">
                 <div class="btn-row"><button class="btn btn-reject"
-                    onclick="processPermAction('2', 'rejected')">Reject</button><button class="btn btn-approve"
-                    onclick="processPermAction('2', 'approved')">Approve</button></div>
+                    onclick="event.stopPropagation();processPermAction('2', 'rejected')">Reject</button><button class="btn btn-approve"
+                    onclick="event.stopPropagation();processPermAction('2', 'approved')">Approve</button></div>
               </div>
             </div>
 
@@ -10583,15 +10617,29 @@
 
           function processPermAction(id, newStatus) {
             const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
-            let pType = 'Permission';
-            let pDate = '04-Sep-2026';
+            let pName = 'Priya Sharma';
+            let pInitials = 'PS';
+            let pRole = 'Senior Software Engineer';
+            let pEmpId = 'EMP-2024-0156';
+            let pType = 'Late Coming';
+            let pSchedule = 'Sep 04 (10:00 - 10:30 AM)';
+            let pDuration = '30 Mins';
+            let pReason = 'Doctor appointment checkup';
 
             if (card) {
               card.setAttribute('data-status', newStatus);
-              pType = card.getAttribute('data-type') || (card.querySelector('.emp-row p') ? card.querySelector('.emp-row p').textContent : 'Permission');
-              const scheduleEl = card.querySelector('.detail-row b');
-              if (scheduleEl) {
-                pDate = scheduleEl.textContent.split(' ')[0] || '04-Sep-2026';
+              pName = card.querySelector('.emp-row b') ? card.querySelector('.emp-row b').textContent.trim() : pName;
+              pInitials = card.querySelector('.avatar') ? card.querySelector('.avatar').textContent.trim() : pInitials;
+              pType = card.getAttribute('data-type') || (card.querySelector('.emp-row p') ? card.querySelector('.emp-row p').textContent.trim() : pType);
+              const schedEl = card.querySelector('.detail-row:nth-child(3) b');
+              const durEl = card.querySelector('.detail-row:nth-child(4) b');
+              const rsnEl = card.querySelector('.detail-row:nth-child(5) b');
+              if (schedEl) pSchedule = schedEl.textContent.trim();
+              if (durEl) pDuration = durEl.textContent.trim();
+              if (rsnEl) pReason = rsnEl.textContent.trim();
+              if (id === '2' || pName.indexOf('Deepak') !== -1) {
+                pRole = 'QA Engineer';
+                pEmpId = 'EMP-2024-0102';
               }
               const actionWrap = card.querySelector('.card-action-wrap');
               if (actionWrap) {
@@ -10601,26 +10649,61 @@
                   actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
                 }
               }
-            } else if (lastPermRequest && lastPermRequest.id === id) {
+            } else if (typeof lastPermRequest !== 'undefined' && lastPermRequest && lastPermRequest.id === id) {
+              pName = lastPermRequest.employeeName || pName;
+              pInitials = lastPermRequest.employeeInitials || pInitials;
+              pRole = 'Senior Software Engineer';
+              pEmpId = lastPermRequest.employeeId || pEmpId;
               pType = lastPermRequest.type;
-              pDate = lastPermRequest.date;
+              pSchedule = lastPermRequest.date + (lastPermRequest.start ? ' (' + lastPermRequest.start + ' - ' + lastPermRequest.end + ')' : '');
+              pDuration = lastPermRequest.duration;
+              pReason = lastPermRequest.reason;
             }
 
             updatePermTabCounts();
             renderPermissionApprovals();
 
-            // Persist decision globally
             const store = window.parent || window;
-            store.LAST_PERMISSION_DECISION = {
+            const defMgr = (store.USER_PROFILE && store.USER_PROFILE.reportingManager) ? store.USER_PROFILE.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Operations Manager)';
+            const permKey = 'perm-' + id;
+
+            const permPersonObj = {
               id: id,
-              status: newStatus,
+              permKey: permKey,
+              isPermission: true,
+              name: pName,
+              initials: pInitials,
+              role: pRole,
+              empId: pEmpId,
               type: pType,
-              date: pDate
+              leaveType: pType,
+              permissionType: pType,
+              schedule: pSchedule,
+              fromDate: pSchedule,
+              toDate: pSchedule,
+              duration: pDuration,
+              totalDays: pDuration,
+              reason: pReason,
+              status: newStatus,
+              approvingManager: defMgr,
+              contact: '+91 98765 22003',
+              emergencyContact: '+91 98765 22003',
+              subtitle: pType + ' Application',
+              appliedPath: pName.split(' ')[0] + ' (Applied)'
             };
+
+            if (!store.PERSON_DATA) store.PERSON_DATA = {};
+            store.PERSON_DATA[permKey] = permPersonObj;
+            store.PERSON_DATA[id] = permPersonObj;
+            store.SELECTED_PERSON = permKey;
+
+            // Persist decision globally
+            store.LAST_PERMISSION_DECISION = permPersonObj;
+            store.LAST_LEAVE_DECISION = permPersonObj;
 
             if (store.PERM_STATE) {
               store.PERM_STATE.forEach(function (req) {
-                if (req.id === id) req.status = newStatus;
+                if (String(req.id) === String(id)) req.status = newStatus;
               });
             }
 
@@ -10633,56 +10716,25 @@
               }
             });
             if (!foundEmpReq) {
-              var empProf = store.USER_PROFILE || {};
               store.EMP_LEAVE_REQUESTS.unshift({
                 id: id,
                 leaveType: pType,
-                fromDate: pDate,
-                daysText: (card && card.querySelector('.detail-row:nth-child(4) b') ? card.querySelector('.detail-row:nth-child(4) b').textContent : '30 Mins'),
-                reason: (card && card.querySelector('.detail-row:nth-child(5) b') ? card.querySelector('.detail-row:nth-child(5) b').textContent : 'Personal work'),
+                fromDate: pSchedule,
+                daysText: pDuration,
+                reason: pReason,
                 isPermission: true,
                 status: newStatus,
-                employeeName: empProf.name || 'Priya Sharma'
+                employeeName: pName
               });
             }
 
-            // Update Employee Dashboard template element in outer document
-            const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
-            const empTpl = parentDoc.getElementById('tpl-EmployeeDashboard');
-            if (empTpl) {
-              const isApp = newStatus === 'approved';
-              const bClass = isApp ? 'badge success' : 'badge danger';
-              const bText = isApp ? 'Approved' : 'Rejected';
-              let tplHtml = empTpl.innerHTML;
-              tplHtml = tplHtml.replace(
-                /<span[^>]*id="dash-perm-status-badge"[^>]*>[\s\S]*?<\/span>/,
-                '<span id="dash-perm-status-badge" class="' + bClass + '">' + bText + '</span>'
-              );
-              empTpl.innerHTML = tplHtml;
-            }
-
-            // Add notification item
-            const notifContainer = document.getElementById('notif-container') || parentDoc.getElementById('notif-container');
-            if (notifContainer) {
-              const isApprove = newStatus === 'approved';
-              const notifHtml = `<div class="card notif-card unread" style="margin-bottom:12px;"><div class="notif-row"><div class="ico ${isApprove ? 'success' : 'danger'}">${isApprove ? '✓' : '✕'}</div><div><b>Permission Request ${isApprove ? 'Approved' : 'Rejected'}</b><p>Your permission request for ${pType} (${pDate}) was ${isApprove ? 'Approved' : 'Rejected'} by Rahul Sharma.</p><span class="time">Just now</span></div></div></div>`;
-              notifContainer.insertAdjacentHTML('afterbegin', notifHtml);
-            }
-
-            // Update Employee Dashboard badge if present in active DOM
-            const dashBadge = parentDoc.getElementById('dash-perm-status-badge') || document.getElementById('dash-perm-status-badge');
-            if (dashBadge) {
-              dashBadge.textContent = newStatus === 'approved' ? 'Approved' : 'Rejected';
-              dashBadge.className = 'badge ' + (newStatus === 'approved' ? 'success' : 'danger');
-            }
-
-            // Navigate to Employee Dashboard page!
+            // Direct navigation to Request Detail page!
             if (store.loadScreen) {
-              store.loadScreen('tpl-EmployeeDashboard');
+              store.loadScreen('tpl-LeaveApprovalDetail', permKey);
             } else if (window.parent && window.parent.loadScreen) {
-              window.parent.loadScreen('tpl-EmployeeDashboard');
+              window.parent.loadScreen('tpl-LeaveApprovalDetail', permKey);
             } else if (typeof loadScreen === 'function') {
-              loadScreen('tpl-EmployeeDashboard');
+              loadScreen('tpl-LeaveApprovalDetail', permKey);
             }
           }
 
@@ -10847,6 +10899,48 @@
 
         var SELECTED_PERSON = 'priya';
         var PERSON_DATA = {
+          'perm-1': {
+            id: '1',
+            permKey: 'perm-1',
+            isPermission: true,
+            initials: 'PS',
+            name: 'Priya Sharma',
+            role: 'Senior Software Engineer',
+            empId: 'EMP-2024-0156',
+            type: 'Late Coming',
+            leaveType: 'Late Coming',
+            permissionType: 'Late Coming',
+            schedule: 'Sep 04 (10:00 - 10:30 AM)',
+            fromDate: 'Sep 04 (10:00 - 10:30 AM)',
+            duration: '30 Mins',
+            totalDays: '30 Mins',
+            emergencyContact: '+91 98765 22003',
+            reason: 'Doctor appointment checkup',
+            subtitle: 'Late Coming Application',
+            appliedPath: 'Priya (Applied)',
+            status: 'pending'
+          },
+          'perm-2': {
+            id: '2',
+            permKey: 'perm-2',
+            isPermission: true,
+            initials: 'DK',
+            name: 'Deepak Kumar',
+            role: 'QA Engineer',
+            empId: 'EMP-2024-0102',
+            type: 'Early Going',
+            leaveType: 'Early Going',
+            permissionType: 'Early Going',
+            schedule: 'Sep 05 (04:00 - 05:30 PM)',
+            fromDate: 'Sep 05 (04:00 - 05:30 PM)',
+            duration: '1.5 Hrs',
+            totalDays: '1.5 Hrs',
+            emergencyContact: '+91 98765 22003',
+            reason: 'Personal family errand...',
+            subtitle: 'Early Going Application',
+            appliedPath: 'Deepak (Applied)',
+            status: 'pending'
+          },
           'priya': {
             initials: 'PS',
             name: 'Priya Sharma',
@@ -11461,8 +11555,8 @@
             var empProf = window.USER_PROFILE || {};
             var dashboardEmpName = empProf.name || 'Priya Sharma';
 
-            // Employee name displayed on Request Detail must match Employee Dashboard exactly
-            if (!p.name || p.name === 'Priya Sharma' || p.name === dashboardEmpName || p.empId === (empProf.employeeId || 'EMP-2024-0156') || SELECTED_PERSON === 'priya' || p.isSelf) {
+            // Only override if employee is explicitly viewing their own request from employee dashboard
+            if (window.AUTH_USER && window.AUTH_USER.role === 'employee' && (p.isSelf || !p.name)) {
               p.name = dashboardEmpName;
               p.role = empProf.role || p.role || 'Senior Software Engineer';
               p.empId = empProf.employeeId || p.empId || 'EMP-2024-0156';
@@ -11497,17 +11591,16 @@
             if (isPerm) {
               if (elSecTitle) elSecTitle.textContent = 'PERMISSION SPECIFICS';
               if (elTypeLabel) elTypeLabel.textContent = 'Permission Type';
-              if (elLeaveType) elLeaveType.textContent = p.leaveType || p.type || 'Early Going';
-              if (elFromLabel) elFromLabel.textContent = 'Date';
-              if (elFromDate) elFromDate.textContent = p.fromDate || p.date || 'Sep 04, 2026';
+              if (elLeaveType) elLeaveType.textContent = p.leaveType || p.type || 'Late Coming';
+              if (elFromLabel) elFromLabel.textContent = 'Schedule';
+              if (elFromDate) elFromDate.textContent = p.schedule || p.fromDate || p.date || 'Sep 04 (10:00 - 10:30 AM)';
               if (elRowToDate) elRowToDate.style.display = 'none';
               if (elDurLabel) elDurLabel.textContent = 'Duration';
-              if (elTotalDays) elTotalDays.textContent = p.totalDays || p.duration || '2 Hours';
-              if (elContactLabel) elContactLabel.textContent = 'Approving Manager';
-              var defMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
-              if (elContact) elContact.textContent = p.approvingManager || p.contact || defMgr;
+              if (elTotalDays) elTotalDays.textContent = p.duration || p.totalDays || '30 Mins';
+              if (elContactLabel) elContactLabel.textContent = 'Emergency Contact';
+              if (elContact) elContact.textContent = p.emergencyContact || p.contact || '+91 98765 22003';
               if (elReasonLabel) elReasonLabel.textContent = 'Reason for Permission';
-              if (elReason) elReason.textContent = p.reason || 'Personal work / checkup';
+              if (elReason) elReason.textContent = p.reason || 'Doctor appointment checkup';
             } else {
               if (elSecTitle) elSecTitle.textContent = 'LEAVE SPECIFICS';
               if (elTypeLabel) elTypeLabel.textContent = 'Leave Type';
@@ -11527,7 +11620,8 @@
 
             // Update Approval Path node for Manager
             var mgrPath = doc.getElementById('lad-manager-path');
-            var dec = (p && p.status) || (window.LAST_LEAVE_DECISION && (window.LAST_LEAVE_DECISION.personKey === SELECTED_PERSON || (SELECTED_PERSON === 'priya' && window.LAST_LEAVE_DECISION.personKey === 'priya')) ? window.LAST_LEAVE_DECISION.status : null);
+            var rawStatus = (p && p.status) || (window.LAST_LEAVE_DECISION && (window.LAST_LEAVE_DECISION.personKey === SELECTED_PERSON || (SELECTED_PERSON === 'priya' && window.LAST_LEAVE_DECISION.personKey === 'priya')) ? window.LAST_LEAVE_DECISION.status : null);
+            var dec = (rawStatus || '').toLowerCase();
             if (mgrPath && dec && dec !== 'pending') {
               if (dec === 'approved') {
                 mgrPath.className = 'done';
@@ -11558,7 +11652,7 @@
                 + '</div>'
                 + '<div style="display:flex;gap:10px;">'
                 + '<button class="btn ' + (isApp ? 'outline-reject' : 'btn-primary') + '" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="handleDetailLeaveDecision(\'' + (isApp ? 'rejected' : 'approved') + '\')">Change to ' + (isApp ? 'Reject' : 'Approve') + '</button>'
-                + '<button class="btn btn-primary" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-EmployeeDashboard\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-EmployeeDashboard\');">Done →</button>'
+                + '<button class="btn btn-primary" style="flex:1;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-ManagerDashboard\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-ManagerDashboard\');">Done →</button>'
                 + '</div>'
                 + '</div>';
             }
@@ -11990,12 +12084,9 @@
                   employeeName: (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee'
                 });
 
-                // Navigate directly to Dashboard
-                if (window.AUTH_USER && window.AUTH_USER.role === 'manager') {
-                  loadScreen('tpl-ManagerDashboard');
-                } else {
-                  loadScreen('tpl-EmployeeDashboard');
-                }
+                // Navigate directly to Request Detail page with permKey
+                var permKey = 'perm-' + id;
+                loadScreen('tpl-LeaveApprovalDetail', permKey);
               };
             }
           }
@@ -12013,26 +12104,116 @@
                 alert('Access Restricted: Manager account is not authorized to access Notifications.');
               };
             }
-            var dec = window.LAST_LEAVE_DECISION;
-            // The approved or rejected request should not be displayed in the Manager Dashboard under Recent Requests
-            if (dec && (dec.status === 'approved' || dec.status === 'rejected')) {
-              var priyaCard = doc.getElementById('mgr-dash-req-priya');
-              if (priyaCard && (dec.personKey === 'priya' || dec.id === '1' || dec.lType === 'Casual Leave' || dec.name === 'Priya Sharma')) {
-                priyaCard.remove();
-              }
-              if (dec.id) {
-                var dynMgrEl = doc.getElementById('mgr-dash-req-' + dec.id);
-                if (dynMgrEl) dynMgrEl.remove();
+            // Sync decisions to Recent Requests cards
+            var recentReqContainer = null;
+            doc.querySelectorAll('.section-label').forEach(function(el) {
+              if (el.textContent.indexOf('RECENT REQUESTS') !== -1) recentReqContainer = el;
+            });
+
+            // 1. Priya Sharma status
+            var priyaStatus = (window.PERSON_DATA && window.PERSON_DATA['priya'] && window.PERSON_DATA['priya'].status) ||
+              (window.LAST_LEAVE_DECISION && (window.LAST_LEAVE_DECISION.personKey === 'priya' || window.LAST_LEAVE_DECISION.name === 'Priya Sharma') ? window.LAST_LEAVE_DECISION.status : null);
+            var priyaBadge = doc.getElementById('dash-priya-status-badge');
+            if (priyaBadge && priyaStatus && priyaStatus.toLowerCase() !== 'pending') {
+              var isApp = priyaStatus.toLowerCase() === 'approved';
+              priyaBadge.className = isApp ? 'badge success' : 'badge danger';
+              priyaBadge.textContent = isApp ? 'Approved' : 'Rejected';
+            }
+
+            // 2. Sneha Gupta status
+            var snehaStatus = (window.PERSON_DATA && window.PERSON_DATA['sneha'] && window.PERSON_DATA['sneha'].status) ||
+              (window.LAST_LEAVE_DECISION && (window.LAST_LEAVE_DECISION.personKey === 'sneha' || window.LAST_LEAVE_DECISION.name === 'Sneha Gupta') ? window.LAST_LEAVE_DECISION.status : null);
+            var snehaBadge = doc.getElementById('dash-sneha-status-badge') || (doc.getElementById('mgr-dash-req-sneha') ? doc.getElementById('mgr-dash-req-sneha').querySelector('.badge') : null);
+            if (snehaBadge && snehaStatus && snehaStatus.toLowerCase() !== 'pending') {
+              var sIsApp = snehaStatus.toLowerCase() === 'approved';
+              snehaBadge.className = sIsApp ? 'badge success' : 'badge danger';
+              snehaBadge.textContent = sIsApp ? 'Approved' : 'Rejected';
+            }
+
+            // 3. Permission decision reflection
+            var permDec = window.LAST_PERMISSION_DECISION;
+            if (permDec && permDec.status && permDec.status.toLowerCase() !== 'pending') {
+              var pIsApp = permDec.status.toLowerCase() === 'approved';
+              var pbClass = pIsApp ? 'badge success' : 'badge danger';
+              var pbText = pIsApp ? 'Approved' : 'Rejected';
+              var pKey = permDec.permKey || ('perm-' + (permDec.id || '1'));
+
+              if (permDec.id === '1' || permDec.name === 'Priya Sharma') {
+                if (priyaBadge) {
+                  priyaBadge.className = pbClass;
+                  priyaBadge.textContent = pbText;
+                  var priyaSub = doc.querySelector('#mgr-dash-req-priya .req-row p');
+                  if (priyaSub) {
+                    priyaSub.textContent = (permDec.type || 'Late Coming') + ' • ' + (permDec.schedule || 'Sep 04 (10:00 - 10:30 AM)');
+                  }
+                  var priyaCard = doc.getElementById('mgr-dash-req-priya');
+                  if (priyaCard) {
+                    priyaCard.onclick = function() {
+                      loadScreen('tpl-LeaveApprovalDetail', pKey);
+                    };
+                  }
+                }
+              } else {
+                var existingCard = doc.getElementById('mgr-dash-req-' + pKey);
+                if (existingCard) {
+                  var b = existingCard.querySelector('.badge');
+                  if (b) {
+                    b.className = pbClass;
+                    b.textContent = pbText;
+                  }
+                } else if (recentReqContainer) {
+                  var permCardHtml = '<div class="card req-card" id="mgr-dash-req-' + pKey + '" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + pKey + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + pKey + '\');">'
+                    + '<div class="req-row"><div><b>' + (permDec.name || 'Deepak Kumar') + '</b>'
+                    + '<p>' + (permDec.type || 'Early Going') + ' &bull; ' + (permDec.schedule || 'Sep 05 (04:00 - 05:30 PM)') + '</p>'
+                    + '</div><span class="' + pbClass + '">' + pbText + '</span></div></div>';
+                  recentReqContainer.insertAdjacentHTML('afterend', permCardHtml);
+                  var newCardEl = doc.getElementById('mgr-dash-req-' + pKey);
+                  if (newCardEl) {
+                    newCardEl.onclick = function() {
+                      loadScreen('tpl-LeaveApprovalDetail', pKey);
+                    };
+                  }
+                }
               }
             }
 
-            // Decrement Leave Approvals badge counter if decided
+            // 4. Additional/Custom leave requests
+            if (window.LATEST_LEAVE_REQUEST && window.LATEST_LEAVE_REQUEST.status && window.LATEST_LEAVE_REQUEST.status.toLowerCase() !== 'pending') {
+              var lReq = window.LATEST_LEAVE_REQUEST;
+              var lIsApp = lReq.status.toLowerCase() === 'approved';
+              var lbClass = lIsApp ? 'badge success' : 'badge danger';
+              var lbText = lIsApp ? 'Approved' : 'Rejected';
+              var lKey = lReq.id || 'leave-latest';
+              var existingLCard = doc.getElementById('mgr-dash-req-' + lKey);
+              if (existingLCard) {
+                var lb = existingLCard.querySelector('.badge');
+                if (lb) { lb.className = lbClass; lb.textContent = lbText; }
+              } else if (recentReqContainer && lReq.name !== 'Priya Sharma') {
+                var lCardHtml = '<div class="card req-card" id="mgr-dash-req-' + lKey + '" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + lKey + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + lKey + '\');">'
+                  + '<div class="req-row"><div><b>' + lReq.name + '</b>'
+                  + '<p>' + lReq.leaveType + ' &bull; ' + (lReq.fromDate || '07-Sep-2026') + ' (' + (lReq.totalDays || '1.0 Day') + ')</p>'
+                  + '</div><span class="' + lbClass + '">' + lbText + '</span></div></div>';
+                recentReqContainer.insertAdjacentHTML('afterend', lCardHtml);
+                var newLCardEl = doc.getElementById('mgr-dash-req-' + lKey);
+                if (newLCardEl) {
+                  newLCardEl.onclick = function() {
+                    loadScreen('tpl-LeaveApprovalDetail', lKey);
+                  };
+                }
+              }
+            }
+
+            // Decrement badge counters if decided
             var leaveBadge = doc.getElementById('manager-dash-leave-badge');
-            if (leaveBadge && dec) {
+            if (leaveBadge && window.LAST_LEAVE_DECISION && !window.LAST_LEAVE_DECISION.isPermission) {
               leaveBadge.textContent = '2';
             }
+            var permBadge = doc.getElementById('manager-dash-perm-badge');
+            if (permBadge && (window.LAST_PERMISSION_DECISION || (window.LAST_LEAVE_DECISION && window.LAST_LEAVE_DECISION.isPermission))) {
+              permBadge.textContent = '1';
+            }
 
-            // Inject any newly submitted leave requests under Recent Requests ONLY IF PENDING
+            // Inject any newly submitted leave requests under Recent Requests
             if (window.EMP_LEAVE_REQUESTS && window.EMP_LEAVE_REQUESTS.length > 0) {
               var recReqSection = null;
               doc.querySelectorAll('.section-label').forEach(function(el) {
@@ -12042,16 +12223,24 @@
                 window.EMP_LEAVE_REQUESTS.forEach(function(req) {
                   var rStatus = (req.status || 'pending').toLowerCase();
                   var existingEl = doc.getElementById('mgr-dash-req-' + req.id);
-                  // Approved or rejected requests MUST NOT be displayed in Manager Dashboard under Recent Requests
-                  if (rStatus === 'approved' || rStatus === 'rejected') {
-                    if (existingEl) existingEl.remove();
+                  var isApp = rStatus === 'approved';
+                  var isRej = rStatus === 'rejected';
+                  var reqBadgeClass = isApp ? 'badge success' : isRej ? 'badge danger' : 'badge warning';
+                  var reqBadgeText = isApp ? 'Approved' : isRej ? 'Rejected' : 'Pending';
+
+                  if (existingEl) {
+                    var b = existingEl.querySelector('.badge');
+                    if (b) {
+                      b.className = reqBadgeClass;
+                      b.textContent = reqBadgeText;
+                    }
                     return;
                   }
-                  if (existingEl) return;
+
                   var reqCardHtml = '<div class="card req-card" id="mgr-dash-req-' + req.id + '" style="cursor:pointer;">'
-                    + '<div class="req-row"><div><b>' + (req.employeeName || 'Priya Sharma') + '</b>'
+                    + '<div class="req-row"><div><b>' + (req.employeeName || 'Employee') + '</b>'
                     + '<p>' + (req.leaveType || 'Leave') + ' &bull; ' + (req.fromDate || '') + ' (' + (req.daysText || '1 Day') + ')</p>'
-                    + '</div><span class="badge warning">Pending</span></div></div>';
+                    + '</div><span class="' + reqBadgeClass + '">' + reqBadgeText + '</span></div></div>';
                   recReqSection.insertAdjacentHTML('afterend', reqCardHtml);
                   var insertedEl = doc.getElementById('mgr-dash-req-' + req.id);
                   if (insertedEl) {

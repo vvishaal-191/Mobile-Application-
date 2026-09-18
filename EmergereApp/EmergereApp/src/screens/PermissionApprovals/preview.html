@@ -85,20 +85,31 @@ function switchPermTab(status, el) {
 
 function processPermAction(id, newStatus) {
   const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
-  if (!card) return;
-  
-  card.setAttribute('data-status', newStatus);
-  const actionWrap = card.querySelector('.card-action-wrap');
-  if (actionWrap) {
-    if (newStatus === 'approved') {
-      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
-    } else {
-      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+  if (card) {
+    card.setAttribute('data-status', newStatus);
+    const actionWrap = card.querySelector('.card-action-wrap');
+    if (actionWrap) {
+      if (newStatus === 'approved') {
+        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
+      } else {
+        actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+      }
     }
+    updatePermTabCounts();
+    renderPermissionApprovals();
   }
 
-  updatePermTabCounts();
-  renderPermissionApprovals();
+  const permKey = 'perm-' + id;
+  if (window.parent && window.parent.loadScreen) {
+    if (window.parent.PERSON_DATA && window.parent.PERSON_DATA[permKey]) {
+      window.parent.PERSON_DATA[permKey].status = newStatus;
+      window.parent.LAST_PERMISSION_DECISION = window.parent.PERSON_DATA[permKey];
+      window.parent.LAST_LEAVE_DECISION = window.parent.PERSON_DATA[permKey];
+    }
+    window.parent.loadScreen('tpl-LeaveApprovalDetail', permKey);
+  } else {
+    window.location.href = '../LeaveApprovalDetail/preview.html?permId=' + id + '&status=' + newStatus;
+  }
 }
 
 function updatePermTabCounts() {
@@ -133,5 +144,19 @@ function renderPermissionApprovals() {
     msg.style.display = visibleCount === 0 ? 'block' : 'none';
   }
 }
+
+document.querySelectorAll('#permission-approvals-list .approval-card').forEach(card => {
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', function(e) {
+    if (e.target.closest('button')) return;
+    const id = this.getAttribute('data-perm-id');
+    const permKey = 'perm-' + id;
+    if (window.parent && window.parent.loadScreen) {
+      window.parent.loadScreen('tpl-LeaveApprovalDetail', permKey);
+    } else {
+      window.location.href = '../LeaveApprovalDetail/preview.html?permId=' + id;
+    }
+  });
+});
 </script>
 </body></html>

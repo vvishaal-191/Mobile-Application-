@@ -35,14 +35,9 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
     (typeof global !== 'undefined' && global.LATEST_REQUEST) ||
     DEFAULT_PERSON;
 
-  // If this represents the dashboard employee, use the exact name from the Employee Dashboard
+  const userRole = typeof global !== 'undefined' ? global.USER_ROLE : null;
   const isDashboardUser =
-    !rawPerson.name ||
-    rawPerson.name === 'Priya Sharma' ||
-    rawPerson.name === dashboardEmpName ||
-    rawPerson.empId === (profile.employeeId || 'EMP-2024-0156') ||
-    rawPerson.id === '1' ||
-    rawPerson.isSelf;
+    userRole === 'employee' && (rawPerson.isSelf || !rawPerson.name);
 
   const person = {
     ...rawPerson,
@@ -80,20 +75,24 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
   const initialDecision = route?.params?.decision || person.status || 'Pending';
   const [decision, setDecision] = useState(initialDecision);
 
-  const handleDecision = (status) => {
-    setDecision(status);
+  const isApproved = (decision || '').toLowerCase() === 'approved';
+  const isRejected = (decision || '').toLowerCase() === 'rejected';
+  const isDecided = isApproved || isRejected;
+
+  const handleDone = () => {
+    const finalDecision = isDecided ? (isApproved ? 'Approved' : 'Rejected') : 'Approved';
     const managerName =
       (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
-      'Your Manager';
+      'Rahul Sharma';
     const employeeName = person.name || 'Employee';
     const reqType = person.leaveType || person.type || (isPermission ? 'Permission' : 'Leave');
 
     // Build notification
     const notification = {
       id: Date.now().toString(),
-      icon: status === 'Approved' ? 'check-circle' : 'x-circle',
-      color: status === 'Approved' ? '#1FAE6E' : '#E5484D',
-      text: `Your ${reqType} request was ${status} by ${managerName}.`,
+      icon: finalDecision === 'Approved' ? 'check-circle' : 'x-circle',
+      color: finalDecision === 'Approved' ? '#1FAE6E' : '#E5484D',
+      text: `Your ${reqType} request was ${finalDecision} by ${managerName}.`,
       employeeName,
       time: 'Just now',
       unread: true,
@@ -107,46 +106,49 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
       if (isPermission) {
         global.LAST_PERMISSION_DECISION = {
           id: person.id || '1',
-          status,
+          status: finalDecision,
           type: reqType,
           name: employeeName,
+          schedule: person.schedule,
+          duration: person.duration,
         };
         if (global.PERMISSION_REQUESTS) {
           global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
-            r.id === person.id ? { ...r, status: status.toLowerCase() } : r
+            r.id === person.id ? { ...r, status: finalDecision.toLowerCase() } : r
           );
         }
       } else {
         global.LAST_LEAVE_DECISION = {
           id: person.id || '1',
-          status,
+          status: finalDecision,
           name: employeeName,
           type: reqType,
         };
         if (global.LEAVE_REQUESTS) {
           global.LEAVE_REQUESTS = global.LEAVE_REQUESTS.map((r) =>
-            r.id === person.id ? { ...r, status: status.toLowerCase() } : r
+            r.id === person.id ? { ...r, status: finalDecision.toLowerCase() } : r
           );
         }
       }
     }
 
     if (navigation) {
-      // Navigate to Employee Dashboard with updated status
-      navigation.navigate('EmployeeDashboard', {
+      // Navigate back to Manager Dashboard
+      navigation.navigate('ManagerDashboard', {
         requestId: person.id || '1',
-        newStatus: status,
+        newStatus: finalDecision,
         remarks: remarks,
         isPermission,
         permissionType: reqType,
-        duration: person.totalDays || person.duration,
+        person: {
+          ...person,
+          status: finalDecision,
+        },
       });
     }
   };
 
   const firstName = person.name ? person.name.split(' ')[0] : 'Employee';
-  const isApproved = decision.toLowerCase() === 'approved';
-  const isRejected = decision.toLowerCase() === 'rejected';
 
   const subHeader = isPermission
     ? `${person.leaveType || person.type || person.permissionType || 'Permission'} Application`
@@ -157,6 +159,13 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
       <ScreenHeader
         title="Request Detail"
         subtitle={subHeader}
+        onBack={() => {
+          if (isDecided) {
+            handleDone();
+          } else if (navigation) {
+            navigation.goBack();
+          }
+        }}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -180,32 +189,30 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
               link
             />
             <DetailRow
-              label="Date"
-              value={person.fromDate || person.date || 'Sep 04, 2026'}
+              label="Schedule"
+              value={
+                person.schedule ||
+                (person.fromDate ? `${person.fromDate} (${person.duration || '30 Mins'})` : 'Sep 04 (10:00 - 10:30 AM)')
+              }
             />
-            {person.schedule ? (
-              <DetailRow label="Schedule" value={person.schedule} />
-            ) : null}
             <DetailRow
               label="Duration"
-              value={person.totalDays || person.duration || '2 Hours'}
+              value={person.totalDays || person.duration || '30 Mins'}
               bold
             />
             <DetailRow
-              label="Approving Manager"
+              label="Emergency Contact"
               value={
-                person.approvingManager ||
                 person.emergencyContact ||
-                (profile.reportingManager
-                  ? `${profile.reportingManager} (Team Lead)`
-                  : 'Rahul Sharma (Team Lead)')
+                person.approvingManager ||
+                '+91 98765 22003'
               }
             />
 
             <View style={styles.reasonBlock}>
               <Text style={styles.reasonLabel}>Reason for Permission</Text>
               <Text style={styles.reasonText}>
-                {person.reason || 'Personal work / Medical checkup'}
+                {person.reason || 'Doctor appointment checkup'}
               </Text>
             </View>
           </Card>
@@ -257,6 +264,32 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
           </View>
         </Card>
 
+        {isDecided ? (
+          <View
+            style={[
+              styles.decisionBanner,
+              isApproved ? styles.decisionBannerApproved : styles.decisionBannerRejected,
+            ]}
+          >
+            <Text
+              style={[
+                styles.decisionBannerIcon,
+                { color: isApproved ? '#1FAE6E' : '#E5484D' },
+              ]}
+            >
+              {isApproved ? '✓' : '✕'}
+            </Text>
+            <Text
+              style={[
+                styles.decisionBannerText,
+                { color: isApproved ? '#0E6245' : '#8A1F1D' },
+              ]}
+            >
+              {isApproved ? 'Approved by Manager' : 'Rejected by Manager'}
+            </Text>
+          </View>
+        ) : null}
+
         <Text style={styles.remarksLabel}>Manager Remarks (Optional)</Text>
         <TextInput
           style={styles.remarksInput}
@@ -267,27 +300,50 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
           onChangeText={setRemarks}
         />
 
-        <View style={styles.actionsRow}>
-          <TouchableOpacity
-            style={[styles.rejectBtn, isRejected && { backgroundColor: '#E5484D' }]}
-            onPress={() => handleDecision('Rejected')}
-          >
-            <Text style={[styles.rejectText, isRejected && { color: '#FFFFFF' }]}>
-              {isRejected ? 'Rejected' : 'Reject'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.approveBtn, isApproved && { backgroundColor: '#1FAE6E' }]}
-            onPress={() => handleDecision('Approved')}
-          >
-            <Text style={[styles.approveText, isApproved && { color: '#FFFFFF' }]}>
-              {isApproved ? 'Approved' : 'Approve'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {isDecided ? (
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.changeBtn}
+              onPress={() => {
+                const toggled = isApproved ? 'Rejected' : 'Approved';
+                setDecision(toggled);
+              }}
+            >
+              <Text style={styles.changeBtnText}>
+                {isApproved ? 'Change to Reject' : 'Change to Approve'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.doneBtn}
+              onPress={handleDone}
+            >
+              <Text style={styles.doneBtnText}>Done →</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.rejectBtn}
+              onPress={() => setDecision('Rejected')}
+            >
+              <Text style={styles.rejectText}>Reject</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.approveBtn}
+              onPress={() => setDecision('Approved')}
+            >
+              <Text style={styles.approveText}>Approve</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
 
-      <BottomNavBar active="Dashboard" onNavigate={(screen) => navigation && navigation.navigate(screen)} />
+      <BottomNavBar
+        active="Dashboard"
+        onNavigate={(screen) =>
+          navigation && navigation.navigate(screen === 'Dashboard' ? 'ManagerDashboard' : screen)
+        }
+      />
     </View>
   );
 }
