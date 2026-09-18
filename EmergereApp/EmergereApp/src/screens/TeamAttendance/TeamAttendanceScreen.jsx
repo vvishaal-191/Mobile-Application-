@@ -134,7 +134,7 @@ export default function TeamAttendanceScreen({ navigation }) {
 
       <Text style={styles.sectionLabel}>TEAM MEMBERS ({MEMBERS.length})</Text>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         {MEMBERS.map((m) => (
           <Card key={m.id} style={styles.memberCard}>
             <View style={styles.memberRow}>

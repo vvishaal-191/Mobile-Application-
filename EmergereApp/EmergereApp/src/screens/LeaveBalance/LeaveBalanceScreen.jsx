@@ -19,7 +19,7 @@ export default function LeaveBalanceScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
           <Text style={styles.headerTitle}>Leave Balances</Text>

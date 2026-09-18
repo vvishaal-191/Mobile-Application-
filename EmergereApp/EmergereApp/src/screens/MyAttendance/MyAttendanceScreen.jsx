@@ -59,7 +59,7 @@ export default function MyAttendanceScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <Image
             source={require('../../../assets/emergere-logo.png')}
@@ -135,7 +135,7 @@ export default function MyAttendanceScreen({ navigation }) {
         >
           <View style={styles.monthPickerCard}>
             <Text style={styles.monthPickerTitle}>Select Month & Year</Text>
-            <ScrollView style={{ maxHeight: 300 }}>
+            <ScrollView style={{ maxHeight: 300 }} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
               {MONTHS_LIST.map((m) => (
                 <TouchableOpacity
                   key={m}

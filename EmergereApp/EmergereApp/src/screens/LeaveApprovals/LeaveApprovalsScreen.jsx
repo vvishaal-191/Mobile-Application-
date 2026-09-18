@@ -225,7 +225,7 @@ export default function LeaveApprovalsScreen({ navigation, route }) {
 
       <PillTabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         {filteredRequests.length === 0 ? (
           <Card style={styles.requestCard}>
             <Text style={{ textAlign: 'center', color: '#6B7280', paddingVertical: 20, fontWeight: '600' }}>

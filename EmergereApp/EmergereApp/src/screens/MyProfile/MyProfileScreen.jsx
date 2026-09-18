@@ -129,7 +129,7 @@ export default function MyProfileScreen({ navigation, route }) {
         onBack={() => navigation && navigation.goBack()}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <Card style={styles.profileCard}>
           <View style={styles.cardHeaderRightEdit}>
             {!isEditing ? (

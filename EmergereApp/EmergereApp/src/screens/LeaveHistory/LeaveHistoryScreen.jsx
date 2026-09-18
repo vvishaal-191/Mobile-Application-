@@ -101,7 +101,7 @@ export default function LeaveHistoryScreen({ navigation }) {
 
       <PillTabs tabs={TABS} active={tab} onChange={setTab} />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         {filtered.map((req) => {
           const isExpanded = expandedId === req.id;
           return (

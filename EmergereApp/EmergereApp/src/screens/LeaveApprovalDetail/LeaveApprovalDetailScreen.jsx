@@ -168,7 +168,7 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
         }}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <Card style={styles.employeeCard}>
           <View style={styles.employeeRow}>
             <Avatar initials={person.initials || 'PS'} size={56} />

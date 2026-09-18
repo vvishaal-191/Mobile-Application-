@@ -226,7 +226,7 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <View style={styles.topRow}>
           <View style={styles.brandRow}>
             <Image

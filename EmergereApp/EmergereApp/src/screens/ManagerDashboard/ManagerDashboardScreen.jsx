@@ -178,7 +178,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
             <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />

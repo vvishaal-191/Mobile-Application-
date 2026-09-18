@@ -99,7 +99,7 @@ export default function NotificationsScreen({ navigation, route }) {
         )}
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         {notifications.length > 0 ? (
           notifications.map((n) => (
             <Card key={n.id} style={[styles.notifCard, n.unread && styles.notifCardUnread]}>

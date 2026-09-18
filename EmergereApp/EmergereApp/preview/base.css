@@ -8,21 +8,65 @@
   --warning:#F5A623; --warning-bg:#FDF0DA; --purple:#8B5CF6; --purple-bg:#EFE9FE;
   --info:#2F6BFF; --info-bg:#E7EEFF; --border:#E7EAF0; --chip:#EEF2FF;
 }
-*{box-sizing:border-box;}
-body{
-  margin:0; font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
-  background:#dfe3ea; display:flex; align-items:flex-start; justify-content:center; padding:40px 0;
+/* Global scrollbar removal while preserving smooth scrolling */
+* {
+  box-sizing: border-box;
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
-.device{
-  width:390px; min-height:844px; background:var(--bg); border-radius:44px;
-  border:10px solid #0e1420; overflow:hidden; position:relative; box-shadow:0 20px 40px rgba(0,0,0,.25);
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.device::-webkit-scrollbar,
+.screen::-webkit-scrollbar,
+div::-webkit-scrollbar,
+iframe::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
-.statusbar{
-  display:none !important;
+body {
+  margin: 0;
+  font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #dfe3ea;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 0;
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
-.statusbar.dark{display:none !important;}
-.screen{ height:844px; overflow-y:auto; padding-top:16px; padding-bottom:90px; }
-.screen.dark{background:var(--navy);}
+.device {
+  width: 390px;
+  min-height: 844px;
+  background: var(--bg);
+  border-radius: 44px;
+  border: 10px solid #0e1420;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, .25);
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.statusbar {
+  display: none !important;
+}
+.statusbar.dark { display: none !important; }
+.screen {
+  height: 844px;
+  overflow-y: auto;
+  padding-top: 16px;
+  padding-bottom: 90px;
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.screen::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.screen.dark { background: var(--navy); }
 
 /* Header */
 .header{display:flex; align-items:flex-start; gap:12px; padding:8px 20px 16px;}
