@@ -9,63 +9,7 @@ import ScreenHeader from '../../components/ScreenHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './LeaveApprovalsScreen.styles';
 
-const INITIAL_REQUESTS = [
-  {
-    id: '1',
-    initials: 'PS',
-    name: 'Priya Sharma',
-    empId: 'EMP-2024-0156',
-    type: 'Casual Leave',
-    duration: '2 Days (Sep 10 - Sep 11)',
-    reason: "Sister's wedding ceremony...",
-    typeTone: 'info',
-    status: 'pending',
-  },
-  {
-    id: '2',
-    initials: 'AP',
-    name: 'Amit Patel',
-    empId: 'EMP-2024-0089',
-    type: 'Sick Leave',
-    duration: '1 Day (Sep 12)',
-    reason: 'Doctor appointment...',
-    typeTone: 'warning',
-    status: 'pending',
-  },
-  {
-    id: '3',
-    initials: 'SG',
-    name: 'Sneha Gupta',
-    empId: 'EMP-2024-0210',
-    type: 'Earned Leave',
-    duration: '3 Days (Sep 15 - Sep 17)',
-    reason: 'Family vacation...',
-    typeTone: 'purple',
-    status: 'pending',
-  },
-  {
-    id: '4',
-    initials: 'VS',
-    name: 'Vikram Singh',
-    empId: 'EMP-2024-0112',
-    type: 'Casual Leave',
-    duration: '1 Day (Sep 05)',
-    reason: 'Personal work',
-    typeTone: 'info',
-    status: 'approved',
-  },
-  {
-    id: '5',
-    initials: 'RV',
-    name: 'Ritu Verma',
-    empId: 'EMP-2024-0199',
-    type: 'Sick Leave',
-    duration: '2 Days (Sep 01 - Sep 02)',
-    reason: 'Severe flu',
-    typeTone: 'warning',
-    status: 'rejected',
-  },
-];
+const INITIAL_REQUESTS = [];
 
 /** Helper: get manager name from global profile for notification text */
 function getManagerName() {
