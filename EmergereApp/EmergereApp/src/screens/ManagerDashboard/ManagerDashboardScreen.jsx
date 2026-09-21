@@ -21,40 +21,7 @@ const INITIAL_QUICK_ACTIONS = [
   { key: 'TeamCalendar', label: 'Team Calendar', target: 'HolidayCalendar' },
 ];
 
-const INITIAL_RECENT_REQUESTS = [
-  {
-    id: '1',
-    name: 'Priya Sharma',
-    role: 'Senior Software Engineer',
-    empId: 'EMP-2024-0156',
-    initials: 'PS',
-    leaveType: 'Casual Leave',
-    fromDate: 'Sep 10, 2026',
-    toDate: 'Sep 11, 2026',
-    totalDays: '2 Days',
-    emergencyContact: '+91 98765 43210',
-    reason: "Family function - attending sister's wedding ceremony in Bangalore.",
-    subtitle: 'Casual Leave • Sep 10-11 (2 Days)',
-    status: 'Pending',
-    tone: 'warning',
-  },
-  {
-    id: '2',
-    name: 'Sneha Gupta',
-    role: 'Product Designer',
-    empId: 'EMP-2024-0210',
-    initials: 'SG',
-    leaveType: 'Earned Leave',
-    fromDate: 'Sep 15, 2026',
-    toDate: 'Sep 19, 2026',
-    totalDays: '5 Days',
-    emergencyContact: '+91 91234 56789',
-    reason: 'Personal leave - annual family vacation to Kerala with family.',
-    subtitle: 'Earned Leave • Sep 15-19 (5 Days)',
-    status: 'Pending',
-    tone: 'warning',
-  },
-];
+const INITIAL_RECENT_REQUESTS = [];
 
 export default function ManagerDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_RECENT_REQUESTS);
@@ -63,12 +30,12 @@ export default function ManagerDashboardScreen({ navigation, route }) {
   const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   useEffect(() => {
-    // Sync any new leave/permission requests submitted by employees
+    // Sync any leave/permission requests that have been decided (approved or rejected)
     const leaveReqs = (typeof global !== 'undefined' && global.LEAVE_REQUESTS) || [];
     const permReqs = (typeof global !== 'undefined' && global.PERMISSION_REQUESTS) || [];
 
     const allNew = [...leaveReqs, ...permReqs]
-      .filter((r) => r && r.id && (r.status || 'Pending').toLowerCase() === 'pending')
+      .filter((r) => r && r.id && (r.status || 'Pending').toLowerCase() !== 'pending')
       .map((r) => ({
         id: r.id,
         name: r.name || 'Employee',
