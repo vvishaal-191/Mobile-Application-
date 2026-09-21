@@ -16,8 +16,8 @@ const OVERVIEW = [
 
 const INITIAL_QUICK_ACTIONS = [
   { key: 'TeamAttendance', label: 'Team Attendance', target: 'TeamAttendance' },
-  { key: 'LeaveApprovals', label: 'Leave Approvals', badge: 3, target: 'LeaveApprovals' },
-  { key: 'PermissionApprovals', label: 'Perm. Approvals', badge: 2, target: 'PermissionApprovals' },
+  { key: 'LeaveApprovals', label: 'Leave Approvals', badge: 0, target: 'LeaveApprovals' },
+  { key: 'PermissionApprovals', label: 'Perm. Approvals', badge: 0, target: 'PermissionApprovals' },
   { key: 'TeamCalendar', label: 'Team Calendar', target: 'HolidayCalendar' },
 ];
 
@@ -149,7 +149,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
             return { ...qa, badge: 2 };
           }
           if (qa.key === 'PermissionApprovals' && (permDec || (isPermission && routeDecision))) {
-            return { ...qa, badge: 1 };
+            return { ...qa, badge: Math.max(0, (qa.badge || 0) - 1) };
           }
           return qa;
         })

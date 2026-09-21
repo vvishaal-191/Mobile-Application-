@@ -15,56 +15,7 @@ import ScreenHeader from '../../components/ScreenHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './PermissionApprovalsScreen.styles';
 
-const INITIAL_REQUESTS = [
-  {
-    id: '1',
-    initials: 'PS',
-    name: 'Priya Sharma',
-    type: 'Late Coming',
-    tag: 'Late Coming',
-    tagTone: 'purple',
-    schedule: 'Sep 04 (10:00 - 10:30 AM)',
-    duration: '30 Mins',
-    reason: 'Doctor appointment checkup',
-    status: 'pending',
-  },
-  {
-    id: '2',
-    initials: 'DK',
-    name: 'Deepak Kumar',
-    type: 'Early Going',
-    tag: 'Early Going',
-    tagTone: 'warning',
-    schedule: 'Sep 05 (04:00 - 05:30 PM)',
-    duration: '1.5 Hrs',
-    reason: 'Personal family errand...',
-    status: 'pending',
-  },
-  {
-    id: '3',
-    initials: 'RV',
-    name: 'Rahul Verma',
-    type: 'Official Work',
-    tag: 'Official Work',
-    tagTone: 'info',
-    schedule: 'Sep 03 (02:00 - 04:00 PM)',
-    duration: '2 Hrs',
-    reason: 'Client meeting visit',
-    status: 'approved',
-  },
-  {
-    id: '4',
-    initials: 'NG',
-    name: 'Neha Gupta',
-    type: 'Late Coming',
-    tag: 'Late Coming',
-    tagTone: 'purple',
-    schedule: 'Sep 01 (10:30 - 11:30 AM)',
-    duration: '1 Hr',
-    reason: 'Car breakdown',
-    status: 'rejected',
-  },
-];
+const INITIAL_REQUESTS = [];
 
 export default function PermissionApprovalsScreen({ navigation, route }) {
   const [activeTab, setActiveTab] = useState('pending');
@@ -73,23 +24,49 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
   const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   React.useEffect(() => {
+    const globalPerms = (typeof global !== 'undefined' && (global.PERMISSION_REQUESTS || global.PERM_STATE)) || [];
+    if (globalPerms.length > 0) {
+      setRequests((prev) => {
+        const existingIds = new Set(prev.map((r) => String(r.id)));
+        const fresh = globalPerms
+          .filter((r) => r && r.id && !existingIds.has(String(r.id)))
+          .map((r) => ({
+            id: String(r.id),
+            initials: r.employeeInitials || r.initials || 'EE',
+            name: r.employeeName || r.name || 'Employee',
+            type: r.type || 'Early Going',
+            tag: r.type || 'Early Going',
+            tagTone: r.type === 'Late Coming' ? 'purple' : r.type === 'Early Going' ? 'warning' : 'info',
+            schedule: r.schedule || (r.date ? `${r.date} (${r.duration || '2 Hours'})` : 'Today'),
+            duration: r.duration || '2 Hours',
+            reason: r.reason || 'Personal work',
+            status: (r.status || 'pending').toLowerCase(),
+          }));
+        if (fresh.length === 0) return prev;
+        return [...fresh, ...prev];
+      });
+    }
+
     if (route?.params?.newPermissionRequest) {
       const newReq = route.params.newPermissionRequest;
-      setRequests((prev) => [
-        {
-          id: newReq.id || Date.now().toString(),
-          initials: newReq.initials || 'PS',
-          name: newReq.name || 'Priya Sharma',
-          type: newReq.type || 'Early Going',
-          tag: newReq.type || 'Early Going',
-          tagTone: newReq.typeTone || 'purple',
-          schedule: newReq.schedule || 'Sep 04 (03:00 - 05:00 PM)',
-          duration: newReq.duration || '2 Hours',
-          reason: newReq.reason || 'Personal medical checkup',
-          status: 'pending',
-        },
-        ...prev,
-      ]);
+      setRequests((prev) => {
+        if (prev.some((r) => String(r.id) === String(newReq.id))) return prev;
+        return [
+          {
+            id: String(newReq.id || Date.now().toString()),
+            initials: newReq.initials || newReq.employeeInitials || 'EE',
+            name: newReq.name || newReq.employeeName || 'Employee',
+            type: newReq.type || 'Early Going',
+            tag: newReq.type || 'Early Going',
+            tagTone: newReq.type === 'Late Coming' ? 'purple' : newReq.type === 'Early Going' ? 'warning' : 'info',
+            schedule: newReq.schedule || (newReq.date ? `${newReq.date} (${newReq.duration || '2 Hours'})` : 'Sep 04 (03:00 - 05:00 PM)'),
+            duration: newReq.duration || '2 Hours',
+            reason: newReq.reason || 'Personal work',
+            status: (newReq.status || 'pending').toLowerCase(),
+          },
+          ...prev,
+        ];
+      });
     }
   }, [route?.params?.newPermissionRequest]);
 
@@ -143,18 +120,18 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
     const updatedItem = {
       ...(targetItem || {}),
       id,
-      name: targetItem?.name || 'Priya Sharma',
-      initials: targetItem?.initials || 'PS',
-      empId: targetItem?.empId || 'EMP-2024-0156',
-      role: targetItem?.role || 'Senior Software Engineer',
+      name: targetItem?.name || 'Employee',
+      initials: targetItem?.initials || 'EE',
+      empId: targetItem?.empId || (typeof global !== 'undefined' && global.USER_PROFILE?.employeeId) || 'EMP-2024-0101',
+      role: targetItem?.role || (typeof global !== 'undefined' && global.USER_PROFILE?.role) || 'Software Engineer',
       isPermission: true,
       type: targetItem?.type || 'Permission',
       leaveType: targetItem?.type || 'Permission',
       permissionType: targetItem?.type || 'Permission',
-      schedule: targetItem?.schedule || 'Sep 04 (10:00 - 10:30 AM)',
-      duration: targetItem?.duration || '30 Mins',
-      totalDays: targetItem?.duration || '30 Mins',
-      reason: targetItem?.reason || 'Doctor appointment checkup',
+      schedule: targetItem?.schedule || 'Today',
+      duration: targetItem?.duration || '2 Hours',
+      totalDays: targetItem?.duration || '2 Hours',
+      reason: targetItem?.reason || 'Personal work',
       emergencyContact: targetItem?.approvingManager || '+91 98765 22003',
       approvingManager: targetItem?.approvingManager || 'Rahul Sharma (Team Lead)',
       status: 'Approved',
@@ -202,18 +179,18 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
     const updatedItem = {
       ...(targetItem || {}),
       id,
-      name: targetItem?.name || 'Priya Sharma',
-      initials: targetItem?.initials || 'PS',
-      empId: targetItem?.empId || 'EMP-2024-0156',
-      role: targetItem?.role || 'Senior Software Engineer',
+      name: targetItem?.name || 'Employee',
+      initials: targetItem?.initials || 'EE',
+      empId: targetItem?.empId || (typeof global !== 'undefined' && global.USER_PROFILE?.employeeId) || 'EMP-2024-0101',
+      role: targetItem?.role || (typeof global !== 'undefined' && global.USER_PROFILE?.role) || 'Software Engineer',
       isPermission: true,
       type: targetItem?.type || 'Permission',
       leaveType: targetItem?.type || 'Permission',
       permissionType: targetItem?.type || 'Permission',
-      schedule: targetItem?.schedule || 'Sep 04 (10:00 - 10:30 AM)',
-      duration: targetItem?.duration || '30 Mins',
-      totalDays: targetItem?.duration || '30 Mins',
-      reason: targetItem?.reason || 'Doctor appointment checkup',
+      schedule: targetItem?.schedule || 'Today',
+      duration: targetItem?.duration || '2 Hours',
+      totalDays: targetItem?.duration || '2 Hours',
+      reason: targetItem?.reason || 'Personal work',
       emergencyContact: targetItem?.approvingManager || '+91 98765 22003',
       approvingManager: targetItem?.approvingManager || 'Rahul Sharma (Team Lead)',
       status: 'Rejected',

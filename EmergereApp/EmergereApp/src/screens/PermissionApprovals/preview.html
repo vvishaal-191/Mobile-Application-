@@ -7,57 +7,13 @@
 <div class="screen">
   <div class="header"><div class="back-btn">←</div><img class="mini-logo" src="../../../assets/emergere-logo.png" alt="Emergere Logo"/><div><h1>Permission Approvals</h1><p>Short-duration Passes</p></div></div>
     <div class="pill-tabs" id="perm-approval-tabs">
-    <div class="pill active" id="perm-tab-pending" onclick="switchPermTab('pending', this)">Pending (<span id="perm-count-pending">2</span>)</div>
-    <div class="pill" id="perm-tab-approved" onclick="switchPermTab('approved', this)">Approved (<span id="perm-count-approved">1</span>)</div>
-    <div class="pill" id="perm-tab-rejected" onclick="switchPermTab('rejected', this)">Rejected (<span id="perm-count-rejected">1</span>)</div>
+    <div class="pill active" id="perm-tab-pending" onclick="switchPermTab('pending', this)">Pending (<span id="perm-count-pending">0</span>)</div>
+    <div class="pill" id="perm-tab-approved" onclick="switchPermTab('approved', this)">Approved (<span id="perm-count-approved">0</span>)</div>
+    <div class="pill" id="perm-tab-rejected" onclick="switchPermTab('rejected', this)">Rejected (<span id="perm-count-rejected">0</span>)</div>
   </div>
 
   <div id="permission-approvals-list">
-    <div class="card approval-card" data-perm-id="1" data-status="pending">
-      <div class="top-row"><div class="emp-row"><div class="avatar">PS</div><div><b>Priya Sharma</b><p>Late Coming</p></div></div><span class="badge purple">Late Coming</span></div>
-      <hr/>
-      <div class="detail-row"><span>Schedule</span><b>Sep 04 (10:00 - 10:30 AM)</b></div>
-      <div class="detail-row"><span>Duration</span><b>30 Mins</b></div>
-      <div class="detail-row"><span>Reason</span><b>Doctor appointment checkup</b></div>
-      <div class="card-action-wrap">
-        <div class="btn-row"><button class="btn btn-reject" onclick="processPermAction('1', 'rejected')">Reject</button><button class="btn btn-approve" onclick="processPermAction('1', 'approved')">Approve</button></div>
-      </div>
-    </div>
-
-    <div class="card approval-card" data-perm-id="2" data-status="pending">
-      <div class="top-row"><div class="emp-row"><div class="avatar">DK</div><div><b>Deepak Kumar</b><p>Early Going</p></div></div><span class="badge warning">Early Going</span></div>
-      <hr/>
-      <div class="detail-row"><span>Schedule</span><b>Sep 05 (04:00 - 05:30 PM)</b></div>
-      <div class="detail-row"><span>Duration</span><b>1.5 Hrs</b></div>
-      <div class="detail-row"><span>Reason</span><b>Personal family errand...</b></div>
-      <div class="card-action-wrap">
-        <div class="btn-row"><button class="btn btn-reject" onclick="processPermAction('2', 'rejected')">Reject</button><button class="btn btn-approve" onclick="processPermAction('2', 'approved')">Approve</button></div>
-      </div>
-    </div>
-
-    <div class="card approval-card" data-perm-id="3" data-status="approved" style="display:none;">
-      <div class="top-row"><div class="emp-row"><div class="avatar">RV</div><div><b>Rahul Verma</b><p>Official Work</p></div></div><span class="badge info">Official Work</span></div>
-      <hr/>
-      <div class="detail-row"><span>Schedule</span><b>Sep 03 (02:00 - 04:00 PM)</b></div>
-      <div class="detail-row"><span>Duration</span><b>2 Hrs</b></div>
-      <div class="detail-row"><span>Reason</span><b>Client meeting visit</b></div>
-      <div class="card-action-wrap">
-        <div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>
-      </div>
-    </div>
-
-    <div class="card approval-card" data-perm-id="4" data-status="rejected" style="display:none;">
-      <div class="top-row"><div class="emp-row"><div class="avatar">NG</div><div><b>Neha Gupta</b><p>Late Coming</p></div></div><span class="badge purple">Late Coming</span></div>
-      <hr/>
-      <div class="detail-row"><span>Schedule</span><b>Sep 01 (10:30 - 11:30 AM)</b></div>
-      <div class="detail-row"><span>Duration</span><b>1 Hr</b></div>
-      <div class="detail-row"><span>Reason</span><b>Car breakdown</b></div>
-      <div class="card-action-wrap">
-        <div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>
-      </div>
-    </div>
-
-    <div id="no-perm-msg" style="display:none; text-align:center; padding:30px 20px; color:var(--text-secondary); font-size:14px; background:#fff; margin:0 20px; border-radius:16px; border:1px solid var(--border);">
+    <div id="no-perm-msg" style="display:block; text-align:center; padding:30px 20px; color:var(--text-secondary); font-size:14px; background:#fff; margin:0 20px; border-radius:16px; border:1px solid var(--border);">
       No permission requests found in this category.
     </div>
   </div>

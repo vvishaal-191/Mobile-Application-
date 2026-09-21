@@ -7884,7 +7884,7 @@
               Approvals <span class="qbadge" id="manager-dash-leave-badge">0</span></div>
             <div class="quick-action" style="cursor:pointer;"
               onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-PermissionApprovals')">
-              Perm. Approvals <span class="qbadge" id="manager-dash-perm-badge">2</span></div>
+              Perm. Approvals <span class="qbadge" id="manager-dash-perm-badge">0</span></div>
             <div class="quick-action" style="cursor:pointer;"
               onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-HolidayCalendar')">Team
               Calendar</div>
@@ -10493,92 +10493,16 @@
           </div>
           <div class="pill-tabs" id="perm-approval-tabs">
             <div class="pill active" id="perm-tab-pending" onclick="switchPermTab('pending', this)">Pending (<span
-                id="perm-count-pending">2</span>)</div>
+                id="perm-count-pending">0</span>)</div>
             <div class="pill" id="perm-tab-approved" onclick="switchPermTab('approved', this)">Approved (<span
-                id="perm-count-approved">1</span>)</div>
+                id="perm-count-approved">0</span>)</div>
             <div class="pill" id="perm-tab-rejected" onclick="switchPermTab('rejected', this)">Rejected (<span
-                id="perm-count-rejected">1</span>)</div>
+                id="perm-count-rejected">0</span>)</div>
           </div>
 
           <div id="permission-approvals-list">
-            <div class="card approval-card" data-perm-id="1" data-status="pending" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail', 'perm-1');else if(typeof loadScreen==='function')loadScreen('tpl-LeaveApprovalDetail', 'perm-1');">
-              <div class="top-row">
-                <div class="emp-row">
-                  <div class="avatar">PS</div>
-                  <div><b>Priya Sharma</b>
-                    <p>Late Coming</p>
-                  </div>
-                </div><span class="badge purple">Late Coming</span>
-              </div>
-              <hr />
-              <div class="detail-row"><span>Schedule</span><b>Sep 04 (10:00 - 10:30 AM)</b></div>
-              <div class="detail-row"><span>Duration</span><b>30 Mins</b></div>
-              <div class="detail-row"><span>Reason</span><b>Doctor appointment checkup</b></div>
-              <div class="card-action-wrap">
-                <div class="btn-row"><button class="btn btn-reject"
-                    onclick="event.stopPropagation();processPermAction('1', 'rejected')">Reject</button><button class="btn btn-approve"
-                    onclick="event.stopPropagation();processPermAction('1', 'approved')">Approve</button></div>
-              </div>
-            </div>
-
-            <div class="card approval-card" data-perm-id="2" data-status="pending" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-LeaveApprovalDetail', 'perm-2');else if(typeof loadScreen==='function')loadScreen('tpl-LeaveApprovalDetail', 'perm-2');">
-              <div class="top-row">
-                <div class="emp-row">
-                  <div class="avatar">DK</div>
-                  <div><b>Deepak Kumar</b>
-                    <p>Early Going</p>
-                  </div>
-                </div><span class="badge warning">Early Going</span>
-              </div>
-              <hr />
-              <div class="detail-row"><span>Schedule</span><b>Sep 05 (04:00 - 05:30 PM)</b></div>
-              <div class="detail-row"><span>Duration</span><b>1.5 Hrs</b></div>
-              <div class="detail-row"><span>Reason</span><b>Personal family errand...</b></div>
-              <div class="card-action-wrap">
-                <div class="btn-row"><button class="btn btn-reject"
-                    onclick="event.stopPropagation();processPermAction('2', 'rejected')">Reject</button><button class="btn btn-approve"
-                    onclick="event.stopPropagation();processPermAction('2', 'approved')">Approve</button></div>
-              </div>
-            </div>
-
-            <div class="card approval-card" data-perm-id="3" data-status="approved" style="display:none;">
-              <div class="top-row">
-                <div class="emp-row">
-                  <div class="avatar">RV</div>
-                  <div><b>Rahul Verma</b>
-                    <p>Official Work</p>
-                  </div>
-                </div><span class="badge info">Official Work</span>
-              </div>
-              <hr />
-              <div class="detail-row"><span>Schedule</span><b>Sep 03 (02:00 - 04:00 PM)</b></div>
-              <div class="detail-row"><span>Duration</span><b>2 Hrs</b></div>
-              <div class="detail-row"><span>Reason</span><b>Client meeting visit</b></div>
-              <div class="card-action-wrap">
-                <div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>
-              </div>
-            </div>
-
-            <div class="card approval-card" data-perm-id="4" data-status="rejected" style="display:none;">
-              <div class="top-row">
-                <div class="emp-row">
-                  <div class="avatar">NG</div>
-                  <div><b>Neha Gupta</b>
-                    <p>Late Coming</p>
-                  </div>
-                </div><span class="badge purple">Late Coming</span>
-              </div>
-              <hr />
-              <div class="detail-row"><span>Schedule</span><b>Sep 01 (10:30 - 11:30 AM)</b></div>
-              <div class="detail-row"><span>Duration</span><b>1 Hr</b></div>
-              <div class="detail-row"><span>Reason</span><b>Car breakdown</b></div>
-              <div class="card-action-wrap">
-                <div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>
-              </div>
-            </div>
-
             <div id="no-perm-msg"
-              style="display:none; text-align:center; padding:30px 20px; color:var(--text-secondary); font-size:14px; background:#fff; margin:0 20px; border-radius:16px; border:1px solid var(--border);">
+              style="display:block; text-align:center; padding:30px 20px; color:var(--text-secondary); font-size:14px; background:#fff; margin:0 20px; border-radius:16px; border:1px solid var(--border);">
               No permission requests found in this category.
             </div>
           </div>
@@ -10769,7 +10693,7 @@
              // Read employee profile from parent window
             const store = window.parent || window;
             const empProf = (store.USER_PROFILE) || {};
-            const empName = empProf.name || 'Priya Sharma';
+            const empName = empProf.name || 'Employee';
             const empInitials = empProf.initials ||
               (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2)) || 'PS';
             const empId = empProf.employeeId || 'EMP-2024-0156';
@@ -10887,7 +10811,7 @@
 
           function processPermAction(id, newStatus) {
             const card = document.querySelector(`#permission-approvals-list .approval-card[data-perm-id="${id}"]`);
-            let pName = 'Priya Sharma';
+            let pName = 'Employee';
             let pInitials = 'PS';
             let pRole = 'Senior Software Engineer';
             let pEmpId = 'EMP-2024-0156';
@@ -11156,48 +11080,6 @@
 
         var SELECTED_PERSON = 'priya';
         var PERSON_DATA = {
-          'perm-1': {
-            id: '1',
-            permKey: 'perm-1',
-            isPermission: true,
-            initials: 'PS',
-            name: 'Priya Sharma',
-            role: 'Senior Software Engineer',
-            empId: 'EMP-2024-0156',
-            type: 'Late Coming',
-            leaveType: 'Late Coming',
-            permissionType: 'Late Coming',
-            schedule: 'Sep 04 (10:00 - 10:30 AM)',
-            fromDate: 'Sep 04 (10:00 - 10:30 AM)',
-            duration: '30 Mins',
-            totalDays: '30 Mins',
-            emergencyContact: '+91 98765 22003',
-            reason: 'Doctor appointment checkup',
-            subtitle: 'Late Coming Application',
-            appliedPath: 'Priya (Applied)',
-            status: 'pending'
-          },
-          'perm-2': {
-            id: '2',
-            permKey: 'perm-2',
-            isPermission: true,
-            initials: 'DK',
-            name: 'Deepak Kumar',
-            role: 'QA Engineer',
-            empId: 'EMP-2024-0102',
-            type: 'Early Going',
-            leaveType: 'Early Going',
-            permissionType: 'Early Going',
-            schedule: 'Sep 05 (04:00 - 05:30 PM)',
-            fromDate: 'Sep 05 (04:00 - 05:30 PM)',
-            duration: '1.5 Hrs',
-            totalDays: '1.5 Hrs',
-            emergencyContact: '+91 98765 22003',
-            reason: 'Personal family errand...',
-            subtitle: 'Early Going Application',
-            appliedPath: 'Deepak (Applied)',
-            status: 'pending'
-          },
           'priya': {
             initials: 'PS',
             name: 'Priya Sharma',
@@ -12323,93 +12205,274 @@
           }
 
           // ── Permission Approvals: inject new requests & wire approve/reject ──
+          // ── Permission Approvals: dynamic action-driven list (no default cards) ─────
           if (currentTpl === 'tpl-PermissionApprovals') {
-            // Inject any pending requests from PERM_STATE that don't already exist in the DOM
             var paList = doc.getElementById('permission-approvals-list');
+            var noPermMsg = doc.getElementById('no-perm-msg');
+
+            // Remove any legacy static cards if any exist
+            doc.querySelectorAll('#permission-approvals-list .approval-card[data-perm-id="1"], #permission-approvals-list .approval-card[data-perm-id="2"], #permission-approvals-list .approval-card[data-perm-id="3"], #permission-approvals-list .approval-card[data-perm-id="4"]').forEach(function (el) {
+              var nameText = el.querySelector('b') ? el.querySelector('b').textContent : '';
+              if (nameText === 'Priya Sharma' || nameText === 'Deepak Kumar' || nameText === 'Rahul Verma' || nameText === 'Neha Gupta') {
+                el.remove();
+              }
+            });
+
+            // Collect all permission requests from PERM_STATE and EMP_LEAVE_REQUESTS
+            var allPerms = window.PERM_STATE || [];
+            if (window.EMP_LEAVE_REQUESTS) {
+              window.EMP_LEAVE_REQUESTS.forEach(function (r) {
+                if (r.isPermission) {
+                  var existsInPermState = allPerms.some(function (p) {
+                    return String(p.id) === String(r.id) || (p.employeeName === r.employeeName && p.type === r.leaveType && p.date === r.fromDate);
+                  });
+                  if (!existsInPermState) {
+                    var permEmpName = r.employeeName || 'Employee';
+                    var permInitials = r.employeeInitials || permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+                    allPerms.push({
+                      id: r.id,
+                      type: r.leaveType || r.type || 'Early Going',
+                      date: r.fromDate || r.date || '04-Sep-2026',
+                      duration: r.daysText || r.duration || '2 Hours',
+                      reason: r.reason || 'Personal work',
+                      status: r.status || 'pending',
+                      employeeName: permEmpName,
+                      employeeInitials: permInitials,
+                      employeeId: r.employeeId || 'EMP-2024-0000',
+                      approvingManager: r.approvingManager || 'Rahul Sharma (Team Lead)'
+                    });
+                  }
+                }
+              });
+            }
+            window.PERM_STATE = allPerms;
+
+            // Ensure PERSON_DATA has all submitted permission requests for detail view
+            if (!window.PERSON_DATA) window.PERSON_DATA = {};
+            allPerms.forEach(function (req) {
+              var permKey = 'perm-' + req.id;
+              var empName = req.employeeName || 'Employee';
+              var empInitials = req.employeeInitials || empName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+              var empId = req.employeeId || 'EMP-2024-0000';
+              var pType = req.type || 'Early Going';
+              var pDate = req.date || '04-Sep-2026';
+              var pDuration = req.duration || '2 Hours';
+              var pReason = req.reason || 'Personal work';
+              var pManager = req.approvingManager || 'Rahul Sharma (Team Lead)';
+
+              var permPersonObj = {
+                id: req.id,
+                permKey: permKey,
+                isPermission: true,
+                type: pType,
+                leaveType: pType,
+                permissionType: pType,
+                date: pDate,
+                fromDate: pDate,
+                toDate: pDate,
+                schedule: pDate + ' (' + pDuration + ')',
+                duration: pDuration,
+                totalDays: pDuration,
+                reason: pReason,
+                status: req.status || 'pending',
+                employeeName: empName,
+                name: empName,
+                employeeInitials: empInitials,
+                initials: empInitials,
+                employeeId: empId,
+                empId: empId,
+                role: req.role || 'Software Engineer',
+                approvingManager: pManager,
+                contact: '+91 98765 22003',
+                emergencyContact: '+91 98765 22003',
+                subtitle: pType + ' Application',
+                appliedPath: empName.split(' ')[0] + ' (Applied)'
+              };
+
+              if (!window.PERSON_DATA[permKey]) window.PERSON_DATA[permKey] = permPersonObj;
+              if (!window.PERSON_DATA[req.id]) window.PERSON_DATA[req.id] = permPersonObj;
+            });
+
+            // Synchronize cards in #permission-approvals-list
             if (paList) {
-              window.PERM_STATE.forEach(function (req) {
-                if (!paList.querySelector('[data-perm-id="' + req.id + '"]')) {
-                  var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
-                  var actionHtml = req.status === 'pending'
-                    ? '<div class="btn-row"><button class="btn btn-reject" onclick="event.stopPropagation();processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="event.stopPropagation();processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>'
-                    : '<div style="text-align:right;margin-top:8px;"><span class="badge ' + (req.status === 'approved' ? 'success' : 'danger') + '">' + (req.status === 'approved' ? 'Approved' : 'Rejected') + '</span></div>';
-                  var reqEmpName = req.employeeName || (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee';
-                  var reqEmpInitials = req.employeeInitials || (reqEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2));
-                  var cardHtml = '<div class="card approval-card" data-perm-id="' + req.id + '" data-status="' + req.status + '" data-type="' + req.type + '" data-date="' + req.date + '" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + req.id + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + req.id + '\');">'
-                    + '<div class="top-row"><div class="emp-row"><div class="avatar">' + reqEmpInitials + '</div><div><b>' + reqEmpName + '</b><p>' + req.type + '</p></div></div><span class="badge ' + tone + '">' + req.type + '</span></div>'
+              allPerms.forEach(function (req) {
+                var existingCard = paList.querySelector('[data-perm-id="' + req.id + '"]');
+                var reqStatus = (req.status || 'pending').toLowerCase();
+                var tone = req.type === 'Late Coming' ? 'purple' : req.type === 'Early Going' ? 'warning' : 'info';
+                var reqEmpName = req.employeeName || 'Employee';
+                var reqEmpInitials = req.employeeInitials || reqEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+                var scheduleText = req.schedule || (req.date ? req.date + (req.duration ? ' (' + req.duration + ')' : '') : 'Recent');
+
+                var actionHtml = '';
+                if (reqStatus === 'approved') {
+                  actionHtml = '<div style="text-align:right;margin-top:8px;"><span class="badge success">Approved</span></div>';
+                } else if (reqStatus === 'rejected') {
+                  actionHtml = '<div style="text-align:right;margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+                } else {
+                  actionHtml = '<div class="btn-row"><button class="btn btn-reject" onclick="event.stopPropagation();processPermAction(\'' + req.id + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="event.stopPropagation();processPermAction(\'' + req.id + '\', \'approved\')">Approve</button></div>';
+                }
+
+                if (existingCard) {
+                  existingCard.setAttribute('data-status', reqStatus);
+                  var actionWrap = existingCard.querySelector('.card-action-wrap');
+                  if (actionWrap) actionWrap.innerHTML = actionHtml;
+                } else {
+                  var cardDiv = doc.createElement('div');
+                  cardDiv.className = 'card approval-card';
+                  cardDiv.setAttribute('data-perm-id', req.id);
+                  cardDiv.setAttribute('data-status', reqStatus);
+                  cardDiv.setAttribute('data-type', req.type || 'Permission');
+                  cardDiv.setAttribute('data-date', req.date || '');
+                  cardDiv.style.cursor = 'pointer';
+                  cardDiv.innerHTML = '<div class="top-row"><div class="emp-row"><div class="avatar">' + reqEmpInitials + '</div><div><b>' + reqEmpName + '</b><p>' + (req.type || 'Permission') + '</p></div></div><span class="badge ' + tone + '">' + (req.type || 'Permission') + '</span></div>'
                     + '<hr/>'
-                    + '<div class="detail-row"><span>Date</span><b>' + req.date + '</b></div>'
-                    + '<div class="detail-row"><span>Duration</span><b>' + req.duration + '</b></div>'
-                    + '<div class="detail-row"><span>Reason</span><b>' + req.reason + '</b></div>'
-                    + '<div class="card-action-wrap">' + actionHtml + '</div>'
-                    + '</div>';
-                  paList.insertAdjacentHTML('afterbegin', cardHtml);
+                    + '<div class="detail-row"><span>Schedule</span><b>' + scheduleText + '</b></div>'
+                    + '<div class="detail-row"><span>Duration</span><b>' + (req.duration || '2 Hours') + '</b></div>'
+                    + '<div class="detail-row"><span>Reason</span><b>' + (req.reason || 'Personal work') + '</b></div>'
+                    + '<div class="card-action-wrap">' + actionHtml + '</div>';
+
+                  cardDiv.addEventListener('click', function(e) {
+                    if (e.target.tagName !== 'BUTTON') {
+                      loadScreen('tpl-LeaveApprovalDetail', 'perm-' + req.id);
+                    }
+                  });
+
+                  if (noPermMsg) {
+                    paList.insertBefore(cardDiv, noPermMsg);
+                  } else {
+                    paList.appendChild(cardDiv);
+                  }
                 }
               });
             }
 
-            // Override processPermAction to also persist back to PERM_STATE and navigate to Employee Dashboard
+            // Function to sync tab visibility and tab counters
+            function syncPermTabs() {
+              var cards = paList ? paList.querySelectorAll('.approval-card') : [];
+              var pCount = 0, aCount = 0, rCount = 0, curVisible = 0;
+              var activeTabEl = doc.querySelector('#perm-approval-tabs .pill.active');
+              var curTab = activeTabEl ? (activeTabEl.id.indexOf('approved') !== -1 ? 'approved' : activeTabEl.id.indexOf('rejected') !== -1 ? 'rejected' : 'pending') : 'pending';
+
+              cards.forEach(function (card) {
+                var st = (card.getAttribute('data-status') || 'pending').toLowerCase();
+                if (st === 'approved') aCount++;
+                else if (st === 'rejected') rCount++;
+                else pCount++;
+
+                if (st === curTab) {
+                  card.style.display = 'block';
+                  curVisible++;
+                } else {
+                  card.style.display = 'none';
+                }
+              });
+
+              var pEl = doc.getElementById('perm-count-pending');
+              var aEl = doc.getElementById('perm-count-approved');
+              var rEl = doc.getElementById('perm-count-rejected');
+              if (pEl) pEl.textContent = pCount;
+              if (aEl) aEl.textContent = aCount;
+              if (rEl) rEl.textContent = rCount;
+
+              if (noPermMsg) {
+                noPermMsg.style.display = curVisible === 0 ? 'block' : 'none';
+              }
+
+              // Update Manager Dashboard Perm Badge
+              var mgrPermBadge = doc.getElementById('manager-dash-perm-badge');
+              if (mgrPermBadge) mgrPermBadge.textContent = pCount;
+            }
+
+            syncPermTabs();
+
+            // Override switchPermTab and processPermAction in iframe
             var iframeWin2 = frame.contentWindow;
             if (iframeWin2) {
-              var _origProcessPerm = iframeWin2.processPermAction;
+              iframeWin2.switchPermTab = function(status, el) {
+                var pills = el.parentElement.querySelectorAll('.pill');
+                pills.forEach(function(p) { p.classList.remove('active'); });
+                el.classList.add('active');
+                syncPermTabs();
+              };
+
               iframeWin2.processPermAction = function (id, newStatus) {
-                if (typeof _origProcessPerm === 'function') _origProcessPerm(id, newStatus);
-                // Update PERM_STATE
-                window.PERM_STATE.forEach(function (req) {
-                  if (req.id === id) req.status = newStatus;
+                var targetPerm = null;
+                (window.PERM_STATE || []).forEach(function (req) {
+                  if (String(req.id) === String(id) || ('perm-' + req.id) === String(id)) {
+                    req.status = newStatus;
+                    targetPerm = req;
+                  }
                 });
 
-                var pType = 'Permission';
-                var pDate = '04-Sep-2026';
-                var pCard = doc.querySelector('#permission-approvals-list .approval-card[data-perm-id="' + id + '"]');
-                if (pCard) {
-                  pType = pCard.getAttribute('data-type') || (pCard.querySelector('.emp-row p') ? pCard.querySelector('.emp-row p').textContent : 'Permission');
-                  var scheduleEl = pCard.querySelector('.detail-row b');
-                  if (scheduleEl) pDate = scheduleEl.textContent.split(' ')[0] || '04-Sep-2026';
-                }
+                var pName = targetPerm ? targetPerm.employeeName : 'Employee';
+                var pType = targetPerm ? targetPerm.type : 'Permission';
+                var pDate = targetPerm ? targetPerm.date : '04-Sep-2026';
+                var pDuration = targetPerm ? targetPerm.duration : '2 Hours';
+                var pReason = targetPerm ? targetPerm.reason : 'Personal work';
 
                 // Update EMP_LEAVE_REQUESTS
                 if (!window.EMP_LEAVE_REQUESTS) window.EMP_LEAVE_REQUESTS = [];
                 var foundEmpReq = false;
-                window.EMP_LEAVE_REQUESTS.forEach(function(r) {
-                  if (r.id === id || (r.isPermission && r.leaveType === pType)) {
+                window.EMP_LEAVE_REQUESTS.forEach(function (r) {
+                  if (String(r.id) === String(id) || ('perm-' + r.id) === String(id) || (r.isPermission && r.leaveType === pType && r.fromDate === pDate && r.employeeName === pName)) {
                     r.status = newStatus;
                     foundEmpReq = true;
                   }
                 });
                 if (!foundEmpReq) {
-                  var empProf = window.USER_PROFILE || {};
                   window.EMP_LEAVE_REQUESTS.unshift({
                     id: id,
                     leaveType: pType,
                     fromDate: pDate,
-                    daysText: (pCard && pCard.querySelector('.detail-row:nth-child(4) b') ? pCard.querySelector('.detail-row:nth-child(4) b').textContent : '30 Mins'),
-                    reason: (pCard && pCard.querySelector('.detail-row:nth-child(5) b') ? pCard.querySelector('.detail-row:nth-child(5) b').textContent : 'Personal work'),
+                    daysText: pDuration,
+                    reason: pReason,
                     isPermission: true,
                     status: newStatus,
-                    employeeName: empProf.name || 'Priya Sharma'
+                    employeeName: pName
                   });
                 }
+
+                // Update PERSON_DATA
+                if (!window.PERSON_DATA) window.PERSON_DATA = {};
+                var permKey = 'perm-' + id;
+                if (window.PERSON_DATA[permKey]) window.PERSON_DATA[permKey].status = newStatus;
+                if (window.PERSON_DATA[id]) window.PERSON_DATA[id].status = newStatus;
 
                 window.LAST_PERMISSION_DECISION = {
                   id: id,
                   status: newStatus,
                   type: pType,
-                  date: pDate
+                  date: pDate,
+                  name: pName
                 };
 
-                // Add notification to parent-level queue
+                // Add notification
                 if (!window.PERM_NOTIFICATIONS) window.PERM_NOTIFICATIONS = [];
                 window.PERM_NOTIFICATIONS.unshift({
                   status: newStatus,
                   type: pType,
                   date: pDate,
                   managerName: (window.USER_PROFILE && window.USER_PROFILE.reportingManager) || 'Your Manager',
-                  employeeName: (window.USER_PROFILE && window.USER_PROFILE.name) || 'Employee'
+                  employeeName: pName
                 });
 
+                // Update card in DOM
+                var card = doc.querySelector('#permission-approvals-list .approval-card[data-perm-id="' + id + '"]');
+                if (card) {
+                  card.setAttribute('data-status', newStatus);
+                  var actionWrap = card.querySelector('.card-action-wrap');
+                  if (actionWrap) {
+                    if (newStatus === 'approved') {
+                      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge success">Approved</span></div>';
+                    } else {
+                      actionWrap.innerHTML = '<div style="text-align:right; margin-top:8px;"><span class="badge danger">Rejected</span></div>';
+                    }
+                  }
+                }
+
+                syncPermTabs();
+
                 // Navigate directly to Request Detail page with permKey
-                var permKey = 'perm-' + id;
                 loadScreen('tpl-LeaveApprovalDetail', permKey);
               };
             }
