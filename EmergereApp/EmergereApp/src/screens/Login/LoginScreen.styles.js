@@ -12,9 +12,13 @@ export default StyleSheet.create({
   logo: {
     width: 76,
     height: 76,
-    // borderRadius: 0,
     resizeMode: 'contain',
     marginBottom: 24,
+    shadowColor: '#00D2FF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 16,
+    elevation: 12,
   },
   logoBadge: {
     width: 64,
