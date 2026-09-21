@@ -65,10 +65,10 @@ export default function ApplyLeaveScreen({ navigation }) {
   const handleSubmit = () => {
     const profile =
       (typeof global !== 'undefined' && global.USER_PROFILE) || {};
-    const employeeName = profile.name || 'Priya Sharma';
-    const employeeInitials = profile.initials || getInitials(employeeName);
-    const employeeId = profile.employeeId || 'EMP-2024-0156';
-    const employeeRole = profile.role || 'Senior Software Engineer';
+    const employeeName = profile.name || 'Sneha Reddy';
+    const employeeInitials = profile.initials || getInitials(employeeName) || 'SR';
+    const employeeId = profile.employeeId || 'EMP-2024-0103';
+    const employeeRole = profile.role || 'UI/UX Designer';
 
     const newRequest = {
       id: Date.now().toString(),

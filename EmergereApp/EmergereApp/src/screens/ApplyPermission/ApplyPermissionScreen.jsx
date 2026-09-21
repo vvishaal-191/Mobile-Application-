@@ -95,15 +95,17 @@ export default function ApplyPermissionScreen({ navigation }) {
   const handleSubmit = () => {
     const profile =
       (typeof global !== 'undefined' && global.USER_PROFILE) || {};
-    const employeeName = profile.name || 'Priya Sharma';
-    const employeeInitials = profile.initials || getInitials(employeeName);
+    const employeeName = profile.name || 'Sneha Reddy';
+    const employeeInitials = profile.initials || getInitials(employeeName) || 'SR';
+    const employeeId = profile.employeeId || 'EMP-2024-0103';
+    const employeeRole = profile.role || 'UI/UX Designer';
 
     const newRequest = {
       id: Date.now().toString(),
       initials: employeeInitials,
       name: employeeName,
-      empId: profile.employeeId || 'EMP-2024-0156',
-      role: profile.role || 'Senior Software Engineer',
+      empId: employeeId,
+      role: employeeRole,
       isPermission: true,
       type: permissionType,
       leaveType: permissionType,

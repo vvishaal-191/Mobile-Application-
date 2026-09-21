@@ -20,31 +20,17 @@ const QUICK_ACTIONS = [
   { key: 'viewHolidays', label: 'View Holidays', icon: 'x-circle' },
 ];
 
-const INITIAL_REQUESTS = [
-  {
-    id: '1',
-    title: 'Casual Leave (1 Day)',
-    subtitle: 'Sep 07, 2026 • Personal Work',
-    status: 'Pending',
-    tone: 'warning',
-  },
-  {
-    id: '2',
-    title: 'Early Going (2 hrs)',
-    subtitle: 'Sep 04, 2026 • Doctor Appointment',
-    status: 'Approved',
-    tone: 'success',
-  },
-];
+const INITIAL_REQUESTS = [];
 
 export default function EmployeeDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
   const [checkedIn, setCheckedIn] = useState(true);
   const [userProfile, setUserProfile] = useState(
     (typeof global !== 'undefined' && global.USER_PROFILE) || {
-      name: 'Priya Sharma',
-      role: 'Senior Software Engineer',
-      employeeId: 'EMP-2024-0156',
+      name: 'Sneha Reddy',
+      role: 'UI/UX Designer',
+      employeeId: 'EMP-2024-0103',
+      email: 'sneha@gmail.com',
     }
   );
 
@@ -115,15 +101,6 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
           }
           return req;
         });
-        if (!matched && pDec.type) {
-          updated.unshift({
-            id: pDec.id || Date.now().toString(),
-            title: `${pDec.type} (${pDec.duration || '30 Mins'})`,
-            subtitle: `${pDec.schedule || 'Sep 04, 2026'} • Doctor Appointment`,
-            status: st,
-            tone,
-          });
-        }
         return updated.filter((r) => {
           const key = `${r.title}|${r.subtitle}`;
           if (seen.has(key)) return false;
