@@ -49,14 +49,28 @@ export default function ManagerDashboardScreen({ navigation, route }) {
         emergencyContact: r.emergencyContact || '',
         reason: r.reason || '',
         subtitle: r.subtitle || `${r.leaveType || r.type || 'Leave'} • ${r.fromDate || r.schedule || ''}`,
-        status: 'Pending',
-        tone: 'warning',
+        status: (r.status && r.status.toLowerCase() === 'rejected') ? 'Rejected' : 'Approved',
+        tone: (r.status && r.status.toLowerCase() === 'rejected') ? 'danger' : 'success',
       }));
+
+    const getSig = (item) =>
+      `${(item.name || '').trim().toLowerCase()}|${(item.leaveType || item.type || '').trim().toLowerCase()}|${(item.fromDate || item.schedule || '').trim().toLowerCase()}`;
+
+    const dedupeList = (list) => {
+      const seen = new Set();
+      return list.filter((item) => {
+        const sig = getSig(item);
+        if (seen.has(sig)) return false;
+        seen.add(sig);
+        return true;
+      });
+    };
 
     if (allNew.length > 0) {
       setRequests((prev) => {
         const existingIds = new Set(prev.map((r) => r.id));
-        const fresh = allNew.filter((r) => !existingIds.has(r.id));
+        const existingSigs = new Set(prev.map(getSig));
+        const fresh = allNew.filter((r) => !existingIds.has(r.id) && !existingSigs.has(getSig(r)));
         if (fresh.length === 0) return prev;
         // Update leave approval badge count
         setQuickActions((qa) =>
@@ -66,7 +80,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
               : action
           )
         );
-        return [...fresh, ...prev];
+        return dedupeList([...fresh, ...prev]);
       });
     }
 
@@ -122,10 +136,10 @@ export default function ManagerDashboardScreen({ navigation, route }) {
             status: statusText,
             tone: tone,
           };
-          return [newReq, ...updated];
+          return dedupeList([newReq, ...updated]);
         }
 
-        return updated;
+        return dedupeList(updated);
       });
 
       // Decrement badge count in Quick Actions
@@ -198,7 +212,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
           ))}
         </View>
 
-        <Text style={styles.sectionLabel}>RECENT REQUESTS</Text>
+        <Text style={styles.sectionLabel}>RECENT REQUESTS ({requests.length})</Text>
         {requests.map((r) => (
           <TouchableOpacity
             key={r.id}
