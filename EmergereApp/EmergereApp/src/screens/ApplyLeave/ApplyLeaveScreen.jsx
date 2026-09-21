@@ -8,9 +8,9 @@ import styles from './ApplyLeaveScreen.styles';
 const LEAVE_TYPES = ['Casual Leave', 'Sick Leave', 'Earned Leave', 'Privilege Leave'];
 
 const MANAGERS = [
-  'Rahul Sharma (Team Lead)',
-  'Priya Verma (HR Manager)',
-  'Suresh Kumar (Engineering Manager)',
+  'Vishnu',
+  'Ram',
+  'Rahul',
 ];
 
 /** Derive initials from a full name string */
@@ -26,9 +26,11 @@ function getInitials(name) {
 function resolveDefaultManager() {
   const profile =
     (typeof global !== 'undefined' && global.USER_PROFILE) || {};
-  const managerName = profile.reportingManager || 'Rahul Sharma';
+  const managerName = profile.reportingManager || 'Vishnu';
   // Try to find a matching entry (partial match on name before parenthesis)
   const match = MANAGERS.find((m) =>
+    m.toLowerCase() === managerName.toLowerCase() ||
+    managerName.toLowerCase().startsWith(m.toLowerCase()) ||
     m.toLowerCase().startsWith(managerName.toLowerCase())
   );
   return match || MANAGERS[0];

@@ -3178,9 +3178,9 @@
           <div class="field"><label class="field-label">Approving Manager</label>
             <div class="select-wrap" style="position:relative;">
               <select id="leave-manager-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
-                <option value="Rahul Sharma (Team Lead)">Rahul Sharma (Team Lead)</option>
-                <option value="Priya Verma (HR Manager)">Priya Verma (HR Manager)</option>
-                <option value="Suresh Kumar (Engineering Manager)">Suresh Kumar (Engineering Manager)</option>
+                <option value="Vishnu">Vishnu</option>
+                <option value="Ram">Ram</option>
+                <option value="Rahul">Rahul</option>
               </select>
               <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -3291,7 +3291,7 @@
           var empId = empProf.employeeId || (store.AUTH_USER && store.AUTH_USER.empId) || 'EMP-2024-0103';
           var empRole = empProf.role || (store.AUTH_USER && store.AUTH_USER.jobTitle) || 'UI/UX Designer';
 
-          var defaultMgr = empProf.reportingManager ? empProf.reportingManager : 'Rahul Sharma';
+          var defaultMgr = empProf.reportingManager ? (empProf.reportingManager.split(' ')[0]) : 'Vishnu';
           var approvingManager = managerEl ? managerEl.value : defaultMgr;
           var reason = reasonEl ? reasonEl.value.trim() : 'Personal Work';
 
@@ -4007,9 +4007,9 @@
           <div class="field"><label class="field-label">Approving Manager</label>
             <div class="select-wrap">
               <select id="perm-manager-select">
-                <option>Rahul Sharma (Team Lead)</option>
-                <option>Priya Verma (HR Manager)</option>
-                <option>Suresh Kumar (Engineering Manager)</option>
+                <option value="Vishnu">Vishnu</option>
+                <option value="Ram">Ram</option>
+                <option value="Rahul">Rahul</option>
               </select>
               <div class="select-chevron">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -4138,7 +4138,7 @@
           var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)) || 'SR';
           var permEmpId = permProf.employeeId || (parentWin.AUTH_USER && parentWin.AUTH_USER.empId) || 'EMP-2024-0103';
           var permEmpRole = permProf.role || (parentWin.AUTH_USER && parentWin.AUTH_USER.jobTitle) || 'UI/UX Designer';
-          var defPermMgr = permProf.reportingManager ? permProf.reportingManager : 'Rahul Sharma';
+          var defPermMgr = permProf.reportingManager ? (permProf.reportingManager.split(' ')[0]) : 'Vishnu';
           var pManager = permManagerEl ? permManagerEl.value : defPermMgr;
 
           var entry = {
@@ -10698,7 +10698,7 @@
               (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2)) || 'PS';
             const empId = empProf.employeeId || 'EMP-2024-0156';
             const managerSelect = document.getElementById('perm-manager-select');
-            const defPermMgr = empProf.reportingManager ? empProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+            const defPermMgr = empProf.reportingManager ? (empProf.reportingManager.split(' ')[0]) : 'Vishnu';
             const pManager = managerSelect ? managerSelect.value : defPermMgr;
 
             const newId = 'perm-' + Date.now();
@@ -12139,7 +12139,7 @@
                 var permEmpName = permProf.name || 'Priya Sharma';
                 var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)) || 'PS';
                 var permEmpId = permProf.employeeId || 'EMP-2024-0156';
-                var defPermMgr = permProf.reportingManager ? permProf.reportingManager + ' (Team Lead)' : 'Rahul Sharma (Team Lead)';
+                var defPermMgr = permProf.reportingManager ? (permProf.reportingManager.split(' ')[0]) : 'Vishnu';
                 var pManager = permManagerEl ? permManagerEl.value : defPermMgr;
 
                 var entry = { id: newId, type: pType, date: fmtDate, duration: pDuration, reason: pReason, status: 'pending', employeeName: permEmpName, employeeInitials: permEmpInitials, employeeId: permEmpId, approvingManager: pManager };
