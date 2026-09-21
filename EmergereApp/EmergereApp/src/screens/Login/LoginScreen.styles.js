@@ -12,7 +12,7 @@ export default StyleSheet.create({
   logo: {
     width: 76,
     height: 76,
-    borderRadius: 18,
+    // borderRadius: 0,
     resizeMode: 'contain',
     marginBottom: 24,
   },
