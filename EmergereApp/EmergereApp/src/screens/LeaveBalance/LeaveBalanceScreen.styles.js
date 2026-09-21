@@ -12,7 +12,7 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
   },
-  logo: { width: 22, height: 22 },
+  logo: { width: 26, height: 26, resizeMode: 'contain' },
   headerTitle: { fontSize: 22, fontWeight: '800', color: colors.textPrimary },
   subtitle: { color: colors.textSecondary, paddingHorizontal: spacing.lg, marginTop: 4, marginBottom: spacing.lg },
   periodRow: {

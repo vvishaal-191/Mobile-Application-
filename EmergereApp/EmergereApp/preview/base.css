@@ -70,7 +70,7 @@ body {
 
 /* Header */
 .header{display:flex; align-items:flex-start; gap:12px; padding:8px 20px 16px;}
-.header .mini-logo{margin-top:1px;}
+.header .mini-logo{width:26px; height:26px; object-fit:contain; flex-shrink:0; background:transparent;}
 .header h1{line-height:1.2;}
 .header p{line-height:1.2;}
 .back-btn{

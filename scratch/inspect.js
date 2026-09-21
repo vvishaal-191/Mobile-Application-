@@ -1,30 +1,19 @@
 const fs = require('fs');
-const path = require('path');
 
-function findFiles(dir, ext) {
-  let results = [];
-  fs.readdirSync(dir).forEach(file => {
-    const fullPath = path.join(dir, file);
-    const stat = fs.statSync(fullPath);
-    if (stat.isDirectory()) {
-      if (file !== 'node_modules' && file !== '.git') {
-        results = results.concat(findFiles(fullPath, ext));
-      }
-    } else if (file.endsWith(ext)) {
-      results.push(fullPath);
-    }
+function inspectFile(filePath) {
+  if (!fs.existsSync(filePath)) return;
+  const content = fs.readFileSync(filePath, 'utf8');
+  const imgs = content.match(/<img[^>]+>/g) || [];
+  console.log(`\n=== File: ${filePath} ===`);
+  console.log(`Total <img>: ${imgs.length}`);
+  imgs.forEach((img, i) => {
+    const src = (img.match(/src="([^"]+)"/) || [])[1] || '';
+    const cls = (img.match(/class="([^"]+)"/) || [])[1] || '';
+    console.log(`  ${i + 1}. class="${cls}" srcLen=${src.length} src="${src.slice(0, 40)}..."`);
   });
-  return results;
 }
 
-const rnScreens = findFiles('EmergereApp/EmergereApp/src/screens', '.jsx');
-
-rnScreens.forEach(f => {
-  const content = fs.readFileSync(f, 'utf8');
-  const lines = content.split('\n');
-  lines.forEach((line, idx) => {
-    if (line.includes('<ScrollView')) {
-      console.log(`${f}:${idx + 1}: ${line.trim()}`);
-    }
-  });
-});
+inspectFile('index.html');
+inspectFile('preview_app.html');
+inspectFile('EmergereApp/EmergereApp/index.html');
+inspectFile('EmergereApp/EmergereApp/preview_app.html');

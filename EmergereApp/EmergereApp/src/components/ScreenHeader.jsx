@@ -1,10 +1,10 @@
 // src/components/ScreenHeader.jsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { colors, spacing } from '../theme/theme';
 
-export default function ScreenHeader({ title, subtitle, onBack, rightAction }) {
+export default function ScreenHeader({ title, subtitle, onBack, rightAction, showLogo = true }) {
   return (
     <View style={styles.row}>
       <View style={styles.leftGroup}>
@@ -12,6 +12,13 @@ export default function ScreenHeader({ title, subtitle, onBack, rightAction }) {
           <TouchableOpacity style={styles.backBtn} onPress={onBack}>
             <Feather name="arrow-left" size={20} color={colors.primary} />
           </TouchableOpacity>
+        ) : null}
+        {showLogo ? (
+          <Image
+            source={require('../../assets/emergere-logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         ) : null}
         <View>
           <Text style={styles.title}>{title}</Text>
@@ -35,7 +42,12 @@ const styles = StyleSheet.create({
   leftGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
+  },
+  logo: {
+    width: 26,
+    height: 26,
+    resizeMode: 'contain',
   },
   rightGroup: {
     flexDirection: 'row',
@@ -48,6 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7EEFF',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 2,
   },
   title: {
     fontSize: 22,
@@ -60,3 +73,4 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
+

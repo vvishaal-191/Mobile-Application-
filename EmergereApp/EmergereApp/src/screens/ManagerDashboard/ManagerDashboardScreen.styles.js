@@ -12,7 +12,7 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
   },
-  logo: { width: 26, height: 26, marginTop: 1, resizeMode: 'contain' },
+  logo: { width: 28, height: 28, marginTop: 1, resizeMode: 'contain', borderRadius: 6 },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',

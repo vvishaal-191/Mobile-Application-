@@ -10,9 +10,10 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    width: 72,
-    height: 72,
+    width: 76,
+    height: 76,
     borderRadius: 18,
+    resizeMode: 'contain',
     marginBottom: 24,
   },
   logoBadge: {

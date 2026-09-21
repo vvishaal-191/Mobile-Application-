@@ -198,7 +198,7 @@ export default function LoginScreen({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#0D47B5" />
 
       <Image
-        source={require('../../../assets/emergere-logo.png')}
+        source={require('../../../assets/emergere-login-logo.png')}
         style={styles.logo}
         resizeMode="contain"
       />

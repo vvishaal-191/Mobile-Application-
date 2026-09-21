@@ -1,6 +1,6 @@
 .dash-top{display:flex;justify-content:space-between;align-items:center;padding:0 20px;}
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;}
-.brand img{width:26px;height:26px;}
+.brand img { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; background: transparent; }
 .bell{position:relative;width:44px;height:44px;border-radius:22px;background:var(--info-bg);display:flex;align-items:center;justify-content:center;}
 .bell .dot{position:absolute;top:8px;right:10px;width:8px;height:8px;border-radius:4px;background:var(--danger);}
 .company{padding:0 20px;color:var(--text-secondary);margin:4px 0 0;}

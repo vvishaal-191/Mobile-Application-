@@ -12,8 +12,8 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
   },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  logo: { width: 30, height: 30 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  logo: { width: 28, height: 28, resizeMode: 'contain', borderRadius: 6 },
   brandName: { fontSize: 20, fontWeight: '800', color: colors.textPrimary },
   bellButton: {
     width: 44,
