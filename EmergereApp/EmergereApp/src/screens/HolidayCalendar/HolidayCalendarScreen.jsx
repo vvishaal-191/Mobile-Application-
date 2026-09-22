@@ -97,7 +97,7 @@ export default function HolidayCalendarScreen({ navigation }) {
         })}
       </ScrollView>
 
-      <BottomNavBar active="Profile" onNavigate={go} />
+      <BottomNavBar onNavigate={go} />
     </View>
   );
 }
