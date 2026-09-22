@@ -3124,16 +3124,26 @@
           width: calc(100% - 40px);
           margin: 8px 20px 20px;
         }
-              /* Half Day Row */
-        .half-day-row {
-          display: block;
-          padding: 4px 0;
-          margin-bottom: 2px;
+              /* Half Day Row — two-col layout mirroring date fields */
+        .half-day-row,
+        .field.half-day-row {
+          display: flex;
+          gap: 12px;
+          align-items: flex-end;
+          padding: 0 20px;
+          margin-bottom: 18px;
         }
-        .half-day-row .half-day-check-wrap {
+        .half-day-col-left {
+          flex: 1;
+          min-width: 0;
           display: flex;
           align-items: center;
-          margin-bottom: 0;
+          height: 44px;
+          padding-left: 8px;
+        }
+        .half-day-col-right {
+          flex: 1;
+          min-width: 0;
         }
         .half-day-label {
           display: flex;
@@ -3144,10 +3154,6 @@
           color: var(--text);
           cursor: pointer;
           user-select: none;
-        }
-        .half-day-row .half-day-type-wrap {
-          margin-top: 14px;
-          width: 100%;
         }
 
         </style>
@@ -3204,21 +3210,21 @@
             </div>
           </div>
           <div class="field half-day-row">
-            <div class="half-day-check-wrap">
+            <div class="half-day-col-left">
               <label class="half-day-label" for="half-day-check">
                 <input type="checkbox" id="half-day-check" onchange="toggleHalfDay(this.checked)" style="width:18px;height:18px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;" />
                 <span>Half Day</span>
               </label>
             </div>
-            <div class="half-day-type-wrap" id="half-day-type-wrap" style="display:none;">
+            <div class="half-day-col-right" id="half-day-type-wrap" style="display:none;">
               <label class="field-label" style="margin-bottom:6px;display:block;">Leave Type <span style="color:var(--danger)">*</span></label>
               <div class="select-wrap" style="position:relative;">
-                <select id="half-day-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:12px 40px 12px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
+                <select id="half-day-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; height:44px; padding:0 36px 0 12px; font-size:14px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
                   <option value="First Half">First Half</option>
                   <option value="Second Half">Second Half</option>
                 </select>
-                <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
               </div>
             </div>
