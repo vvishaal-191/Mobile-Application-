@@ -72,6 +72,9 @@ export default function ApplyLeaveScreen({ navigation }) {
     const employeeId = profile.employeeId || 'EMP-2024-0103';
     const employeeRole = profile.role || 'UI/UX Designer';
 
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const managerDisplayName = approvingManager.replace(' (Reporting Manager)', '');
+
     const newRequest = {
       id: Date.now().toString(),
       initials: employeeInitials,
@@ -88,11 +91,16 @@ export default function ApplyLeaveScreen({ navigation }) {
       emergencyContact: profile.phone || '+91 98765 43210',
       reason: reason || 'Personal work',
       status: 'pending',
+      appliedDate: todayStr,
+      approverName: managerDisplayName,
+      approvingManager,
+      approverComments: '',
+      supportingDocs: 'None Attached',
+      remark: `Sent to ${managerDisplayName} for review.`,
       typeTone: 'info',
       // used in Employee Dashboard list
       title: `${leaveType} (${daysCount.replace(' (Auto-calculated)', '')})`,
       subtitle: `${fromDate} • ${reason || 'Personal Work'}`,
-      approvingManager,
       subtitleApp: `${leaveType} Application`,
       appliedName: `${employeeName.split(' ')[0]} (Applied)`,
     };
@@ -275,11 +283,11 @@ export default function ApplyLeaveScreen({ navigation }) {
               style={modalStyles.button}
               onPress={() => {
                 setShowSuccessModal(false);
-                go('EmployeeDashboard', { newLeaveRequest: submittedRequest });
+                go('History');
               }}
               activeOpacity={0.8}
             >
-              <Text style={modalStyles.buttonText}>Done</Text>
+              <Text style={modalStyles.buttonText}>View My Requests →</Text>
             </TouchableOpacity>
           </View>
         </View>

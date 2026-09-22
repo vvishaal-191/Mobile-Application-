@@ -114,7 +114,16 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
         };
         if (global.PERMISSION_REQUESTS) {
           global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
-            r.id === person.id ? { ...r, status: finalDecision.toLowerCase() } : r
+            r.id === person.id
+              ? {
+                  ...r,
+                  status: finalDecision.toLowerCase(),
+                  approverComments: remarks || (finalDecision === 'Approved' ? 'Approved by manager.' : 'Rejected by manager.'),
+                  remark: finalDecision === 'Approved'
+                    ? `Approved by ${managerName}.`
+                    : `Rejected by ${managerName}.`,
+                }
+              : r
           );
         }
       } else {
@@ -126,7 +135,16 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
         };
         if (global.LEAVE_REQUESTS) {
           global.LEAVE_REQUESTS = global.LEAVE_REQUESTS.map((r) =>
-            r.id === person.id ? { ...r, status: finalDecision.toLowerCase() } : r
+            r.id === person.id
+              ? {
+                  ...r,
+                  status: finalDecision.toLowerCase(),
+                  approverComments: remarks || (finalDecision === 'Approved' ? 'Approved by manager.' : 'Rejected by manager.'),
+                  remark: finalDecision === 'Approved'
+                    ? `Approved by ${managerName}.`
+                    : `Rejected by ${managerName}.`,
+                }
+              : r
           );
         }
 

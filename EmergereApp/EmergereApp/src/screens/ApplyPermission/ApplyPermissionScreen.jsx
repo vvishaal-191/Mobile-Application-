@@ -102,6 +102,9 @@ export default function ApplyPermissionScreen({ navigation }) {
     const employeeId = profile.employeeId || 'EMP-2024-0103';
     const employeeRole = profile.role || 'UI/UX Designer';
 
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const managerDisplayName = manager.replace(' (Reporting Manager)', '');
+
     const newRequest = {
       id: Date.now().toString(),
       initials: employeeInitials,
@@ -124,8 +127,13 @@ export default function ApplyPermissionScreen({ navigation }) {
       totalDays: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
       reason: reason || 'Personal work / Medical checkup',
       status: 'pending',
-      typeTone: 'purple',
+      appliedDate: todayStr,
+      approverName: managerDisplayName,
       approvingManager: manager,
+      approverComments: '',
+      supportingDocs: 'None Attached',
+      remark: `Sent to ${managerDisplayName} for review.`,
+      typeTone: 'purple',
       emergencyContact: manager,
       contact: manager,
       subtitle: `${permissionType} Application`,
@@ -322,12 +330,12 @@ export default function ApplyPermissionScreen({ navigation }) {
               onPress={() => {
                 setShowSuccessModal(false);
                 if (navigation) {
-                  navigation.navigate('EmployeeDashboard', { newPermissionRequest: submittedRequest });
+                  navigation.navigate('History');
                 }
               }}
               activeOpacity={0.8}
             >
-              <Text style={modalStyles.buttonText}>Done</Text>
+              <Text style={modalStyles.buttonText}>View My Requests →</Text>
             </TouchableOpacity>
           </View>
         </View>
