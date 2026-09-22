@@ -15,6 +15,13 @@ export default StyleSheet.create({
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   logo: { width: 28, height: 28, resizeMode: 'contain', borderRadius: 6 },
   brandName: { fontSize: 20, fontWeight: '800', color: colors.textPrimary },
+  // Wrapper holding glow ring + bell button (relative so absolute glow works)
+  bellWrapper: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   bellButton: {
     width: 44,
     height: 44,
@@ -22,6 +29,21 @@ export default StyleSheet.create({
     backgroundColor: colors.infoBg,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1,
+  },
+  // Glow ring: sits behind the bell button, animates opacity for a subtle pulse
+  bellGlowRing: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#2F6BFF',
+    shadowColor: '#2F6BFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.7,
+    shadowRadius: 10,
+    elevation: 6,
+    zIndex: 0,
   },
   bellDot: {
     position: 'absolute',

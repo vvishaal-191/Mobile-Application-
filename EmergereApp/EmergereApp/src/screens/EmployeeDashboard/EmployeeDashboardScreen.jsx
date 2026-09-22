@@ -1,6 +1,6 @@
 // src/screens/EmployeeDashboard/EmployeeDashboardScreen.jsx
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import StatusBadge from '../../components/StatusBadge';
@@ -24,6 +24,8 @@ const INITIAL_REQUESTS = [];
 
 export default function EmployeeDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
+  const glowAnim = useRef(new Animated.Value(0)).current;
   const [checkedIn, setCheckedIn] = useState(true);
   const [userProfile, setUserProfile] = useState(
     (typeof global !== 'undefined' && global.USER_PROFILE) || {
@@ -64,7 +66,34 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
     setRequests((prev) => prev.filter((req) => req.id !== id));
   };
 
+  // Start or stop the gentle glow pulse animation
   useEffect(() => {
+    if (hasNewNotification) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      glowAnim.stopAnimation();
+      glowAnim.setValue(0);
+    }
+  }, [hasNewNotification]);
+
+  useEffect(() => {
+    // Check for any unread notifications pushed by the manager
+    if (typeof global !== 'undefined' && global.NOTIFICATIONS && global.NOTIFICATIONS.some((n) => n.unread)) {
+      setHasNewNotification(true);
+    }
     if (typeof global !== 'undefined' && global.USER_PROFILE) {
       setUserProfile(global.USER_PROFILE);
     }
@@ -110,8 +139,9 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
       });
     }
     if (route && route.params) {
-      // Manager approved / rejected a request — update its status in the list
+      // Manager approved / rejected a request — trigger the notification glow
       if (route.params.newStatus) {
+        setHasNewNotification(true);
         const { requestId, newStatus, isPermission, permissionType, duration } = route.params;
         const tone = newStatus === 'Approved' ? 'success' : 'danger';
         setRequests((prev) => {
@@ -213,13 +243,33 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
             />
             <Text style={styles.brandName}>Dashboard</Text>
           </View>
-          <TouchableOpacity
-            style={styles.bellButton}
-            onPress={() => go('Notifications')}
-          >
-            <Feather name="bell" size={20} color={'#2F6BFF'} />
-            <View style={styles.bellDot} />
-          </TouchableOpacity>
+          <View style={styles.bellWrapper}>
+            <Animated.View
+              style={[
+                styles.bellGlowRing,
+                {
+                  opacity: hasNewNotification ? glowAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 0.55],
+                  }) : 0,
+                },
+              ]}
+            />
+            <TouchableOpacity
+              style={styles.bellButton}
+              onPress={() => {
+                setHasNewNotification(false);
+                // Mark notifications as read
+                if (typeof global !== 'undefined' && global.NOTIFICATIONS) {
+                  global.NOTIFICATIONS = global.NOTIFICATIONS.map((n) => ({ ...n, unread: false }));
+                }
+                go('Notifications');
+              }}
+            >
+              <Feather name="bell" size={20} color={'#2F6BFF'} />
+              <View style={styles.bellDot} />
+            </TouchableOpacity>
+          </View>
         </View>
         <Text style={styles.companyName}>IT Solutions Pvt. Ltd.</Text>
 

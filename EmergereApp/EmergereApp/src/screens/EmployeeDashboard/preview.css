@@ -1,7 +1,12 @@
 .dash-top{display:flex;justify-content:space-between;align-items:center;padding:0 20px;}
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;}
 .brand img { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; background: transparent; }
-.bell{position:relative;width:44px;height:44px;border-radius:22px;background:var(--info-bg);display:flex;align-items:center;justify-content:center;}
+.bell{position:relative;width:44px;height:44px;border-radius:22px;background:var(--info-bg);display:flex;align-items:center;justify-content:center;transition:box-shadow 0.4s ease;}
+.bell.bell-glow{animation:bellGlowPulse 2s ease-in-out infinite;}
+@keyframes bellGlowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(47,107,255,0);}
+  50%{box-shadow:0 0 0 7px rgba(47,107,255,0.22), 0 0 14px 4px rgba(47,107,255,0.12);}
+}
 .bell .dot{position:absolute;top:8px;right:10px;width:8px;height:8px;border-radius:4px;background:var(--danger);}
 .company{padding:0 20px;color:var(--text-secondary);margin:4px 0 0;}
 .greeting{padding:0 20px;margin:20px 0 0;font-size:24px;font-weight:800;}

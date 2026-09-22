@@ -1,3 +1,35 @@
+// --- Notification glow on bell icon ---
+(function initBellGlow() {
+  const bellEl = document.querySelector('.bell');
+  if (!bellEl) return;
+
+  function checkForNewNotifications() {
+    const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+    const notes = pWin.NOTIFICATIONS || [];
+    if (notes.some(function(n) { return n.unread; })) {
+      bellEl.classList.add('bell-glow');
+    } else {
+      bellEl.classList.remove('bell-glow');
+    }
+  }
+
+  checkForNewNotifications();
+
+  // Re-check when user returns to this screen (focus / page restore)
+  window.addEventListener('focus', checkForNewNotifications);
+  window.addEventListener('pageshow', checkForNewNotifications);
+
+  // Remove glow when user opens notifications
+  bellEl.addEventListener('click', function() {
+    bellEl.classList.remove('bell-glow');
+    const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+    if (pWin.NOTIFICATIONS) {
+      pWin.NOTIFICATIONS = pWin.NOTIFICATIONS.map(function(n) { return Object.assign({}, n, { unread: false }); });
+    }
+    if (window.parent && window.parent.loadScreen) window.parent.loadScreen('tpl-Notifications');
+  });
+})();
+
 document.querySelectorAll('.bottom-nav .tab').forEach((t) => {
   t.addEventListener('click', () => {
     if (typeof setActiveNav === 'function') setActiveNav(t);
