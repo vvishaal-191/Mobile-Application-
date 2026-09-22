@@ -3380,8 +3380,8 @@
               <select id="leave-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
                 <option>Casual Leave</option>
                 <option>Sick Leave</option>
-                <option>Earned Leave</option>
-                <option>Privilege Leave</option>
+                <option>WFH (Work From Home)</option>
+                <option>Comp-Off (Compensatory Off)</option>
               </select>
               <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -7411,6 +7411,7 @@
 
           <div class="card status-card">
             <div class="status-row"><b>Employment Status</b><span class="badge success" id="profile-emp-status">Active</span></div>
+            <div id="profile-leave-banner" style="display:none;"></div>
           </div>
 
           <!-- JOB INFORMATION CARD -->
@@ -9451,6 +9452,9 @@
           if (pData) {
             pData.status = newStatus;
           }
+          if (pData && isApproved) {
+            pData.approvedAt = Date.now();
+          }
           store.LAST_LEAVE_DECISION = {
             id: id,
             personKey: personKey,
@@ -9459,7 +9463,8 @@
             badgeClass: badgeClass,
             lType: lType,
             fromDate: fromDate,
-            empName: empName
+            empName: empName,
+            approvedAt: isApproved ? Date.now() : null
           };
           store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
 
@@ -9468,8 +9473,12 @@
             store.EMP_LEAVE_REQUESTS.forEach(function(req) {
               if (String(req.id) === String(id) || (req.employeeName === empName && req.leaveType === lType)) {
                 req.status = newStatus;
+                if (isApproved) req.approvedAt = Date.now();
               }
             });
+            if (typeof store.updateEmploymentStatusAfterApproval === 'function') {
+              store.updateEmploymentStatusAfterApproval(empName, lType, newStatus);
+            }
           }
 
           // 5. Update EMP_STATUS_UPDATES
@@ -10269,8 +10278,13 @@
               var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName)) && (req.leaveType === (pData.leaveType || pData.type));
               if (idMatch || detailMatch) {
                 req.status = status;
+                if (isApproved) req.approvedAt = Date.now();
               }
             });
+            var pObjDetail = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
+            if (typeof store.updateEmploymentStatusAfterApproval === 'function') {
+              store.updateEmploymentStatusAfterApproval(pObjDetail.name || pObjDetail.employeeName, pObjDetail.leaveType || pObjDetail.type, status);
+            }
           }
           if (store.PERM_STATE && store.PERM_STATE.length > 0) {
             store.PERM_STATE.forEach(function(req) {
@@ -11586,6 +11600,8 @@
               joiningDate: '15-Jan-2024',
               phone: userObj.phone || '+91 98765 11001'
             };
+            var activeLeaveOnLogin = typeof getActiveLeaveInfo === 'function' ? getActiveLeaveInfo(window.USER_PROFILE) : { isInactive: false };
+            window.EMPLOYMENT_STATUS = activeLeaveOnLogin.isInactive ? 'Inactive' : 'Active';
           } else if (role === 'manager') {
             window.USER_PROFILE = {
               name: userObj.name || 'Vishnu Kumar',
@@ -11667,6 +11683,294 @@
         }
         window.loadScreen = loadScreen;
         window.EMPLOYMENT_STATUS = 'Active';
+        window.SIMULATED_DATE_OFFSET_DAYS = 0;
+
+        function isInactiveLeaveType(leaveType) {
+          if (!leaveType) return false;
+          var lt = String(leaveType).toLowerCase().trim();
+          return lt.indexOf('casual') !== -1 ||
+                 lt.indexOf('sick') !== -1 ||
+                 lt.indexOf('comp-off') !== -1 ||
+                 lt.indexOf('comp off') !== -1 ||
+                 lt.indexOf('compensatory') !== -1;
+        }
+        window.isInactiveLeaveType = isInactiveLeaveType;
+
+        function parseLeaveDate(dateStr) {
+          if (!dateStr) return null;
+          if (dateStr instanceof Date) return new Date(dateStr.getFullYear(), dateStr.getMonth(), dateStr.getDate());
+          var s = String(dateStr).trim();
+          if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+            var p = s.split('-');
+            return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+          }
+          var monthMap = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+          var dmyMatch = s.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,9})[-/ ](\d{4})$/);
+          if (dmyMatch) {
+            var day = parseInt(dmyMatch[1], 10);
+            var monKey = dmyMatch[2].substring(0, 3).toLowerCase();
+            var yr = parseInt(dmyMatch[3], 10);
+            if (monthMap[monKey] !== undefined) {
+              return new Date(yr, monthMap[monKey], day);
+            }
+          }
+          var mdyMatch = s.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})$/);
+          if (mdyMatch) {
+            var monKey2 = mdyMatch[1].substring(0, 3).toLowerCase();
+            var day2 = parseInt(mdyMatch[2], 10);
+            var yr2 = parseInt(mdyMatch[3], 10);
+            if (monthMap[monKey2] !== undefined) {
+              return new Date(yr2, monthMap[monKey2], day2);
+            }
+          }
+          var parsed = new Date(s);
+          if (!isNaN(parsed.getTime())) {
+            return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+          }
+          return null;
+        }
+        window.parseLeaveDate = parseLeaveDate;
+
+        function getActiveLeaveInfo(employee) {
+          var emp = employee || window.USER_PROFILE || (window.AUTH_USER && window.AUTH_USER.role === 'employee' ? window.AUTH_USER : null) || {};
+          var empName = (emp.name || '').trim().toLowerCase();
+          var empId = (emp.employeeId || emp.empId || '').trim().toLowerCase();
+          var empEmail = (emp.email || '').trim().toLowerCase();
+
+          var allReqs = (window.EMP_LEAVE_REQUESTS || []).slice();
+          if (window.PERSON_DATA) {
+            Object.keys(window.PERSON_DATA).forEach(function(k) {
+              var p = window.PERSON_DATA[k];
+              if (p && !p.isPermission && !allReqs.some(function(r) { return String(r.id) === String(p.id); })) {
+                allReqs.push(p);
+              }
+            });
+          }
+
+          var simOffsetDays = window.SIMULATED_DATE_OFFSET_DAYS || 0;
+          var now = new Date();
+          if (simOffsetDays !== 0) {
+            now = new Date(now.getTime() + simOffsetDays * 24 * 60 * 60 * 1000);
+          }
+          now.setHours(0, 0, 0, 0);
+
+          for (var i = 0; i < allReqs.length; i++) {
+            var r = allReqs[i];
+            if (r.isPermission) continue;
+            var status = String(r.status || '').toLowerCase().trim();
+            if (status !== 'approved') continue;
+
+            var lType = r.leaveType || r.type || '';
+            if (!isInactiveLeaveType(lType)) continue;
+
+            var rName = (r.employeeName || r.name || '').trim().toLowerCase();
+            var rId = (r.employeeId || r.empId || '').trim().toLowerCase();
+            var rEmail = (r.employeeEmail || r.email || '').trim().toLowerCase();
+
+            var matches = false;
+            if (empId && rId && empId === rId) matches = true;
+            else if (empEmail && rEmail && empEmail === rEmail) matches = true;
+            else if (empName && rName && empName === rName) matches = true;
+            else if (!rName && !rId && (!empName || empName === 'sneha reddy' || empName === 'priya sharma')) matches = true;
+
+            if (!matches) continue;
+
+            var startDate = parseLeaveDate(r.fromDate);
+            var endDate = parseLeaveDate(r.toDate) || startDate;
+
+            var days = 1;
+            if (r.daysText) {
+              var m = r.daysText.match(/(\d+(\.\d+)?)/);
+              if (m) days = Math.round(parseFloat(m[1])) || 1;
+            } else if (r.totalDays) {
+              var m2 = String(r.totalDays).match(/(\d+(\.\d+)?)/);
+              if (m2) days = Math.round(parseFloat(m2[1])) || 1;
+            } else if (startDate && endDate) {
+              days = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+            }
+            if (days < 1) days = 1;
+
+            if (startDate && (!endDate || endDate < startDate)) {
+              endDate = new Date(startDate.getTime() + (days - 1) * 24 * 60 * 60 * 1000);
+            }
+
+            var isWithin = false;
+            if (startDate && endDate) {
+              isWithin = (now >= startDate && now <= endDate);
+            }
+
+            if (!isWithin && r.approvedAt) {
+              var approvedDay = new Date(r.approvedAt);
+              approvedDay.setHours(0, 0, 0, 0);
+              var approvedEndDay = new Date(approvedDay.getTime() + (days - 1) * 24 * 60 * 60 * 1000);
+              if (now >= approvedDay && now <= approvedEndDay) {
+                isWithin = true;
+              }
+            }
+
+            if (isWithin) {
+              var nextWorkingDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1000);
+              if (endDate.getDay() === 5) {
+                nextWorkingDate = new Date(endDate.getTime() + 3 * 24 * 60 * 60 * 1000);
+              } else if (endDate.getDay() === 6) {
+                nextWorkingDate = new Date(endDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+              }
+              var monthsArr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              var nextWkStr = nextWorkingDate.getDate() + ' ' + monthsArr[nextWorkingDate.getMonth()];
+
+              return {
+                isInactive: true,
+                leaveType: lType,
+                days: days,
+                fromDate: r.fromDate,
+                toDate: r.toDate,
+                nextWorkingDayStr: nextWkStr,
+                request: r
+              };
+            }
+          }
+
+          return { isInactive: false };
+        }
+        window.getActiveLeaveInfo = getActiveLeaveInfo;
+
+        function computeEmploymentStatus(employee) {
+          var leaveInfo = getActiveLeaveInfo(employee);
+          return leaveInfo.isInactive ? 'Inactive' : 'Active';
+        }
+        window.computeEmploymentStatus = computeEmploymentStatus;
+
+        function updateLiveProfileStatusUI(docRef) {
+          var targetDoc = docRef;
+          if (!targetDoc) {
+            var frame = document.getElementById('frame');
+            targetDoc = frame && (frame.contentDocument || (frame.contentWindow && frame.contentWindow.document));
+          }
+          if (!targetDoc) return;
+
+          var empStatusEl = targetDoc.getElementById('profile-emp-status');
+          if (!empStatusEl) {
+            var badges = targetDoc.querySelectorAll('.status-card .badge, .status-row .badge');
+            if (badges.length > 0) empStatusEl = badges[0];
+          }
+
+          var currentEmp = window.USER_PROFILE || (window.AUTH_USER && window.AUTH_USER.role === 'employee' ? window.AUTH_USER : null) || {};
+          var leaveInfo = getActiveLeaveInfo(currentEmp);
+          var isLeaveInactive = leaveInfo.isInactive;
+          var finalStatus = isLeaveInactive ? 'Inactive' : (window.CHECKED_IN === false ? 'Inactive' : 'Active');
+          window.EMPLOYMENT_STATUS = finalStatus;
+
+          if (empStatusEl) {
+            empStatusEl.textContent = finalStatus;
+            if (finalStatus === 'Active') {
+              empStatusEl.className = 'badge success';
+              empStatusEl.style.background = 'var(--success-bg, #E3F8EE)';
+              empStatusEl.style.color = 'var(--success, #1FAE6E)';
+            } else {
+              empStatusEl.className = 'badge danger';
+              empStatusEl.style.background = 'var(--danger-bg, #FEECEE)';
+              empStatusEl.style.color = 'var(--danger, #E5484D)';
+            }
+          }
+
+          var statusCard = targetDoc.querySelector('.status-card');
+          var bannerEl = targetDoc.getElementById('profile-leave-banner');
+          if (!bannerEl && statusCard) {
+            bannerEl = targetDoc.createElement('div');
+            bannerEl.id = 'profile-leave-banner';
+            statusCard.appendChild(bannerEl);
+          }
+
+          if (bannerEl) {
+            if (isLeaveInactive) {
+              bannerEl.style.display = 'block';
+              bannerEl.style.marginTop = '10px';
+              bannerEl.style.padding = '10px 12px';
+              bannerEl.style.background = '#FEF2F2';
+              bannerEl.style.border = '1px solid #FECACA';
+              bannerEl.style.borderRadius = '10px';
+              bannerEl.style.fontSize = '12px';
+              bannerEl.style.color = '#991B1B';
+              bannerEl.style.lineHeight = '1.4';
+
+              var daysStr = leaveInfo.days + ' Day' + (leaveInfo.days > 1 ? 's' : '');
+              var periodStr = leaveInfo.fromDate === leaveInfo.toDate ? leaveInfo.fromDate : (leaveInfo.fromDate + ' – ' + leaveInfo.toDate);
+
+              bannerEl.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; font-weight:700; margin-bottom:4px;">'
+                + '<span>● On Approved ' + leaveInfo.leaveType + ' (' + daysStr + ')</span>'
+                + '<span style="font-size:11px; font-weight:700; background:#FEE2E2; color:#B91C1C; padding:2px 8px; border-radius:6px;">Inactive</span>'
+                + '</div>'
+                + '<div style="color:#7F1D1D;">Period: <b>' + periodStr + '</b></div>'
+                + '<div style="color:#047857; font-weight:600; margin-top:4px;">'
+                + '✓ Automatically changes back to <b>Active</b> on next working day (' + leaveInfo.nextWorkingDayStr + ')'
+                + '</div>'
+                + '<div style="margin-top:8px; padding-top:6px; border-top:1px dashed #FCA5A5; display:flex; gap:6px;">'
+                + '<button type="button" id="btn-sim-next-day" style="flex:1; background:#FFFFFF; border:1px solid #F87171; border-radius:6px; color:#B91C1C; font-size:11px; font-weight:600; padding:4px 6px; cursor:pointer;">Simulate Next Working Day (End Leave) ↻</button>'
+                + '</div>';
+
+              var simBtn = bannerEl.querySelector('#btn-sim-next-day');
+              if (simBtn) {
+                simBtn.onclick = function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.SIMULATED_DATE_OFFSET_DAYS = (leaveInfo.days || 3) + 1;
+                  updateLiveProfileStatusUI(targetDoc);
+                };
+              }
+            } else if (window.SIMULATED_DATE_OFFSET_DAYS > 0) {
+              bannerEl.style.display = 'block';
+              bannerEl.style.marginTop = '10px';
+              bannerEl.style.padding = '10px 12px';
+              bannerEl.style.background = '#ECFDF5';
+              bannerEl.style.border = '1px solid #A7F3D0';
+              bannerEl.style.borderRadius = '10px';
+              bannerEl.style.fontSize = '12px';
+              bannerEl.style.color = '#065F46';
+              bannerEl.style.lineHeight = '1.4';
+
+              bannerEl.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; font-weight:700;">'
+                + '<span>✓ Approved Leave Period Completed</span>'
+                + '<span style="font-size:11px; font-weight:700; background:#D1FAE5; color:#047857; padding:2px 8px; border-radius:6px;">Active</span>'
+                + '</div>'
+                + '<div style="color:#047857; margin-top:3px;">Employment Status automatically reverted back to <b>Active</b> on the next working day.</div>'
+                + '<div style="margin-top:6px; padding-top:6px; border-top:1px dashed #6EE7B7;">'
+                + '<button type="button" id="btn-reset-sim" style="background:#FFFFFF; border:1px solid #10B981; border-radius:6px; color:#047857; font-size:11px; font-weight:600; padding:3px 8px; cursor:pointer;">Reset to Current Date ↺</button>'
+                + '</div>';
+
+              var resetBtn = bannerEl.querySelector('#btn-reset-sim');
+              if (resetBtn) {
+                resetBtn.onclick = function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.SIMULATED_DATE_OFFSET_DAYS = 0;
+                  updateLiveProfileStatusUI(targetDoc);
+                };
+              }
+            } else {
+              bannerEl.style.display = 'none';
+            }
+          }
+        }
+        window.updateLiveProfileStatusUI = updateLiveProfileStatusUI;
+
+        function updateEmploymentStatusAfterApproval(empName, lType, status) {
+          var activeLeave = getActiveLeaveInfo();
+          var newStatus = activeLeave.isInactive ? 'Inactive' : 'Active';
+          window.EMPLOYMENT_STATUS = newStatus;
+          try {
+            sessionStorage.setItem('EMPLOYMENT_STATUS', newStatus);
+          } catch (e) {}
+
+          var frame = document.getElementById('frame');
+          if (frame) {
+            var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
+            if (doc && typeof updateLiveProfileStatusUI === 'function') {
+              updateLiveProfileStatusUI(doc);
+            }
+          }
+        }
+        window.updateEmploymentStatusAfterApproval = updateEmploymentStatusAfterApproval;
+
         window.CHECKED_IN = true;
         window.ATTENDANCE_STATUS = 'Checked In';
 

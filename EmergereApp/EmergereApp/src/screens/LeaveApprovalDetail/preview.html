@@ -197,6 +197,40 @@ function handleDetailLeaveDecision(status) {
     mgrPath.textContent = isApproved ? 'Manager (Approved)' : 'Manager (Rejected)';
   }
 
+  // Auto-update Employment Status for eligible leave types
+  const leaveTypeEl = document.getElementById('lad-type-val');
+  const leaveType = leaveTypeEl ? leaveTypeEl.textContent.trim() : '';
+  const eligibleTypes = ['Casual Leave', 'Sick Leave', 'Comp-Off'];
+  const isEligibleLeave = eligibleTypes.some(t => leaveType.toLowerCase() === t.toLowerCase());
+  if (isEligibleLeave && !activeRecord?.isPermission) {
+    const fromDateEl = document.getElementById('lad-from-val');
+    const toDateEl = document.getElementById('lad-to-val');
+    const fromDate = fromDateEl ? fromDateEl.textContent.trim() : null;
+    const toDate = toDateEl ? toDateEl.textContent.trim() : null;
+    const newStatus = isApproved ? 'Inactive' : 'Active';
+    const schedule = isApproved ? {
+      leaveType: leaveType,
+      fromDate: fromDate,
+      toDate: toDate,
+      approvedAt: new Date().toISOString()
+    } : null;
+    // Write to parent (SPA frame) and sessionStorage
+    const st = window.parent || window;
+    st.EMPLOYMENT_STATUS = newStatus;
+    st.LEAVE_STATUS_SCHEDULE = schedule;
+    try {
+      sessionStorage.setItem('EMPLOYMENT_STATUS', newStatus);
+      sessionStorage.setItem('LEAVE_STATUS_SCHEDULE', schedule ? JSON.stringify(schedule) : '');
+    } catch(e) {}
+    // Also update live profile-emp-status badge if present in parent frame
+    const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+    const empStatusBadge = parentDoc.getElementById('profile-emp-status');
+    if (empStatusBadge) {
+      empStatusBadge.textContent = newStatus;
+      empStatusBadge.className = newStatus === 'Active' ? 'badge success' : 'badge danger';
+    }
+  }
+
   // Update buttons to show status banner and Done button
   const btnRow = document.getElementById('lad-btn-row');
   if (btnRow) {

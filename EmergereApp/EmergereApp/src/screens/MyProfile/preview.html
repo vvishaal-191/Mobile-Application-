@@ -240,6 +240,70 @@ function saveProfileEdit() {
       if (document.getElementById('input-phone')) document.getElementById('input-phone').value = p.phone;
     }
   }
+
+  // ── Employment Status: compute from leave schedule ──────────────────────────
+  (function updateEmploymentStatus() {
+    const st = window.parent || window;
+
+    // Read schedule from parent global or sessionStorage
+    let schedule = st.LEAVE_STATUS_SCHEDULE || null;
+    if (!schedule) {
+      try {
+        const raw = sessionStorage.getItem('LEAVE_STATUS_SCHEDULE');
+        if (raw) schedule = JSON.parse(raw);
+      } catch(e) {}
+    }
+
+    let empStatus = st.EMPLOYMENT_STATUS || null;
+    if (!empStatus) {
+      try { empStatus = sessionStorage.getItem('EMPLOYMENT_STATUS'); } catch(e) {}
+    }
+
+    if (schedule && schedule.fromDate) {
+      const today = new Date();
+      const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      function parseDateStr(s) {
+        if (!s) return null;
+        const d = new Date(s);
+        if (!isNaN(d.getTime())) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        return null;
+      }
+      function nextWorkDay(d) {
+        const n = new Date(d);
+        n.setDate(n.getDate() + 1);
+        while (n.getDay() === 0 || n.getDay() === 6) n.setDate(n.getDate() + 1);
+        return n;
+      }
+
+      const from = parseDateStr(schedule.fromDate);
+      const to = parseDateStr(schedule.toDate);
+      const leaveEnd = to || from;
+      const resumeDay = nextWorkDay(leaveEnd);
+
+      if (todayMid >= from && todayMid < resumeDay) {
+        empStatus = 'Inactive';
+        st.EMPLOYMENT_STATUS = 'Inactive';
+        try { sessionStorage.setItem('EMPLOYMENT_STATUS', 'Inactive'); } catch(e) {}
+      } else if (todayMid >= resumeDay) {
+        empStatus = 'Active';
+        st.EMPLOYMENT_STATUS = 'Active';
+        st.LEAVE_STATUS_SCHEDULE = null;
+        try {
+          sessionStorage.setItem('EMPLOYMENT_STATUS', 'Active');
+          sessionStorage.setItem('LEAVE_STATUS_SCHEDULE', '');
+        } catch(e) {}
+      }
+    }
+
+    const badge = document.getElementById('profile-emp-status');
+    if (badge && empStatus) {
+      badge.textContent = empStatus;
+      badge.className = empStatus === 'Active' ? 'badge success' : 'badge danger';
+    }
+  })();
+  // ────────────────────────────────────────────────────────────────────────────
 })();
+
 </script>
 </body></html>

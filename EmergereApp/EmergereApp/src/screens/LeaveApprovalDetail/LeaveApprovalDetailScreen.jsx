@@ -129,6 +129,24 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
             r.id === person.id ? { ...r, status: finalDecision.toLowerCase() } : r
           );
         }
+
+        // Auto-update Employment Status for eligible leave types
+        const eligibleLeaveTypes = ['Casual Leave', 'Sick Leave', 'Comp-Off'];
+        const isEligible = eligibleLeaveTypes.some(
+          (lt) => reqType && reqType.toLowerCase() === lt.toLowerCase()
+        );
+        if (isEligible && finalDecision === 'Approved') {
+          const empId = person.empId || person.employeeId || 'EMP-2024-0156';
+          global.EMPLOYMENT_STATUS = 'Inactive';
+          global.LEAVE_STATUS_SCHEDULE = {
+            employeeId: empId,
+            leaveType: reqType,
+            fromDate: person.fromDate || null,
+            toDate: person.toDate || null,
+            totalDays: person.totalDays || null,
+            approvedAt: new Date().toISOString(),
+          };
+        }
       }
     }
 

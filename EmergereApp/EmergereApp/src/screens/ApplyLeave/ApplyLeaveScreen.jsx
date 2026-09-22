@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './ApplyLeaveScreen.styles';
 
-const LEAVE_TYPES = ['Casual Leave', 'Sick Leave', 'Earned Leave', 'Privilege Leave'];
+const LEAVE_TYPES = ['Casual Leave', 'Sick Leave', 'WFH (Work From Home)', 'Comp-Off (Compensatory Off)'];
 
 const MANAGERS = [
   'Vishnu (Reporting Manager)',

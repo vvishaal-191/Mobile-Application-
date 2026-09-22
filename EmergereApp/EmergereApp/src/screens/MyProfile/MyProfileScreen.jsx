@@ -1,5 +1,5 @@
 // src/screens/MyProfile/MyProfileScreen.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Avatar from '../../components/Avatar';
@@ -9,19 +9,88 @@ import ScreenHeader from '../../components/ScreenHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './MyProfileScreen.styles';
 
+/**
+ * Parses a date string like "Sep 10, 2026" into a Date object (midnight local).
+ */
+function parseLeaveDateString(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  return null;
+}
+
+/**
+ * Returns the next working day (Mon–Fri) after the given date.
+ */
+function nextWorkingDay(date) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + 1);
+  // Skip weekends
+  while (next.getDay() === 0 || next.getDay() === 6) {
+    next.setDate(next.getDate() + 1);
+  }
+  return next;
+}
+
+/**
+ * Computes the employment status based on the global leave schedule.
+ * Returns 'Inactive' if today is within the approved leave period,
+ * 'Active' otherwise. Also clears the schedule when the leave has ended.
+ */
+function computeEmploymentStatus() {
+  if (typeof global === 'undefined') return 'Active';
+
+  const schedule = global.LEAVE_STATUS_SCHEDULE;
+  if (!schedule) return global.EMPLOYMENT_STATUS || 'Active';
+
+  const today = new Date();
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  const from = parseLeaveDateString(schedule.fromDate);
+  const to = parseLeaveDateString(schedule.toDate);
+
+  if (!from) return global.EMPLOYMENT_STATUS || 'Active';
+
+  // End of leave period = next working day after toDate (or fromDate if no toDate)
+  const leaveEnd = to ? to : from;
+  const resumeDay = nextWorkingDay(leaveEnd);
+
+  if (todayMidnight >= from && todayMidnight < resumeDay) {
+    // Still on leave
+    global.EMPLOYMENT_STATUS = 'Inactive';
+    return 'Inactive';
+  } else if (todayMidnight >= resumeDay) {
+    // Leave period is over — revert status
+    global.EMPLOYMENT_STATUS = 'Active';
+    global.LEAVE_STATUS_SCHEDULE = null;
+    return 'Active';
+  }
+
+  return global.EMPLOYMENT_STATUS || 'Active';
+}
+
 export default function MyProfileScreen({ navigation, route }) {
   const [isEditing, setIsEditing] = useState(false);
   const [employmentStatus, setEmploymentStatus] = useState(
     route?.params?.employmentStatus ||
-      (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS) ||
+      computeEmploymentStatus() ||
       'Active'
   );
 
+  // Refresh employment status whenever the screen mounts or comes into focus
+  const refreshStatus = useCallback(() => {
+    const computed = computeEmploymentStatus();
+    setEmploymentStatus(computed);
+  }, []);
+
   useEffect(() => {
+    // Compute status on mount
+    refreshStatus();
+
     if (route?.params?.employmentStatus) {
       setEmploymentStatus(route.params.employmentStatus);
-    } else if (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS) {
-      setEmploymentStatus(global.EMPLOYMENT_STATUS);
     }
     if (typeof global !== 'undefined' && global.USER_PROFILE) {
       const p = global.USER_PROFILE;
@@ -42,7 +111,8 @@ export default function MyProfileScreen({ navigation, route }) {
         phone: p.phone || '+91 98765 43210',
       });
     }
-  }, [route?.params?.employmentStatus]);
+  }, [route?.params?.employmentStatus, refreshStatus]);
+
 
   const [profileHeader, setProfileHeader] = useState(() => {
     const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
