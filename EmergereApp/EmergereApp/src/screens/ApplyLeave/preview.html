@@ -41,7 +41,27 @@
       </div>
     </div>
   </div>
-  <div class="field"><label class="field-label">Number of Days</label><div class="auto-box">1.0 Day (Auto-calculated)</div></div>
+  <div class="field half-day-row">
+    <div class="half-day-check-wrap">
+      <label class="half-day-label" for="half-day-check">
+        <input type="checkbox" id="half-day-check" onchange="toggleHalfDay(this.checked)" style="width:18px;height:18px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;" />
+        <span>Half Day</span>
+      </label>
+    </div>
+    <div class="half-day-type-wrap" id="half-day-type-wrap" style="display:none;">
+      <label class="field-label" style="margin-bottom:6px;display:block;">Leave Type <span style="color:var(--danger)">*</span></label>
+      <div class="select-wrap" style="position:relative;">
+        <select id="half-day-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:12px 40px 12px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500;">
+          <option value="First Half">First Half</option>
+          <option value="Second Half">Second Half</option>
+        </select>
+        <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="field"><label class="field-label">Number of Days</label><div class="auto-box" id="days-count-box">1.0 Day (Auto-calculated)</div></div>
   <div class="field"><label class="field-label">Approving Manager</label>
     <div class="select-wrap" style="position:relative;">
       <select id="leave-manager-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500;">
@@ -83,6 +103,16 @@
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
 <script>
+function toggleHalfDay(isChecked) {
+  var wrap = document.getElementById('half-day-type-wrap');
+  var daysBox = document.getElementById('days-count-box');
+  if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
+  if (isChecked && daysBox) {
+    daysBox.textContent = '0.5 Day (Half Day)';
+  } else if (!isChecked && daysBox) {
+    daysBox.textContent = '1.0 Day (Auto-calculated)';
+  }
+}
 function submitLeaveRequest() {
   var modal = document.getElementById('leave-success-modal');
   if (modal) modal.classList.add('show');
