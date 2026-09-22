@@ -13,11 +13,43 @@ const LEAVE_BALANCES = [
   { label: 'Earned Leave', used: 10, total: 15 },
 ];
 
-const QUICK_ACTIONS = [
-  { key: 'applyLeave', label: 'Apply Leave', icon: 'plus-circle' },
-  { key: 'applyPermission', label: 'Apply Permission', icon: 'clock' },
-  { key: 'viewAttendance', label: 'View Attendance', icon: 'calendar' },
-  { key: 'viewHolidays', label: 'View Holidays', icon: 'x-circle' },
+const ACTION_CARDS = [
+  {
+    key: 'applyLeave',
+    title: 'Apply Leave',
+    subtitle: 'Plan your time off',
+    icon: 'calendar',
+    iconColor: '#2F6BFF',
+    iconBg: '#EEF4FF',
+    screen: 'ApplyLeave',
+  },
+  {
+    key: 'applyPermission',
+    title: 'Apply Permission',
+    subtitle: 'Request short leave',
+    icon: 'file-text',
+    iconColor: '#1FAE6E',
+    iconBg: '#E6F9F0',
+    screen: 'ApplyPermission',
+  },
+  {
+    key: 'myRequests',
+    title: 'My Requests',
+    subtitle: 'Track your leaves & permissions',
+    icon: 'layers',
+    iconColor: '#7C3AED',
+    iconBg: '#F1EDFD',
+    screen: 'LeaveHistory',
+  },
+  {
+    key: 'holidayCalendar',
+    title: 'Holiday Calendar',
+    subtitle: 'View upcoming holidays',
+    icon: 'calendar',
+    iconColor: '#FA6400',
+    iconBg: '#FFF1E5',
+    screen: 'HolidayCalendar',
+  },
 ];
 
 const INITIAL_REQUESTS = [];
@@ -26,13 +58,12 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const glowAnim = useRef(new Animated.Value(0)).current;
-  const [checkedIn, setCheckedIn] = useState(true);
   const [userProfile, setUserProfile] = useState(
     (typeof global !== 'undefined' && global.USER_PROFILE) || {
-      name: 'Sneha Reddy',
-      role: 'UI/UX Designer',
-      employeeId: 'EMP-2024-0103',
-      email: 'sneha@gmail.com',
+      name: 'Priya Sharma',
+      role: 'Senior Software Engineer',
+      employeeId: 'EMP-2024-0156',
+      email: 'priya@it-solutions.com',
     }
   );
 
@@ -40,25 +71,10 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
     if (screen === 'Profile' || screen === 'More' || screen === 'MyProfile') {
       const status = (typeof global !== 'undefined' && global.EMPLOYMENT_STATUS)
         ? global.EMPLOYMENT_STATUS
-        : (checkedIn ? 'Active' : 'Inactive');
+        : 'Active';
       navigation && navigation.navigate('MyProfile', { employmentStatus: status });
     } else {
       navigation && navigation.navigate(screen);
-    }
-  };
-
-  const handleCheckIn = () => {
-    setCheckedIn(true);
-    if (typeof global !== 'undefined') {
-      global.EMPLOYMENT_STATUS = 'Active';
-    }
-    navigation && navigation.navigate('MyProfile', { employmentStatus: 'Active' });
-  };
-
-  const handleCheckOut = () => {
-    setCheckedIn(false);
-    if (typeof global !== 'undefined') {
-      global.EMPLOYMENT_STATUS = 'Inactive';
     }
   };
 
@@ -212,9 +228,6 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
           ];
         });
       }
-      if (route.params.checkedIn !== undefined) {
-        setCheckedIn(route.params.checkedIn);
-      }
       if (route.params.userProfile) {
         setUserProfile(route.params.userProfile);
       }
@@ -279,49 +292,32 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
           <Text style={styles.date}>Thu, Sep 03 2026</Text>
         </View>
 
-        <Card style={styles.attendanceCard}>
-          <View style={styles.attendanceRow}>
-            <View style={styles.statusDotRow}>
-              <View
-                style={[
-                  styles.statusDot,
-                  { backgroundColor: checkedIn ? '#1FAE6E' : '#E5484D' },
-                ]}
-              />
-              <Text style={styles.attendanceText}>
-                {checkedIn ? 'Checked In' : 'Checked Out'}
-              </Text>
-            </View>
-            <View style={styles.btnGroup}>
-              <TouchableOpacity
-                style={styles.checkInBtn}
-                onPress={handleCheckIn}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.checkInText}>Check In</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.checkOutBtn}
-                onPress={handleCheckOut}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.checkOutText}>Check Out</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statsRow}>
-            <View>
-              <Text style={styles.statLabel}>Working Hours</Text>
-              <Text style={styles.statValue}>6h 45m</Text>
-            </View>
-            <View>
-              <Text style={styles.statLabel}>Break Duration</Text>
-              <Text style={styles.statValue}>30m</Text>
-            </View>
-          </View>
-        </Card>
+        {/* 2x2 Action Cards from Image 2 */}
+        <View style={styles.actionGrid}>
+          {ACTION_CARDS.map((action) => (
+            <TouchableOpacity
+              key={action.key}
+              style={styles.actionCard}
+              onPress={() => go(action.screen)}
+              activeOpacity={0.75}
+            >
+              <View style={styles.actionTop}>
+                <View style={[styles.actionIconWrap, { backgroundColor: action.iconBg }]}>
+                  <Feather name={action.icon} size={22} color={action.iconColor} />
+                </View>
+                <View style={styles.actionChevron}>
+                  <Feather name="chevron-right" size={16} color="#2F6BFF" />
+                </View>
+              </View>
+              <View style={styles.actionBody}>
+                <Text style={styles.actionTitle}>{action.title}</Text>
+                <Text style={styles.actionSub}>{action.subtitle}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
 
+        {/* Leave Balances Card with matching container style */}
         <Card style={styles.balancesCard}>
           <Text style={styles.cardTitle}>Leave Balances</Text>
           {LEAVE_BALANCES.map((item) => (
@@ -343,20 +339,6 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
             </View>
           ))}
         </Card>
-
-        <Text style={styles.sectionLabel}>QUICK ACTIONS</Text>
-        <View style={styles.quickActionsGrid}>
-          {QUICK_ACTIONS.map((action) => (
-            <TouchableOpacity
-              key={action.key}
-              style={styles.quickAction}
-              onPress={() => go(action.key)}
-            >
-              <Feather name={action.icon} size={18} color="#2F6BFF" />
-              <Text style={styles.quickActionText}>{action.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
 
         <Text style={styles.sectionLabel}>RECENT REQUESTS ({requests.length})</Text>
         {requests.map((req) => (
