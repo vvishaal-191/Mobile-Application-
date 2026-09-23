@@ -56,8 +56,9 @@ export default StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   logoImage: {
-    width: 66,
-    height: 66,
+    width: 64,
+    height: 64,
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 26,
