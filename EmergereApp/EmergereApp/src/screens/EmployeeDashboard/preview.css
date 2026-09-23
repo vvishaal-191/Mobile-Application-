@@ -86,7 +86,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 38px;
+  height: 40px;
 }
 
 .hamburger-btn {
@@ -107,34 +107,18 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.brand-block {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 38px;
-}
-
-.brand-logo-img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
 .header-dashboard-title-wrap {
   position: relative;
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 
 .header-dashboard-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: #FFFFFF;
-  line-height: 1.15;
-  letter-spacing: -0.25px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
 }
 
 
@@ -249,6 +233,18 @@ body {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.profile-avatar-block:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.profile-avatar-block:active {
+  transform: scale(0.97);
 }
 
 .avatar-circle-wrap {

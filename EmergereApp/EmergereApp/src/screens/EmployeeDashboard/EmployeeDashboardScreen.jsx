@@ -214,16 +214,8 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
               >
                 <Feather name="menu" size={24} color="#FFFFFF" />
               </TouchableOpacity>
-              <View style={styles.brandBlock}>
-                <Image
-                  source={require('../../../assets/tech-circuit-logo.png')}
-                  style={styles.brandLogo}
-                  resizeMode="contain"
-                />
-                <View style={styles.headerDashboardTitleWrap}>
-                  <Text style={styles.headerDashboardTitle}>Dashboard</Text>
-                  <View style={styles.headerDashboardCircle} />
-                </View>
+              <View style={styles.headerDashboardTitleWrap}>
+                <Text style={styles.headerDashboardTitle}>Dashboard</Text>
               </View>
             </View>
 

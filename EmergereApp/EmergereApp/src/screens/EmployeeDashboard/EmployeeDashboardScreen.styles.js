@@ -29,13 +29,13 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 38,
+    height: 40,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    height: 38,
+    height: 40,
   },
   menuButton: {
     width: 38,
@@ -45,35 +45,14 @@ export default StyleSheet.create({
     justifyContent: 'center',
     padding: 0,
   },
-  brandBlock: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    height: 38,
-  },
-  brandLogo: {
-    width: 32,
-    height: 32,
-    resizeMode: 'contain',
-  },
   headerDashboardTitleWrap: {
-    position: 'relative',
-    alignItems: 'center',
     justifyContent: 'center',
   },
   headerDashboardTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '700',
     color: '#FFFFFF',
-    letterSpacing: -0.25,
-  },
-  headerDashboardCircle: {
-    position: 'absolute',
-    bottom: -7,
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: '#FFFFFF',
+    letterSpacing: -0.3,
   },
 
   bellWrapper: {
@@ -157,6 +136,7 @@ export default StyleSheet.create({
   avatarBlock: {
     alignItems: 'center',
     marginLeft: 12,
+    cursor: 'pointer',
   },
   avatarCircle: {
     width: 74,
