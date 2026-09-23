@@ -1,11 +1,18 @@
 // src/screens/ApplyLeave/ApplyLeaveScreen.jsx
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, Modal, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './ApplyLeaveScreen.styles';
 
-const LEAVE_TYPES = ['Casual Leave', 'Sick Leave', 'WFH (Work From Home)', 'Comp-Off (Compensatory Off)'];
+const LEAVE_TYPES = [
+  { label: 'Casual Leave', sub: 'For personal reasons' },
+  { label: 'Sick Leave', sub: 'Medical & health care' },
+  { label: 'WFH (Work From Home)', sub: 'Work from home' },
+  { label: 'Comp-Off (Compensatory Off)', sub: 'Compensatory day off' },
+];
+
+const HALF_DAY_TYPES = ['First Half', 'Second Half'];
 
 const MANAGERS = [
   'Vishnu (Reporting Manager)',
@@ -13,7 +20,6 @@ const MANAGERS = [
   'Rahul (Reporting Manager)',
 ];
 
-/** Derive initials from a full name string */
 function getInitials(name) {
   if (!name) return 'PS';
   const parts = name.trim().split(' ').filter(Boolean);
@@ -21,13 +27,9 @@ function getInitials(name) {
   return name.substring(0, 2).toUpperCase();
 }
 
-/** Read the reporting manager name from global profile and match it to a MANAGERS entry.
- *  Returns the matching manager string, or the first manager if none found. */
 function resolveDefaultManager() {
-  const profile =
-    (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+  const profile = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
   const managerName = profile.reportingManager || 'Vishnu (Reporting Manager)';
-  // Try to find a matching entry (partial match on name before parenthesis)
   const match = MANAGERS.find((m) =>
     m.toLowerCase() === managerName.toLowerCase() ||
     managerName.toLowerCase().startsWith(m.toLowerCase()) ||
@@ -38,8 +40,12 @@ function resolveDefaultManager() {
 
 export default function ApplyLeaveScreen({ navigation }) {
   const [leaveType, setLeaveType] = useState('Casual Leave');
+  const [leaveTypeSub, setLeaveTypeSub] = useState('For personal reasons');
   const [fromDate, setFromDate] = useState('07-Sep-2026');
   const [toDate, setToDate] = useState('07-Sep-2026');
+  const [isHalfDay, setIsHalfDay] = useState(false);
+  const [halfDayType, setHalfDayType] = useState('First Half');
+  const [isHalfDayTypeOpen, setIsHalfDayTypeOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [daysCount, setDaysCount] = useState('1.0 Day (Auto-calculated)');
   const [approvingManager, setApprovingManager] = useState(resolveDefaultManager);
@@ -51,22 +57,41 @@ export default function ApplyLeaveScreen({ navigation }) {
   const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   const toggleFromDate = () => {
-    setFromDate(fromDate === '07-Sep-2026' ? '10-Sep-2026' : '07-Sep-2026');
+    const nextDate = fromDate === '07-Sep-2026' ? '10-Sep-2026' : '07-Sep-2026';
+    setFromDate(nextDate);
   };
 
   const toggleToDate = () => {
     if (toDate === '07-Sep-2026') {
       setToDate('12-Sep-2026');
-      setDaysCount('6.0 Days (Auto-calculated)');
+      if (!isHalfDay) setDaysCount('6.0 Days (Auto-calculated)');
     } else {
       setToDate('07-Sep-2026');
-      setDaysCount('1.0 Day (Auto-calculated)');
+      if (!isHalfDay) setDaysCount('1.0 Day (Auto-calculated)');
     }
   };
 
+  const toggleHalfDay = () => {
+    const nextHalf = !isHalfDay;
+    setIsHalfDay(nextHalf);
+    if (nextHalf) {
+      setDaysCount('0.5 Day (Half Day)');
+      setLeaveTypeSub(`For personal reasons • ${halfDayType}`);
+    } else {
+      setDaysCount('1.0 Day (Auto-calculated)');
+      const match = LEAVE_TYPES.find((lt) => lt.label === leaveType);
+      setLeaveTypeSub(match ? match.sub : 'General leave');
+    }
+  };
+
+  const selectHalfDayType = (type) => {
+    setHalfDayType(type);
+    setIsHalfDayTypeOpen(false);
+    setLeaveTypeSub(`For personal reasons • ${type}`);
+  };
+
   const handleSubmit = () => {
-    const profile =
-      (typeof global !== 'undefined' && global.USER_PROFILE) || {};
+    const profile = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
     const employeeName = profile.name || 'Sneha Reddy';
     const employeeInitials = profile.initials || getInitials(employeeName) || 'SR';
     const employeeId = profile.employeeId || 'EMP-2024-0103';
@@ -98,14 +123,12 @@ export default function ApplyLeaveScreen({ navigation }) {
       supportingDocs: 'None Attached',
       remark: `Sent to ${managerDisplayName} for review.`,
       typeTone: 'info',
-      // used in Employee Dashboard list
       title: `${leaveType} (${daysCount.replace(' (Auto-calculated)', '')})`,
       subtitle: `${fromDate} • ${reason || 'Personal Work'}`,
       subtitleApp: `${leaveType} Application`,
       appliedName: `${employeeName.split(' ')[0]} (Applied)`,
     };
 
-    // Push to shared global store so Manager Dashboard and Request Detail can pick it up
     if (typeof global !== 'undefined') {
       if (!global.LEAVE_REQUESTS) global.LEAVE_REQUESTS = [];
       global.LEAVE_REQUESTS.unshift(newRequest);
@@ -113,7 +136,6 @@ export default function ApplyLeaveScreen({ navigation }) {
       global.LATEST_LEAVE_REQUEST = newRequest;
     }
 
-    // Show success confirmation popup
     setSubmittedRequest(newRequest);
     setShowSuccessModal(true);
   };
@@ -121,148 +143,321 @@ export default function ApplyLeaveScreen({ navigation }) {
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-        <View style={styles.headerRow}>
-          <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-          <Text style={styles.headerTitle}>Apply Leave</Text>
-        </View>
-        <Text style={styles.subtitle}>Create new leave request</Text>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Leave Type *</Text>
+        {/* Header Gradient Banner - Flush to top with no gap */}
+        <View style={styles.headerBanner}>
           <TouchableOpacity
-            style={[styles.selectBox, isLeaveTypeOpen && styles.selectBoxActive]}
-            onPress={() => {
-              setIsLeaveTypeOpen(!isLeaveTypeOpen);
-              setIsManagerOpen(false);
-            }}
-            activeOpacity={0.7}
+            style={styles.backBtn}
+            onPress={() => go('Dashboard')}
+            activeOpacity={0.8}
+            accessibilityLabel="Back to Dashboard"
           >
-            <Text style={styles.selectText}>{leaveType}</Text>
-            <Feather
-              name={isLeaveTypeOpen ? 'chevron-up' : 'chevron-down'}
-              size={18}
-              color="#111827"
-            />
+            <Feather name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
-          {isLeaveTypeOpen && (
-            <View style={styles.dropdownContainer}>
-              {LEAVE_TYPES.map((lt) => {
-                const isSelected = lt === leaveType;
-                return (
-                  <TouchableOpacity
-                    key={lt}
-                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
-                    onPress={() => {
-                      setLeaveType(lt);
-                      setIsLeaveTypeOpen(false);
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    <Text
-                      style={[
-                        styles.dropdownOptionText,
-                        isSelected && styles.dropdownOptionTextSelected,
-                      ]}
-                    >
-                      {lt}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.headerTitle}>Apply Leave</Text>
+              <Text style={styles.headerSubtitle}>Create new leave request</Text>
             </View>
-          )}
-        </View>
 
-        <View style={styles.row}>
-          <View style={styles.halfField}>
-            <Text style={styles.label}>From Date *</Text>
-            <TouchableOpacity style={styles.inputBoxWithIcon} onPress={toggleFromDate}>
-              <Text style={styles.inputText}>{fromDate}</Text>
-              <View style={styles.calIconBadge}>
-                <Feather name="calendar" size={16} color="#2F6BFF" />
+            {/* 3D Calendar Illustration Badge */}
+            <View style={styles.badgeContainer}>
+              <View style={styles.calendarIllustrateBox}>
+                <View style={styles.calendarHeaderBar} />
+                <View style={styles.calendarRingsRow}>
+                  <View style={styles.calendarRing} />
+                  <View style={styles.calendarRing} />
+                  <View style={styles.calendarRing} />
+                </View>
+                <View style={styles.calendarGrid}>
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={[styles.calendarCell, styles.calendarCellPrimary]} />
+                </View>
+                <View style={styles.clockBadge}>
+                  <Feather name="clock" size={14} color="#FFFFFF" />
+                </View>
               </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.halfField}>
-            <Text style={styles.label}>To Date *</Text>
-            <TouchableOpacity style={styles.inputBoxWithIcon} onPress={toggleToDate}>
-              <Text style={styles.inputText}>{toDate}</Text>
-              <View style={styles.calIconBadge}>
-                <Feather name="calendar" size={16} color="#2F6BFF" />
+              <View style={styles.quoteBox}>
+                <Text style={styles.quoteText}>Plan your time</Text>
+                <Text style={styles.quoteText}>for a better tomorrow</Text>
+                <View style={styles.quoteLine} />
               </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Main Form Card */}
+        <View style={styles.formCard}>
+          {/* Leave Type (Casual Leave icon removed per user request) */}
+          <View style={styles.field}>
+            <Text style={styles.label}>
+              Leave Type <Text style={styles.required}>*</Text>
+            </Text>
+            <TouchableOpacity
+              style={[styles.selectCard, isLeaveTypeOpen && styles.selectCardActive]}
+              onPress={() => {
+                setIsLeaveTypeOpen(!isLeaveTypeOpen);
+                setIsManagerOpen(false);
+                setIsHalfDayTypeOpen(false);
+              }}
+              activeOpacity={0.7}
+            >
+              <View style={styles.selectContent}>
+                <Text style={styles.selectTitle}>{leaveType}</Text>
+                <Text style={styles.selectSub}>{leaveTypeSub}</Text>
+              </View>
+              <Feather
+                name={isLeaveTypeOpen ? 'chevron-up' : 'chevron-down'}
+                size={18}
+                color="#1E293B"
+              />
             </TouchableOpacity>
-          </View>
-        </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Number of Days</Text>
-          <View style={styles.autoBox}>
-            <Text style={styles.autoText}>{daysCount}</Text>
+            {isLeaveTypeOpen && (
+              <View style={styles.dropdownContainer}>
+                {LEAVE_TYPES.map((lt) => {
+                  const isSelected = lt.label === leaveType;
+                  return (
+                    <TouchableOpacity
+                      key={lt.label}
+                      style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                      onPress={() => {
+                        setLeaveType(lt.label);
+                        setLeaveTypeSub(isHalfDay ? `${lt.sub} • ${halfDayType}` : lt.sub);
+                        setIsLeaveTypeOpen(false);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          styles.dropdownOptionText,
+                          isSelected && styles.dropdownOptionTextSelected,
+                        ]}
+                      >
+                        {lt.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
           </View>
-        </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Approving Manager</Text>
-          <TouchableOpacity
-            style={[styles.selectBox, isManagerOpen && styles.selectBoxActive]}
-            onPress={() => {
-              setIsManagerOpen(!isManagerOpen);
-              setIsLeaveTypeOpen(false);
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.selectText}>{approvingManager}</Text>
-            <Feather
-              name={isManagerOpen ? 'chevron-up' : 'chevron-down'}
-              size={18}
-              color="#111827"
-            />
-          </TouchableOpacity>
-          {isManagerOpen && (
-            <View style={styles.dropdownContainer}>
-              {MANAGERS.map((mgr) => {
-                const isSelected = mgr === approvingManager;
-                return (
+          {/* From Date & To Date */}
+          <View style={styles.row}>
+            <View style={styles.halfField}>
+              <Text style={styles.label}>
+                From Date <Text style={styles.required}>*</Text>
+              </Text>
+              <TouchableOpacity style={styles.dateCard} onPress={toggleFromDate} activeOpacity={0.7}>
+                <Feather name="calendar" size={16} color="#2563EB" />
+                <Text style={styles.dateText}>{fromDate}</Text>
+                <Feather name="chevron-down" size={14} color="#1E293B" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.halfField}>
+              <Text style={styles.label}>
+                To Date <Text style={styles.required}>*</Text>
+              </Text>
+              <TouchableOpacity style={styles.dateCard} onPress={toggleToDate} activeOpacity={0.7}>
+                <Feather name="calendar" size={16} color="#2563EB" />
+                <Text style={styles.dateText}>{toDate}</Text>
+                <Feather name="chevron-down" size={14} color="#1E293B" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Half Day Row */}
+          <View style={styles.field}>
+            <View style={styles.halfDayBox}>
+              <View style={styles.halfDayMain}>
+                <View style={styles.iconBadgeCircleBlue}>
+                  <Feather name="clock" size={16} color="#2563EB" />
+                </View>
+                <TouchableOpacity
+                  style={styles.checkboxBtn}
+                  onPress={toggleHalfDay}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.checkbox, isHalfDay && styles.checkboxChecked]}>
+                    {isHalfDay && <Feather name="check" size={13} color="#FFFFFF" />}
+                  </View>
+                  <View style={styles.halfDayTextCol}>
+                    <Text style={styles.halfDayTitle}>Half Day</Text>
+                    <Text style={styles.halfDaySub}>Select if you are applying for half day</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              {/* Sub Leave Type card inside Half Day when active: displays selected option */}
+              {isHalfDay && (
+                <View style={{ marginTop: 12 }}>
+                  <Text style={[styles.label, { marginBottom: 6 }]}>
+                    Leave Type <Text style={styles.required}>*</Text>
+                  </Text>
                   <TouchableOpacity
-                    key={mgr}
-                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                    style={[styles.selectCard, { height: 48 }, isHalfDayTypeOpen && styles.selectCardActive]}
                     onPress={() => {
-                      setApprovingManager(mgr);
+                      setIsHalfDayTypeOpen(!isHalfDayTypeOpen);
+                      setIsLeaveTypeOpen(false);
                       setIsManagerOpen(false);
                     }}
                     activeOpacity={0.7}
                   >
-                    <Text
-                      style={[
-                        styles.dropdownOptionText,
-                        isSelected && styles.dropdownOptionTextSelected,
-                      ]}
-                    >
-                      {mgr}
-                    </Text>
+                    <View style={styles.selectContent}>
+                      <Text style={styles.selectTitle}>{halfDayType}</Text>
+                      <Text style={styles.selectSub}>
+                        {halfDayType === 'First Half' ? 'Morning session (0.5 Day)' : 'Afternoon session (0.5 Day)'}
+                      </Text>
+                    </View>
+                    <Feather
+                      name={isHalfDayTypeOpen ? 'chevron-up' : 'chevron-down'}
+                      size={18}
+                      color="#1E293B"
+                    />
                   </TouchableOpacity>
-                );
-              })}
+
+                  {isHalfDayTypeOpen && (
+                    <View style={styles.dropdownContainer}>
+                      {HALF_DAY_TYPES.map((type) => {
+                        const isSelected = type === halfDayType;
+                        return (
+                          <TouchableOpacity
+                            key={type}
+                            style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                            onPress={() => selectHalfDayType(type)}
+                            activeOpacity={0.7}
+                          >
+                            <Text
+                              style={[
+                                styles.dropdownOptionText,
+                                isSelected && styles.dropdownOptionTextSelected,
+                              ]}
+                            >
+                              {type}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  )}
+                </View>
+              )}
             </View>
-          )}
-        </View>
+          </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Reason *</Text>
-          <TextInput
-            style={styles.textArea}
-            multiline
-            numberOfLines={4}
-            placeholder="Describe the reason for your leave..."
-            placeholderTextColor="#9AA3B2"
-            value={reason}
-            onChangeText={setReason}
-          />
-        </View>
+          {/* Number of Days */}
+          <View style={styles.field}>
+            <Text style={styles.label}>Number of Days</Text>
+            <View style={styles.daysCard}>
+              <View style={styles.daysIconBadge}>
+                <Feather name="calendar" size={18} color="#2563EB" />
+              </View>
+              <View style={styles.daysContent}>
+                <Text style={styles.daysText}>{daysCount}</Text>
+                <Text style={styles.daysSub}>Based on the selected dates</Text>
+              </View>
+            </View>
+          </View>
 
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Submit Request</Text>
-        </TouchableOpacity>
+          {/* Approving Manager */}
+          <View style={styles.field}>
+            <Text style={styles.label}>Approving Manager</Text>
+            <TouchableOpacity
+              style={[styles.selectCard, isManagerOpen && styles.selectCardActive]}
+              onPress={() => {
+                setIsManagerOpen(!isManagerOpen);
+                setIsLeaveTypeOpen(false);
+                setIsHalfDayTypeOpen(false);
+              }}
+              activeOpacity={0.7}
+            >
+              <View style={styles.iconBadgeCircleBlue}>
+                <Feather name="user" size={16} color="#2563EB" />
+              </View>
+              <View style={styles.selectContent}>
+                <Text style={styles.selectTitle}>{approvingManager}</Text>
+              </View>
+              <Feather
+                name={isManagerOpen ? 'chevron-up' : 'chevron-down'}
+                size={18}
+                color="#1E293B"
+              />
+            </TouchableOpacity>
+
+            {isManagerOpen && (
+              <View style={styles.dropdownContainer}>
+                {MANAGERS.map((mgr) => {
+                  const isSelected = mgr === approvingManager;
+                  return (
+                    <TouchableOpacity
+                      key={mgr}
+                      style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                      onPress={() => {
+                        setApprovingManager(mgr);
+                        setIsManagerOpen(false);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          styles.dropdownOptionText,
+                          isSelected && styles.dropdownOptionTextSelected,
+                        ]}
+                      >
+                        {mgr}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+
+          {/* Reason */}
+          <View style={styles.field}>
+            <Text style={styles.label}>
+              Reason <Text style={styles.required}>*</Text>
+            </Text>
+            <View style={styles.textareaCard}>
+              <View style={styles.textareaTop}>
+                <View style={styles.iconBadgeSmBlue}>
+                  <Feather name="file-text" size={15} color="#2563EB" />
+                </View>
+                <TextInput
+                  style={styles.textArea}
+                  multiline
+                  numberOfLines={3}
+                  maxLength={500}
+                  placeholder="Describe the reason for your leave..."
+                  placeholderTextColor="#94A3B8"
+                  value={reason}
+                  onChangeText={setReason}
+                />
+              </View>
+              <Text style={styles.charCounter}>{reason.length}/500</Text>
+            </View>
+          </View>
+
+          {/* Validation Info Helper Pill */}
+          <View style={styles.infoBanner}>
+            <Feather name="info" size={16} color="#2563EB" />
+            <Text style={styles.infoText}>
+              Please provide a valid reason for your leave request.
+            </Text>
+          </View>
+
+          {/* Submit Request Button */}
+          <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} activeOpacity={0.85}>
+            <Feather name="send" size={18} color="#FFFFFF" />
+            <Text style={styles.submitText}>Submit Request</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Success Popup Modal */}
@@ -346,12 +541,12 @@ const modalStyles = StyleSheet.create({
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#2F6BFF',
-    borderRadius: 12,
-    paddingVertical: 13,
+    backgroundColor: '#2563EB',
+    borderRadius: 14,
+    paddingVertical: 14,
     width: '100%',
     alignItems: 'center',
-    shadowColor: '#2F6BFF',
+    shadowColor: '#2563EB',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,

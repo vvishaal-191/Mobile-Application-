@@ -1,12 +1,66 @@
 
+        function onLeaveTypeChange(val) {
+          var titleEl = document.getElementById('leave-type-title');
+          var subEl = document.getElementById('leave-type-sub');
+          if (titleEl) titleEl.textContent = val;
+          if (subEl) {
+            var halfCheck = document.getElementById('half-day-check');
+            var isHalf = halfCheck && halfCheck.checked;
+            var halfType = document.getElementById('half-day-type-select') ? document.getElementById('half-day-type-select').value : 'First Half';
+            var halfSuffix = isHalf ? (' • ' + halfType) : '';
+            if (val === 'Casual Leave') subEl.textContent = 'For personal reasons' + halfSuffix;
+            else if (val === 'Sick Leave') subEl.textContent = 'Medical & health care' + halfSuffix;
+            else if (val.indexOf('WFH') !== -1) subEl.textContent = 'Work from home' + halfSuffix;
+            else if (val.indexOf('Comp-Off') !== -1) subEl.textContent = 'Compensatory day off' + halfSuffix;
+            else subEl.textContent = 'General leave' + halfSuffix;
+          }
+        }
+
+        function onHalfDayTypeChange(val) {
+          var titleEl = document.getElementById('half-day-type-title');
+          var subEl = document.getElementById('half-day-type-sub');
+          if (titleEl) titleEl.textContent = val;
+          if (subEl) {
+            subEl.textContent = (val === 'First Half' || val === '1st Half') ? 'Morning session (0.5 Day)' : 'Afternoon session (0.5 Day)';
+          }
+          var mainSub = document.getElementById('leave-type-sub');
+          if (mainSub) {
+            mainSub.textContent = 'For personal reasons • ' + val;
+          }
+        }
+
+        function onManagerChange(val) {
+          var mgrTitle = document.getElementById('leave-manager-title');
+          if (mgrTitle) mgrTitle.textContent = val;
+        }
+
+        function updateCharCount(el) {
+          var counter = document.getElementById('reason-char-counter');
+          if (counter) counter.textContent = (el.value ? el.value.length : 0) + '/500';
+        }
+
         function toggleHalfDay(isChecked) {
           var wrap = document.getElementById('half-day-type-wrap');
           var daysBox = document.getElementById('days-count-box');
           if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
-          if (isChecked && daysBox) {
-            daysBox.textContent = '0.5 Day (Half Day)';
-          } else if (!isChecked && daysBox) {
-            daysBox.textContent = '1.0 Day (Auto-calculated)';
+          if (isChecked) {
+            if (daysBox) daysBox.textContent = '0.5 Day (Half Day)';
+            var halfSelect = document.getElementById('half-day-type-select');
+            if (halfSelect) onHalfDayTypeChange(halfSelect.value);
+          } else {
+            updateLeaveDates();
+            var mainType = document.getElementById('leave-type-select');
+            if (mainType) onLeaveTypeChange(mainType.value);
+          }
+        }
+
+        function handleBackNav() {
+          if (window.parent && window.parent.loadScreen) {
+            window.parent.loadScreen('tpl-EmployeeDashboard');
+          } else if (typeof loadScreen === 'function') {
+            loadScreen('tpl-EmployeeDashboard');
+          } else {
+            location.href = '../EmployeeDashboard/preview.html';
           }
         }
 
@@ -119,7 +173,7 @@
             }
             var mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
             if (mgrTpl) {
-              let mgrHtml = mgrTpl.innerHTML;
+              var mgrHtml = mgrTpl.innerHTML;
               mgrHtml = mgrHtml.replace(/class="qbadge" id="manager-dash-leave-badge">[0-9]+/, function(m) {
                 var c = parseInt(m.replace('class="qbadge" id="manager-dash-leave-badge">', ''), 10) || 0;
                 return 'class="qbadge" id="manager-dash-leave-badge">' + (c + 1);

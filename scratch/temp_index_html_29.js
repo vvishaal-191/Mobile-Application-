@@ -740,12 +740,14 @@
             }
             
             .statusbar { display: none !important; }
-            .screen:not(.neumorphic-login-screen):not(.has-dash-header):not(:has(.dash-header)) {
+            .screen:not(.neumorphic-login-screen):not(.has-dash-header):not(:has(.dash-header)):not(.has-al-header):not(:has(.al-header-banner)) {
               height: 844px !important;
               padding-top: 16px !important;
             }
             .screen.has-dash-header,
-            .screen:has(.dash-header) {
+            .screen:has(.dash-header),
+            .screen.has-al-header,
+            .screen:has(.al-header-banner) {
               height: 844px !important;
               padding-top: 0 !important;
             }
@@ -852,12 +854,14 @@
             .statusbar {
               display: none !important;
             }
-            .screen:not(.neumorphic-login-screen):not(.has-dash-header):not(:has(.dash-header)) {
+            .screen:not(.neumorphic-login-screen):not(.has-dash-header):not(:has(.dash-header)):not(.has-al-header):not(:has(.al-header-banner)) {
               height: 844px !important;
               padding-top: 16px !important;
             }
             .screen.has-dash-header,
-            .screen:has(.dash-header) {
+            .screen:has(.dash-header),
+            .screen.has-al-header,
+            .screen:has(.al-header-banner) {
               height: 844px !important;
               padding-top: 0 !important;
             }

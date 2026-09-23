@@ -1,122 +1,453 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Apply Leave - Preview</title>
-<link rel="stylesheet" href="../../../preview/base.css"/>
-<link rel="stylesheet" href="./preview.css"/></head>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Apply Leave - Preview</title>
+  <link rel="stylesheet" href="../../../preview/base.css" />
+  <link rel="stylesheet" href="./preview.css" />
+</head>
 <body>
 <div class="device">
-<div class="screen">
-  <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Apply Leave</h1></div>
-  <p class="subtitle">Create new leave request</p>
-  <div class="field"><label class="field-label">Leave Type *</label>
-    <div class="select-wrap" style="position:relative;">
-      <select id="leave-type-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500;">
-        <option>Casual Leave</option>
-        <option>Sick Leave</option>
-        <option>WFH (Work From Home)</option>
-        <option>Comp-Off (Compensatory Off)</option>
-      </select>
-      <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </div>
-    </div>
-  </div>
-  <div class="field two-col">
-    <div>
-      <label class="field-label">From Date *</label>
-      <div class="date-input-wrap" onclick="openCalPicker('from-date-picker', this.querySelector('.cal-icon-btn'))">
-        <input type="text" id="from-date-display" value="07-Sep-2026" readonly />
-        <label for="from-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('from-date-picker', this)">
-          📅
-          <input type="date" id="from-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
-        </label>
-      </div>
-    </div>
-    <div>
-      <label class="field-label">To Date *</label>
-      <div class="date-input-wrap" onclick="openCalPicker('to-date-picker', this.querySelector('.cal-icon-btn'))">
-        <input type="text" id="to-date-display" value="07-Sep-2026" readonly />
-        <label for="to-date-picker" class="cal-icon-btn" title="Open Calendar" onclick="event.stopPropagation(); openCalPicker('to-date-picker', this)">
-          📅
-          <input type="date" id="to-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="field half-day-row">
-    <div class="half-day-col-left">
-      <label class="half-day-label" for="half-day-check">
-        <input type="checkbox" id="half-day-check" onchange="toggleHalfDay(this.checked)" style="width:18px;height:18px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;" />
-        <span>Half Day</span>
-      </label>
-    </div>
-    <div class="half-day-col-right" id="half-day-type-wrap" style="display:none;">
-      <label class="field-label" style="margin-bottom:6px;display:block;">Leave Type <span style="color:var(--danger)">*</span></label>
-      <div class="select-wrap" style="position:relative;">
-        <select id="half-day-type-select" style="width:100%; height:44px; border:1px solid var(--border); border-radius:12px; padding:0 36px 0 12px; font-size:14px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500; transition:border-color 0.25s ease, box-shadow 0.25s ease;">
-          <option value="First Half">First Half</option>
-          <option value="Second Half">Second Half</option>
-        </select>
-        <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  <div class="screen has-al-header">
+    <!-- Header Gradient Banner - Flush with top -->
+    <div class="al-header-banner">
+      <button class="al-back-btn" onclick="handleBackNav()" title="Back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+      <div class="al-header-content">
+        <div class="al-header-left">
+          <h1 class="al-header-title">Apply Leave</h1>
+          <p class="al-header-subtitle">Create new leave request</p>
+        </div>
+        <div class="al-header-badge">
+          <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="22" width="60" height="54" rx="14" fill="#FFFFFF" filter="drop-shadow(0 8px 16px rgba(0, 30, 100, 0.25))"/>
+            <path d="M14 34C14 26.268 20.268 20 28 20H60C67.732 20 74 26.268 74 34V36H14V34Z" fill="#3B82F6"/>
+            <rect x="25" y="14" width="6" height="12" rx="3" fill="#93C5FD"/>
+            <rect x="41" y="14" width="6" height="12" rx="3" fill="#93C5FD"/>
+            <rect x="57" y="14" width="6" height="12" rx="3" fill="#93C5FD"/>
+            <rect x="22" y="44" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+            <rect x="36" y="44" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+            <rect x="50" y="44" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+            <rect x="22" y="56" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+            <rect x="36" y="56" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+            <rect x="50" y="56" width="8" height="8" rx="2" fill="#3B82F6"/>
+            <circle cx="68" cy="68" r="19" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="4" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.2))"/>
+            <path d="M68 57V68H76" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="al-header-quote">
+            <span>Plan your time</span>
+            <span>for a better tomorrow</span>
+            <div class="al-quote-line"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="field"><label class="field-label">Number of Days</label><div class="auto-box" id="days-count-box">1.0 Day (Auto-calculated)</div></div>
-  <div class="field"><label class="field-label">Approving Manager</label>
-    <div class="select-wrap" style="position:relative;">
-      <select id="leave-manager-select" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px 40px 14px 14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer; appearance:none; -webkit-appearance:none; font-weight:500;">
-        <option value="Vishnu (Reporting Manager)">Vishnu (Reporting Manager)</option>
-        <option value="Ram (Reporting Manager)">Ram (Reporting Manager)</option>
-        <option value="Rahul (Reporting Manager)">Rahul (Reporting Manager)</option>
-      </select>
-      <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; display:flex; align-items:center; color:#111827;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+    <!-- Main Form Card Container -->
+    <div class="al-form-card">
+      <!-- Leave Type (Casual Leave icon removed per user request) -->
+      <div class="al-field">
+        <label class="al-label">Leave Type <span class="al-required">*</span></label>
+        <div class="al-select-card" id="leave-type-card">
+          <div class="al-select-content">
+            <div class="al-select-title" id="leave-type-title">Casual Leave</div>
+            <div class="al-select-sub" id="leave-type-sub">For personal reasons</div>
+          </div>
+          <div class="al-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <select id="leave-type-select" class="al-native-select" onchange="onLeaveTypeChange(this.value)">
+            <option value="Casual Leave" selected>Casual Leave</option>
+            <option value="Sick Leave">Sick Leave</option>
+            <option value="WFH (Work From Home)">WFH (Work From Home)</option>
+            <option value="Comp-Off (Compensatory Off)">Comp-Off (Compensatory Off)</option>
+          </select>
+        </div>
       </div>
+
+      <!-- From Date & To Date -->
+      <div class="al-row">
+        <div class="al-col">
+          <label class="al-label">From Date <span class="al-required">*</span></label>
+          <div class="al-date-card" onclick="openCalPicker('from-date-picker')">
+            <div class="al-date-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <input type="text" id="from-date-display" class="al-date-text" value="07-Sep-2026" readonly />
+            <div class="al-chevron-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <label for="from-date-picker" class="al-hidden-picker-label">
+              <input type="date" id="from-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
+            </label>
+          </div>
+        </div>
+
+        <div class="al-col">
+          <label class="al-label">To Date <span class="al-required">*</span></label>
+          <div class="al-date-card" onclick="openCalPicker('to-date-picker')">
+            <div class="al-date-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <input type="text" id="to-date-display" class="al-date-text" value="07-Sep-2026" readonly />
+            <div class="al-chevron-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <label for="to-date-picker" class="al-hidden-picker-label">
+              <input type="date" id="to-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Half Day Row -->
+      <div class="al-field">
+        <div class="al-half-day-box">
+          <div class="al-half-day-main">
+            <div class="al-icon-badge al-badge-circle-blue">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <label class="al-half-day-checkbox-label" for="half-day-check">
+              <input type="checkbox" id="half-day-check" class="al-checkbox" onchange="toggleHalfDay(this.checked)" />
+              <div class="al-half-day-text">
+                <span class="al-half-day-title">Half Day</span>
+                <span class="al-half-day-sub">Select if you are applying for half day</span>
+              </div>
+            </label>
+          </div>
+          <!-- Leave Type sub-card inside Half Day: displays selected 1st Half / 2nd Half -->
+          <div class="al-half-day-extra" id="half-day-type-wrap" style="display:none;">
+            <label class="al-label" style="margin-top:12px;margin-bottom:6px;display:block;">Leave Type <span class="al-required">*</span></label>
+            <div class="al-select-card" style="height:50px;">
+              <div class="al-select-content">
+                <div class="al-select-title" id="half-day-type-title">First Half</div>
+                <div class="al-select-sub" id="half-day-type-sub">Morning session (0.5 Day)</div>
+              </div>
+              <div class="al-chevron">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <select id="half-day-type-select" class="al-native-select" onchange="onHalfDayTypeChange(this.value)">
+                <option value="First Half" selected>First Half</option>
+                <option value="Second Half">Second Half</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Number of Days -->
+      <div class="al-field">
+        <label class="al-label">Number of Days</label>
+        <div class="al-days-card">
+          <div class="al-days-icon-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <circle cx="8" cy="15" r="1.2" fill="#2563EB"></circle>
+              <circle cx="12" cy="15" r="1.2" fill="#2563EB"></circle>
+              <circle cx="16" cy="15" r="1.2" fill="#2563EB"></circle>
+            </svg>
+          </div>
+          <div class="al-days-content">
+            <div class="al-days-text" id="days-count-box">1.0 Day (Auto-calculated)</div>
+            <div class="al-days-sub">Based on the selected dates</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approving Manager -->
+      <div class="al-field">
+        <label class="al-label">Approving Manager</label>
+        <div class="al-select-card al-manager-card">
+          <div class="al-icon-badge al-badge-circle-blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#2563EB" stroke="none">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+          <div class="al-manager-name" id="leave-manager-title">Vishnu (Reporting Manager)</div>
+          <div class="al-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <select id="leave-manager-select" class="al-native-select" onchange="onManagerChange(this.value)">
+            <option value="Vishnu (Reporting Manager)">Vishnu (Reporting Manager)</option>
+            <option value="Ram (Reporting Manager)">Ram (Reporting Manager)</option>
+            <option value="Rahul (Reporting Manager)">Rahul (Reporting Manager)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Reason -->
+      <div class="al-field">
+        <label class="al-label">Reason <span class="al-required">*</span></label>
+        <div class="al-textarea-card">
+          <div class="al-textarea-top">
+            <div class="al-icon-badge al-badge-sm-blue">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <textarea id="leave-reason-text" class="al-textarea" rows="3" maxlength="500" placeholder="Describe the reason for your leave..." oninput="updateCharCount(this)"></textarea>
+          </div>
+          <div class="al-char-counter" id="reason-char-counter">0/500</div>
+        </div>
+      </div>
+
+      <!-- Validation Info Helper Pill -->
+      <div class="al-info-banner">
+        <div class="al-info-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#2563EB">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+        <span class="al-info-text">Please provide a valid reason for your leave request.</span>
+      </div>
+
+      <!-- Submit Request Button -->
+      <button class="al-submit-btn" id="leave-submit-btn" onclick="submitLeaveRequest()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+        <span>Submit Request</span>
+      </button>
     </div>
   </div>
-  <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="Describe the reason for your leave..."></textarea></div>
-  <div class="field"><label class="field-label">Supporting Document</label><div class="upload-box">☁️ Click to upload (PDF, JPEG, max 5MB)</div></div>
-  <div class="field"><label class="field-label">Contact Info During Leave</label><input placeholder="Emergency contact or location details"/></div>
-  <button class="btn btn-primary full" id="leave-submit-btn" onclick="submitLeaveRequest()">Submit Request</button>
-</div>
-<div class="bottom-nav">
-  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
-  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
-  <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
-  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
-  <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
-</div>
-<!-- Success Popup Modal -->
-<div class="success-modal-overlay" id="leave-success-modal" onclick="if(event.target===this)closeLeaveSuccessModal()">
-  <div class="success-modal-card">
-    <div class="success-modal-icon-wrap">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="bottom-nav">
+    <div class="tab" onclick="navigateTo('tpl-EmployeeDashboard')">
+      <span class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+        </svg>
+      </span>
+      <span>Dashboard</span>
     </div>
-    <h2 class="success-modal-title">Request Submitted!</h2>
-    <p class="success-modal-msg">Your leave request has been submitted successfully.</p>
-    <button class="success-modal-btn" onclick="closeLeaveSuccessModal()">Done</button>
+    <div class="tab" onclick="navigateTo('tpl-MyAttendance')">
+      <span class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </span>
+      <span>Attendance</span>
+    </div>
+    <div class="tab active al-tab-apply">
+      <div class="al-elevated-plus-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </div>
+      <span class="al-nav-text">Apply</span>
+    </div>
+    <div class="tab" onclick="navigateTo('tpl-History')">
+      <span class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+          <polyline points="12 7 12 12 15 15"></polyline>
+        </svg>
+      </span>
+      <span>History</span>
+    </div>
+    <div class="tab" onclick="navigateTo('tpl-MyProfile')">
+      <span class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="7" r="4"></circle>
+          <path d="M5.5 21a8.5 8.5 0 0 1 13 0"></path>
+        </svg>
+      </span>
+      <span>Profile</span>
+    </div>
+  </div>
+
+  <!-- Success Popup Modal -->
+  <div class="success-modal-overlay" id="leave-success-modal" onclick="if(event.target===this)closeLeaveSuccessModal()">
+    <div class="success-modal-card">
+      <div class="success-modal-icon-wrap">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h2 class="success-modal-title">Request Submitted!</h2>
+      <p class="success-modal-msg">Your leave request has been submitted successfully.</p>
+      <button class="success-modal-btn" onclick="closeLeaveSuccessModal()">Done</button>
+    </div>
   </div>
 </div>
-</div>
+
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
 <script>
+function onLeaveTypeChange(val) {
+  var titleEl = document.getElementById('leave-type-title');
+  var subEl = document.getElementById('leave-type-sub');
+  if (titleEl) titleEl.textContent = val;
+  if (subEl) {
+    if (val === 'Casual Leave') subEl.textContent = 'For personal reasons';
+    else if (val === 'Sick Leave') subEl.textContent = 'Medical & health care';
+    else if (val.indexOf('WFH') !== -1) subEl.textContent = 'Work from home';
+    else if (val.indexOf('Comp-Off') !== -1) subEl.textContent = 'Compensatory day off';
+    else subEl.textContent = 'General leave';
+  }
+}
+
+function onHalfDayTypeChange(val) {
+  var titleEl = document.getElementById('half-day-type-title');
+  var subEl = document.getElementById('half-day-type-sub');
+  if (titleEl) titleEl.textContent = val;
+  if (subEl) {
+    subEl.textContent = (val === 'First Half' || val === '1st Half') ? 'Morning session (0.5 Day)' : 'Afternoon session (0.5 Day)';
+  }
+  var mainSub = document.getElementById('leave-type-sub');
+  if (mainSub) {
+    mainSub.textContent = 'For personal reasons • ' + val;
+  }
+}
+
+function onManagerChange(val) {
+  var mgrTitle = document.getElementById('leave-manager-title');
+  if (mgrTitle) mgrTitle.textContent = val;
+}
+
+function updateCharCount(el) {
+  var counter = document.getElementById('reason-char-counter');
+  if (counter) counter.textContent = (el.value ? el.value.length : 0) + '/500';
+}
+
+function formatDateString(dateVal) {
+  if (!dateVal) return '07-Sep-2026';
+  var parts = dateVal.split('-');
+  var yr = parts[0];
+  var mIdx = parseInt(parts[1], 10) - 1;
+  var day = parts[2];
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return day + '-' + (months[mIdx] || 'Sep') + '-' + yr;
+}
+
+function updateLeaveDates() {
+  var fromPicker = document.getElementById('from-date-picker');
+  var toPicker = document.getElementById('to-date-picker');
+  var fromDisplay = document.getElementById('from-date-display');
+  var toDisplay = document.getElementById('to-date-display');
+  var daysBox = document.getElementById('days-count-box');
+
+  if (fromPicker && fromDisplay && fromPicker.value) {
+    fromDisplay.value = formatDateString(fromPicker.value);
+  }
+  if (toPicker && toDisplay && toPicker.value) {
+    toDisplay.value = formatDateString(toPicker.value);
+  }
+
+  var isHalf = document.getElementById('half-day-check') && document.getElementById('half-day-check').checked;
+  if (isHalf && daysBox) {
+    daysBox.textContent = '0.5 Day (Half Day)';
+    return;
+  }
+
+  if (fromPicker && toPicker && daysBox && fromPicker.value && toPicker.value) {
+    var d1 = new Date(fromPicker.value);
+    var d2 = new Date(toPicker.value);
+    if (!isNaN(d1) && !isNaN(d2)) {
+      var diffTime = d2.getTime() - d1.getTime();
+      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      if (diffDays < 1) diffDays = 1;
+      daysBox.textContent = diffDays + '.0 Day' + (diffDays > 1 ? 's' : '') + ' (Auto-calculated)';
+    }
+  }
+}
+
+function openCalPicker(pickerId) {
+  var picker = document.getElementById(pickerId);
+  if (picker) {
+    if (typeof picker.showPicker === 'function') {
+      try {
+        picker.showPicker();
+      } catch (e) {
+        picker.click();
+      }
+    } else {
+      picker.click();
+    }
+  }
+}
+
 function toggleHalfDay(isChecked) {
   var wrap = document.getElementById('half-day-type-wrap');
   var daysBox = document.getElementById('days-count-box');
   if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
-  if (isChecked && daysBox) {
-    daysBox.textContent = '0.5 Day (Half Day)';
-  } else if (!isChecked && daysBox) {
-    daysBox.textContent = '1.0 Day (Auto-calculated)';
+  if (isChecked) {
+    if (daysBox) daysBox.textContent = '0.5 Day (Half Day)';
+    var halfSelect = document.getElementById('half-day-type-select');
+    if (halfSelect) onHalfDayTypeChange(halfSelect.value);
+  } else {
+    updateLeaveDates();
+    var mainType = document.getElementById('leave-type-select');
+    if (mainType) onLeaveTypeChange(mainType.value);
   }
 }
+
+function handleBackNav() {
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen('tpl-EmployeeDashboard');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-EmployeeDashboard');
+  } else {
+    location.href = '../EmployeeDashboard/preview.html';
+  }
+}
+
+function navigateTo(tplId) {
+  if (window.parent && window.parent.loadScreen) {
+    window.parent.loadScreen(tplId);
+  } else if (typeof loadScreen === 'function') {
+    loadScreen(tplId);
+  }
+}
+
 function submitLeaveRequest() {
   var modal = document.getElementById('leave-success-modal');
   if (modal) modal.classList.add('show');
 }
+
 function closeLeaveSuccessModal() {
   var modal = document.getElementById('leave-success-modal');
   if (modal) modal.classList.remove('show');
@@ -127,4 +458,5 @@ function closeLeaveSuccessModal() {
   }
 }
 </script>
-</body></html>
+</body>
+</html>
