@@ -212,7 +212,7 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                 onPress={() => setSidebarVisible(true)}
                 accessibilityLabel="Open Menu"
               >
-                <Feather name="menu" size={22} color="#FFFFFF" />
+                <Feather name="menu" size={24} color="#FFFFFF" />
               </TouchableOpacity>
               <View style={styles.brandBlock}>
                 <Image

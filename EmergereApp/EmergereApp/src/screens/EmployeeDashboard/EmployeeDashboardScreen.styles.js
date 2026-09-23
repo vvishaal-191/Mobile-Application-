@@ -43,26 +43,28 @@ export default StyleSheet.create({
     gap: 10,
   },
   brandLogo: {
-    width: 24,
-    height: 24,
+    width: 32,
+    height: 32,
     resizeMode: 'contain',
   },
   headerDashboardTitleWrap: {
+    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerDashboardTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '700',
     color: '#FFFFFF',
-    letterSpacing: -0.2,
+    letterSpacing: -0.25,
   },
   headerDashboardCircle: {
+    position: 'absolute',
+    bottom: -7,
     width: 5,
     height: 5,
     borderRadius: 2.5,
     backgroundColor: '#FFFFFF',
-    marginTop: 3,
   },
 
   bellWrapper: {
