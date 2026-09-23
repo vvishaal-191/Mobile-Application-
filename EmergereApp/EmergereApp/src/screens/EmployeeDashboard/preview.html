@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Employee Dashboard - Preview</title>
 <link rel="stylesheet" href="../../../preview/base.css" />
 <link rel="stylesheet" href="./preview.css" />
@@ -9,96 +10,356 @@
 <body>
 <div class="device">
   <div class="screen">
-    <div class="dash-top">
-      <div class="brand"><img src="../../../assets/emergere-logo.png"/><span>Emergere</span></div>
-      <div class="bell" style="cursor:pointer;">🔔<span class="dot"></span></div>
+    <!-- Header matching Image 2 -->
+    <div class="dash-header">
+      <div class="header-top">
+        <div class="header-left-brand">
+          <button class="hamburger-btn" aria-label="Menu" onclick="openSidebarDrawer()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="brand-block">
+            <img src="../../../assets/tech-circuit-logo.png" alt="Logo" class="brand-logo-img" />
+            <div class="header-dashboard-title-wrap">
+              <span class="header-dashboard-title">Dashboard</span>
+              <span class="header-dashboard-circle"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-bell-wrap" id="dash-bell-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="header-bell-dot"></span>
+        </div>
+      </div>
+
+      <!-- Profile & Greeting -->
+      <div class="header-profile-row">
+        <div class="profile-greeting-col">
+          <span class="profile-hello">Hello,</span>
+          <h1 class="profile-name-title" id="dash-greeting">Sneha Reddy </h1>
+          <div class="profile-meta-role" id="dash-role-meta">
+            <span id="dash-role-text">UI/UX Designer</span> &bull; <span id="dash-id-text">EMP-2024-0103</span>
+          </div>
+          <div class="profile-date-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Thu, Sep 03 2026</span>
+          </div>
+        </div>
+
+        <div class="profile-avatar-block" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
+          <div class="avatar-circle-wrap">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="7" r="4.2" fill="#3B82F6"></circle>
+              <path d="M4 20c0-4 3.5-6.5 8-6.5s8 2.5 8 6.5" fill="#3B82F6"></path>
+            </svg>
+          </div>
+          <span class="avatar-caption">Have a great day!</span>
+          <span class="avatar-line-accent"></span>
+        </div>
+      </div>
     </div>
-    <p class="company">IT Solutions Pvt. Ltd.</p>
-    <h1 class="greeting" id="dash-greeting">Hello, Priya Sharma</h1>
-    <p class="dash-role-meta" id="dash-role-meta" style="padding:0 20px; color:var(--text-secondary); margin:4px 0 0; font-size:13px; font-weight:500;"><span id="dash-role-text">Senior Software Engineer</span> &bull; <span id="dash-id-text">EMP-2024-0156</span></p>
-    <p class="date">Thu, Sep 03 2026</p>
 
     <!-- 2x2 Action Cards from Image 2 -->
     <div class="dash-action-grid">
-      <div class="dash-action-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
-        <div class="action-top">
-          <div class="action-icon-wrap" style="background:#EEF4FF;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="8" y1="14" x2="8.01" y2="14"></line><line x1="12" y1="14" x2="12.01" y2="14"></line><line x1="16" y1="14" x2="16.01" y2="14"></line><line x1="8" y1="18" x2="8.01" y2="18"></line><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+      <!-- Apply Leave -->
+      <div class="dash-action-card card-leave" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
+        <div class="action-top-row">
+          <div class="action-icon-box" style="background:#1C6AFD;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <circle cx="8" cy="14" r="1" fill="#FFFFFF"></circle>
+              <circle cx="12" cy="14" r="1" fill="#FFFFFF"></circle>
+              <circle cx="16" cy="14" r="1" fill="#FFFFFF"></circle>
+            </svg>
           </div>
-          <div class="action-chevron">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </div>
-        </div>
-        <div class="action-body">
-          <div class="action-title">Apply Leave</div>
-          <div class="action-sub">Plan your time off</div>
-        </div>
-      </div>
-
-      <div class="dash-action-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyPermission')}else{window.location.href='../ApplyPermission/preview.html'}">
-        <div class="action-top">
-          <div class="action-icon-wrap" style="background:#E6F9F0;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1FAE6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          </div>
-          <div class="action-chevron">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <div class="action-chevron-btn" style="background:#EDF3FF;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </div>
         </div>
-        <div class="action-body">
-          <div class="action-title">Apply Permission</div>
-          <div class="action-sub">Request short leave</div>
+        <div class="action-text-col">
+          <span class="action-main-title">Apply Leave</span>
+          <span class="action-sub-text">Plan your time off</span>
         </div>
       </div>
 
-      <div class="dash-action-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
-        <div class="action-top">
-          <div class="action-icon-wrap" style="background:#F1EDFD;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path><line x1="13" y1="13" x2="18" y2="13"></line><line x1="13" y1="17" x2="16" y2="17"></line></svg>
+      <!-- Apply Permission -->
+      <div class="dash-action-card card-perm" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyPermission')}else{window.location.href='../ApplyPermission/preview.html'}">
+        <div class="action-top-row">
+          <div class="action-icon-box" style="background:#097717;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
           </div>
-          <div class="action-chevron">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <div class="action-chevron-btn" style="background:#EDF3FF;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </div>
         </div>
-        <div class="action-body">
-          <div class="action-title">My Requests</div>
-          <div class="action-sub">Track your leaves & permissions</div>
+        <div class="action-text-col">
+          <span class="action-main-title">Apply Permission</span>
+          <span class="action-sub-text">Request short leave</span>
         </div>
       </div>
 
-      <div class="dash-action-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-HolidayCalendar')}else{window.location.href='../HolidayCalendar/preview.html'}">
-        <div class="action-top">
-          <div class="action-icon-wrap" style="background:#FFF1E5;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA6400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><circle cx="8" cy="14" r="1" fill="#FA6400"></circle><circle cx="12" cy="14" r="1" fill="#FA6400"></circle><circle cx="16" cy="14" r="1" fill="#FA6400"></circle><circle cx="8" cy="18" r="1" fill="#FA6400"></circle><circle cx="12" cy="18" r="1" fill="#FA6400"></circle></svg>
+      <!-- My Requests -->
+      <div class="dash-action-card card-reqs" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
+        <div class="action-top-row">
+          <div class="action-icon-box" style="background:#8B5CF6;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="4" width="14" height="16" rx="2" ry="2"></rect>
+              <line x1="9" y1="9" x2="15" y2="9"></line>
+              <line x1="9" y1="13" x2="15" y2="13"></line>
+              <line x1="9" y1="17" x2="13" y2="17"></line>
+            </svg>
           </div>
-          <div class="action-chevron">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <div class="action-chevron-btn" style="background:#ECE6FE;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </div>
         </div>
-        <div class="action-body">
-          <div class="action-title">Holiday Calendar</div>
-          <div class="action-sub">View upcoming holidays</div>
+        <div class="action-text-col">
+          <span class="action-main-title">My Requests</span>
+          <span class="action-sub-text">Track your leaves & permissions</span>
+        </div>
+      </div>
+
+      <!-- Holiday Calendar -->
+      <div class="dash-action-card card-holiday" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-HolidayCalendar')}else{window.location.href='../HolidayCalendar/preview.html'}">
+        <div class="action-top-row">
+          <div class="action-icon-box" style="background:#FA6400;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <circle cx="8" cy="14" r="1" fill="#FFFFFF"></circle>
+              <circle cx="12" cy="14" r="1" fill="#FFFFFF"></circle>
+              <circle cx="16" cy="14" r="1" fill="#FFFFFF"></circle>
+            </svg>
+          </div>
+          <div class="action-chevron-btn" style="background:#FEEBD7;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="action-text-col">
+          <span class="action-main-title">Holiday Calendar</span>
+          <span class="action-sub-text">View upcoming holidays</span>
         </div>
       </div>
     </div>
 
     <!-- Leave Balances Card -->
-    <div class="card" id="dash-leave-balance-card">
-      <h3>Leave Balances</h3>
-      <div class="balance"><div class="balance-head"><span>Casual Leave</span><span class="value">8/12 Days</span></div><div class="progress"><div style="width:66%"></div></div></div>
-      <div class="balance"><div class="balance-head"><span>Sick Leave</span><span class="value">5/7 Days</span></div><div class="progress"><div style="width:71%"></div></div></div>
-      <div class="balance"><div class="balance-head"><span>Earned Leave</span><span class="value">10/15 Days</span></div><div class="progress"><div style="width:66%"></div></div></div>
+    <div class="leave-balances-card" id="dash-leave-balance-card">
+      <div class="balances-card-header">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M21.21 15.89A10 10 0 1 1 8 2.83" stroke="#2563EB" stroke-width="2.8" stroke-linecap="round"></path>
+          <path d="M22 12A10 10 0 0 0 12 2v10z" fill="#2563EB"></path>
+        </svg>
+        <span class="balances-card-title">Leave Balances</span>
+      </div>
+
+      <!-- Casual Leave -->
+      <div class="balance-item-row">
+        <div class="balance-icon-circle" style="background:#EBF3FF;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+            <line x1="12" y1="12" x2="12" y2="12.01"></line>
+          </svg>
+        </div>
+        <div class="balance-content-col">
+          <div class="balance-title-row">
+            <span class="balance-item-label">Casual Leave</span>
+            <span class="balance-item-val">8 / 12 Days</span>
+          </div>
+          <span class="balance-sub-label">For personal time</span>
+          <div class="balance-progress-track">
+            <div class="balance-progress-fill" style="width: 66.6%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sick Leave -->
+      <div class="balance-item-row">
+        <div class="balance-icon-circle" style="background:#FEE2E2;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="10" y1="11" x2="14" y2="11"></line>
+          </svg>
+        </div>
+        <div class="balance-content-col">
+          <div class="balance-title-row">
+            <span class="balance-item-label">Sick Leave</span>
+            <span class="balance-item-val">5 / 7 Days</span>
+          </div>
+          <span class="balance-sub-label">For your well-being</span>
+          <div class="balance-progress-track">
+            <div class="balance-progress-fill" style="width: 71.4%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WFH -->
+      <div class="balance-item-row">
+        <div class="balance-icon-circle" style="background:#DCFCE7;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <div class="balance-content-col">
+          <div class="balance-title-row">
+            <span class="balance-item-label">WFH</span>
+            <span class="balance-item-val">10 / 15 Days</span>
+          </div>
+          <span class="balance-sub-label">Work from home</span>
+          <div class="balance-progress-track">
+            <div class="balance-progress-fill" style="width: 66.6%;"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Recent Requests Section -->
-    <p class="section-label" id="emp-dash-requests-label">RECENT REQUESTS (0)</p>
-    <div id="emp-dash-requests-list"></div>
+    <!-- Recent Requests Section matching Image 4 (Conditional) -->
+    <div class="recent-requests-section" id="emp-recent-requests-section" style="display: none;">
+      <div class="recent-requests-header" id="emp-dash-requests-label">RECENT REQUESTS (0)</div>
+      <!-- Dynamic requests list container -->
+      <div id="emp-dash-requests-list"></div>
+    </div>
   </div>
+
+  <!-- Bottom Navigation Bar -->
   <div class="bottom-nav">
-    <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg></span>Dashboard</div>
-    <div class="tab" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>Attendance</div>
-    <div class="tab" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>Apply</div>
-    <div class="tab" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><polyline points="12 7 12 12 15 15"></polyline></svg></span>History</div>
-    <div class="tab" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span>Profile</div>
+    <!-- Dashboard (Active) -->
+    <div class="tab nav-tab active">
+      <div class="dashboard-pill-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+        </svg>
+      </div>
+      <span>Dashboard</span>
+      <span class="active-dot-indicator"></span>
+    </div>
+
+    <!-- Attendance -->
+    <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span>Attendance</span>
+    </div>
+
+    <!-- Apply (Elevated Center Button) -->
+    <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
+      <div class="nav-apply-circle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </div>
+      <span class="nav-apply-label">Apply</span>
+    </div>
+
+    <!-- History -->
+    <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+        <path d="M3 3v5h5"></path>
+        <polyline points="12 7 12 12 15 15"></polyline>
+      </svg>
+      <span>History</span>
+    </div>
+
+    <!-- Profile -->
+    <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>Profile</span>
+    </div>
+  </div>
+
+  <!-- Sidebar Drawer Overlay (Image 4) -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebarDrawer()">
+    <div class="sidebar-drawer" onclick="event.stopPropagation()">
+      <!-- Header -->
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <img src="../../../assets/tech-circuit-logo.png" alt="Logo" class="sidebar-logo" />
+          <span class="sidebar-title">Mobile Application</span>
+        </div>
+        <button class="sidebar-close-btn" onclick="closeSidebarDrawer()" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="sidebar-profile-card">
+        <div class="sidebar-profile-top">
+          <div class="sidebar-avatar-circle" id="sidebar-avatar-circle">
+            <span id="sidebar-initials">SR</span>
+          </div>
+          <div class="sidebar-profile-info">
+            <div class="sidebar-profile-name" id="sidebar-name">Sneha Reddy</div>
+            <span class="sidebar-role-badge">EMPLOYEE</span>
+          </div>
+        </div>
+        <button class="sidebar-logout-btn" onclick="handleSidebarLogout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Log Out</span>
+        </button>
+      </div>
+
+      <!-- Navigation Links Matching Image 4 -->
+      <nav class="sidebar-nav">
+        <button class="sidebar-nav-item highlight" onclick="handleSidebarNav('../EmployeeDashboard/preview.html', 'tpl-EmployeeDashboard')">Employee Dashboard</button>
+        <button class="sidebar-nav-item active" onclick="handleSidebarNav('../MyAttendance/preview.html', 'tpl-MyAttendance')">My Attendance</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../ApplyLeave/preview.html', 'tpl-ApplyLeave')">Apply Leave</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../ApplyPermission/preview.html', 'tpl-ApplyPermission')">Apply Permission</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../LeaveBalance/preview.html', 'tpl-LeaveBalance')">Leave Balance</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../LeaveHistory/preview.html', 'tpl-MyRequests')">My Requests (History)</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../HolidayCalendar/preview.html', 'tpl-HolidayCalendar')">Holiday Calendar</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../Notifications/preview.html', 'tpl-Notifications')">Notifications</button>
+        <button class="sidebar-nav-item" onclick="handleSidebarNav('../MyProfile/preview.html', 'tpl-MyProfile')">My Profile</button>
+      </nav>
+    </div>
   </div>
 </div>
 <script src="../../../preview/shared.js"></script>

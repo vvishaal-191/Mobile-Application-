@@ -1,6 +1,15 @@
 // src/screens/EmployeeDashboard/EmployeeDashboardScreen.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Animated,
+  Modal,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import StatusBadge from '../../components/StatusBadge';
@@ -8,9 +17,9 @@ import BottomNavBar from '../../components/BottomNavBar';
 import styles from './EmployeeDashboardScreen.styles';
 
 const LEAVE_BALANCES = [
-  { label: 'Casual Leave', used: 8, total: 12 },
-  { label: 'Sick Leave', used: 5, total: 7 },
-  { label: 'Earned Leave', used: 10, total: 15 },
+  { label: 'Casual Leave', sublabel: 'For personal time', used: 8, total: 12, icon: 'briefcase', iconColor: '#2563EB', iconBg: '#EBF3FF' },
+  { label: 'Sick Leave', sublabel: 'For your well-being', used: 5, total: 7, icon: 'heart', iconColor: '#EF4444', iconBg: '#FEE2E2' },
+  { label: 'WFH', sublabel: 'Work from home', used: 10, total: 15, icon: 'home', iconColor: '#10B981', iconBg: '#DCFCE7' },
 ];
 
 const ACTION_CARDS = [
@@ -19,8 +28,10 @@ const ACTION_CARDS = [
     title: 'Apply Leave',
     subtitle: 'Plan your time off',
     icon: 'calendar',
-    iconColor: '#2F6BFF',
-    iconBg: '#EEF4FF',
+    iconColor: '#FFFFFF',
+    iconBg: '#1C6AFD',
+    chevronBg: '#EDF3FF',
+    chevronColor: '#1D4ED8',
     screen: 'ApplyLeave',
   },
   {
@@ -28,8 +39,10 @@ const ACTION_CARDS = [
     title: 'Apply Permission',
     subtitle: 'Request short leave',
     icon: 'file-text',
-    iconColor: '#1FAE6E',
-    iconBg: '#E6F9F0',
+    iconColor: '#FFFFFF',
+    iconBg: '#097717',
+    chevronBg: '#EDF3FF',
+    chevronColor: '#1D4ED8',
     screen: 'ApplyPermission',
   },
   {
@@ -37,8 +50,10 @@ const ACTION_CARDS = [
     title: 'My Requests',
     subtitle: 'Track your leaves & permissions',
     icon: 'layers',
-    iconColor: '#7C3AED',
-    iconBg: '#F1EDFD',
+    iconColor: '#FFFFFF',
+    iconBg: '#8B5CF6',
+    chevronBg: '#ECE6FE',
+    chevronColor: '#7C3AED',
     screen: 'LeaveHistory',
   },
   {
@@ -46,24 +61,28 @@ const ACTION_CARDS = [
     title: 'Holiday Calendar',
     subtitle: 'View upcoming holidays',
     icon: 'calendar',
-    iconColor: '#FA6400',
-    iconBg: '#FFF1E5',
+    iconColor: '#FFFFFF',
+    iconBg: '#FA6400',
+    chevronBg: '#FEEBD7',
+    chevronColor: '#C2410C',
     screen: 'HolidayCalendar',
   },
 ];
 
+// Default initial requests - Empty by default (Requirement 5: Only displayed when approved/rejected by manager)
 const INITIAL_REQUESTS = [];
 
 export default function EmployeeDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const glowAnim = useRef(new Animated.Value(0)).current;
   const [userProfile, setUserProfile] = useState(
     (typeof global !== 'undefined' && global.USER_PROFILE) || {
-      name: 'Priya Sharma',
-      role: 'Senior Software Engineer',
-      employeeId: 'EMP-2024-0156',
-      email: 'priya@it-solutions.com',
+      name: 'Sneha Reddy',
+      role: 'UI/UX Designer',
+      employeeId: 'EMP-2024-0103',
+      email: 'sneha@gmail.com',
     }
   );
 
@@ -100,97 +119,34 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         ])
       ).start();
     } else {
-      glowAnim.stopAnimation();
       glowAnim.setValue(0);
     }
   }, [hasNewNotification]);
 
+  // Synchronize state with route params
   useEffect(() => {
-    // Check for any unread notifications pushed by the manager
-    if (typeof global !== 'undefined' && global.NOTIFICATIONS && global.NOTIFICATIONS.some((n) => n.unread)) {
-      setHasNewNotification(true);
+    if (route?.params?.employmentStatus && typeof global !== 'undefined') {
+      global.EMPLOYMENT_STATUS = route.params.employmentStatus;
+    }
+    if (route?.params?.roleProfile && typeof global !== 'undefined') {
+      global.USER_PROFILE = {
+        name: route.params.roleProfile.name || (global.USER_PROFILE && global.USER_PROFILE.name) || 'Sneha Reddy',
+        role: route.params.roleProfile.role || (global.USER_PROFILE && global.USER_PROFILE.role) || 'UI/UX Designer',
+        employeeId: route.params.roleProfile.employeeId || (global.USER_PROFILE && global.USER_PROFILE.employeeId) || 'EMP-2024-0103',
+        email: route.params.roleProfile.email || (global.USER_PROFILE && global.USER_PROFILE.email) || 'sneha@gmail.com',
+      };
+      setUserProfile(global.USER_PROFILE);
     }
     if (typeof global !== 'undefined' && global.USER_PROFILE) {
       setUserProfile(global.USER_PROFILE);
     }
-    if (typeof global !== 'undefined' && global.LAST_LEAVE_DECISION) {
-      const dec = global.LAST_LEAVE_DECISION;
-      const tone = dec.status.toLowerCase() === 'approved' ? 'success' : 'danger';
-      const st = dec.status.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
-      setRequests((prev) => {
-        const seen = new Set();
-        const updated = prev.map((req) =>
-          (req.id === (dec.id || '1') || (req.title && req.title.includes(dec.type || 'Casual Leave')))
-            ? { ...req, status: st, tone }
-            : req
-        );
-        return updated.filter((r) => {
-          const key = `${r.title}|${r.subtitle}`;
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-      });
+    if (typeof global !== 'undefined' && global.NOTIFICATIONS) {
+      setHasNewNotification(global.NOTIFICATIONS.some((n) => n.unread));
     }
-    if (typeof global !== 'undefined' && global.LAST_PERMISSION_DECISION) {
-      const pDec = global.LAST_PERMISSION_DECISION;
-      const tone = pDec.status.toLowerCase() === 'approved' ? 'success' : 'danger';
-      const st = pDec.status.toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
-      setRequests((prev) => {
-        const seen = new Set();
-        let matched = false;
-        const updated = prev.map((req) => {
-          if (req.id === pDec.id || (req.title && (req.title.includes(pDec.type || 'Going') || req.title.includes('Late Coming')))) {
-            matched = true;
-            return { ...req, status: st, tone };
-          }
-          return req;
-        });
-        return updated.filter((r) => {
-          const key = `${r.title}|${r.subtitle}`;
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-      });
-    }
-    if (route && route.params) {
-      // Manager approved / rejected a request — trigger the notification glow
-      if (route.params.newStatus) {
+    if (route?.params) {
+      if (route.params.newNotification) {
         setHasNewNotification(true);
-        const { requestId, newStatus, isPermission, permissionType, duration } = route.params;
-        const tone = newStatus === 'Approved' ? 'success' : 'danger';
-        setRequests((prev) => {
-          const seen = new Set();
-          let matched = false;
-          const updated = prev.map((req) => {
-            const isIdMatch = req.id === requestId;
-            const isLeaveMatch = !isPermission && (req.id === (requestId || '1') || (req.title && req.title.includes('Casual Leave')));
-            const isPermMatch = isPermission && (req.id === requestId || (req.title && (req.title.includes(permissionType || 'Going') || req.title.includes('Late Coming') || req.title.includes('Permission'))));
-            if (isIdMatch || isPermMatch || isLeaveMatch) {
-              matched = true;
-              return { ...req, status: newStatus, tone };
-            }
-            return req;
-          });
-          if (isPermission && !matched) {
-            updated.unshift({
-              id: requestId || Date.now().toString(),
-              title: `${permissionType || 'Permission'} (${duration || '30 Mins'})`,
-              subtitle: 'Sep 04, 2026 • Doctor Appointment',
-              status: newStatus,
-              tone,
-            });
-          }
-          return updated.filter((r) => {
-            const key = `${r.title}|${r.subtitle}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          });
-        });
       }
-      // Employee just submitted a leave request — prepend as Pending (display only once)
       if (route.params.newLeaveRequest) {
         const req = route.params.newLeaveRequest;
         setRequests((prev) => {
@@ -202,6 +158,7 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
               id: req.id,
               title,
               subtitle,
+              empMeta: `${userProfile.name || 'Sneha Reddy'} • ${userProfile.employeeId || 'EMP-2024-0103'}`,
               status: 'Pending',
               tone: 'warning',
             },
@@ -209,7 +166,6 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
           ];
         });
       }
-      // Employee just submitted a permission request — prepend as Pending (display only once)
       if (route.params.newPermissionRequest) {
         const req = route.params.newPermissionRequest;
         setRequests((prev) => {
@@ -221,6 +177,7 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
               id: req.id,
               title,
               subtitle,
+              empMeta: `${userProfile.name || 'Sneha Reddy'} • ${userProfile.employeeId || 'EMP-2024-0103'}`,
               status: 'Pending',
               tone: 'warning',
             },
@@ -232,7 +189,6 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
         setUserProfile(route.params.userProfile);
       }
     }
-    // De-duplicate requests to ensure each leave/permission is displayed only once
     setRequests((prev) => {
       const seen = new Set();
       return prev.filter((r) => {
@@ -247,173 +203,375 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-        <View style={styles.topRow}>
-          <View style={styles.brandRow}>
-            <Image
-              source={require('../../../assets/emergere-logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={styles.brandName}>Dashboard</Text>
-          </View>
-          <View style={styles.bellWrapper}>
-            <Animated.View
-              style={[
-                styles.bellGlowRing,
-                {
-                  opacity: hasNewNotification ? glowAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 0.55],
-                  }) : 0,
-                },
-              ]}
-            />
-            <TouchableOpacity
-              style={styles.bellButton}
-              onPress={() => {
-                setHasNewNotification(false);
-                // Mark notifications as read
-                if (typeof global !== 'undefined' && global.NOTIFICATIONS) {
-                  global.NOTIFICATIONS = global.NOTIFICATIONS.map((n) => ({ ...n, unread: false }));
-                }
-                go('Notifications');
-              }}
-            >
-              <Feather name="bell" size={20} color={'#2F6BFF'} />
-              <View style={styles.bellDot} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Text style={styles.companyName}>IT Solutions Pvt. Ltd.</Text>
-
-        <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>Hello, {userProfile.name || 'Priya Sharma'}</Text>
-          <Text style={styles.roleSubtitle}>{userProfile.role || 'Senior Software Engineer'} • {userProfile.employeeId || 'EMP-2024-0156'}</Text>
-          <Text style={styles.date}>Thu, Sep 03 2026</Text>
-        </View>
-
-        {/* 2x2 Action Cards from Image 2 */}
-        <View style={styles.actionGrid}>
-          {ACTION_CARDS.map((action) => (
-            <TouchableOpacity
-              key={action.key}
-              style={styles.actionCard}
-              onPress={() => go(action.screen)}
-              activeOpacity={0.75}
-            >
-              <View style={styles.actionTop}>
-                <View style={[styles.actionIconWrap, { backgroundColor: action.iconBg }]}>
-                  <Feather name={action.icon} size={22} color={action.iconColor} />
-                </View>
-                <View style={styles.actionChevron}>
-                  <Feather name="chevron-right" size={16} color="#2F6BFF" />
-                </View>
-              </View>
-              <View style={styles.actionBody}>
-                <Text style={styles.actionTitle}>{action.title}</Text>
-                <Text style={styles.actionSub}>{action.subtitle}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Leave Balances Card with matching container style */}
-        <Card style={styles.balancesCard}>
-          <Text style={styles.cardTitle}>Leave Balances</Text>
-          {LEAVE_BALANCES.map((item) => (
-            <View key={item.label} style={styles.balanceItem}>
-              <View style={styles.balanceHeader}>
-                <Text style={styles.balanceLabel}>{item.label}</Text>
-                <Text style={styles.balanceValue}>
-                  {item.used}/{item.total} Days
-                </Text>
-              </View>
-              <View style={styles.progressTrack}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${(item.used / item.total) * 100}%` },
-                  ]}
+        {/* Header matching Image 2, aligned upward */}
+        <View style={styles.dashHeader}>
+          <View style={styles.headerTop}>
+            <View style={styles.headerLeft}>
+              <TouchableOpacity
+                style={styles.menuButton}
+                onPress={() => setSidebarVisible(true)}
+                accessibilityLabel="Open Menu"
+              >
+                <Feather name="menu" size={22} color="#FFFFFF" />
+              </TouchableOpacity>
+              <View style={styles.brandBlock}>
+                <Image
+                  source={require('../../../assets/tech-circuit-logo.png')}
+                  style={styles.brandLogo}
+                  resizeMode="contain"
                 />
+                <View style={styles.headerDashboardTitleWrap}>
+                  <Text style={styles.headerDashboardTitle}>Dashboard</Text>
+                  <View style={styles.headerDashboardCircle} />
+                </View>
               </View>
             </View>
-          ))}
-        </Card>
 
-        <Text style={styles.sectionLabel}>RECENT REQUESTS ({requests.length})</Text>
-        {requests.map((req) => (
-          <Card key={req.id} style={styles.requestCard}>
-            <View style={styles.requestRow}>
+            <View style={styles.bellWrapper}>
+              <Animated.View
+                style={[
+                  styles.bellGlowRing,
+                  {
+                    opacity: hasNewNotification ? glowAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 0.6],
+                    }) : 0,
+                  },
+                ]}
+              />
               <TouchableOpacity
-                style={{ flex: 1, paddingRight: 8 }}
-                activeOpacity={0.7}
+                style={styles.bellButton}
                 onPress={() => {
-                  const isPerm =
-                    req.title &&
-                    (req.title.includes('Going') ||
-                      req.title.includes('Coming') ||
-                      req.title.includes('Permission'));
-                  navigation.navigate('LeaveApprovalDetail', {
-                    person: {
-                      id: req.id,
-                      name: userProfile.name || 'Priya Sharma',
-                      initials: userProfile.initials || 'PS',
-                      empId: userProfile.employeeId || 'EMP-2024-0156',
-                      role: userProfile.role || 'Senior Software Engineer',
-                      isPermission: isPerm,
-                      leaveType: req.title ? req.title.split('(')[0].trim() : 'Casual Leave',
-                      permissionType: req.title ? req.title.split('(')[0].trim() : 'Early Going',
-                      totalDays:
-                        req.title && req.title.includes('(')
-                          ? req.title.split('(')[1].replace(')', '')
-                          : isPerm
-                          ? '2 Hours'
-                          : '1 Day',
-                      duration:
-                        req.title && req.title.includes('(')
-                          ? req.title.split('(')[1].replace(')', '')
-                          : isPerm
-                          ? '2 Hours'
-                          : '1 Day',
-                      fromDate: req.subtitle ? req.subtitle.split('•')[0].trim() : 'Sep 07, 2026',
-                      toDate: req.subtitle ? req.subtitle.split('•')[0].trim() : 'Sep 07, 2026',
-                      date: req.subtitle ? req.subtitle.split('•')[0].trim() : 'Sep 07, 2026',
-                      reason:
-                        req.subtitle && req.subtitle.includes('•')
-                          ? req.subtitle.split('•')[1].trim()
-                          : 'Personal work',
-                      approvingManager:
-                        (typeof global !== 'undefined' &&
-                          global.USER_PROFILE?.reportingManager) ||
-                        'Rahul Sharma (Team Lead)',
-                      emergencyContact:
-                        (typeof global !== 'undefined' && global.USER_PROFILE?.phone) ||
-                        '+91 98765 43210',
-                      status: req.status,
-                    },
-                  });
+                  setHasNewNotification(false);
+                  if (typeof global !== 'undefined' && global.NOTIFICATIONS) {
+                    global.NOTIFICATIONS = global.NOTIFICATIONS.map((n) => ({ ...n, unread: false }));
+                  }
+                  go('Notifications');
                 }}
               >
-                <Text style={styles.requestTitle}>{req.title}</Text>
-                <Text style={styles.requestSubtitle}>{req.subtitle}</Text>
+                <Feather name="bell" size={18} color="#FFFFFF" />
+                <View style={styles.bellDot} />
               </TouchableOpacity>
-              <View style={styles.requestActions}>
-                <StatusBadge label={req.status} tone={req.tone} />
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => handleDeleteRequest(req.id)}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  accessibilityLabel="Delete request"
-                >
-                  <Feather name="x-circle" size={18} color="#9AA3B2" />
-                </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Profile & Greeting Row (No duplicate Hello) */}
+          <View style={styles.headerProfileRow}>
+            <View style={styles.profileGreetingCol}>
+              <Text style={styles.greetingHello}>Hello,</Text>
+              <Text style={styles.greetingName}>
+                {userProfile.name ? userProfile.name.replace(/\s*👋\s*$/, '') : 'Sneha Reddy'}
+              </Text>
+              <Text style={styles.roleMeta}>
+                {userProfile.role || 'UI/UX Designer'} • {userProfile.employeeId || 'EMP-2024-0103'}
+              </Text>
+              <View style={styles.dateRow}>
+                <Feather name="calendar" size={14} color="rgba(255,255,255,0.9)" />
+                <Text style={styles.dateText}>Thu, Sep 03 2026</Text>
               </View>
             </View>
-          </Card>
-        ))}
+
+            <TouchableOpacity
+              style={styles.avatarBlock}
+              activeOpacity={0.8}
+              onPress={() => go('MyProfile')}
+            >
+              <View style={styles.avatarCircle}>
+                <Feather name="user" size={38} color="#3B82F6" />
+              </View>
+              <Text style={styles.avatarCaption}>Have a great day!</Text>
+              <View style={styles.avatarUnderline} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 4 Action Cards (2x2 Grid) */}
+        <View style={styles.actionGrid}>
+          {ACTION_CARDS.map((item) => (
+            <TouchableOpacity
+              key={item.key}
+              style={styles.actionCard}
+              activeOpacity={0.75}
+              onPress={() => go(item.screen)}
+            >
+              <View style={styles.actionTopRow}>
+                <View style={[styles.actionIconBox, { backgroundColor: item.iconBg }]}>
+                  <Feather name={item.icon} size={20} color={item.iconColor} />
+                </View>
+                <View style={[styles.actionChevron, { backgroundColor: item.chevronBg }]}>
+                  <Feather name="chevron-right" size={13} color={item.chevronColor} />
+                </View>
+              </View>
+              <View style={styles.actionTextCol}>
+                <Text style={styles.actionTitle}>{item.title}</Text>
+                <Text style={styles.actionSubtitle}>{item.subtitle}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Leave Balances Card */}
+        <View style={styles.balancesCard}>
+          <View style={styles.balancesHeader}>
+            <Feather name="pie-chart" size={20} color="#2563EB" />
+            <Text style={styles.balancesTitle}>Leave Balances</Text>
+          </View>
+          {LEAVE_BALANCES.map((item) => (
+            <View key={item.label} style={styles.balanceRow}>
+              <View style={[styles.balanceIcon, { backgroundColor: item.iconBg }]}>
+                <Feather name={item.icon} size={18} color={item.iconColor} />
+              </View>
+              <View style={styles.balanceCol}>
+                <View style={styles.balanceTopLine}>
+                  <Text style={styles.balanceLabel}>{item.label}</Text>
+                  <Text style={styles.balanceValue}>
+                    {item.used} / {item.total} Days
+                  </Text>
+                </View>
+                <Text style={styles.balanceSubLabel}>{item.sublabel}</Text>
+                <View style={styles.progressTrack}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${(item.used / item.total) * 100}%` },
+                    ]}
+                  />
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {/* Recent Requests Section matching Image 4 (Displayed ONLY when manager approves or rejects request) */}
+        {(() => {
+          const approvedOrRejected = requests.filter((r) => {
+            const st = (r.status || '').toLowerCase();
+            return st === 'approved' || st === 'rejected';
+          });
+          if (approvedOrRejected.length === 0) return null;
+          return (
+            <View style={styles.recentRequestsSection}>
+              <Text style={styles.sectionLabel}>RECENT REQUESTS ({approvedOrRejected.length})</Text>
+              {approvedOrRejected.map((req) => (
+                <TouchableOpacity
+                  key={req.id}
+                  style={styles.recentRequestCard}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    const isPerm =
+                      req.title &&
+                      (req.title.includes('Going') ||
+                        req.title.includes('Coming') ||
+                        req.title.includes('Permission'));
+                    navigation.navigate('LeaveApprovalDetail', {
+                      person: {
+                        id: req.id,
+                        name: userProfile.name || 'Sneha Reddy',
+                        initials: userProfile.initials || 'SR',
+                        empId: userProfile.employeeId || 'EMP-2024-0103',
+                        role: userProfile.role || 'UI/UX Designer',
+                        isPermission: isPerm,
+                        leaveType: req.title ? req.title.split('(')[0].trim() : 'Casual Leave',
+                        permissionType: req.title ? req.title.split('(')[0].trim() : 'Early Going',
+                        totalDays: req.title && req.title.includes('(') ? req.title.split('(')[1].replace(')', '') : '1.0 Day',
+                        duration: req.title && req.title.includes('(') ? req.title.split('(')[1].replace(')', '') : '1.0 Day',
+                        fromDate: req.subtitle ? req.subtitle.split('•')[0].trim() : '07-Sep-2026',
+                        toDate: req.subtitle ? req.subtitle.split('•')[0].trim() : '07-Sep-2026',
+                        approvingManager: 'Rahul Sharma',
+                        reason: req.subtitle && req.subtitle.includes('•') ? req.subtitle.split('•')[1].trim() : 'Personal Work',
+                        status: req.status ? req.status.toLowerCase() : 'approved',
+                      },
+                    });
+                  }}
+                >
+                  <View style={styles.recentRequestLeft}>
+                    <Text style={styles.recentRequestTitle}>{req.title || 'Casual Leave (1.0 Day)'}</Text>
+                    <Text style={styles.recentRequestSub}>{req.subtitle || '07-Sep-2026 • Personal Work'}</Text>
+                    <Text style={styles.recentRequestMeta}>{req.empMeta || `${userProfile.name || 'Sneha Reddy'} • ${userProfile.employeeId || 'EMP-2024-0103'}`}</Text>
+                  </View>
+                  <View style={styles.recentRequestRight}>
+                    <View style={[
+                      styles.recentRequestBadge,
+                      (req.status || '').toLowerCase() === 'approved' ? { backgroundColor: '#DCFCE7' } : { backgroundColor: '#FCE4E4' }
+                    ]}>
+                      <Text style={[
+                        styles.recentRequestBadgeText,
+                        (req.status || '').toLowerCase() === 'approved' ? { color: '#16A34A' } : { color: '#E5484D' }
+                      ]}>
+                        {req.status || 'Approved'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.recentRequestDismissBtn}
+                      onPress={() => handleDeleteRequest(req.id)}
+                      accessibilityLabel="Dismiss Request"
+                    >
+                      <Feather name="x-circle" size={18} color="#94A3B8" />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          );
+        })()}
       </ScrollView>
 
-      <BottomNavBar active="Dashboard" onNavigate={go} />
+      {/* Sidebar Drawer Modal matching Image 4 */}
+      <Modal
+        visible={sidebarVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSidebarVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setSidebarVisible(false)}>
+          <View style={styles.sidebarModalOverlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.sidebarDrawer}>
+                {/* Header */}
+                <View style={styles.sidebarHeader}>
+                  <View style={styles.sidebarBrand}>
+                    <Image
+                      source={require('../../../assets/tech-circuit-logo.png')}
+                      style={styles.sidebarLogo}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.sidebarTitle}>Mobile Application</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.sidebarCloseBtn}
+                    onPress={() => setSidebarVisible(false)}
+                    accessibilityLabel="Close Menu"
+                  >
+                    <Feather name="x" size={20} color="#94A3B8" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Profile Card */}
+                <View style={styles.sidebarProfileCard}>
+                  <View style={styles.sidebarProfileTop}>
+                    <View style={styles.sidebarAvatarCircle}>
+                      <Text style={styles.sidebarInitials}>
+                        {userProfile.initials || 'SR'}
+                      </Text>
+                    </View>
+                    <View style={styles.sidebarProfileInfo}>
+                      <Text style={styles.sidebarProfileName}>
+                        {userProfile.name ? userProfile.name.replace(/\s*👋\s*$/, '') : 'Sneha Reddy'}
+                      </Text>
+                      <View style={styles.sidebarRoleBadge}>
+                        <Text style={styles.sidebarRoleText}>EMPLOYEE</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.sidebarLogoutBtn}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      navigation && navigation.navigate('Login');
+                    }}
+                  >
+                    <Feather name="log-out" size={16} color="#F87171" />
+                    <Text style={styles.sidebarLogoutText}>Log Out</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Navigation Links Matching Image 4 */}
+                <View style={styles.sidebarNav}>
+                  <TouchableOpacity
+                    style={[styles.sidebarNavItem, styles.sidebarNavItemHighlight]}
+                    onPress={() => setSidebarVisible(false)}
+                  >
+                    <Text style={styles.sidebarNavItemHighlightText}>Employee Dashboard</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.sidebarNavItem, styles.sidebarNavItemActive]}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('MyAttendance');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemActiveText}>My Attendance</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('ApplyLeave');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>Apply Leave</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('ApplyPermission');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>Apply Permission</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('LeaveBalance');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>Leave Balance</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('LeaveHistory');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>My Requests (History)</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('HolidayCalendar');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>Holiday Calendar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('Notifications');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>Notifications</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.sidebarNavItem}
+                    onPress={() => {
+                      setSidebarVisible(false);
+                      go('MyProfile');
+                    }}
+                  >
+                    <Text style={styles.sidebarNavItemText}>My Profile</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      <BottomNavBar navigation={navigation} active="Dashboard" />
     </View>
   );
 }
