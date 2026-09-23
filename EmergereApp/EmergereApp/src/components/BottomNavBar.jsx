@@ -43,7 +43,8 @@ export default function BottomNavBar({ active, onNavigate }) {
               <View style={styles.elevatedCircle}>
                 <Feather name="plus" size={24} color="#FFFFFF" />
               </View>
-              <Text style={styles.elevatedLabel}>{tab.label}</Text>
+              <Text style={[styles.elevatedLabel, isActive && { color: '#2563EB' }]}>{tab.label}</Text>
+              {isActive && <View style={styles.activeDot} />}
             </TouchableOpacity>
           );
         }
@@ -55,7 +56,7 @@ export default function BottomNavBar({ active, onNavigate }) {
             activeOpacity={0.7}
             onPress={() => handlePress(tab.key)}
           >
-            {isActive && tab.key === 'Dashboard' ? (
+            {isActive ? (
               <View style={styles.activePillWrap}>
                 <Feather name={tab.icon} size={20} color="#2563EB" />
               </View>
@@ -63,13 +64,13 @@ export default function BottomNavBar({ active, onNavigate }) {
               <Feather
                 name={tab.icon}
                 size={22}
-                color={isActive ? '#2563EB' : '#64748B'}
+                color="#64748B"
               />
             )}
             <Text style={[styles.label, isActive && styles.labelActive]}>
               {tab.label}
             </Text>
-            {isActive && tab.key === 'Dashboard' && <View style={styles.activeDot} />}
+            {isActive && <View style={styles.activeDot} />}
           </TouchableOpacity>
         );
       })}

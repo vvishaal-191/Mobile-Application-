@@ -2057,7 +2057,7 @@
         }
 
         /* ── Bottom Navigation Bar ── */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
@@ -2071,8 +2071,11 @@
           justify-content: space-between;
           box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
           z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
+        .bottom-nav .tab,
         .nav-tab {
           flex: 1;
           display: flex;
@@ -2087,12 +2090,14 @@
           user-select: none;
         }
 
+        .bottom-nav .tab.active,
         .nav-tab.active {
           color: #2563EB;
           font-weight: 700;
         }
 
-        .dashboard-pill-wrap {
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
           background: #EEF4FF;
           border-radius: 16px;
           padding: 6px 14px;
@@ -2395,8 +2400,7 @@
 
         <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
-          <!-- Dashboard (Active) -->
-          <div class="tab nav-tab active">
+          <div class="tab nav-tab active" id="tab-dashboard">
             <div class="dashboard-pill-wrap">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
                 <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
@@ -2405,9 +2409,7 @@
             <span>Dashboard</span>
             <span class="active-dot-indicator"></span>
           </div>
-
-          <!-- Attendance -->
-          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}">
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -2416,9 +2418,7 @@
             </svg>
             <span>Attendance</span>
           </div>
-
-          <!-- Apply (Elevated Center Button) -->
-          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}">
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
             <div class="nav-apply-circle">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -2427,9 +2427,7 @@
             </div>
             <span class="nav-apply-label">Apply</span>
           </div>
-
-          <!-- History -->
-          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}">
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
               <path d="M3 3v5h5"></path>
@@ -2437,9 +2435,7 @@
             </svg>
             <span>History</span>
           </div>
-
-          <!-- Profile -->
-          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}">
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
@@ -2992,33 +2988,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -3251,38 +3311,49 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab active" id="tab-attendance">
+            <div class="nav-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+              </svg>
+            </div>
+            <span>Attendance</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -4055,43 +4126,97 @@
         }
 
         /* Bottom Nav Styling */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
           background: #FFFFFF;
-          border-top: 1px solid #E2E8F0;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
           align-items: flex-end;
-          padding: 8px 0 16px;
-          height: 68px;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
           box-sizing: border-box;
-          z-index: 10;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
-          font-size: 11px;
-          font-weight: 500;
-          color: #64748B;
-          cursor: pointer;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 4px;
+          cursor: pointer;
+          color: #64748B;
+          font-size: 11px;
+          font-weight: 500;
+          gap: 3px;
           user-select: none;
         }
 
-        .bottom-nav .tab.active {
+        .bottom-nav .tab.active,
+        .nav-tab.active {
           color: #2563EB;
           font-weight: 700;
         }
 
-        .bottom-nav .tab.active .icon svg {
-          stroke: #2563EB;
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Elevated Circular '+' Button in Nav Center */
@@ -4443,54 +4568,45 @@
 
         <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
-          <div class="tab" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-EmployeeDashboard');else if(typeof loadScreen==='function')loadScreen('tpl-EmployeeDashboard');">
-            <span class="icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg>
-            </span>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
             <span>Dashboard</span>
           </div>
-          <div class="tab" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-MyAttendance');else if(typeof loadScreen==='function')loadScreen('tpl-MyAttendance');">
-            <span class="icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-            </span>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
             <span>Attendance</span>
           </div>
-          <div class="tab active al-tab-apply">
-            <div class="al-elevated-plus-btn">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <div class="tab nav-apply-btn-wrap active" id="tab-apply">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </div>
-            <span class="al-nav-text">Apply</span>
+            <span class="nav-apply-label" style="color: #2563EB; font-weight: 700;">Apply</span>
+            <span class="active-dot-indicator"></span>
           </div>
-          <div class="tab" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-History');else if(typeof loadScreen==='function')loadScreen('tpl-History');">
-            <span class="icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg>
-            </span>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
             <span>History</span>
           </div>
-          <div class="tab" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen('tpl-MyProfile');else if(typeof loadScreen==='function')loadScreen('tpl-MyProfile');">
-            <span class="icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="7" r="4"></circle>
-                <path d="M5.5 21a8.5 8.5 0 0 1 13 0"></path>
-              </svg>
-            </span>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
             <span>Profile</span>
           </div>
         </div>
@@ -5098,33 +5214,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -5346,38 +5526,47 @@
           <button class="btn btn-primary full" onclick="handleApplyPermissionSubmit()">Submit Request</button>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap active" id="tab-apply">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label" style="color: #2563EB; font-weight: 700;">Apply</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
         <!-- Success Popup Modal -->
         <div class="success-modal-overlay" id="perm-success-modal" onclick="if(event.target===this)closePermSuccessModal()">
@@ -5833,33 +6022,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -6072,38 +6325,49 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab active" id="tab-profile">
+            <div class="nav-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <span>Profile</span>
+            <span class="active-dot-indicator"></span>
+          </div>
         </div>
       </div>
       <script>
@@ -6425,33 +6689,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -6915,38 +7243,49 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab active" id="tab-history">
+            <div class="nav-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                 <path d="M3 3v5h5"></path>
                 <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+              </svg>
+            </div>
+            <span>History</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -7334,33 +7673,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -7590,38 +7993,46 @@
           </script>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -7812,33 +8223,97 @@
           margin: 0 20px 16px;
         }
 
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         .mini-logo {
@@ -8002,38 +8477,48 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab active" id="tab-dashboard">
+            <div class="dashboard-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
+                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+              </svg>
+            </div>
+            <span>Dashboard</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -8274,34 +8759,97 @@
           box-shadow: 0 1px 4px rgba(229, 72, 77, 0.12);
         }
 
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
-          font-size: 11px;
-          color: var(--text-muted);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
           cursor: pointer;
+          color: #64748B;
+          font-size: 11px;
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         .profile-card {
@@ -8516,38 +9064,49 @@
             onclick="if(window.parent&&window.parent.logoutUser){window.parent.logoutUser();}else if(window.logoutUser){window.logoutUser();}else if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-Login');}">Logout</button>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab active" id="tab-profile">
+            <div class="nav-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <span>Profile</span>
+            <span class="active-dot-indicator"></span>
+          </div>
         </div>
       </div>
       <script>
@@ -8968,33 +9527,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -9225,38 +9848,48 @@
           <div id="mgr-dash-requests-list"></div>
         </div>
         <div class="bottom-nav">
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab active" id="tab-dashboard">
+            <div class="dashboard-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
+                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+              </svg>
+            </div>
+            <span>Dashboard</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -9578,33 +10211,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -9801,38 +10498,49 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab active" id="tab-attendance">
+            <div class="nav-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+              </svg>
+            </div>
+            <span>Attendance</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -10209,33 +10917,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -10386,38 +11158,48 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab active" id="tab-dashboard">
+            <div class="dashboard-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
+                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+              </svg>
+            </div>
+            <span>Dashboard</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
@@ -10919,33 +11701,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -11197,39 +12043,49 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab active" id="tab-dashboard">
+            <div class="dashboard-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
+                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+              </svg>
+            </div>
+            <span>Dashboard</span>
+            <span class="active-dot-indicator"></span>
           </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
+        </div>
         </div>
       <script>
         // preview/shared.js
@@ -11730,33 +12586,97 @@
         }
 
         /* Bottom nav */
-        .bottom-nav {
+                .bottom-nav {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
           display: flex;
-          padding: 10px 0 22px;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
         }
 
-        .bottom-nav .tab {
+        .bottom-nav .tab,
+        .nav-tab {
           flex: 1;
-          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
           font-size: 11px;
-          color: var(--text-muted);
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
         }
 
-        .bottom-nav .tab .icon {
-          font-size: 20px;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .bottom-nav .tab.active {
-          color: var(--primary);
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
           font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
         }
 
         /* Avatar */
@@ -11910,38 +12830,48 @@
           </div>
         </div>
         <div class="bottom-nav">
-          <div class="tab active"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-              </svg></span>Dashboard</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg></span>Attendance</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg></span>Apply</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-                <polyline points="12 7 12 12 15 15"></polyline>
-              </svg></span>History</div>
-          <div class="tab"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6"></line>
-                <line x1="4" y1="12" x2="20" y2="12"></line>
-                <line x1="4" y1="18" x2="20" y2="18"></line>
-              </svg></span>Profile</div>
+          <div class="tab nav-tab active" id="tab-dashboard">
+            <div class="dashboard-pill-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
+                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+              </svg>
+            </div>
+            <span>Dashboard</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
         </div>
       </div>
       <script>
