@@ -195,16 +195,20 @@ export default function LoginScreen({ navigation }) {
       style={styles.screen}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#0D47B5" />
+      <StatusBar barStyle="dark-content" backgroundColor="#EEF3F9" />
 
-      <Image
-        source={require('../../../assets/emergere-login-logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+      <View style={styles.centerContainer}>
+        {/* Logo Plate */}
+        <View style={styles.logoCard}>
+        <Image
+          source={require('../../../assets/emergere-circuit-logo.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
+      </View>
 
       <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Log in to manage leaves & attendance</Text>
+      <Text style={styles.subtitle}>Sign in to continue</Text>
 
       {!!authError && (
         <View style={styles.authErrorBox}>
@@ -213,69 +217,76 @@ export default function LoginScreen({ navigation }) {
         </View>
       )}
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Email Address *</Text>
-        <View style={styles.emailRow}>
-          <TextInput
-            style={styles.emailInput}
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              setAuthError('');
-            }}
-            placeholder="Enter your email address"
-            placeholderTextColor="#F2F2F2"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
+      {/* Username or Email Input */}
+      <View style={styles.inputWrap}>
+        <Feather name="user" size={18} color="#64748B" style={styles.inputIcon} />
+        <TextInput
+          style={styles.textInputField}
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            setAuthError('');
+          }}
+          placeholder="Username or Email"
+          placeholderTextColor="#94A3B8"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
       </View>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Password *</Text>
-        <View style={styles.passwordRow}>
-          <TextInput
-            style={styles.passwordInput}
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              if (text.length >= 8) setPasswordError('');
-            }}
-            placeholder="Enter your password"
-            placeholderTextColor="#F2F2F2"
-            secureTextEntry={!showPassword}
+      {/* Password Input */}
+      <View style={styles.inputWrap}>
+        <Feather name="lock" size={18} color="#64748B" style={styles.inputIcon} />
+        <TextInput
+          style={styles.textInputField}
+          value={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            if (text.length >= 8) setPasswordError('');
+          }}
+          placeholder="Password"
+          placeholderTextColor="#94A3B8"
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword((v) => !v)} activeOpacity={0.7} style={styles.eyeBtn}>
+          <Feather
+            name={showPassword ? 'eye-off' : 'eye'}
+            size={18}
+            color="#64748B"
           />
-          {password.length > 0 && (
-            <TouchableOpacity onPress={() => setShowPassword((v) => !v)} activeOpacity={0.7}>
-              <Feather
-                name={showPassword ? 'eye-off' : 'eye'}
-                size={20}
-                color="#FFFFFF"
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-        {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+        </TouchableOpacity>
+      </View>
+      {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+
+      {/* Remember Me and Forgot Password Row */}
+      <View style={styles.optionsRow}>
+        <TouchableOpacity
+          style={styles.rememberRow}
+          onPress={() => setRememberMe(!rememberMe)}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.checkbox, !rememberMe && styles.checkboxUnchecked]}>
+            {rememberMe && <Text style={styles.checkboxCheck}>✓</Text>}
+          </View>
+          <Text style={styles.rememberText}>Remember Me</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleOpenForgotModal} activeOpacity={0.7}>
+          <Text style={styles.forgotText}>Forgot Password?</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.rememberRow}
-        onPress={() => setRememberMe(!rememberMe)}
-        activeOpacity={0.8}
-      >
-        <View style={styles.checkbox}>
-          {rememberMe && <Text style={styles.checkboxCheck}>✓</Text>}
-        </View>
-        <Text style={styles.rememberText}>Remember me</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+      {/* Primary Login Button */}
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.85}>
         <Text style={styles.loginButtonText}>Login</Text>
+        <View style={styles.arrowCircle}>
+          <Feather name="arrow-right" size={18} color="#FFFFFF" />
+        </View>
       </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity style={styles.forgotWrap} onPress={handleOpenForgotModal}>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </TouchableOpacity>
+
+
 
       {/* Forgot Password Modal */}
       <Modal

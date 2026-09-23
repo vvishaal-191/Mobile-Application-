@@ -110,10 +110,34 @@ function handleLogin() {
 
 function toggleRemember(el) {
   isRememberChecked = !isRememberChecked;
-  const chk = el.querySelector('.chk-box');
+  const chk = el ? el.querySelector('.chk-box') : document.querySelector('.chk-box');
   if (chk) {
-    chk.textContent = isRememberChecked ? '✓' : '';
-    chk.style.background = isRememberChecked ? '#8EC4EA' : 'transparent';
+    if (isRememberChecked) {
+      chk.classList.remove('unchecked');
+      chk.textContent = '✓';
+    } else {
+      chk.classList.add('unchecked');
+      chk.textContent = '';
+    }
+  }
+}
+
+function toggleLoginTheme() {
+  const wrap = document.getElementById('login-screen-wrap');
+  if (wrap) {
+    wrap.classList.toggle('dark-mode');
+  }
+}
+
+function handleSocialClick(platform) {
+  const emailInput = document.getElementById('email');
+  const pwdInput = document.getElementById('pwd');
+  if (emailInput) {
+    emailInput.value = 'sneha@gmail.com';
+    if (pwdInput) {
+      pwdInput.value = 'employee@123';
+      updatePasswordEyeVisibility('pwd');
+    }
   }
 }
 
