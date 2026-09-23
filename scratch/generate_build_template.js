@@ -211,13 +211,7 @@ const tplContent = `  <template id="tpl-EmployeeDashboard">
           letter-spacing: -0.2px;
         }
 
-        .header-dashboard-circle {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: #FFFFFF;
-          margin-top: 3px;
-        }
+    
 
         .header-bell-wrap {
           position: relative;
@@ -960,7 +954,7 @@ const tplContent = `  <template id="tpl-EmployeeDashboard">
                   <img src="${logoDataUri}" alt="Logo" class="brand-logo-img" />
                   <div class="header-dashboard-title-wrap">
                     <span class="header-dashboard-title">Dashboard</span>
-                    <span class="header-dashboard-circle"></span>
+                    
                   </div>
                 </div>
               </div>

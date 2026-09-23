@@ -27,7 +27,9 @@ body {
   background: var(--bg);
 }
 
-.screen {
+.screen,
+.screen.has-dash-header,
+.screen:has(.dash-header) {
   padding-top: 0 !important;
   padding-bottom: 96px;
 }
@@ -35,10 +37,13 @@ body {
 /* ── Header ── */
 .dash-header {
   margin-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
   background: linear-gradient(135deg, #0937A0 0%, #0A4FD5 45%, #1862EE 78%, #2B76FB 100%);
   position: relative;
-  border-radius: 0 0 28px 28px;
-  padding: 24px 18px 22px 18px;
+  padding: 20px 18px 22px 18px;
   color: #FFFFFF;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(10, 79, 213, 0.18);
@@ -81,6 +86,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  height: 38px;
 }
 
 .hamburger-btn {
@@ -90,13 +96,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+.hamburger-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .brand-block {
   display: flex;
   align-items: center;
   gap: 10px;
+  height: 38px;
 }
 
 .brand-logo-img {
@@ -122,16 +137,7 @@ body {
   letter-spacing: -0.25px;
 }
 
-.header-dashboard-circle {
-  position: absolute;
-  bottom: -7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #FFFFFF;
-}
+
 
 .header-bell-wrap {
   position: relative;

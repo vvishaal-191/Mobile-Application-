@@ -37,7 +37,7 @@ htmlFiles.forEach(file => {
 
   // Requirement 2: Header title replaced with "Dashboard" and circle indicator below it
   assert(`${file}: Has header-dashboard-title with Dashboard`, content.includes('header-dashboard-title') && content.includes('Dashboard'));
-  assert(`${file}: Has header-dashboard-circle below title`, content.includes('header-dashboard-circle'));
+  
 
   // Requirement 3: Use logo from third image on Employee Dashboard
   assert(`${file}: Header brand has logo image`, content.includes('brand-logo-img'));
@@ -73,7 +73,7 @@ const prevCss = fs.readFileSync('EmergereApp/EmergereApp/src/screens/EmployeeDas
 const prevJs = fs.readFileSync('EmergereApp/EmergereApp/src/screens/EmployeeDashboard/preview.js', 'utf8');
 
 assert('preview.html: header has Dashboard title', prevHtml.includes('header-dashboard-title') && prevHtml.includes('Dashboard'));
-assert('preview.html: header has circle dot', prevHtml.includes('header-dashboard-circle'));
+
 assert('preview.html: header uses tech-circuit-logo.png', prevHtml.includes('tech-circuit-logo.png'));
 assert('preview.html: sidebar uses tech-circuit-logo.png', prevHtml.includes('sidebar-logo') && prevHtml.includes('tech-circuit-logo.png'));
 assert('preview.html: recent-requests-section is hidden by default', prevHtml.includes('id="emp-recent-requests-section" style="display: none;"'));

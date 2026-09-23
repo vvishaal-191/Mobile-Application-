@@ -61,7 +61,8 @@ body {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
 }
-.screen:has(.dash-header) {
+.screen:has(.dash-header),
+.screen.has-dash-header {
   padding-top: 0 !important;
 }
 .screen::-webkit-scrollbar {

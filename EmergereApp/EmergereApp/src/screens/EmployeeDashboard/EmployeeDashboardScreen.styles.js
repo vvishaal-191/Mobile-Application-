@@ -11,6 +11,8 @@ export default StyleSheet.create({
   // ── Header (Deep Blue Gradient Style matching Image 2, Aligned Upward) ──
   dashHeader: {
     backgroundColor: '#0A4FD5',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     paddingHorizontal: 18,
@@ -27,20 +29,27 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: 38,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    height: 38,
   },
   menuButton: {
-    padding: 6,
-    borderRadius: 8,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0,
   },
   brandBlock: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    height: 38,
   },
   brandLogo: {
     width: 32,

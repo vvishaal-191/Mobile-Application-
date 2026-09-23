@@ -740,9 +740,19 @@
             }
             
             .statusbar { display: none !important; }
-            .screen:not(.neumorphic-login-screen) {
+            .screen:not(.neumorphic-login-screen):not(.has-dash-header):not(:has(.dash-header)) {
               height: 844px !important;
               padding-top: 16px !important;
+            }
+            .screen.has-dash-header,
+            .screen:has(.dash-header) {
+              height: 844px !important;
+              padding-top: 0 !important;
+            }
+            .dash-header {
+              margin-top: 0 !important;
+              border-top-left-radius: 0 !important;
+              border-top-right-radius: 0 !important;
             }
             .screen.neumorphic-login-screen {
               height: 100% !important;
@@ -842,9 +852,19 @@
             .statusbar {
               display: none !important;
             }
-            .screen:not(.neumorphic-login-screen) {
+            .screen:not(.neumorphic-login-screen):not(.has-dash-header):not(:has(.dash-header)) {
               height: 844px !important;
               padding-top: 16px !important;
+            }
+            .screen.has-dash-header,
+            .screen:has(.dash-header) {
+              height: 844px !important;
+              padding-top: 0 !important;
+            }
+            .dash-header {
+              margin-top: 0 !important;
+              border-top-left-radius: 0 !important;
+              border-top-right-radius: 0 !important;
             }
             .screen.neumorphic-login-screen {
               height: 100% !important;
@@ -1255,6 +1275,8 @@
               }
               .dash-header {
                 margin-top: 0 !important;
+                border-top-left-radius: 0 !important;
+                border-top-right-radius: 0 !important;
               }
               #dash-leave-balance-card, #dash-leave-balance-card:hover {
                 background: #FFFFFF !important;
