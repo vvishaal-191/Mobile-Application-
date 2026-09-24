@@ -179,40 +179,71 @@ export default function LeaveHistoryScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.headerRow}>
-        <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-        <Text style={styles.headerTitle}>My Requests</Text>
+      {/* Royal Blue Gradient Header Banner matching Image 2 */}
+      <View style={styles.headerBanner}>
+        <Image
+          source={require('../../../assets/requests-header-banner.png')}
+          style={styles.headerBannerImg}
+          resizeMode="cover"
+        />
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => (navigation && navigation.canGoBack ? navigation.goBack() : go('Dashboard'))}
+          activeOpacity={0.7}
+          accessibilityLabel="Back"
+        />
       </View>
-      <Text style={styles.subtitle}>Track your leaves &amp; permissions</Text>
 
-      <PillTabs tabs={TABS} active={tab} onChange={setTab} />
+      {/* Filter Segment Bar matching Image 2 */}
+      <View style={styles.filterBar}>
+        {TABS.map((t) => {
+          const isActive = tab === t.key;
+          return (
+            <TouchableOpacity
+              key={t.key}
+              style={[styles.filterPill, isActive && styles.filterPillActive]}
+              onPress={() => setTab(t.key)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.filterPillText, isActive && styles.filterPillTextActive]}>
+                {t.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2F6BFF" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0066FF" />
         }
       >
         {isEmpty ? (
           <View style={styles.emptyContainer}>
-            <Feather name="inbox" size={48} color="#C6CCD6" />
+            <Image
+              source={require('../../../assets/empty-requests-art.png')}
+              style={styles.emptyArtImg}
+              resizeMode="contain"
+            />
             <Text style={styles.emptyTitle}>No requests yet</Text>
             <Text style={styles.emptySubtitle}>
               {tab === 'permissions'
                 ? 'Apply for a permission to see it here.'
                 : tab === 'leaves'
                 ? 'Apply for leave to see it here.'
-                : 'Submit a leave or permission request to see it here.'}
+                : 'Submit a leave or permission request\nto see it here.'}
             </Text>
             <TouchableOpacity
               style={styles.emptyActionBtn}
               onPress={() => go(tab === 'permissions' ? 'ApplyPermission' : 'ApplyLeave')}
               activeOpacity={0.8}
             >
+              <Feather name="plus" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
               <Text style={styles.emptyActionBtnText}>
-                {tab === 'permissions' ? '+ Apply Permission' : '+ Apply Leave'}
+                {tab === 'permissions' ? 'Apply Permission' : 'Apply Leave'}
               </Text>
             </TouchableOpacity>
           </View>
