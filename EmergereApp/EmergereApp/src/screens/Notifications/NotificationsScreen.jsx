@@ -1,52 +1,80 @@
 // src/screens/Notifications/NotificationsScreen.jsx
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import Card from '../../components/Card';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './NotificationsScreen.styles';
 
 const INITIAL_NOTIFICATIONS = [
   {
     id: '1',
-    icon: 'check-circle',
-    color: '#1FAE6E',
+    type: 'approved',
     text: 'Your Casual Leave request for Sep 02 has been Approved by Rahul Sharma',
-    time: '2h ago',
-    unread: false,
+    time: '2 hours ago',
+    renderText: () => (
+      <Text style={styles.notifText}>
+        Your <Text style={styles.highlightGreen}>Casual Leave</Text> request for Sep 02 has been <Text style={styles.highlightGreen}>Approved</Text> by Rahul Sharma
+      </Text>
+    ),
   },
   {
     id: '2',
-    icon: 'info',
-    color: '#2F6BFF',
+    type: 'permission',
     text: 'New Permission request submitted for review',
-    time: '5h ago',
-    unread: true,
+    time: '5 hours ago',
+    renderText: () => (
+      <Text style={styles.notifText}>
+        New <Text style={styles.highlightBlue}>Permission request</Text> submitted for review
+      </Text>
+    ),
   },
   {
     id: '3',
-    icon: 'x-circle',
-    color: '#E5484D',
+    type: 'rejected',
     text: 'Your Sick Leave request for Sep 15 was Rejected. Reason: Insufficient balance',
-    time: '1d ago',
-    unread: false,
+    time: '1 day ago',
+    renderText: () => (
+      <Text style={styles.notifText}>
+        Your <Text style={styles.highlightRed}>Sick Leave</Text> request for Sep 15 was <Text style={styles.highlightRed}>Rejected</Text>. Reason: Insufficient balance
+      </Text>
+    ),
   },
   {
     id: '4',
-    icon: 'alert-circle',
-    color: '#F5A623',
+    type: 'holiday',
     text: 'Holiday Alert: Ganesh Chaturthi on Sep 10',
-    time: '2d ago',
-    unread: false,
+    time: '2 days ago',
+    renderText: () => (
+      <Text style={styles.notifText}>
+        <Text style={styles.highlightAmber}>Holiday Alert:</Text> Ganesh Chaturthi on Sep 10
+      </Text>
+    ),
   },
 ];
 
 export default function NotificationsScreen({ navigation, route }) {
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
-  const go = (screen) => navigation && navigation.navigate(screen);
 
-  // On mount: merge any notifications pushed to the global store by approval flows
-  React.useEffect(() => {
+  // Directly navigate to EmployeeDashboard for Home/Dashboard
+  const go = (screen) => {
+    if (!navigation) return;
+    if (screen === 'Dashboard') {
+      navigation.navigate('EmployeeDashboard');
+    } else {
+      navigation.navigate(screen);
+    }
+  };
+
+  const handleBack = () => {
+    if (navigation?.goBack) {
+      navigation.goBack();
+    } else {
+      go('EmployeeDashboard');
+    }
+  };
+
+  // Merge any global notifications
+  useEffect(() => {
     const globalNotifs = (typeof global !== 'undefined' && global.NOTIFICATIONS) || [];
     if (globalNotifs.length > 0) {
       setNotifications((prev) => {
@@ -57,79 +85,186 @@ export default function NotificationsScreen({ navigation, route }) {
     }
   }, []);
 
-  React.useEffect(() => {
+  // Merge route params notification
+  useEffect(() => {
     if (route?.params?.newNotification) {
-      const newNotif = route.params.newNotification;
-      setNotifications((prev) => [
-        {
-          id: newNotif.id || Date.now().toString(),
-          icon: newNotif.icon || 'check-circle',
-          color: newNotif.tone === 'danger' ? '#E5484D' : '#1FAE6E',
-          text: newNotif.desc || newNotif.title,
-          time: 'Just now',
-          unread: true,
-        },
-        ...prev,
-      ]);
+      const n = route.params.newNotification;
+      const isApprove = n.status === 'approved' || n.tone !== 'danger';
+      const item = {
+        id: n.id || Date.now().toString(),
+        type: isApprove ? 'approved' : 'rejected',
+        text: n.desc || n.title,
+        time: 'Just now',
+        renderText: () => (
+          <Text style={styles.notifText}>
+            {n.title || (isApprove ? 'Permission Request Approved' : 'Permission Request Rejected')}: {n.desc}
+          </Text>
+        ),
+      };
+      setNotifications((prev) => [item, ...prev]);
     }
   }, [route?.params?.newNotification]);
 
   const handleClearAll = () => {
     setNotifications([]);
+    if (typeof global !== 'undefined') {
+      global.NOTIFICATIONS = [];
+    }
   };
 
   const handleRemoveOne = (id) => {
     setNotifications((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const renderBadge = (type) => {
+    switch (type) {
+      case 'approved':
+        return (
+          <View style={[styles.iconBadge, styles.badgeGreen]}>
+            <Feather name="check-circle" size={22} color="#10B981" />
+          </View>
+        );
+      case 'permission':
+        return (
+          <View style={[styles.iconBadge, styles.badgeBlue]}>
+            <Feather name="info" size={22} color="#0066FF" />
+          </View>
+        );
+      case 'rejected':
+        return (
+          <View style={[styles.iconBadge, styles.badgeRed]}>
+            <Feather name="x-circle" size={22} color="#EF4444" />
+          </View>
+        );
+      case 'holiday':
+        return (
+          <View style={[styles.iconBadge, styles.badgeAmber]}>
+            <Feather name="bell" size={20} color="#D97706" />
+          </View>
+        );
+      default:
+        return (
+          <View style={[styles.iconBadge, styles.badgeBlue]}>
+            <Feather name="bell" size={20} color="#0066FF" />
+          </View>
+        );
+    }
+  };
+
+  const getCardStyle = (type) => {
+    switch (type) {
+      case 'approved':
+        return styles.cardApproved;
+      case 'permission':
+        return styles.cardPermission;
+      case 'rejected':
+        return styles.cardRejected;
+      case 'holiday':
+        return styles.cardHoliday;
+      default:
+        return styles.cardPermission;
+    }
+  };
+
+  const getDismissBtnStyle = (type) => {
+    if (type === 'rejected') return styles.dismissBtnRed;
+    if (type === 'holiday') return styles.dismissBtnAmber;
+    return null;
+  };
+
+  const getDismissIconColor = (type) => {
+    if (type === 'rejected') return '#EF4444';
+    if (type === 'holiday') return '#D97706';
+    return '#3B82F6';
+  };
+
   return (
     <View style={styles.screen}>
-      <View style={styles.headerRow}>
-        <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-        <Text style={styles.headerTitle}>Notifications</Text>
+      {/* Royal Blue Header Banner */}
+      <View style={styles.headerBanner}>
+        <View style={styles.headerContent}>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity
+              onPress={handleBack}
+              style={styles.backButton}
+              activeOpacity={0.8}
+            >
+              <Feather name="arrow-left" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+            <View style={styles.headerTextGroup}>
+              <Text style={styles.headerTitle}>Notifications</Text>
+              <Text style={styles.headerSubtitle}>Stay updated with your requests</Text>
+            </View>
+          </View>
+          <View style={styles.bellArtWrap}>
+            <Feather name="bell" size={32} color="#FFFFFF" />
+          </View>
+        </View>
       </View>
-      <Text style={styles.subtitle}>Stay updated with your requests</Text>
 
-      <View style={styles.recentRow}>
-        <Text style={styles.recentLabel}>Recent</Text>
-        {notifications.length > 0 && (
-          <TouchableOpacity onPress={handleClearAll}>
-            <Text style={styles.markAllText}>Clear</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Top Controls Row */}
+        <View style={styles.controlsRow}>
+          <View style={styles.recentPill}>
+            <Feather name="bell" size={14} color="#FFFFFF" />
+            <Text style={styles.recentPillText}>Recent</Text>
+          </View>
+          {notifications.length > 0 && (
+            <TouchableOpacity
+              onPress={handleClearAll}
+              style={styles.clearAllBtn}
+              activeOpacity={0.7}
+            >
+              <Feather name="trash-2" size={15} color="#0066FF" />
+              <Text style={styles.clearAllText}>Clear All</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+        {/* Section Title */}
+        <Text style={styles.sectionTitle}>Recent Notifications</Text>
+
+        {/* Cards List */}
         {notifications.length > 0 ? (
-          notifications.map((n) => (
-            <Card key={n.id} style={[styles.notifCard, n.unread && styles.notifCardUnread]}>
-              <View style={styles.notifRow}>
-                <View style={styles.iconWrap}>
-                  <Feather name={n.icon} size={20} color={n.color} />
+          <View style={styles.cardList}>
+            {notifications.map((item) => (
+              <View key={item.id} style={[styles.notifCard, getCardStyle(item.type)]}>
+                <View style={styles.notifRow}>
+                  {renderBadge(item.type)}
+                  <View style={styles.notifTextWrap}>
+                    {item.renderText ? item.renderText() : <Text style={styles.notifText}>{item.text}</Text>}
+                    <View style={styles.timeRow}>
+                      <Feather name="calendar" size={13} color="#94A3B8" />
+                      <Text style={styles.timeText}>{item.time}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveOne(item.id)}
+                    style={[styles.dismissBtn, getDismissBtnStyle(item.type)]}
+                    activeOpacity={0.7}
+                  >
+                    <Feather name="x" size={13} color={getDismissIconColor(item.type)} />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.notifTextWrap}>
-                  <Text style={styles.notifText}>{n.text}</Text>
-                  <Text style={styles.notifTime}>{n.time}</Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => handleRemoveOne(n.id)}
-                  style={{ padding: 4, marginLeft: 6 }}
-                >
-                  <Feather name="x" size={16} color="#9AA3B2" />
-                </TouchableOpacity>
               </View>
-            </Card>
-          ))
+            ))}
+          </View>
         ) : (
           <View style={styles.emptyContainer}>
-            <Feather name="bell-off" size={48} color="#9AA3B2" />
+            <View style={styles.emptyIconWrap}>
+              <Feather name="bell-off" size={28} color="#0066FF" />
+            </View>
             <Text style={styles.emptyTitle}>No Notifications</Text>
             <Text style={styles.emptySubtitle}>All notifications have been cleared.</Text>
           </View>
         )}
       </ScrollView>
 
-      <BottomNavBar active="Dashboard" onNavigate={go} />
+      {/* active="" ensures Home icon is NOT highlighted on the Notification page */}
+      <BottomNavBar active="" onNavigate={go} />
     </View>
   );
 }

@@ -1,63 +1,327 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Notifications - Preview</title>
-<link rel="stylesheet" href="../../../preview/base.css"/>
-<link rel="stylesheet" href="./preview.css"/></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Notifications - Preview</title>
+  <link rel="stylesheet" href="../../../preview/base.css"/>
+  <link rel="stylesheet" href="./preview.css"/>
+</head>
 <body>
 <div class="device">
-<div class="screen">
-  <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Notifications</h1></div>
-  <p class="subtitle">Stay updated with your requests</p>
-  <div class="recent-row"><b>Recent</b><span class="mark-all">Mark all as read</span></div>
-
-  <div class="card notif-card"><div class="notif-row"><span class="ico-wrap success">✓</span><div class="notif-text"><p>Your Casual Leave request for Sep 02 has been Approved by Rahul Sharma</p><small>2h ago</small></div></div></div>
-  <div class="card notif-card unread"><div class="notif-row"><span class="ico-wrap info">ℹ</span><div class="notif-text"><p>New Permission request submitted for review</p><small>5h ago</small></div><span class="dot"></span></div></div>
-  <div class="card notif-card"><div class="notif-row"><span class="ico-wrap danger">✕</span><div class="notif-text"><p>Your Sick Leave request for Sep 15 was Rejected. Reason: Insufficient balance</p><small>1d ago</small></div></div></div>
-  <div class="card notif-card"><div class="notif-row"><span class="ico-wrap warning">✕</span><div class="notif-text"><p>Holiday Alert: Ganesh Chaturthi on Sep 10</p><small>2d ago</small></div></div></div>
-</div>
-<div class="bottom-nav">
-          <div class="tab nav-tab active" id="tab-dashboard">
-            <div class="dashboard-pill-wrap">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB">
-                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-              </svg>
-            </div>
-            <span>Dashboard</span>
-            <span class="active-dot-indicator"></span>
-          </div>
-          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
+  <div class="screen has-notif-header has-al-header">
+    
+    <!-- Royal Blue Gradient Header Banner -->
+    <div class="notif-header-banner al-header-banner">
+      <div class="notif-header-content">
+        <div class="notif-header-left">
+          <div class="notif-back-btn" onclick="handleBackNav()" title="Go Back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
-            <span>Attendance</span>
           </div>
-          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
-            <div class="nav-apply-circle">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </div>
-            <span class="nav-apply-label">Apply</span>
-          </div>
-          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-              <path d="M3 3v5h5"></path>
-              <polyline points="12 7 12 12 15 15"></polyline>
-            </svg>
-            <span>History</span>
-          </div>
-          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>Profile</span>
+          <div class="notif-title-group">
+            <h1>Notifications</h1>
+            <p>Stay updated with your requests</p>
           </div>
         </div>
+
+        <!-- 3D Ringing Bell Art with sound waves -->
+        <div class="notif-bell-art">
+          <svg width="68" height="68" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bellGrad" x1="26" y1="20" x2="68" y2="65" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="50%" stop-color="#F0F6FF"/>
+                <stop offset="85%" stop-color="#C7DEFE"/>
+                <stop offset="100%" stop-color="#A5C9FD"/>
+              </linearGradient>
+              <filter id="bellShadow" x="18" y="16" width="60" height="60" filterUnits="userSpaceOnUse">
+                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#002A80" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+
+            <!-- Ringing sound waves -->
+            <path d="M26 28C24 23 20 18 14 14" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+            <path d="M33 21C30 14 24 8 16 4" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+
+            <!-- Bell Clapper -->
+            <circle cx="48" cy="67" r="5.5" fill="#2563EB"/>
+
+            <!-- Bell Body -->
+            <g filter="url(#bellShadow)">
+              <path d="M48 22C41.5 22 37 27 36 36C35.2 44.5 32 54 26 59C24 60.8 25 64 28 64H68C71 64 72 60.8 70 59C64 54 60.8 44.5 60 36C59 27 54.5 22 48 22Z" fill="url(#bellGrad)"/>
+              <path d="M38 32C38 32 43 25 48 25C53 25 58 32 58 32" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+              <ellipse cx="48" cy="63.5" rx="21" ry="3" fill="#93C5FD" opacity="0.4"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body Area -->
+    <div class="notif-body">
+      <!-- Controls Row: Recent Pill & Clear All -->
+      <div class="notif-controls-row">
+        <div class="notif-recent-pill">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span>Recent</span>
+        </div>
+        <button class="notif-clear-btn" id="clear-btn" onclick="clearAllNotifications()" title="Clear all notifications">
+          <svg viewBox="0 0 24 24">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          <span>Clear All</span>
+        </button>
+      </div>
+
+      <!-- Section Title -->
+      <div class="notif-section-title">Recent Notifications</div>
+
+      <!-- Notifications List Container -->
+      <div id="notif-container">
+        <!-- Card 1: Approved Casual Leave (Green) -->
+        <div class="card notif-card type-approved" data-id="1">
+          <div class="notif-row">
+            <div class="notif-badge badge-green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#10B981"/>
+                <path d="M8 12.3l2.6 2.6 5.4-5.4" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="notif-text">
+              <p>Your <span class="text-highlight-green">Casual Leave</span> request for Sep 02 has been <span class="text-highlight-green">Approved</span> by Rahul Sharma</p>
+              <div class="notif-time-row">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>2 hours ago</span>
+              </div>
+            </div>
+            <button class="notif-dismiss-btn" onclick="removeSingleNotif(this)" title="Dismiss">
+              <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2: Permission request submitted (Blue) -->
+        <div class="card notif-card type-permission" data-id="2">
+          <div class="notif-row">
+            <div class="notif-badge badge-blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#0066FF"/>
+                <line x1="12" y1="11" x2="12" y2="16" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round"/>
+                <circle cx="12" cy="7.5" r="1.3" fill="#FFFFFF"/>
+              </svg>
+            </div>
+            <div class="notif-text">
+              <p>New <span class="text-highlight-blue">Permission request</span> submitted for review</p>
+              <div class="notif-time-row">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>5 hours ago</span>
+              </div>
+            </div>
+            <button class="notif-dismiss-btn" onclick="removeSingleNotif(this)" title="Dismiss">
+              <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 3: Sick Leave Rejected (Red) -->
+        <div class="card notif-card type-rejected" data-id="3">
+          <div class="notif-row">
+            <div class="notif-badge badge-red">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#EF4444"/>
+                <line x1="8.5" y1="8.5" x2="15.5" y2="15.5" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round"/>
+                <line x1="15.5" y1="8.5" x2="8.5" y2="15.5" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="notif-text">
+              <p>Your <span class="text-highlight-red">Sick Leave</span> request for Sep 15 was <span class="text-highlight-red">Rejected</span>. Reason: Insufficient balance</p>
+              <div class="notif-time-row">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>1 day ago</span>
+              </div>
+            </div>
+            <button class="notif-dismiss-btn" onclick="removeSingleNotif(this)" title="Dismiss">
+              <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 4: Holiday Alert (Amber) -->
+        <div class="card notif-card type-holiday" data-id="4">
+          <div class="notif-row">
+            <div class="notif-badge badge-amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" fill="#D97706" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="notif-text">
+              <p><span class="text-highlight-amber">Holiday Alert:</span> Ganesh Chaturthi on Sep 10</p>
+              <div class="notif-time-row">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>2 days ago</span>
+              </div>
+            </div>
+            <button class="notif-dismiss-btn" onclick="removeSingleNotif(this)" title="Dismiss">
+              <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Bar: Home icon is NOT highlighted, navigates directly to EmployeeDashboard -->
+    <div class="bottom-nav">
+      <div class="tab nav-tab" id="tab-dashboard" onclick="navigateToDashboard()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+        </svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}else{window.location.href='../MyAttendance/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span>Attendance</span>
+      </div>
+      <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}else{window.location.href='../ApplyLeave/preview.html'}">
+        <div class="nav-apply-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <span class="nav-apply-label">Apply</span>
+      </div>
+      <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}else{window.location.href='../LeaveHistory/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+          <polyline points="12 7 12 12 15 15"></polyline>
+        </svg>
+        <span>History</span>
+      </div>
+      <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}else{window.location.href='../MyProfile/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
 </div>
+
 <script src="../../../preview/shared.js"></script>
-<script src="./preview.js"></script>
-</body></html>
+<script>
+  function navigateToDashboard() {
+    var parentWin = (window.parent && window.parent.loadScreen) ? window.parent : window;
+    if (typeof parentWin.loadScreen === 'function') {
+      parentWin.loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof loadScreen === 'function') {
+      loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof navTo === 'function') {
+      navTo('EmployeeDashboard');
+    } else {
+      window.location.href = '../EmployeeDashboard/preview.html';
+    }
+  }
+
+  function handleBackNav() {
+    var parentWin = (window.parent && window.parent.loadScreen) ? window.parent : window;
+    if (typeof parentWin.loadScreen === 'function') {
+      parentWin.loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof loadScreen === 'function') {
+      loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof navTo === 'function') {
+      navTo('EmployeeDashboard');
+    } else if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '../EmployeeDashboard/preview.html';
+    }
+  }
+
+  function clearAllNotifications() {
+    const container = document.getElementById('notif-container');
+    if (container) {
+      container.innerHTML = `
+        <div class="notif-empty-state">
+          <div class="notif-empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+          </div>
+          <div class="notif-empty-title">No Notifications</div>
+          <p class="notif-empty-subtitle">All notifications have been cleared.</p>
+        </div>`;
+    }
+    const btn = document.getElementById('clear-btn');
+    if (btn) btn.style.display = 'none';
+
+    var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+    pWin.HAS_NEW_NOTIFICATION = false;
+    window.HAS_NEW_NOTIFICATION = false;
+    try { sessionStorage.removeItem('HAS_NEW_NOTIFICATION'); } catch(e){}
+    try { pWin.sessionStorage.removeItem('HAS_NEW_NOTIFICATION'); } catch(e){}
+    pWin.PERM_NOTIFICATIONS = [];
+  }
+
+  function removeSingleNotif(el) {
+    const card = el.closest('.notif-card');
+    if (card) {
+      card.classList.add('fade-out');
+      setTimeout(function() {
+        card.remove();
+        const remaining = document.querySelectorAll('#notif-container .notif-card');
+        if (remaining.length === 0) {
+          clearAllNotifications();
+        }
+      }, 180);
+    }
+  }
+</script>
+</body>
+</html>
