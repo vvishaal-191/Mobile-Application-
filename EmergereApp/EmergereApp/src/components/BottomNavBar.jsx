@@ -17,11 +17,21 @@ const TABS = [
 export default function BottomNavBar({ active, onNavigate }) {
   const handlePress = (tabKey) => {
     if (!onNavigate) return;
+    const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
     if (tabKey === 'Dashboard') {
-      const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
       onNavigate(isManager ? 'ManagerDashboard' : 'EmployeeDashboard');
+    } else if (tabKey === 'Attendance') {
+      onNavigate(isManager ? 'TeamAttendance' : 'MyAttendance');
     } else if (tabKey === 'Apply') {
       onNavigate('ApplyLeave');
+    } else if (tabKey === 'History') {
+      if (isManager) {
+        alert('Access Restricted: Manager account is not authorized to access My Requests (History).');
+        return;
+      }
+      onNavigate('LeaveHistory');
+    } else if (tabKey === 'Profile') {
+      onNavigate('MyProfile');
     } else {
       onNavigate(tabKey);
     }

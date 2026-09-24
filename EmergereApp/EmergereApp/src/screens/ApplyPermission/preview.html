@@ -1,113 +1,455 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Apply Permission - Preview</title>
-<link rel="stylesheet" href="../../../preview/base.css"/>
-<link rel="stylesheet" href="../ApplyLeave/preview.css"/>
-<link rel="stylesheet" href="./preview.css"/></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Apply Permission - Preview</title>
+  <link rel="stylesheet" href="../../../preview/base.css"/>
+  <link rel="stylesheet" href="../ApplyLeave/preview.css"/>
+  <link rel="stylesheet" href="./preview.css"/>
+</head>
 <body>
 <div class="device">
-<div class="screen">
-  <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Apply Permission</h1></div>
-  <p class="subtitle">Request short duration permission</p>
-  <div class="field">
-    <label class="field-label">Date *</label>
-    <input type="date" id="perm-date-input" value="2026-09-04" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit; cursor:pointer;"/>
-  </div>
-  <div class="field"><label class="field-label">Permission Type *</label>
-    <div class="select-wrap">
-      <select id="perm-type-select"><option>Early Going</option><option>Late Coming</option><option>Personal Work</option><option>Official Work</option></select>
-      <div class="select-chevron">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"></polyline>
+  <div class="screen has-perm-header has-al-header">
+    <!-- Header Gradient Banner - Flush to top with vibrant blue gradient -->
+    <div class="perm-header-banner al-header-banner">
+      <div class="perm-header-decor-wave"></div>
+      <button class="perm-back-btn" onclick="handleBackNav()" title="Back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
+      </button>
+      <div class="perm-header-content">
+        <div class="perm-header-left">
+          <h1 class="perm-header-title">Apply Permission</h1>
+          <p class="perm-header-subtitle">Request short duration permission</p>
+        </div>
+        <!-- 3D Calendar Illustration with Clock Badge -->
+        <div class="perm-header-badge">
+          <svg class="perm-calendar-svg" width="76" height="76" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Calendar Card Body -->
+            <rect x="14" y="20" width="62" height="56" rx="14" fill="#FFFFFF"/>
+            <!-- Blue Top Header Bar -->
+            <path d="M14 34C14 26.268 20.268 20 28 20H62C69.732 20 76 26.268 76 34V36H14V34Z" fill="#3B82F6"/>
+            <!-- Binder Rings -->
+            <rect x="24" y="13" width="5.5" height="13" rx="2.75" fill="#BFDBFE"/>
+            <rect x="42" y="13" width="5.5" height="13" rx="2.75" fill="#BFDBFE"/>
+            <rect x="60" y="13" width="5.5" height="13" rx="2.75" fill="#BFDBFE"/>
+            <!-- Date Grid Squares -->
+            <!-- Row 1 -->
+            <rect x="22" y="43" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="35" y="43" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="48" y="43" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="61" y="43" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <!-- Row 2 -->
+            <rect x="22" y="55" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="35" y="55" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="48" y="55" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="61" y="55" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <!-- Row 3 -->
+            <rect x="22" y="65" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <rect x="35" y="65" width="7.5" height="7.5" rx="2" fill="#BFDBFE" fill-opacity="0.85"/>
+            <!-- Circular Clock / Timer Badge -->
+            <circle cx="70" cy="70" r="19" fill="#0066FF" stroke="#FFFFFF" stroke-width="3.5"/>
+            <!-- Clock hands -->
+            <circle cx="70" cy="70" r="12" stroke="#FFFFFF" stroke-width="1.8" stroke-opacity="0.9" fill="none"/>
+            <path d="M70 63V70L75 73" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="field"><label class="field-label">Duration *</label><input type="text" id="perm-duration-input" value="2 Hours" placeholder="E.g., 2 Hours" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:14px; font-size:15px; color:var(--text); background:var(--surface); font-family:inherit;"/></div>
-  <div class="field"><label class="field-label">Reason *</label><textarea rows="4" placeholder="E.g., Medical checkup, personal work..."></textarea></div>
-  <div class="field"><label class="field-label">Approving Manager</label>
-    <div class="select-wrap">
-      <select id="perm-manager-select"><option value="Vishnu (Reporting Manager)">Vishnu (Reporting Manager)</option><option value="Ram (Reporting Manager)">Ram (Reporting Manager)</option><option value="Rahul (Reporting Manager)">Rahul (Reporting Manager)</option></select>
-      <div class="select-chevron">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
-    </div>
-  </div>
-  <button class="btn btn-primary full" id="perm-submit-btn" onclick="submitPermRequest()">Submit Request</button>
-</div>
-<div class="bottom-nav">
-          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else{window.location.href='../EmployeeDashboard/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            <span>Dashboard</span>
-          </div>
-          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main White Form Card Container -->
+    <div class="perm-form-card">
+      <!-- Date * -->
+      <div class="perm-field">
+        <label class="perm-label">Date <span class="perm-required">*</span></label>
+        <div class="perm-input-card" id="perm-date-card">
+          <span class="perm-card-value" id="perm-date-display">09/04/2026</span>
+          <div class="perm-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
               <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
-            <span>Attendance</span>
           </div>
-          <div class="tab nav-apply-btn-wrap active" id="tab-apply">
-            <div class="nav-apply-circle">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </div>
-            <span class="nav-apply-label" style="color: #2563EB; font-weight: 700;">Apply</span>
-            <span class="active-dot-indicator"></span>
-          </div>
-          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-              <path d="M3 3v5h5"></path>
-              <polyline points="12 7 12 12 15 15"></polyline>
-            </svg>
-            <span>History</span>
-          </div>
-          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>Profile</span>
-          </div>
+          <input type="date" id="perm-date-input" class="perm-native-overlay" value="2026-09-04" onchange="onPermDateChange(this.value)" />
         </div>
-<!-- Success Popup Modal -->
-<div class="success-modal-overlay" id="perm-success-modal" onclick="if(event.target===this)closePermSuccessModal()">
-  <div class="success-modal-card">
-    <div class="success-modal-icon-wrap">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
+      </div>
+
+      <!-- Permission Type * -->
+      <div class="perm-field">
+        <label class="perm-label">Permission Type <span class="perm-required">*</span></label>
+        <div class="perm-input-card" id="perm-type-card">
+          <span class="perm-card-value" id="perm-type-display">Early Going</span>
+          <div class="perm-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <select id="perm-type-select" class="perm-native-overlay" onchange="onPermTypeChange(this.value)">
+            <option value="Early Going" selected>Early Going</option>
+            <option value="Late Coming">Late Coming</option>
+            <option value="Personal Work">Personal Work</option>
+            <option value="Official Work">Official Work</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Duration * -->
+      <div class="perm-field">
+        <label class="perm-label">Duration <span class="perm-required">*</span></label>
+        <div class="perm-input-card" id="perm-duration-card">
+          <span class="perm-card-value" id="perm-duration-display">2 Hours</span>
+          <div class="perm-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <!-- Hidden text input to preserve backward-compatibility with scripts reading perm-duration-input -->
+          <input type="hidden" id="perm-duration-input" value="2 Hours" />
+          <select id="perm-duration-select" class="perm-native-overlay" onchange="onPermDurationSelect(this.value)">
+            <option value="1 Hour">1 Hour</option>
+            <option value="2 Hours" selected>2 Hours</option>
+            <option value="3 Hours">3 Hours</option>
+            <option value="4 Hours">4 Hours</option>
+            <option value="5 Hours">5 Hours</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Reason * -->
+      <div class="perm-field">
+        <label class="perm-label">Reason <span class="perm-required">*</span></label>
+        <div class="perm-textarea-card">
+          <textarea id="perm-reason-text" class="perm-textarea" rows="4" maxlength="500" placeholder="E.g., Medical checkup, personal work..." oninput="updatePermCharCount(this)"></textarea>
+          <div class="perm-char-counter" id="perm-char-counter">0/500</div>
+          <!-- Diagonal resize grip svg icon -->
+          <svg class="perm-resize-grip" viewBox="0 0 10 10" fill="none" stroke="#94A3B8" stroke-width="1.5">
+            <line x1="8" y1="2" x2="2" y2="8"></line>
+            <line x1="9" y1="5" x2="5" y2="9"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Approving Manager (No red asterisk, matches Image 2) -->
+      <div class="perm-field">
+        <label class="perm-label">Approving Manager</label>
+        <div class="perm-input-card" id="perm-manager-card">
+          <span class="perm-card-value" id="perm-manager-display">Vishnu (Reporting Manager)</span>
+          <div class="perm-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <select id="perm-manager-select" class="perm-native-overlay" onchange="onPermManagerChange(this.value)">
+            <option value="Vishnu (Reporting Manager)" selected>Vishnu (Reporting Manager)</option>
+            <option value="Ram (Reporting Manager)">Ram (Reporting Manager)</option>
+            <option value="Rahul (Reporting Manager)">Rahul (Reporting Manager)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Submit Request Button with Paper Airplane Icon -->
+      <button class="perm-submit-btn" id="perm-submit-btn" onclick="handleApplyPermissionSubmit()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+        <span>Submit Request</span>
+      </button>
     </div>
-    <h2 class="success-modal-title">Request Submitted!</h2>
-    <p class="success-modal-msg">Your permission request has been submitted successfully.</p>
-    <button class="success-modal-btn" onclick="closePermSuccessModal()">Done</button>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+      <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else{window.location.href='../EmployeeDashboard/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span>Attendance</span>
+      </div>
+      <div class="tab nav-apply-btn-wrap active" id="tab-apply">
+        <div class="nav-apply-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <span class="nav-apply-label" style="color: #2563EB; font-weight: 700;">Apply</span>
+        <span class="active-dot-indicator"></span>
+      </div>
+      <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+          <polyline points="12 7 12 12 15 15"></polyline>
+        </svg>
+        <span>History</span>
+      </div>
+      <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Profile</span>
+      </div>
+    </div>
+
+    <!-- Success Popup Modal -->
+    <div class="success-modal-overlay" id="perm-success-modal" onclick="if(event.target===this)closePermSuccessModal()">
+      <div class="success-modal-card">
+        <div class="success-modal-icon-wrap">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 class="success-modal-title">Request Submitted!</h2>
+        <p class="success-modal-msg">Your permission request has been submitted successfully.</p>
+        <button class="success-modal-btn" onclick="closePermSuccessModal()">Done</button>
+      </div>
+    </div>
   </div>
 </div>
-</div>
+
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
 <script>
-function submitPermRequest() {
-  var modal = document.getElementById('perm-success-modal');
-  if (modal) modal.classList.add('show');
-}
-function closePermSuccessModal() {
-  var modal = document.getElementById('perm-success-modal');
-  if (modal) modal.classList.remove('show');
-  if (window.parent && window.parent.loadScreen) {
-    window.parent.loadScreen('tpl-EmployeeDashboard');
-  } else {
-    location.href = '../EmployeeDashboard/preview.html';
+  function handleBackNav() {
+    var parentWin = window.parent || window;
+    if (parentWin.loadScreen) {
+      parentWin.loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof loadScreen === 'function') {
+      loadScreen('tpl-EmployeeDashboard');
+    } else {
+      location.href = '../EmployeeDashboard/preview.html';
+    }
   }
-}
+  window.handleBackNav = handleBackNav;
+
+  function onPermDateChange(val) {
+    if (!val) return;
+    var parts = val.split('-');
+    if (parts.length === 3) {
+      // Format as MM/DD/YYYY to match Image 2 (09/04/2026)
+      var formatted = parts[1] + '/' + parts[2] + '/' + parts[0];
+      var displayEl = document.getElementById('perm-date-display');
+      if (displayEl) displayEl.textContent = formatted;
+    }
+    if (typeof calcPermDuration === 'function') calcPermDuration();
+  }
+  window.onPermDateChange = onPermDateChange;
+
+  function onPermTypeChange(val) {
+    var displayEl = document.getElementById('perm-type-display');
+    if (displayEl) displayEl.textContent = val;
+  }
+  window.onPermTypeChange = onPermTypeChange;
+
+  function onPermDurationSelect(val) {
+    var displayEl = document.getElementById('perm-duration-display');
+    if (displayEl) displayEl.textContent = val;
+    var inputEl = document.getElementById('perm-duration-input');
+    if (inputEl) inputEl.value = val;
+  }
+  window.onPermDurationSelect = onPermDurationSelect;
+
+  function onPermManagerChange(val) {
+    var displayEl = document.getElementById('perm-manager-display');
+    if (displayEl) displayEl.textContent = val;
+  }
+  window.onPermManagerChange = onPermManagerChange;
+
+  function updatePermCharCount(el) {
+    var counter = document.getElementById('perm-char-counter');
+    if (counter && el) {
+      counter.textContent = el.value.length + '/500';
+    }
+  }
+  window.updatePermCharCount = updatePermCharCount;
+
+  function calcPermDuration() {
+    var durationInput = document.getElementById('perm-duration-input');
+    var durationDisplay = document.getElementById('perm-duration-display');
+    var durationSelect = document.getElementById('perm-duration-select');
+    var startInput = document.getElementById('perm-start-time');
+    var endInput = document.getElementById('perm-end-time');
+    if (startInput && endInput && startInput.value && endInput.value) {
+      var sParts = startInput.value.split(':').map(Number);
+      var eParts = endInput.value.split(':').map(Number);
+      var diff = (eParts[0] * 60 + eParts[1]) - (sParts[0] * 60 + sParts[1]);
+      if (diff < 0) diff += 24 * 60;
+      var hours = Math.floor(diff / 60);
+      var mins = diff % 60;
+      var text = '';
+      if (hours > 0 && mins > 0) text = hours + ' Hr ' + mins + ' Mins';
+      else if (hours > 0) text = hours + ' Hour' + (hours > 1 ? 's' : '');
+      else text = mins + ' Mins';
+      if (durationInput) durationInput.value = text;
+      if (durationDisplay) durationDisplay.textContent = text;
+    } else if (durationInput && !durationInput.value) {
+      durationInput.value = '2 Hours';
+      if (durationDisplay) durationDisplay.textContent = '2 Hours';
+      if (durationSelect) durationSelect.value = '2 Hours';
+    }
+  }
+  window.calcPermDuration = calcPermDuration;
+
+  function handleApplyPermissionSubmit() {
+    var permDateInput  = document.getElementById('perm-date-input');
+    var permTypeSelect = document.getElementById('perm-type-select');
+    var durationInput  = document.getElementById('perm-duration-input');
+    var reasonText     = document.getElementById('perm-reason-text');
+    var permManagerEl  = document.getElementById('perm-manager-select');
+
+    var rawDate   = permDateInput ? permDateInput.value : '2026-09-04';
+    var months    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dp = rawDate.split('-');
+    var fmtDate = dp.length === 3 ? (dp[2] + '-' + (months[parseInt(dp[1],10)-1]||'Sep') + '-' + dp[0]) : rawDate;
+
+    var pType     = permTypeSelect ? permTypeSelect.value : 'Early Going';
+    var pDuration = durationInput  ? (durationInput.value.trim() || '2 Hours') : '2 Hours';
+    var pReason   = reasonText     ? (reasonText.value.trim()   || 'Personal work / checkup') : 'Personal work / checkup';
+
+    var newId = 'perm-' + Date.now();
+    var parentWin = window.parent || window;
+    var permProf = parentWin.USER_PROFILE || {};
+    var permEmpName = permProf.name || (parentWin.AUTH_USER && parentWin.AUTH_USER.name) || 'Sneha Reddy';
+    var permEmpEmail = (permProf.email || (parentWin.AUTH_USER && parentWin.AUTH_USER.email) || 'sneha@gmail.com').toLowerCase();
+    var permEmpInitials = permProf.initials || (permEmpName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)) || 'SR';
+    var permEmpId = permProf.employeeId || (parentWin.AUTH_USER && parentWin.AUTH_USER.empId) || 'EMP-2024-0103';
+    var permEmpRole = permProf.role || (parentWin.AUTH_USER && parentWin.AUTH_USER.jobTitle) || 'UI/UX Designer';
+    var defPermMgr = permProf.reportingManager ? (permProf.reportingManager.indexOf('(') !== -1 ? permProf.reportingManager : permProf.reportingManager.split(' ')[0] + ' (Reporting Manager)') : 'Vishnu (Reporting Manager)';
+    var pManager = permManagerEl ? permManagerEl.value : defPermMgr;
+
+    var entry = {
+      id: newId,
+      type: pType,
+      leaveType: pType,
+      permissionType: pType,
+      date: fmtDate,
+      fromDate: fmtDate,
+      toDate: fmtDate,
+      duration: pDuration,
+      daysText: pDuration,
+      reason: pReason,
+      status: 'pending',
+      isPermission: true,
+      employeeName: permEmpName,
+      employeeEmail: permEmpEmail,
+      employeeInitials: permEmpInitials,
+      employeeId: permEmpId,
+      employeeRole: permEmpRole,
+      approvingManager: pManager,
+      createdAt: Date.now()
+    };
+    if (!parentWin.PERM_STATE) parentWin.PERM_STATE = [];
+    var existsPerm = parentWin.PERM_STATE.some(function(p){ return p.type === pType && p.date === fmtDate && p.reason === pReason; });
+    if (!existsPerm) {
+      parentWin.PERM_STATE.unshift(entry);
+    }
+
+    if (!parentWin.EMP_LEAVE_REQUESTS) parentWin.EMP_LEAVE_REQUESTS = [];
+    var existsEmpReq = parentWin.EMP_LEAVE_REQUESTS.some(function(r){ return r.leaveType === pType && r.fromDate === fmtDate && r.reason === pReason; });
+    if (!existsEmpReq) {
+      parentWin.EMP_LEAVE_REQUESTS.unshift({ id: newId, leaveType: pType, fromDate: fmtDate, daysText: pDuration, reason: pReason, isPermission: true, employeeName: permEmpName, employeeEmail: permEmpEmail, employeeId: permEmpId, employeeRole: permEmpRole, status: 'pending' });
+    }
+
+    var permPersonObj = {
+      id: newId,
+      isPermission: true,
+      type: pType,
+      leaveType: pType,
+      permissionType: pType,
+      name: permEmpName,
+      initials: permEmpInitials,
+      role: permProf.role || 'Senior Software Engineer',
+      empId: permEmpId,
+      employeeId: permEmpId,
+      employeeName: permEmpName,
+      employeeInitials: permEmpInitials,
+      status: 'pending',
+      date: fmtDate,
+      fromDate: fmtDate,
+      toDate: fmtDate,
+      duration: pDuration,
+      totalDays: pDuration,
+      reason: pReason,
+      approvingManager: pManager,
+      contact: pManager,
+      emergencyContact: pManager,
+      subtitle: pType + ' Application',
+      appliedPath: permEmpName.split(' ')[0] + ' (Applied)',
+      title: pType + ' (' + pDuration + ')',
+      subtitleReq: fmtDate + ' • ' + pReason
+    };
+    if (!parentWin.PERSON_DATA) parentWin.PERSON_DATA = {};
+    parentWin.PERSON_DATA[newId] = permPersonObj;
+    parentWin.PERSON_DATA['priya'] = permPersonObj;
+    parentWin.LATEST_REQUEST = permPersonObj;
+    parentWin.LATEST_PERMISSION_REQUEST = permPersonObj;
+    parentWin.SELECTED_PERSON = newId;
+
+    var modal = document.getElementById('perm-success-modal');
+    if (modal) {
+      modal.classList.add('show');
+    } else if (parentWin.loadScreen) {
+      parentWin.loadScreen('tpl-EmployeeDashboard');
+    }
+  }
+  window.handleApplyPermissionSubmit = handleApplyPermissionSubmit;
+
+  function closePermSuccessModal() {
+    var modal = document.getElementById('perm-success-modal');
+    if (modal) modal.classList.remove('show');
+    var parentWin = window.parent || window;
+    if (parentWin.loadScreen) {
+      parentWin.loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof loadScreen === 'function') {
+      loadScreen('tpl-EmployeeDashboard');
+    } else {
+      location.href = '../EmployeeDashboard/preview.html';
+    }
+  }
+  window.closePermSuccessModal = closePermSuccessModal;
+
+  // Initialize display labels
+  window.addEventListener('DOMContentLoaded', function() {
+    var dateInput = document.getElementById('perm-date-input');
+    if (dateInput && dateInput.value) {
+      onPermDateChange(dateInput.value);
+    }
+    var reasonInput = document.getElementById('perm-reason-text');
+    if (reasonInput) {
+      updatePermCharCount(reasonInput);
+    }
+    // Pre-fill manager from parent USER_PROFILE if present
+    var parentWin = window.parent || window;
+    if (parentWin.USER_PROFILE && parentWin.USER_PROFILE.reportingManager) {
+      var mgr = parentWin.USER_PROFILE.reportingManager;
+      var mgrSelect = document.getElementById('perm-manager-select');
+      if (mgrSelect) {
+        var opts = mgrSelect.querySelectorAll('option');
+        opts.forEach(function(opt) {
+          if (opt.value.toLowerCase().indexOf(mgr.toLowerCase().split(' ')[0]) !== -1) {
+            mgrSelect.value = opt.value;
+            onPermManagerChange(opt.value);
+          }
+        });
+      }
+    }
+  });
 </script>
-</body></html>
+</body>
+</html>

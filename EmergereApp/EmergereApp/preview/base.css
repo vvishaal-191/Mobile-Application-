@@ -62,7 +62,13 @@ body {
   scrollbar-width: none !important;
 }
 .screen:has(.dash-header),
-.screen.has-dash-header {
+.screen.has-dash-header,
+.screen:has(.al-header-banner),
+.screen.has-al-header,
+.screen:has(.perm-header-banner),
+.screen.has-perm-header,
+.screen:has(.profile-header-banner),
+.screen.has-profile-header {
   padding-top: 0 !important;
 }
 .screen::-webkit-scrollbar {

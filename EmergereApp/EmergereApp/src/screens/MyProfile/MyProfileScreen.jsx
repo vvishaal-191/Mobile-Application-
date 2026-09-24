@@ -2,10 +2,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import Avatar from '../../components/Avatar';
-import Card from '../../components/Card';
-import StatusBadge from '../../components/StatusBadge';
-import ScreenHeader from '../../components/ScreenHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './MyProfileScreen.styles';
 
@@ -27,7 +23,6 @@ function parseLeaveDateString(dateStr) {
 function nextWorkingDay(date) {
   const next = new Date(date);
   next.setDate(next.getDate() + 1);
-  // Skip weekends
   while (next.getDay() === 0 || next.getDay() === 6) {
     next.setDate(next.getDate() + 1);
   }
@@ -36,8 +31,6 @@ function nextWorkingDay(date) {
 
 /**
  * Computes the employment status based on the global leave schedule.
- * Returns 'Inactive' if today is within the approved leave period,
- * 'Active' otherwise. Also clears the schedule when the leave has ended.
  */
 function computeEmploymentStatus() {
   if (typeof global === 'undefined') return 'Active';
@@ -58,11 +51,9 @@ function computeEmploymentStatus() {
   const resumeDay = nextWorkingDay(leaveEnd);
 
   if (todayMidnight >= from && todayMidnight < resumeDay) {
-    // Still on leave
     global.EMPLOYMENT_STATUS = 'Inactive';
     return 'Inactive';
   } else if (todayMidnight >= resumeDay) {
-    // Leave period is over — revert status
     global.EMPLOYMENT_STATUS = 'Active';
     global.LEAVE_STATUS_SCHEDULE = null;
     return 'Active';
@@ -79,14 +70,12 @@ export default function MyProfileScreen({ navigation, route }) {
       'Active'
   );
 
-  // Refresh employment status whenever the screen mounts or comes into focus
   const refreshStatus = useCallback(() => {
     const computed = computeEmploymentStatus();
     setEmploymentStatus(computed);
   }, []);
 
   useEffect(() => {
-    // Compute status on mount
     refreshStatus();
 
     if (route?.params?.employmentStatus) {
@@ -95,50 +84,49 @@ export default function MyProfileScreen({ navigation, route }) {
     if (typeof global !== 'undefined' && global.USER_PROFILE) {
       const p = global.USER_PROFILE;
       setProfileHeader({
-        name: p.name || 'Priya Sharma',
+        name: p.name || 'John Doe',
         role: p.role || 'Senior Software Engineer',
-        employeeId: p.employeeId || 'EMP-2024-0156',
+        employeeId: p.employeeId || 'EMP-2024-0101',
       });
       setJobInfo({
-        department: p.department || 'IT',
-        team: p.team || 'Development',
-        reportingManager: p.reportingManager || 'Rahul Sharma',
-        workLocation: p.workLocation || 'Bangalore',
-        joiningDate: p.joiningDate || 'Mar 15, 2022',
+        department: p.department || 'Engineering',
+        team: p.team || 'Mobile Development',
+        reportingManager: p.reportingManager || 'Vishnu Kumar',
+        workLocation: p.workLocation || 'Bangalore - Tech Park',
+        joiningDate: p.joiningDate || '15-Jan-2024',
       });
       setContactInfo({
-        email: p.email || 'priya.sharma@emergere.com',
-        phone: p.phone || '+91 98765 43210',
+        email: p.email || 'john@gmail.com',
+        phone: p.phone || '+91 98765 11001',
       });
     }
   }, [route?.params?.employmentStatus, refreshStatus]);
 
-
   const [profileHeader, setProfileHeader] = useState(() => {
     const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
     return {
-      name: p.name || 'Priya Sharma',
+      name: p.name || 'John Doe',
       role: p.role || 'Senior Software Engineer',
-      employeeId: p.employeeId || 'EMP-2024-0156',
+      employeeId: p.employeeId || 'EMP-2024-0101',
     };
   });
 
   const [jobInfo, setJobInfo] = useState(() => {
     const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
     return {
-      department: p.department || 'IT',
-      team: p.team || 'Development',
-      reportingManager: p.reportingManager || 'Rahul Sharma',
-      workLocation: p.workLocation || 'Bangalore',
-      joiningDate: p.joiningDate || 'Mar 15, 2022',
+      department: p.department || 'Engineering',
+      team: p.team || 'Mobile Development',
+      reportingManager: p.reportingManager || 'Vishnu Kumar',
+      workLocation: p.workLocation || 'Bangalore - Tech Park',
+      joiningDate: p.joiningDate || '15-Jan-2024',
     };
   });
 
   const [contactInfo, setContactInfo] = useState(() => {
     const p = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
     return {
-      email: p.email || 'priya.sharma@emergere.com',
-      phone: p.phone || '+91 98765 43210',
+      email: p.email || 'john@gmail.com',
+      phone: p.phone || '+91 98765 11001',
     };
   });
 
@@ -147,7 +135,7 @@ export default function MyProfileScreen({ navigation, route }) {
   const [editContactForm, setEditContactForm] = useState({ ...contactInfo });
 
   const getInitials = (nameStr) => {
-    if (!nameStr) return 'PS';
+    if (!nameStr) return 'JD';
     const parts = nameStr.trim().split(' ').filter(Boolean);
     if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     return nameStr.substring(0, 2).toUpperCase();
@@ -193,26 +181,40 @@ export default function MyProfileScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <ScreenHeader
-        title="My Profile"
-        subtitle="Employee Details"
-        onBack={() => navigation && navigation.goBack()}
-      />
-
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-        <Card style={styles.profileCard}>
-          <View style={styles.cardHeaderRightEdit}>
+        {/* Header Gradient Banner - Flush to top with vibrant blue gradient */}
+        <View style={styles.headerBanner}>
+          <View style={styles.decorCircle1} />
+          <View style={styles.decorCircle2} />
+
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => (navigation && navigation.canGoBack ? navigation.goBack() : go('Dashboard'))}
+            activeOpacity={0.8}
+            accessibilityLabel="Back"
+          >
+            <Feather name="arrow-left" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>My Profile</Text>
+          <Text style={styles.headerSubtitle}>Employee Details</Text>
+        </View>
+
+        {/* MAIN PROFILE HERO CARD */}
+        <View style={styles.profileHeroCard}>
+          {/* Top Right Edit Buttons */}
+          <View style={styles.editBtnWrap}>
             {!isEditing ? (
-              <TouchableOpacity style={styles.editBtn} onPress={handleEditPress}>
-                <Feather name="edit-2" size={14} color="#2F6BFF" />
+              <TouchableOpacity style={styles.editBtn} onPress={handleEditPress} activeOpacity={0.8}>
+                <Feather name="edit-2" size={13} color="#0066FF" />
                 <Text style={styles.editBtnText}>Edit</Text>
               </TouchableOpacity>
             ) : (
-              <View style={styles.actionBtnGroup}>
-                <TouchableOpacity style={styles.cancelBtn} onPress={handleCancelPress}>
+              <View style={styles.saveCancelGroup}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={handleCancelPress} activeOpacity={0.8}>
                   <Text style={styles.cancelBtnText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.saveBtn} onPress={handleSavePress}>
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSavePress} activeOpacity={0.8}>
                   <Text style={styles.saveBtnText}>Save</Text>
                 </TouchableOpacity>
               </View>
@@ -221,7 +223,16 @@ export default function MyProfileScreen({ navigation, route }) {
 
           {!isEditing ? (
             <>
-              <Avatar initials={getInitials(profileHeader.name)} size={90} />
+              {/* Avatar with Camera Badge */}
+              <View style={styles.avatarWrap}>
+                <View style={styles.avatarCircle}>
+                  <Text style={styles.avatarText}>{getInitials(profileHeader.name)}</Text>
+                </View>
+                <View style={styles.cameraBadge}>
+                  <Feather name="camera" size={12} color="#FFFFFF" />
+                </View>
+              </View>
+
               <Text style={styles.name}>{profileHeader.name}</Text>
               <Text style={styles.role}>{profileHeader.role}</Text>
               <View style={styles.idChip}>
@@ -230,8 +241,6 @@ export default function MyProfileScreen({ navigation, route }) {
             </>
           ) : (
             <View style={styles.editFormContainer}>
-              <Text style={styles.sectionTitle}>PROFILE SUMMARY</Text>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Full Name</Text>
                 <TextInput
@@ -240,7 +249,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   onChangeText={(val) => setEditProfileHeaderForm({ ...editProfileHeaderForm, name: val })}
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Designation / Role</Text>
                 <TextInput
@@ -249,7 +257,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   onChangeText={(val) => setEditProfileHeaderForm({ ...editProfileHeaderForm, role: val })}
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Employee ID</Text>
                 <TextInput
@@ -260,30 +267,45 @@ export default function MyProfileScreen({ navigation, route }) {
               </View>
             </View>
           )}
-        </Card>
+        </View>
 
-        <Card style={styles.statusCard}>
-          <View style={styles.statusRow}>
-            <Text style={styles.statusLabel}>Employment Status</Text>
-            <StatusBadge
-              label={employmentStatus}
-              tone={employmentStatus === 'Active' ? 'success' : 'danger'}
-            />
+        {/* EMPLOYMENT STATUS CARD */}
+        <View style={styles.statusCard}>
+          <View style={styles.statusLeft}>
+            <View style={styles.iconBadge42}>
+              <Feather name="briefcase" size={20} color="#0066FF" />
+            </View>
+            <View>
+              <Text style={styles.statusTitle}>Employment Status</Text>
+              <Text style={styles.statusSub}>Current working status</Text>
+            </View>
           </View>
-        </Card>
+          <View style={styles.statusPill}>
+            <View style={styles.statusDot} />
+            <Text style={styles.statusText}>{employmentStatus}</Text>
+          </View>
+        </View>
 
         {/* JOB INFORMATION CARD */}
-        <Card style={styles.infoCard}>
-          <Text style={styles.sectionTitle}>JOB INFORMATION</Text>
+        <View style={styles.sectionCard}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.iconBadge42}>
+              <Feather name="briefcase" size={20} color="#0066FF" />
+            </View>
+            <View>
+              <Text style={styles.sectionTitle}>JOB INFORMATION</Text>
+              <Text style={styles.sectionSub}>Work details and organization information</Text>
+            </View>
+          </View>
 
           {!isEditing ? (
-            <>
-              <InfoRow label="Department" value={jobInfo.department} />
-              <InfoRow label="Team" value={jobInfo.team} />
-              <InfoRow label="Reporting Manager" value={jobInfo.reportingManager} link />
-              <InfoRow label="Work Location" value={jobInfo.workLocation} />
-              <InfoRow label="Joining Date" value={jobInfo.joiningDate} />
-            </>
+            <View style={styles.rowsContainer}>
+              <ProfileRow icon="layers" label="Department" value={jobInfo.department} />
+              <ProfileRow icon="users" label="Team" value={jobInfo.team} />
+              <ProfileRow icon="user" label="Reporting Manager" value={jobInfo.reportingManager} link />
+              <ProfileRow icon="map-pin" label="Work Location" value={jobInfo.workLocation} />
+              <ProfileRow icon="calendar" label="Joining Date" value={jobInfo.joiningDate} isLast />
+            </View>
           ) : (
             <View style={styles.editFormContainer}>
               <View style={styles.inputField}>
@@ -294,7 +316,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   onChangeText={(val) => setEditJobForm({ ...editJobForm, department: val })}
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Team</Text>
                 <TextInput
@@ -303,7 +324,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   onChangeText={(val) => setEditJobForm({ ...editJobForm, team: val })}
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Reporting Manager</Text>
                 <TextInput
@@ -312,7 +332,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   onChangeText={(val) => setEditJobForm({ ...editJobForm, reportingManager: val })}
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Work Location</Text>
                 <TextInput
@@ -321,7 +340,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   onChangeText={(val) => setEditJobForm({ ...editJobForm, workLocation: val })}
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Joining Date</Text>
                 <TextInput
@@ -332,17 +350,25 @@ export default function MyProfileScreen({ navigation, route }) {
               </View>
             </View>
           )}
-        </Card>
+        </View>
 
         {/* CONTACT INFORMATION CARD */}
-        <Card style={styles.infoCard}>
-          <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
+        <View style={styles.sectionCard}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.iconBadge42}>
+              <Feather name="mail" size={20} color="#0066FF" />
+            </View>
+            <View>
+              <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
+              <Text style={styles.sectionSub}>Your contact details</Text>
+            </View>
+          </View>
 
           {!isEditing ? (
-            <>
-              <InfoRow label="Email" value={contactInfo.email} />
-              <InfoRow label="Phone" value={contactInfo.phone} />
-            </>
+            <View style={styles.rowsContainer}>
+              <ProfileRow icon="mail" label="Email" value={contactInfo.email} />
+              <ProfileRow icon="phone" label="Phone" value={contactInfo.phone} isLast />
+            </View>
           ) : (
             <View style={styles.editFormContainer}>
               <View style={styles.inputField}>
@@ -355,7 +381,6 @@ export default function MyProfileScreen({ navigation, route }) {
                   autoCapitalize="none"
                 />
               </View>
-
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Phone</Text>
                 <TextInput
@@ -367,11 +392,16 @@ export default function MyProfileScreen({ navigation, route }) {
               </View>
             </View>
           )}
-        </Card>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={() => go('Login')}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+          {/* Logout Button matching Image 2 */}
+          <TouchableOpacity style={styles.logoutBtn} onPress={() => go('Login')} activeOpacity={0.85}>
+            <View style={styles.logoutLeft}>
+              <Feather name="log-out" size={18} color="#EF4444" />
+              <Text style={styles.logoutText}>Logout</Text>
+            </View>
+            <Feather name="chevron-right" size={18} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <BottomNavBar active="Profile" onNavigate={go} />
@@ -379,11 +409,16 @@ export default function MyProfileScreen({ navigation, route }) {
   );
 }
 
-function InfoRow({ label, value, link }) {
+function ProfileRow({ icon, label, value, link, isLast }) {
   return (
-    <View style={styles.infoRow}>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={[styles.infoValue, link && styles.infoValueLink]}>{value}</Text>
+    <View style={[styles.dataRow, isLast && { borderBottomWidth: 0 }]}>
+      <View style={styles.rowLeft}>
+        <View style={styles.miniIconBadge}>
+          <Feather name={icon} size={15} color="#0066FF" />
+        </View>
+        <Text style={styles.rowLabel}>{label}</Text>
+      </View>
+      <Text style={[styles.rowValue, link && styles.rowValueLink]}>{value}</Text>
     </View>
   );
 }

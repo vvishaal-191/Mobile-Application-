@@ -1,0 +1,1463 @@
+<template id="tpl-ApplyLeave">
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <style>
+        :root {
+          --primary: #1E6BFF;
+          --primary-dark: #1255DB;
+          --bg: #EEF3FA;
+          --surface: #FFFFFF;
+          --navy: #1B2333;
+          --text: #0F172A;
+          --text-secondary: #64748B;
+          --text-muted: #94A3B8;
+          --success: #1FAE6E;
+          --success-bg: #E3F8EE;
+          --danger: #E5484D;
+          --danger-bg: #FCE4E4;
+          --warning: #F5A623;
+          --warning-bg: #FDF0DA;
+          --purple: #8B5CF6;
+          --purple-bg: #EFE9FE;
+          --info: #1E6BFF;
+          --info-bg: #EFF6FF;
+          --border: #E2E8F0;
+          --chip: #EEF2FF;
+        }
+
+        * {
+          box-sizing: border-box;
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        *::-webkit-scrollbar,
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        .device::-webkit-scrollbar,
+        .screen::-webkit-scrollbar,
+        div::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
+        }
+
+        html, body, .device, .screen {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        body {
+          margin: 0;
+          font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+          background: var(--bg);
+          display: flex;
+          justify-content: center;
+          align-items: stretch;
+          padding: 0;
+          height: 100vh;
+          height: 100dvh;
+          overflow: hidden;
+        }
+
+        .device {
+          width: 100%;
+          max-width: 440px;
+          height: 100vh;
+          height: 100dvh;
+          background: var(--bg);
+          border-radius: 0;
+          border: none;
+          overflow: hidden;
+          position: relative;
+          box-shadow: none;
+          display: flex;
+          flex-direction: column;
+          margin: 0 auto;
+        }
+
+        @media (min-width: 769px) {
+          body {
+            background: #0e1420;
+            padding: 15px 0;
+            align-items: center;
+          }
+
+          .device {
+            border-radius: 40px;
+            border: 8px solid #1f2937;
+            height: 844px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .4);
+          }
+        }
+
+        .statusbar { display: none !important; }
+
+        .screen {
+          flex: 1;
+          overflow-y: auto;
+          padding-bottom: 90px;
+          background: var(--bg);
+          -webkit-overflow-scrolling: touch;
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        .screen::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        .screen.has-al-header {
+          padding-top: 0 !important;
+        }
+
+        /* Header Gradient Banner - Flush to top */
+        .al-header-banner {
+          background: linear-gradient(135deg, #0A4FD5 0%, #155BFF 50%, #2575FC 100%);
+          padding: 20px 20px 42px 20px;
+          margin-top: 0 !important;
+          border-top-left-radius: 0 !important;
+          border-top-right-radius: 0 !important;
+          border-bottom-left-radius: 24px;
+          border-bottom-right-radius: 24px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .al-header-banner::before {
+          content: '';
+          position: absolute;
+          top: -40px;
+          right: -30px;
+          width: 220px;
+          height: 220px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+          pointer-events: none;
+        }
+
+        .al-header-banner::after {
+          content: '';
+          position: absolute;
+          bottom: -20px;
+          left: 20%;
+          width: 140px;
+          height: 140px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+          pointer-events: none;
+        }
+
+        .al-back-btn {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: #FFFFFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          margin-bottom: 14px;
+          transition: transform 0.2s ease, background 0.2s ease;
+          position: relative;
+          z-index: 3;
+        }
+
+        .al-back-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.05);
+        }
+
+        .al-header-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          position: relative;
+          z-index: 2;
+        }
+
+        .al-header-left {
+          flex: 1;
+        }
+
+        .al-header-title {
+          font-size: 22px;
+          font-weight: 800;
+          color: #FFFFFF;
+          margin: 0;
+          letter-spacing: -0.2px;
+          line-height: 1.2;
+        }
+
+        .al-header-subtitle {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.85);
+          margin: 5px 0 0 0;
+          font-weight: 400;
+        }
+
+        .al-header-badge {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          margin-top: -30px;
+        }
+
+        .al-header-quote {
+          text-align: right;
+          margin-top: 2px;
+        }
+
+        .al-header-quote span {
+          display: block;
+          font-size: 10px;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 1.25;
+          font-weight: 500;
+        }
+
+        .al-quote-line {
+          width: 48px;
+          height: 1.5px;
+          background: rgba(255, 255, 255, 0.7);
+          margin-top: 3px;
+          margin-left: auto;
+          border-radius: 1px;
+        }
+
+        /* Form Container Card */
+        .al-form-card {
+          margin: -24px 14px 20px 14px;
+          background: #FFFFFF;
+          border-radius: 24px;
+          padding: 20px 16px;
+          box-shadow: 0 10px 30px rgba(15, 30, 80, 0.06);
+          border: 1px solid rgba(226, 232, 240, 0.8);
+          position: relative;
+          z-index: 2;
+        }
+
+        .al-field {
+          margin-bottom: 16px;
+        }
+
+        .al-label {
+          display: block;
+          font-size: 13.5px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-bottom: 8px;
+        }
+
+        .al-required {
+          color: #EF4444;
+          margin-left: 2px;
+        }
+
+        /* Icon Badges */
+        .al-icon-badge {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .al-badge-circle-blue {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #EFF6FF;
+        }
+
+        .al-badge-sm-blue {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background: #EFF6FF;
+        }
+
+        /* Select Card (Leave Type, Half Day Type, Approving Manager) */
+        .al-select-card {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          height: 54px;
+          padding: 0 16px;
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          background: #FFFFFF;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-sizing: border-box;
+        }
+
+        .al-select-card:hover {
+          border-color: #93C5FD;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+
+        .al-select-content {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .al-select-title {
+          font-size: 14px;
+          font-weight: 700;
+          color: #1E293B;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.25;
+        }
+
+        .al-select-sub {
+          font-size: 12px;
+          color: var(--text-secondary);
+          font-weight: 500;
+          margin-top: 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .al-chevron {
+          color: #1E293B;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          pointer-events: none;
+        }
+
+        .al-native-select {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+          z-index: 2;
+        }
+
+        /* Two Column Row for From / To Date */
+        .al-row {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+
+        .al-col {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .al-date-card {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          height: 50px;
+          padding: 0 14px;
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          background: #FFFFFF;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-sizing: border-box;
+        }
+
+        .al-date-card:hover {
+          border-color: #93C5FD;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+
+        .al-date-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .al-date-text {
+          flex: 1;
+          min-width: 0;
+          border: none;
+          background: transparent;
+          padding: 0;
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #1E293B;
+          font-family: inherit;
+          cursor: pointer;
+        }
+
+        .al-date-text:focus {
+          outline: none;
+        }
+
+        .al-chevron-sm {
+          color: #1E293B;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .al-hidden-picker-label {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+          opacity: 0;
+        }
+
+        .al-hidden-picker-label input[type="date"] {
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+
+        /* Half Day Box */
+        .al-half-day-box {
+          background: #F8FAFD;
+          border: 1px solid #E8EEF5;
+          border-radius: 14px;
+          padding: 14px 16px;
+          transition: border-color 0.2s ease;
+        }
+
+        .al-half-day-main {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .al-half-day-checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          cursor: pointer;
+          user-select: none;
+          flex: 1;
+        }
+
+        .al-checkbox {
+          width: 18px;
+          height: 18px;
+          accent-color: #2563EB;
+          border-radius: 4px;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+
+        .al-half-day-text {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .al-half-day-title {
+          font-size: 14px;
+          font-weight: 700;
+          color: #1E293B;
+          line-height: 1.25;
+        }
+
+        .al-half-day-sub {
+          font-size: 12px;
+          color: #64748B;
+          margin-top: 2px;
+        }
+
+        /* Number of Days Informational Card */
+        .al-days-card {
+          background: #EFF6FF;
+          border: 1px solid #DBEAFE;
+          border-radius: 14px;
+          padding: 0 16px;
+          height: 54px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          box-sizing: border-box;
+        }
+
+        .al-days-icon-badge {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: #FFFFFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08);
+          flex-shrink: 0;
+        }
+
+        .al-days-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .al-days-text {
+          font-size: 14.5px;
+          font-weight: 800;
+          color: #1D4ED8;
+          letter-spacing: -0.1px;
+          line-height: 1.25;
+        }
+
+        .al-days-sub {
+          font-size: 12px;
+          color: #60A5FA;
+          font-weight: 500;
+          margin-top: 2px;
+        }
+
+        /* Approving Manager Card */
+        .al-manager-card {
+          height: 54px;
+          padding: 0 16px;
+        }
+
+        .al-manager-name {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 700;
+          color: #1E293B;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        /* Reason Textarea Card */
+        .al-textarea-card {
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          background: #FFFFFF;
+          padding: 14px 16px 28px 16px;
+          position: relative;
+          transition: all 0.2s ease;
+        }
+
+        .al-textarea-card:focus-within {
+          border-color: #2563EB;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .al-textarea-top {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .al-textarea {
+          flex: 1;
+          border: none;
+          background: transparent;
+          padding: 0;
+          font-size: 14px;
+          color: #1E293B;
+          font-family: inherit;
+          resize: none;
+          min-height: 58px;
+          line-height: 1.45;
+        }
+
+        .al-textarea:focus {
+          outline: none;
+        }
+
+        .al-textarea::placeholder {
+          color: #94A3B8;
+        }
+
+        .al-char-counter {
+          position: absolute;
+          right: 16px;
+          bottom: 8px;
+          font-size: 12px;
+          color: #94A3B8;
+          font-weight: 500;
+        }
+
+        /* Info Helper Banner */
+        .al-info-banner {
+          background: #EFF6FF;
+          border: 1px solid #DBEAFE;
+          border-radius: 12px;
+          padding: 11px 14px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+
+        .al-info-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .al-info-text {
+          font-size: 12px;
+          color: #475569;
+          font-weight: 500;
+          line-height: 1.35;
+        }
+
+        /* Submit Request Button */
+        .al-submit-btn {
+          width: 100%;
+          height: 52px;
+          background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+          border: none;
+          border-radius: 14px;
+          color: #FFFFFF;
+          font-size: 15px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          cursor: pointer;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+          transition: all 0.2s ease;
+          font-family: inherit;
+        }
+
+        .al-submit-btn:hover {
+          background: linear-gradient(135deg, #1D4ED8 0%, #1740B8 100%);
+          box-shadow: 0 10px 24px rgba(37, 99, 235, 0.45);
+          transform: translateY(-1px);
+        }
+
+        .al-submit-btn:active {
+          transform: translateY(0);
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Bottom Nav Styling */
+                .bottom-nav {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
+        }
+
+        .bottom-nav .tab,
+        .nav-tab {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
+          font-size: 11px;
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
+        }
+
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
+          font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
+        }
+
+        /* Elevated Circular '+' Button in Nav Center */
+        .al-tab-apply {
+          position: relative;
+          margin-top: -24px;
+        }
+
+        .al-elevated-plus-btn {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+          color: #FFFFFF;
+          margin-bottom: 2px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .al-tab-apply:hover .al-elevated-plus-btn {
+          transform: scale(1.06);
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.55);
+        }
+
+        .al-nav-text {
+          font-size: 11px;
+          font-weight: 700;
+          color: #2563EB;
+        }
+
+        /* Success Popup Modal */
+        .success-modal-overlay {
+          display: none;
+          position: absolute;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.65);
+          align-items: center;
+          justify-content: center;
+          z-index: 999;
+          padding: 20px;
+        }
+
+        .success-modal-overlay.show {
+          display: flex;
+        }
+
+        .success-modal-card {
+          background: #FFFFFF;
+          border-radius: 24px;
+          padding: 32px 24px;
+          width: 100%;
+          max-width: 320px;
+          text-align: center;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+          animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popIn {
+          0% { transform: scale(0.85); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-modal-icon-wrap {
+          width: 64px;
+          height: 64px;
+          border-radius: 32px;
+          background: #E3F8EE;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 16px;
+          border: 6px solid #F0FDF4;
+          color: #1FAE6E;
+        }
+
+        .success-modal-title {
+          font-size: 20px;
+          font-weight: 800;
+          color: #111827;
+          margin: 0 0 8px;
+        }
+
+        .success-modal-msg {
+          font-size: 14px;
+          color: #6B7280;
+          line-height: 1.45;
+          margin: 0 0 24px;
+        }
+
+        .success-modal-btn {
+          width: 100%;
+          background: #2563EB;
+          color: #FFFFFF;
+          border: none;
+          border-radius: 12px;
+          padding: 13px;
+          font-size: 15px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .success-modal-btn:hover {
+          background: #1D4ED8;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="device">
+        <div class="screen has-al-header">
+          <!-- Header Gradient Banner - Flush to top with no gap -->
+          <div class="al-header-banner">
+            <button class="al-back-btn" onclick="handleBackNav()" title="Back">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <div class="al-header-content">
+              <div class="al-header-left">
+                <h1 class="al-header-title">Apply Leave</h1>
+                <p class="al-header-subtitle">Create new leave request</p>
+              </div>
+              <div class="al-header-badge">
+                <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="14" y="22" width="60" height="54" rx="14" fill="#FFFFFF" filter="drop-shadow(0 8px 16px rgba(0, 30, 100, 0.25))"/>
+                  <path d="M14 34C14 26.268 20.268 20 28 20H60C67.732 20 74 26.268 74 34V36H14V34Z" fill="#3B82F6"/>
+                  <rect x="25" y="14" width="6" height="12" rx="3" fill="#93C5FD"/>
+                  <rect x="41" y="14" width="6" height="12" rx="3" fill="#93C5FD"/>
+                  <rect x="57" y="14" width="6" height="12" rx="3" fill="#93C5FD"/>
+                  <rect x="22" y="44" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+                  <rect x="36" y="44" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+                  <rect x="50" y="44" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+                  <rect x="22" y="56" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+                  <rect x="36" y="56" width="8" height="8" rx="2" fill="#93C5FD" fill-opacity="0.8"/>
+                  <rect x="50" y="56" width="8" height="8" rx="2" fill="#3B82F6"/>
+                  <circle cx="68" cy="68" r="19" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="4" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.2))"/>
+                  <path d="M68 57V68H76" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="al-header-quote">
+                  <span>Plan your time</span>
+                  <span>for a better tomorrow</span>
+                  <div class="al-quote-line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Form Card Container -->
+          <div class="al-form-card">
+            <!-- Leave Type (Casual Leave icon removed per user request) -->
+            <div class="al-field">
+              <label class="al-label">Leave Type <span class="al-required">*</span></label>
+              <div class="al-select-card" id="leave-type-card">
+                <div class="al-select-content">
+                  <div class="al-select-title" id="leave-type-title">Casual Leave</div>
+                  <div class="al-select-sub" id="leave-type-sub">For personal reasons</div>
+                </div>
+                <div class="al-chevron">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+                <select id="leave-type-select" class="al-native-select" onchange="onLeaveTypeChange(this.value)">
+                  <option value="Casual Leave" selected>Casual Leave</option>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="WFH (Work From Home)">WFH (Work From Home)</option>
+                  <option value="Comp-Off (Compensatory Off)">Comp-Off (Compensatory Off)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- From Date & To Date -->
+            <div class="al-row">
+              <div class="al-col">
+                <label class="al-label">From Date <span class="al-required">*</span></label>
+                <div class="al-date-card" onclick="openCalPicker('from-date-picker')">
+                  <div class="al-date-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                  <input type="text" id="from-date-display" class="al-date-text" value="07-Sep-2026" readonly />
+                  <div class="al-chevron-sm">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  <label for="from-date-picker" class="al-hidden-picker-label">
+                    <input type="date" id="from-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="al-col">
+                <label class="al-label">To Date <span class="al-required">*</span></label>
+                <div class="al-date-card" onclick="openCalPicker('to-date-picker')">
+                  <div class="al-date-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                  <input type="text" id="to-date-display" class="al-date-text" value="07-Sep-2026" readonly />
+                  <div class="al-chevron-sm">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  <label for="to-date-picker" class="al-hidden-picker-label">
+                    <input type="date" id="to-date-picker" value="2026-09-07" onchange="updateLeaveDates()" />
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Half Day Row -->
+            <div class="al-field">
+              <div class="al-half-day-box">
+                <div class="al-half-day-main">
+                  <div class="al-icon-badge al-badge-circle-blue">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <label class="al-half-day-checkbox-label" for="half-day-check">
+                    <input type="checkbox" id="half-day-check" class="al-checkbox" onchange="toggleHalfDay(this.checked)" />
+                    <div class="al-half-day-text">
+                      <span class="al-half-day-title">Half Day</span>
+                      <span class="al-half-day-sub">Select if you are applying for half day</span>
+                    </div>
+                  </label>
+                </div>
+                <!-- Leave Type sub-card inside Half Day: displays selected 1st Half / 2nd Half -->
+                <div class="al-half-day-extra" id="half-day-type-wrap" style="display:none;">
+                  <label class="al-label" style="margin-top:12px;margin-bottom:6px;display:block;">Leave Type <span class="al-required">*</span></label>
+                  <div class="al-select-card" style="height:50px;">
+                    <div class="al-select-content">
+                      <div class="al-select-title" id="half-day-type-title">First Half</div>
+                      <div class="al-select-sub" id="half-day-type-sub">Morning session (0.5 Day)</div>
+                    </div>
+                    <div class="al-chevron">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                    <select id="half-day-type-select" class="al-native-select" onchange="onHalfDayTypeChange(this.value)">
+                      <option value="First Half" selected>First Half</option>
+                      <option value="Second Half">Second Half</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Number of Days -->
+            <div class="al-field">
+              <label class="al-label">Number of Days</label>
+              <div class="al-days-card">
+                <div class="al-days-icon-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="15" r="1.2" fill="#2563EB"></circle>
+                    <circle cx="12" cy="15" r="1.2" fill="#2563EB"></circle>
+                    <circle cx="16" cy="15" r="1.2" fill="#2563EB"></circle>
+                  </svg>
+                </div>
+                <div class="al-days-content">
+                  <div class="al-days-text" id="days-count-box">1.0 Day (Auto-calculated)</div>
+                  <div class="al-days-sub">Based on the selected dates</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approving Manager -->
+            <div class="al-field">
+              <label class="al-label">Approving Manager</label>
+              <div class="al-select-card al-manager-card">
+                <div class="al-icon-badge al-badge-circle-blue">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#2563EB" stroke="none">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+                <div class="al-manager-name" id="leave-manager-title">Vishnu (Reporting Manager)</div>
+                <div class="al-chevron">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <select id="leave-manager-select" class="al-native-select" onchange="onManagerChange(this.value)">
+                  <option value="Vishnu (Reporting Manager)">Vishnu (Reporting Manager)</option>
+                  <option value="Ram (Reporting Manager)">Ram (Reporting Manager)</option>
+                  <option value="Rahul (Reporting Manager)">Rahul (Reporting Manager)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Reason -->
+            <div class="al-field">
+              <label class="al-label">Reason <span class="al-required">*</span></label>
+              <div class="al-textarea-card">
+                <div class="al-textarea-top">
+                  <div class="al-icon-badge al-badge-sm-blue">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <textarea id="leave-reason-text" class="al-textarea" rows="3" maxlength="500" placeholder="Describe the reason for your leave..." oninput="updateCharCount(this)"></textarea>
+                </div>
+                <div class="al-char-counter" id="reason-char-counter">0/500</div>
+              </div>
+            </div>
+
+            <!-- Validation Info Helper Pill -->
+            <div class="al-info-banner">
+              <div class="al-info-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2563EB">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+              </div>
+              <span class="al-info-text">Please provide a valid reason for your leave request.</span>
+            </div>
+
+            <!-- Submit Request Button -->
+            <button class="al-submit-btn" id="leave-submit-btn" onclick="handleApplyLeaveSubmit()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              <span>Submit Request</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap active" id="tab-apply">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label" style="color: #2563EB; font-weight: 700;">Apply</span>
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
+        </div>
+
+        <!-- Success Popup Modal -->
+        <div class="success-modal-overlay" id="leave-success-modal" onclick="if(event.target===this)closeLeaveSuccessModal()">
+          <div class="success-modal-card">
+            <div class="success-modal-icon-wrap">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h2 class="success-modal-title">Request Submitted!</h2>
+            <p class="success-modal-msg">Your leave request has been submitted successfully.</p>
+            <button class="success-modal-btn" onclick="closeLeaveSuccessModal()">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function activatePill(el, groupSelector) {
+          document.querySelectorAll(groupSelector).forEach(function(p) { p.classList.remove('active'); });
+          el.classList.add('active');
+        }
+
+        function toggleVisibility(id) {
+          var input = document.getElementById(id);
+          if (!input) return;
+          input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function setActiveNav(el) {
+          document.querySelectorAll('.bottom-nav .tab').forEach(function(t) { t.classList.remove('active'); });
+          el.classList.add('active');
+        }
+      </script>
+
+      <script>
+        function onLeaveTypeChange(val) {
+          var titleEl = document.getElementById('leave-type-title');
+          var subEl = document.getElementById('leave-type-sub');
+          if (titleEl) titleEl.textContent = val;
+          if (subEl) {
+            var halfCheck = document.getElementById('half-day-check');
+            var isHalf = halfCheck && halfCheck.checked;
+            var halfType = document.getElementById('half-day-type-select') ? document.getElementById('half-day-type-select').value : 'First Half';
+            var halfSuffix = isHalf ? (' • ' + halfType) : '';
+            if (val === 'Casual Leave') subEl.textContent = 'For personal reasons' + halfSuffix;
+            else if (val === 'Sick Leave') subEl.textContent = 'Medical & health care' + halfSuffix;
+            else if (val.indexOf('WFH') !== -1) subEl.textContent = 'Work from home' + halfSuffix;
+            else if (val.indexOf('Comp-Off') !== -1) subEl.textContent = 'Compensatory day off' + halfSuffix;
+            else subEl.textContent = 'General leave' + halfSuffix;
+          }
+        }
+
+        function onHalfDayTypeChange(val) {
+          var titleEl = document.getElementById('half-day-type-title');
+          var subEl = document.getElementById('half-day-type-sub');
+          if (titleEl) titleEl.textContent = val;
+          if (subEl) {
+            subEl.textContent = (val === 'First Half' || val === '1st Half') ? 'Morning session (0.5 Day)' : 'Afternoon session (0.5 Day)';
+          }
+          var mainSub = document.getElementById('leave-type-sub');
+          if (mainSub) {
+            mainSub.textContent = 'For personal reasons • ' + val;
+          }
+        }
+
+        function onManagerChange(val) {
+          var mgrTitle = document.getElementById('leave-manager-title');
+          if (mgrTitle) mgrTitle.textContent = val;
+        }
+
+        function updateCharCount(el) {
+          var counter = document.getElementById('reason-char-counter');
+          if (counter) counter.textContent = (el.value ? el.value.length : 0) + '/500';
+        }
+
+        function toggleHalfDay(isChecked) {
+          var wrap = document.getElementById('half-day-type-wrap');
+          var daysBox = document.getElementById('days-count-box');
+          if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
+          if (isChecked) {
+            if (daysBox) daysBox.textContent = '0.5 Day (Half Day)';
+            var halfSelect = document.getElementById('half-day-type-select');
+            if (halfSelect) onHalfDayTypeChange(halfSelect.value);
+          } else {
+            updateLeaveDates();
+            var mainType = document.getElementById('leave-type-select');
+            if (mainType) onLeaveTypeChange(mainType.value);
+          }
+        }
+
+        function handleBackNav() {
+          if (window.parent && window.parent.loadScreen) {
+            window.parent.loadScreen('tpl-EmployeeDashboard');
+          } else if (typeof loadScreen === 'function') {
+            loadScreen('tpl-EmployeeDashboard');
+          } else {
+            location.href = '../EmployeeDashboard/preview.html';
+          }
+        }
+
+        function handleApplyLeaveSubmit() {
+          var leaveTypeEl = document.getElementById('leave-type-select');
+          var fromDateEl = document.getElementById('from-date-display');
+          var toDateEl = document.getElementById('to-date-display');
+          var daysEl = document.getElementById('days-count-box');
+          var managerEl = document.getElementById('leave-manager-select');
+          var reasonEl = document.getElementById('leave-reason-text');
+
+          var leaveType = leaveTypeEl ? leaveTypeEl.value : 'Casual Leave';
+          var fromDate = fromDateEl ? fromDateEl.value : '07-Sep-2026';
+          var toDate = toDateEl ? toDateEl.value : '07-Sep-2026';
+          var daysText = daysEl ? daysEl.textContent.replace(' (Auto-calculated)', '') : '1.0 Day';
+
+          // Read employee profile from store
+          var store = window.parent || window;
+          var empProf = store.USER_PROFILE || {};
+          var empName = empProf.name || (store.AUTH_USER && store.AUTH_USER.name) || 'Sneha Reddy';
+          var empEmail = (empProf.email || (store.AUTH_USER && store.AUTH_USER.email) || 'sneha@gmail.com').toLowerCase();
+          var empInitials = empProf.initials ||
+            (empName.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2)) || 'SR';
+          var empId = empProf.employeeId || (store.AUTH_USER && store.AUTH_USER.empId) || 'EMP-2024-0103';
+          var empRole = empProf.role || (store.AUTH_USER && store.AUTH_USER.jobTitle) || 'UI/UX Designer';
+
+          var defaultMgr = empProf.reportingManager ? (empProf.reportingManager.indexOf('(') !== -1 ? empProf.reportingManager : empProf.reportingManager.split(' ')[0] + ' (Reporting Manager)') : 'Vishnu (Reporting Manager)';
+          var approvingManager = managerEl ? managerEl.value : defaultMgr;
+          var reason = reasonEl ? reasonEl.value.trim() : 'Personal Work';
+
+          var newId = 'leave-' + Date.now();
+          var reqObj = {
+            id: newId,
+            leaveType: leaveType,
+            fromDate: fromDate,
+            toDate: toDate,
+            daysText: daysText,
+            reason: reason,
+            approvingManager: approvingManager,
+            employeeName: empName,
+            employeeEmail: empEmail,
+            employeeInitials: empInitials,
+            employeeId: empId,
+            employeeRole: empRole,
+            status: 'pending',
+            isPermission: false,
+            createdAt: Date.now()
+          };
+          store.lastLeaveRequest = reqObj;
+          store.LATEST_LEAVE_REQUEST = reqObj;
+
+          var leavePersonObj = {
+            id: newId,
+            isPermission: false,
+            initials: empInitials,
+            name: empName,
+            role: empRole || 'Senior Software Engineer',
+            empId: empId || 'EMP-2024-0156',
+            leaveType: leaveType,
+            fromDate: fromDate,
+            toDate: toDate,
+            totalDays: daysText,
+            contact: empProf.phone || '+91 98765 43210',
+            emergencyContact: empProf.phone || '+91 98765 43210',
+            approvingManager: approvingManager,
+            reason: reason || 'Personal work',
+            subtitle: leaveType + ' Application',
+            appliedPath: empName.split(' ')[0] + ' (Applied)',
+            status: 'pending'
+          };
+
+          if (!store.PERSON_DATA) store.PERSON_DATA = {};
+          store.PERSON_DATA[newId] = leavePersonObj;
+          store.PERSON_DATA['priya'] = leavePersonObj;
+          store.LATEST_REQUEST = leavePersonObj;
+          store.LATEST_LEAVE_REQUEST = leavePersonObj;
+          store.SELECTED_PERSON = newId;
+
+          // Also push to EMP_LEAVE_REQUESTS so Employee Dashboard shows it (avoid duplicate)
+          if (!store.EMP_LEAVE_REQUESTS) store.EMP_LEAVE_REQUESTS = [];
+          var isDupReq = store.EMP_LEAVE_REQUESTS.some(function(r) {
+            return r.id === newId || (r.leaveType === leaveType && r.fromDate === fromDate && r.reason === reason);
+          });
+          if (!isDupReq) {
+            store.EMP_LEAVE_REQUESTS.unshift(reqObj);
+          }
+
+          // Inject a new pending card at the top of the Leave Approvals list in the template
+          var parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+          var approvalsTpl = parentDoc.getElementById('tpl-LeaveApprovals');
+          if (approvalsTpl) {
+            var typeClass = leaveType.indexOf('Sick') !== -1 ? 'warning' : leaveType.indexOf('Earned') !== -1 ? 'purple' : 'info';
+            var cardHtml = '<div class="card approval-card" data-leave-id="' + newId + '" data-status="pending" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen)window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + newId + '\');else if(typeof loadScreen===\'function\')loadScreen(\'tpl-LeaveApprovalDetail\', \'' + newId + '\');">'
+              + '<div class="top-row"><div class="emp-row"><div class="avatar">' + empInitials + '</div><div><b>' + empName + '</b><p>' + empId + '</p></div></div><span class="badge ' + typeClass + '">' + leaveType + '</span></div>'
+              + '<hr/>'
+              + '<div class="detail-row"><span>Duration</span><b>' + daysText + ' (' + fromDate + ' \u2013 ' + toDate + ')</b></div>'
+              + '<div class="detail-row"><span>Reason</span><b>' + (reason || 'Not specified') + '</b></div>'
+              + '<div class="card-action-wrap" id="action-wrap-' + newId + '">'
+              + '<div class="btn-row"><button class="btn btn-reject" onclick="event.stopPropagation();processLeaveAction(\'' + newId + '\', \'rejected\')">Reject</button><button class="btn btn-approve" onclick="event.stopPropagation();processLeaveAction(\'' + newId + '\', \'approved\')">Approve</button></div>'
+              + '</div></div>';
+            var tplHtml = approvalsTpl.innerHTML;
+            if (tplHtml.indexOf(newId) === -1) {
+              tplHtml = tplHtml.replace('<div id="leave-approvals-list">', '<div id="leave-approvals-list">' + cardHtml);
+              tplHtml = tplHtml.replace(/id="count-pending">[0-9]+/, function(m) {
+                var c = parseInt(m.replace('id="count-pending">', ''), 10) || 0;
+                return 'id="count-pending">' + (c + 1);
+              });
+              tplHtml = tplHtml.replace(/id="no-leave-msg"[\s\S]*?style="display:block;/g, 'id="no-leave-msg" style="display:none;');
+              approvalsTpl.innerHTML = tplHtml;
+            }
+            var mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
+            if (mgrTpl) {
+              var mgrHtml = mgrTpl.innerHTML;
+              mgrHtml = mgrHtml.replace(/class="qbadge" id="manager-dash-leave-badge">[0-9]+/, function(m) {
+                var c = parseInt(m.replace('class="qbadge" id="manager-dash-leave-badge">', ''), 10) || 0;
+                return 'class="qbadge" id="manager-dash-leave-badge">' + (c + 1);
+              });
+              mgrTpl.innerHTML = mgrHtml;
+            }
+            var liveMgrBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
+            if (liveMgrBadge) {
+              var curVal = parseInt(liveMgrBadge.textContent, 10) || 0;
+              liveMgrBadge.textContent = String(curVal + 1);
+            }
+          }
+
+          // Show success confirmation popup
+          var modal = document.getElementById('leave-success-modal');
+          if (modal) {
+            modal.classList.add('show');
+          } else if (window.parent && window.parent.loadScreen) {
+            window.parent.loadScreen('tpl-EmployeeDashboard');
+          }
+        }
+
+        function closeLeaveSuccessModal() {
+          var modal = document.getElementById('leave-success-modal');
+          if (modal) modal.classList.remove('show');
+          if (window.parent && window.parent.loadScreen) {
+            window.parent.loadScreen('tpl-EmployeeDashboard');
+          }
+        }
+        window.closeLeaveSuccessModal = closeLeaveSuccessModal;
+      </script>
+
+      <script>
+        function formatDateString(dateVal) {
+          if (!dateVal) return '07-Sep-2026';
+          var parts = dateVal.split('-');
+          var yr = parts[0];
+          var mIdx = parseInt(parts[1], 10) - 1;
+          var day = parts[2];
+          var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          return day + '-' + (months[mIdx] || 'Sep') + '-' + yr;
+        }
+
+        function updateLeaveDates() {
+          var fromPicker = document.getElementById('from-date-picker');
+          var toPicker = document.getElementById('to-date-picker');
+          var fromDisplay = document.getElementById('from-date-display');
+          var toDisplay = document.getElementById('to-date-display');
+          var daysBox = document.getElementById('days-count-box');
+
+          if (fromPicker && fromDisplay && fromPicker.value) {
+            fromDisplay.value = formatDateString(fromPicker.value);
+          }
+          if (toPicker && toDisplay && toPicker.value) {
+            toDisplay.value = formatDateString(toPicker.value);
+          }
+
+          var isHalf = document.getElementById('half-day-check') && document.getElementById('half-day-check').checked;
+          if (isHalf && daysBox) {
+            daysBox.textContent = '0.5 Day (Half Day)';
+            return;
+          }
+
+          if (fromPicker && toPicker && daysBox && fromPicker.value && toPicker.value) {
+            var d1 = new Date(fromPicker.value);
+            var d2 = new Date(toPicker.value);
+            if (!isNaN(d1) && !isNaN(d2)) {
+              var diffTime = d2.getTime() - d1.getTime();
+              var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+              if (diffDays < 1) diffDays = 1;
+              daysBox.textContent = diffDays + '.0 Day' + (diffDays > 1 ? 's' : '') + ' (Auto-calculated)';
+            }
+          }
+        }
+
+        function openCalPicker(pickerId, btnEl) {
+          var picker = document.getElementById(pickerId);
+          if (picker) {
+            if (typeof picker.showPicker === 'function') {
+              try {
+                picker.showPicker();
+              } catch (e) {
+                picker.click();
+              }
+            } else {
+              picker.click();
+            }
+          }
+        }
+
+        function syncPermDate(val) {
+          var display = document.getElementById('perm-date-display');
+          if (display && val) {
+            display.value = formatDateString(val);
+          }
+          if (typeof calcPermDuration === 'function') {
+            calcPermDuration();
+          }
+        }
+
+        document.querySelectorAll('.bottom-nav .tab').forEach(function(t) {
+          t.addEventListener('click', function() { setActiveNav(t); });
+        });
+      </script>
+    </body>
+
+    </html>
+  </template>

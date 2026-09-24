@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, Modal, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './ApplyPermissionScreen.styles';
@@ -9,6 +9,14 @@ const PERMISSION_TYPES = [
   'Late Coming',
   'Personal Work',
   'Official Work',
+];
+
+const DURATION_OPTIONS = [
+  '1 Hour',
+  '2 Hours',
+  '3 Hours',
+  '4 Hours',
+  '5 Hours',
 ];
 
 const MANAGERS = [
@@ -39,7 +47,7 @@ function resolveDefaultManager() {
 }
 
 export default function ApplyPermissionScreen({ navigation }) {
-  const [date, setDate] = useState('04-Sep-2026');
+  const [date, setDate] = useState('09/04/2026');
   const [permissionType, setPermissionType] = useState('Early Going');
   const [startTime, setStartTime] = useState('03:00 PM');
   const [endTime, setEndTime] = useState('05:00 PM');
@@ -47,9 +55,12 @@ export default function ApplyPermissionScreen({ navigation }) {
   const [reason, setReason] = useState('');
   const [manager, setManager] = useState(resolveDefaultManager);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const [isDurationOpen, setIsDurationOpen] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [submittedRequest, setSubmittedRequest] = useState(null);
+
+  const go = (screen, params) => navigation && navigation.navigate(screen, params);
 
   const parseTimeToMinutes = (timeStr) => {
     if (!timeStr) return null;
@@ -69,7 +80,7 @@ export default function ApplyPermissionScreen({ navigation }) {
   const calculateDurationText = (startStr, endStr) => {
     const startMin = parseTimeToMinutes(startStr);
     const endMin = parseTimeToMinutes(endStr);
-    if (startMin === null || endMin === null) return '2 Hours (Auto-calculated)';
+    if (startMin === null || endMin === null) return '2 Hours';
 
     let diff = endMin - startMin;
     if (diff < 0) diff += 24 * 60;
@@ -81,7 +92,7 @@ export default function ApplyPermissionScreen({ navigation }) {
     else if (hours > 0) result = `${hours} Hour${hours > 1 ? 's' : ''}`;
     else result = `${mins} Mins`;
 
-    return `${result} (Auto-calculated)`;
+    return result;
   };
 
   const handleStartTimeChange = (text) => {
@@ -94,6 +105,11 @@ export default function ApplyPermissionScreen({ navigation }) {
     setDurationText(calculateDurationText(startTime, text));
   };
 
+  const handleSelectDuration = (val) => {
+    setDurationText(val);
+    setIsDurationOpen(false);
+  };
+
   const handleSubmit = () => {
     const profile =
       (typeof global !== 'undefined' && global.USER_PROFILE) || {};
@@ -104,6 +120,8 @@ export default function ApplyPermissionScreen({ navigation }) {
 
     const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     const managerDisplayName = manager.replace(' (Reporting Manager)', '');
+
+    const cleanDuration = durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours';
 
     const newRequest = {
       id: Date.now().toString(),
@@ -123,8 +141,8 @@ export default function ApplyPermissionScreen({ navigation }) {
       startTime,
       endTime,
       schedule: `${date} (${startTime} - ${endTime})`,
-      duration: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
-      totalDays: durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours',
+      duration: cleanDuration,
+      totalDays: cleanDuration,
       reason: reason || 'Personal work / Medical checkup',
       status: 'pending',
       appliedDate: todayStr,
@@ -139,7 +157,7 @@ export default function ApplyPermissionScreen({ navigation }) {
       subtitle: `${permissionType} Application`,
       appliedPath: `${employeeName.split(' ')[0]} (Applied)`,
       // for Employee Dashboard recent list
-      title: `${permissionType} (${durationText ? durationText.replace(' (Auto-calculated)', '') : '2 Hours'})`,
+      title: `${permissionType} (${cleanDuration})`,
       subtitleReq: `${date} • ${reason || 'Personal Work'}`,
     };
 
@@ -159,156 +177,218 @@ export default function ApplyPermissionScreen({ navigation }) {
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-        <View style={styles.headerRow}>
-          <Image source={require('../../../assets/emergere-logo.png')} style={styles.logo} />
-          <Text style={styles.headerTitle}>Apply Permission</Text>
-        </View>
-        <Text style={styles.subtitle}>Request short duration permission</Text>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Date *</Text>
-          <View style={styles.dateInputRow}>
-            <TextInput
-              style={styles.flexInput}
-              value={date}
-              onChangeText={setDate}
-              placeholder="DD-MMM-YYYY"
-              placeholderTextColor="#9AA3B2"
-            />
-            <Feather name="calendar" size={18} color="#111827" />
-          </View>
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Permission Type *</Text>
+        {/* Header Gradient Banner - Flush to top */}
+        <View style={styles.headerBanner}>
+          <View style={styles.decorCircle1} />
+          <View style={styles.decorCircle2} />
+          
           <TouchableOpacity
-            style={[styles.selectBox, isTypeOpen && styles.selectBoxActive]}
-            onPress={() => {
-              setIsTypeOpen(!isTypeOpen);
-              setIsManagerOpen(false);
-            }}
-            activeOpacity={0.7}
+            style={styles.backBtn}
+            onPress={() => (navigation && navigation.canGoBack ? navigation.goBack() : go('Dashboard'))}
+            activeOpacity={0.8}
+            accessibilityLabel="Back"
           >
-            <Text style={styles.selectText}>{permissionType}</Text>
-            <Feather name={isTypeOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
+            <Feather name="arrow-left" size={20} color="#FFFFFF" />
           </TouchableOpacity>
-          {isTypeOpen && (
-            <View style={styles.dropdownContainer}>
-              {PERMISSION_TYPES.map((t) => {
-                const isSelected = t === permissionType;
-                return (
-                  <TouchableOpacity
-                    key={t}
-                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
-                    onPress={() => {
-                      setPermissionType(t);
-                      setIsTypeOpen(false);
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
-                      {t}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.headerTitle}>Apply Permission</Text>
+              <Text style={styles.headerSubtitle}>Request short duration permission</Text>
             </View>
-          )}
+
+            {/* 3D Calendar Illustration Badge */}
+            <View style={styles.badgeContainer}>
+              <View style={styles.calendarIllustrateBox}>
+                <View style={styles.calendarHeaderBar} />
+                <View style={styles.calendarRingsRow}>
+                  <View style={styles.calendarRing} />
+                  <View style={styles.calendarRing} />
+                  <View style={styles.calendarRing} />
+                </View>
+                <View style={styles.calendarGrid}>
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                  <View style={styles.calendarCell} />
+                </View>
+                <View style={styles.clockBadge}>
+                  <Feather name="clock" size={15} color="#FFFFFF" />
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
 
-        <View style={styles.row}>
-          <View style={styles.halfField}>
-            <Text style={styles.label}>Start Time *</Text>
-            <View style={styles.dateInputRow}>
+        {/* Main Form Card */}
+        <View style={styles.formCard}>
+          {/* Date * */}
+          <View style={styles.field}>
+            <Text style={styles.label}>
+              Date <Text style={styles.required}>*</Text>
+            </Text>
+            <View style={styles.inputCard}>
               <TextInput
-                style={styles.flexInput}
-                value={startTime}
-                onChangeText={handleStartTimeChange}
-                placeholder="03:00 PM"
-                placeholderTextColor="#9AA3B2"
+                style={styles.cardInput}
+                value={date}
+                onChangeText={setDate}
+                placeholder="MM/DD/YYYY"
+                placeholderTextColor="#94A3B8"
               />
+              <Feather name="calendar" size={18} color="#111827" />
             </View>
           </View>
-          <View style={styles.halfField}>
-            <Text style={styles.label}>End Time *</Text>
-            <View style={styles.dateInputRow}>
+
+          {/* Permission Type * */}
+          <View style={styles.field}>
+            <Text style={styles.label}>
+              Permission Type <Text style={styles.required}>*</Text>
+            </Text>
+            <TouchableOpacity
+              style={[styles.selectCard, isTypeOpen && styles.selectCardActive]}
+              onPress={() => {
+                setIsTypeOpen(!isTypeOpen);
+                setIsDurationOpen(false);
+                setIsManagerOpen(false);
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.selectText}>{permissionType}</Text>
+              <Feather name={isTypeOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
+            </TouchableOpacity>
+            {isTypeOpen && (
+              <View style={styles.dropdownContainer}>
+                {PERMISSION_TYPES.map((t) => {
+                  const isSelected = t === permissionType;
+                  return (
+                    <TouchableOpacity
+                      key={t}
+                      style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                      onPress={() => {
+                        setPermissionType(t);
+                        setIsTypeOpen(false);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
+                        {t}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+
+          {/* Duration * */}
+          <View style={styles.field}>
+            <Text style={styles.label}>
+              Duration <Text style={styles.required}>*</Text>
+            </Text>
+            <TouchableOpacity
+              style={[styles.selectCard, isDurationOpen && styles.selectCardActive]}
+              onPress={() => {
+                setIsDurationOpen(!isDurationOpen);
+                setIsTypeOpen(false);
+                setIsManagerOpen(false);
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.selectText}>{durationText}</Text>
+              <Feather name={isDurationOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
+            </TouchableOpacity>
+            {isDurationOpen && (
+              <View style={styles.dropdownContainer}>
+                {DURATION_OPTIONS.map((d) => {
+                  const isSelected = d === durationText;
+                  return (
+                    <TouchableOpacity
+                      key={d}
+                      style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                      onPress={() => handleSelectDuration(d)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
+                        {d}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+
+          {/* Reason * */}
+          <View style={styles.field}>
+            <Text style={styles.label}>
+              Reason <Text style={styles.required}>*</Text>
+            </Text>
+            <View style={styles.textareaCard}>
               <TextInput
-                style={styles.flexInput}
-                value={endTime}
-                onChangeText={handleEndTimeChange}
-                placeholder="05:00 PM"
-                placeholderTextColor="#9AA3B2"
+                style={styles.textArea}
+                multiline
+                numberOfLines={4}
+                maxLength={500}
+                placeholder="E.g., Medical checkup, personal work..."
+                placeholderTextColor="#94A3B8"
+                value={reason}
+                onChangeText={setReason}
               />
+              <Text style={styles.charCounter}>{reason.length}/500</Text>
             </View>
           </View>
-        </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Duration *</Text>
-          <View style={styles.dateInputRow}>
-            <TextInput
-              style={styles.flexInput}
-              value={durationText}
-              onChangeText={setDurationText}
-              placeholder="E.g., 2 Hours"
-              placeholderTextColor="#9AA3B2"
-            />
+          {/* Approving Manager (No red asterisk per Image 2) */}
+          <View style={styles.field}>
+            <Text style={styles.label}>Approving Manager</Text>
+            <TouchableOpacity
+              style={[styles.selectCard, isManagerOpen && styles.selectCardActive]}
+              onPress={() => {
+                setIsManagerOpen(!isManagerOpen);
+                setIsTypeOpen(false);
+                setIsDurationOpen(false);
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.selectText}>{manager}</Text>
+              <Feather name={isManagerOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
+            </TouchableOpacity>
+            {isManagerOpen && (
+              <View style={styles.dropdownContainer}>
+                {MANAGERS.map((m) => {
+                  const isSelected = m === manager;
+                  return (
+                    <TouchableOpacity
+                      key={m}
+                      style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
+                      onPress={() => {
+                        setManager(m);
+                        setIsManagerOpen(false);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
+                        {m}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
           </View>
-        </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Reason *</Text>
-          <TextInput
-            style={styles.textArea}
-            multiline
-            numberOfLines={4}
-            placeholder="E.g., Medical checkup, personal work..."
-            placeholderTextColor="#9AA3B2"
-            value={reason}
-            onChangeText={setReason}
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Approving Manager</Text>
-          <TouchableOpacity
-            style={[styles.selectBox, isManagerOpen && styles.selectBoxActive]}
-            onPress={() => {
-              setIsManagerOpen(!isManagerOpen);
-              setIsTypeOpen(false);
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.selectText}>{manager}</Text>
-            <Feather name={isManagerOpen ? "chevron-up" : "chevron-down"} size={18} color="#111827" />
+          {/* Submit Request Button */}
+          <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} activeOpacity={0.85}>
+            <Feather name="send" size={18} color="#FFFFFF" style={styles.submitIcon} />
+            <Text style={styles.submitText}>Submit Request</Text>
           </TouchableOpacity>
-          {isManagerOpen && (
-            <View style={styles.dropdownContainer}>
-              {MANAGERS.map((m) => {
-                const isSelected = m === manager;
-                return (
-                  <TouchableOpacity
-                    key={m}
-                    style={[styles.dropdownOption, isSelected && styles.dropdownOptionSelected]}
-                    onPress={() => {
-                      setManager(m);
-                      setIsManagerOpen(false);
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={[styles.dropdownOptionText, isSelected && styles.dropdownOptionTextSelected]}>
-                      {m}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          )}
         </View>
-
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Submit Request</Text>
-        </TouchableOpacity>
       </ScrollView>
 
       {/* Success Popup Modal */}
@@ -394,12 +474,12 @@ const modalStyles = StyleSheet.create({
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#2F6BFF',
-    borderRadius: 12,
-    paddingVertical: 13,
+    backgroundColor: '#0066FF',
+    borderRadius: 14,
+    paddingVertical: 14,
     width: '100%',
     alignItems: 'center',
-    shadowColor: '#2F6BFF',
+    shadowColor: '#0066FF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,

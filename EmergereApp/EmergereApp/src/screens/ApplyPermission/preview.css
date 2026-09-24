@@ -1,1 +1,344 @@
-/* Uses ../ApplyLeave/preview.css as the base for shared form styling */
+/* Apply Permission Redesign Styles - Exact Reference with Image 2 */
+:root {
+  --perm-primary: #0066FF;
+  --perm-primary-dark: #0052EA;
+  --perm-bg: #EEF4FB;
+  --perm-card-bg: #FFFFFF;
+  --perm-border: #E2E8F0;
+  --perm-text-main: #111827;
+  --perm-text-sub: #64748B;
+  --perm-text-muted: #94A3B8;
+  --perm-danger: #EF4444;
+}
+
+body {
+  background: var(--perm-bg) !important;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.device {
+  background: var(--perm-bg) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.screen,
+.screen.has-perm-header,
+.screen.has-al-header {
+  background: var(--perm-bg) !important;
+  padding-top: 0 !important;
+  padding-bottom: 96px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.screen.has-perm-header {
+  padding-top: 0 !important;
+}
+
+/* Header Gradient Banner - Flush to top, vibrant blue gradient with soft organic shapes */
+.perm-header-banner,
+.al-header-banner {
+  margin-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  background: linear-gradient(135deg, #005CE6 0%, #0066FF 45%, #1877F2 100%);
+  padding: 22px 20px 48px 20px;
+  margin-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing organic curves and orbs in background matching Image 2 */
+.perm-header-banner::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -20px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.perm-header-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -35px;
+  left: -20px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.perm-header-decor-wave {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 75%);
+  pointer-events: none;
+}
+
+/* Back Button */
+.perm-back-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  margin-bottom: 14px;
+  transition: transform 0.2s ease, background 0.2s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.perm-back-btn:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: scale(1.05);
+}
+
+.perm-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+}
+
+.perm-header-left {
+  flex: 1;
+  padding-right: 12px;
+}
+
+.perm-header-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.perm-header-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 5px 0 0 0;
+  font-weight: 400;
+}
+
+/* 3D Calendar Illustration Badge */
+.perm-header-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: -32px;
+  flex-shrink: 0;
+}
+
+.perm-calendar-svg {
+  filter: drop-shadow(0 10px 18px rgba(0, 35, 120, 0.28));
+  display: block;
+}
+
+/* Main Form Card Container */
+.perm-form-card {
+  margin: -24px 14px 20px 14px;
+  background: #FFFFFF;
+  border-radius: 26px;
+  padding: 22px 16px 24px 16px;
+  box-shadow: 0 10px 30px rgba(15, 30, 80, 0.07);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+.perm-field {
+  margin-bottom: 18px;
+}
+
+.perm-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.perm-required {
+  color: var(--perm-danger);
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+/* Input / Select Row Card */
+.perm-input-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 16px;
+  border: 1.5px solid var(--perm-border);
+  border-radius: 14px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.perm-input-card:hover {
+  border-color: #93C5FD;
+}
+
+.perm-input-card:focus-within {
+  border-color: var(--perm-primary);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+.perm-card-value {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.perm-card-icon {
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* Native invisible overlays for interactive date & select */
+.perm-native-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 16px;
+}
+
+/* Reason Textarea Card */
+.perm-textarea-card {
+  border: 1.5px solid var(--perm-border);
+  border-radius: 14px;
+  background: #FFFFFF;
+  padding: 14px 16px 28px 16px;
+  position: relative;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.perm-textarea-card:focus-within {
+  border-color: var(--perm-primary);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+.perm-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 14.5px;
+  color: #111827;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+.perm-textarea:focus {
+  outline: none;
+}
+
+.perm-textarea::placeholder {
+  color: var(--perm-text-muted);
+  font-weight: 400;
+}
+
+.perm-char-counter {
+  position: absolute;
+  right: 22px;
+  bottom: 8px;
+  font-size: 12px;
+  color: var(--perm-text-muted);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.perm-resize-grip {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 10px;
+  height: 10px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Submit Request Button */
+.perm-submit-btn {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, #0066FF 0%, #0050EA 100%);
+  border: none;
+  border-radius: 16px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 102, 255, 0.38);
+  transition: all 0.2s ease;
+  font-family: inherit;
+  margin-top: 6px;
+}
+
+.perm-submit-btn:hover {
+  background: linear-gradient(135deg, #005AE0 0%, #0044CC 100%);
+  box-shadow: 0 10px 28px rgba(0, 102, 255, 0.48);
+  transform: translateY(-1px);
+}
+
+.perm-submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+}
+
+.perm-submit-btn svg {
+  flex-shrink: 0;
+}

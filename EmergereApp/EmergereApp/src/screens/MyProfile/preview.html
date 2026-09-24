@@ -1,347 +1,656 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>My Profile - Preview</title>
-<link rel="stylesheet" href="../../../preview/base.css"/>
-<link rel="stylesheet" href="./preview.css"/></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>My Profile - Preview</title>
+  <link rel="stylesheet" href="../../../preview/base.css"/>
+  <link rel="stylesheet" href="./preview.css"/>
+</head>
 <body>
 <div class="device">
-<div class="screen">
-  <div class="header">
-    <div class="back-btn">←</div>
-    <img class="mini-logo" src="../../../assets/emergere-logo.png" alt="Emergere Logo"/>
-    <div><h1>My Profile</h1><p>Employee Details</p></div>
-  </div>
-
-  <!-- PROFILE SUMMARY CARD -->
-  <div class="card profile-card" id="profile-main-card" style="position:relative;">
-    <div style="position:absolute; top:12px; right:12px;" id="profile-edit-btn-wrap">
-      <button class="edit-btn" onclick="enableProfileEdit()" style="background:#E7EEFF; color:#2F6BFF; border:none; padding:4px 10px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">✏️ Edit</button>
-    </div>
-    <div style="position:absolute; top:12px; right:12px; display:none; gap:6px;" id="profile-save-cancel-wrap">
-      <button onclick="cancelProfileEdit()" style="background:none; border:1px solid #E7EAF0; padding:4px 10px; border-radius:8px; color:#6B7280; font-size:13px; cursor:pointer;">Cancel</button>
-      <button onclick="saveProfileEdit()" style="background:#2F6BFF; border:none; padding:4px 12px; border-radius:8px; color:#fff; font-size:13px; font-weight:700; cursor:pointer;">Save</button>
-    </div>
-    <div id="profile-view-mode">
-      <div class="avatar big" id="profile-avatar-display">PS</div>
-      <h2 id="profile-name-display">Priya Sharma</h2>
-      <p class="role" id="profile-role-display">Senior Software Engineer</p>
-      <span class="id-chip" id="profile-id-display">EMP-2024-0156</span>
-    </div>
-    <div id="profile-edit-mode" style="display:none; text-align:left;">
-      <p class="section-title" style="margin-bottom:12px;">PROFILE SUMMARY</p>
-      <div style="margin-bottom:10px;">
-        <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Full Name</label>
-        <input type="text" id="edit-profile-name" value="Priya Sharma" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
-      </div>
-      <div style="margin-bottom:10px;">
-        <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Designation / Role</label>
-        <input type="text" id="edit-profile-role" value="Senior Software Engineer" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
-      </div>
-      <div style="margin-bottom:10px;">
-        <label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Employee ID</label>
-        <input type="text" id="edit-profile-id" value="EMP-2024-0156" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;" />
+  <div class="screen has-profile-header has-al-header">
+    <!-- Header Gradient Banner - Flush to top with vibrant blue gradient -->
+    <div class="profile-header-banner al-header-banner">
+      <button class="profile-back-btn" onclick="handleProfileBackNav()" title="Back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+      <div class="profile-header-content">
+        <h1 class="profile-header-title">My Profile</h1>
+        <p class="profile-header-subtitle">Employee Details</p>
       </div>
     </div>
-  </div>
 
-  <div class="card status-card"><div class="status-row"><b>Employment Status</b><span class="badge success" id="profile-emp-status">Active</span></div></div>
+    <!-- MAIN PROFILE HERO CARD -->
+    <div class="profile-hero-card" id="profile-main-card">
+      <div class="profile-hero-wave"></div>
+      
+      <!-- Top Right Edit Action Buttons -->
+      <div id="profile-edit-btn-wrap">
+        <button class="profile-edit-btn" onclick="enableProfileEdit()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+          </svg>
+          <span>Edit</span>
+        </button>
+      </div>
+      <div class="profile-save-cancel-group" id="profile-save-cancel-wrap">
+        <button class="profile-btn-cancel" onclick="cancelProfileEdit()">Cancel</button>
+        <button class="profile-btn-save" onclick="saveProfileEdit()">Save</button>
+      </div>
 
-  <!-- JOB INFORMATION CARD -->
-  <div class="card">
-    <p class="section-title">JOB INFORMATION</p>
-    <div id="job-read-mode">
-      <div class="info-row"><span>Department</span><b id="val-dept">IT</b></div>
-      <div class="info-row"><span>Team</span><b id="val-team">Development</b></div>
-      <div class="info-row"><span>Reporting Manager</span><b class="link" id="val-manager">Rahul Sharma</b></div>
-      <div class="info-row"><span>Work Location</span><b id="val-location">Bangalore</b></div>
-      <div class="info-row"><span>Joining Date</span><b id="val-date">Mar 15, 2022</b></div>
-    </div>
-    <div id="job-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:8px;">
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Department</label><input type="text" id="input-dept" value="IT" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Team</label><input type="text" id="input-team" value="Development" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Reporting Manager</label><input type="text" id="input-manager" value="Rahul Sharma" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Work Location</label><input type="text" id="input-location" value="Bangalore" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Joining Date</label><input type="text" id="input-date" value="Mar 15, 2022" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-    </div>
-  </div>
-
-  <!-- CONTACT INFORMATION CARD -->
-  <div class="card">
-    <p class="section-title">CONTACT INFORMATION</p>
-    <div id="contact-read-mode">
-      <div class="info-row"><span>Email</span><b id="val-email">priya.sharma@emergere.com</b></div>
-      <div class="info-row"><span>Phone</span><b id="val-phone">+91 98765 43210</b></div>
-    </div>
-    <div id="contact-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:8px;">
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Email</label><input type="email" id="input-email" value="priya.sharma@emergere.com" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-      <div style="margin-bottom:10px;"><label style="font-size:12px; color:#6B7280; font-weight:600; display:block; margin-bottom:3px;">Phone</label><input type="text" id="input-phone" value="+91 98765 43210" style="width:100%; border:1px solid #E7EAF0; border-radius:8px; padding:8px 12px; font-size:14px;"></div>
-    </div>
-  </div>
-
-  <button class="btn logout-btn">Logout</button>
-</div>
-<div class="bottom-nav">
-          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else{window.location.href='../EmployeeDashboard/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      <!-- View Mode -->
+      <div id="profile-view-mode">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar-circle" id="profile-avatar-display">JD</div>
+          <!-- Camera badge on bottom-right of avatar matching Image 2 -->
+          <div class="profile-camera-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
             </svg>
-            <span>Dashboard</span>
           </div>
-          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <span>Attendance</span>
-          </div>
-          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
-            <div class="nav-apply-circle">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
+        </div>
+        <h2 class="profile-name" id="profile-name-display">John Doe</h2>
+        <p class="profile-role" id="profile-role-display">Senior Software Engineer</p>
+        <div class="profile-id-chip" id="profile-id-display">EMP-2024-0101</div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div id="profile-edit-mode" style="display:none; text-align:left; margin-top:20px;">
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Full Name</label>
+          <input type="text" id="edit-profile-name" class="profile-edit-input" value="John Doe" />
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Designation / Role</label>
+          <input type="text" id="edit-profile-role" class="profile-edit-input" value="Senior Software Engineer" />
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Employee ID</label>
+          <input type="text" id="edit-profile-id" class="profile-edit-input" value="EMP-2024-0101" />
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPLOYMENT STATUS CARD -->
+    <div class="profile-status-card">
+      <div class="profile-status-left">
+        <div class="profile-icon-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="profile-status-title">Employment Status</div>
+          <div class="profile-status-sub">Current working status</div>
+        </div>
+      </div>
+      <div class="profile-status-pill">
+        <span class="profile-status-dot"></span>
+        <span class="profile-status-text" id="profile-emp-status">Active</span>
+      </div>
+    </div>
+
+    <!-- JOB INFORMATION CARD -->
+    <div class="profile-section-card">
+      <div class="profile-section-header">
+        <div class="profile-icon-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="profile-section-title">JOB INFORMATION</div>
+          <div class="profile-section-sub">Work details and organization information</div>
+        </div>
+      </div>
+
+      <!-- Read Mode -->
+      <div id="job-read-mode" class="profile-rows-container">
+        <!-- Department -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22h16M4 2v20M20 2v20M9 6h2M9 10h2M9 14h2M9 18h2M14 6h2M14 10h2M14 14h2M14 18h2"/>
               </svg>
             </div>
-            <span class="nav-apply-label">Apply</span>
+            <span class="profile-row-label">Department</span>
           </div>
-          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-              <path d="M3 3v5h5"></path>
-              <polyline points="12 7 12 12 15 15"></polyline>
-            </svg>
-            <span>History</span>
+          <span class="profile-row-value" id="val-dept">Engineering</span>
+        </div>
+
+        <!-- Team -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <span class="profile-row-label">Team</span>
           </div>
-          <div class="tab nav-tab active" id="tab-profile">
-            <div class="nav-pill-wrap">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <span class="profile-row-value" id="val-team">Mobile Development</span>
+        </div>
+
+        <!-- Reporting Manager -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
-            <span>Profile</span>
-            <span class="active-dot-indicator"></span>
+            <span class="profile-row-label">Reporting Manager</span>
           </div>
+          <span class="profile-row-value link" id="val-manager">Vishnu Kumar</span>
         </div>
+
+        <!-- Work Location -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <span class="profile-row-label">Work Location</span>
+          </div>
+          <span class="profile-row-value" id="val-location">Bangalore - Tech Park</span>
+        </div>
+
+        <!-- Joining Date -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <span class="profile-row-label">Joining Date</span>
+          </div>
+          <span class="profile-row-value" id="val-date">15-Jan-2024</span>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div id="job-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:14px;">
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Department</label>
+          <input type="text" id="input-dept" class="profile-edit-input" value="Engineering">
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Team</label>
+          <input type="text" id="input-team" class="profile-edit-input" value="Mobile Development">
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Reporting Manager</label>
+          <input type="text" id="input-manager" class="profile-edit-input" value="Vishnu Kumar">
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Work Location</label>
+          <input type="text" id="input-location" class="profile-edit-input" value="Bangalore - Tech Park">
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Joining Date</label>
+          <input type="text" id="input-date" class="profile-edit-input" value="15-Jan-2024">
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT INFORMATION CARD -->
+    <div class="profile-section-card">
+      <div class="profile-section-header">
+        <div class="profile-icon-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="profile-section-title">CONTACT INFORMATION</div>
+          <div class="profile-section-sub">Your contact details</div>
+        </div>
+      </div>
+
+      <!-- Read Mode -->
+      <div id="contact-read-mode" class="profile-rows-container">
+        <!-- Email -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <span class="profile-row-label">Email</span>
+          </div>
+          <span class="profile-row-value" id="val-email">john@gmail.com</span>
+        </div>
+
+        <!-- Phone -->
+        <div class="profile-data-row">
+          <div class="profile-row-left">
+            <div class="profile-mini-icon-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <span class="profile-row-label">Phone</span>
+          </div>
+          <span class="profile-row-value" id="val-phone">+91 98765 11001</span>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div id="contact-edit-mode" style="display:none; flex-direction:column; gap:10px; margin-top:14px; margin-bottom:14px;">
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Email</label>
+          <input type="email" id="input-email" class="profile-edit-input" value="john@gmail.com">
+        </div>
+        <div class="profile-edit-field">
+          <label class="profile-edit-label">Phone</label>
+          <input type="text" id="input-phone" class="profile-edit-input" value="+91 98765 11001">
+        </div>
+      </div>
+
+      <!-- Logout Button matching Image 2 -->
+      <div class="profile-logout-btn" onclick="handleLogoutClick()">
+        <div class="profile-logout-left">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span class="profile-logout-text">Logout</span>
+        </div>
+        <div class="profile-logout-chevron">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar (Image 2 Reference) -->
+  <div class="bottom-nav">
+    <div class="tab nav-tab" id="tab-dashboard" onclick="handleNavTab('dashboard', event)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+      </svg>
+      <span>Dashboard</span>
+    </div>
+    <div class="tab nav-tab" id="tab-attendance" onclick="handleNavTab('attendance', event)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span>Attendance</span>
+    </div>
+    <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="handleNavTab('apply', event)">
+      <div class="nav-apply-circle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </div>
+      <span class="nav-apply-label">Apply</span>
+    </div>
+    <div class="tab nav-tab" id="tab-history" onclick="handleNavTab('history', event)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+        <path d="M3 3v5h5"></path>
+        <polyline points="12 7 12 12 15 15"></polyline>
+      </svg>
+      <span>History</span>
+    </div>
+    <div class="tab nav-tab active" id="tab-profile" onclick="handleNavTab('profile', event)">
+      <div class="nav-pill-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <span style="color: #2563EB; font-weight: 700;">Profile</span>
+      <span class="active-dot-indicator"></span>
+    </div>
+  </div>
 </div>
+
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
 <script>
-function enableProfileEdit() {
-  document.getElementById('profile-view-mode').style.display = 'none';
-  document.getElementById('profile-edit-mode').style.display = 'block';
-  document.getElementById('job-read-mode').style.display = 'none';
-  document.getElementById('job-edit-mode').style.display = 'flex';
-  document.getElementById('contact-read-mode').style.display = 'none';
-  document.getElementById('contact-edit-mode').style.display = 'flex';
-
-  document.getElementById('profile-edit-btn-wrap').style.display = 'none';
-  document.getElementById('profile-save-cancel-wrap').style.display = 'flex';
-}
-
-function cancelProfileEdit() {
-  const p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
-  if (p) {
-    if (document.getElementById('edit-profile-name') && p.name) document.getElementById('edit-profile-name').value = p.name;
-    if (document.getElementById('edit-profile-role') && p.role) document.getElementById('edit-profile-role').value = p.role;
-    if (document.getElementById('edit-profile-id') && p.employeeId) document.getElementById('edit-profile-id').value = p.employeeId;
-    if (document.getElementById('input-dept') && p.department) document.getElementById('input-dept').value = p.department;
-    if (document.getElementById('input-team') && p.team) document.getElementById('input-team').value = p.team;
-    if (document.getElementById('input-manager') && p.reportingManager) document.getElementById('input-manager').value = p.reportingManager;
-    if (document.getElementById('input-location') && p.workLocation) document.getElementById('input-location').value = p.workLocation;
-    if (document.getElementById('input-date') && p.joiningDate) document.getElementById('input-date').value = p.joiningDate;
-    if (document.getElementById('input-email') && p.email) document.getElementById('input-email').value = p.email;
-    if (document.getElementById('input-phone') && p.phone) document.getElementById('input-phone').value = p.phone;
-  }
-  document.getElementById('profile-view-mode').style.display = 'block';
-  document.getElementById('profile-edit-mode').style.display = 'none';
-  document.getElementById('job-read-mode').style.display = 'block';
-  document.getElementById('job-edit-mode').style.display = 'none';
-  document.getElementById('contact-read-mode').style.display = 'block';
-  document.getElementById('contact-edit-mode').style.display = 'none';
-
-  document.getElementById('profile-edit-btn-wrap').style.display = 'block';
-  document.getElementById('profile-save-cancel-wrap').style.display = 'none';
-}
-
-function saveProfileEdit() {
-  const name = document.getElementById('edit-profile-name').value;
-  const role = document.getElementById('edit-profile-role').value;
-  const id = document.getElementById('edit-profile-id').value;
-
-  document.getElementById('profile-name-display').textContent = name;
-  document.getElementById('profile-role-display').textContent = role;
-  document.getElementById('profile-id-display').textContent = id;
-
-  let initials = 'PS';
-  if (name) {
-    const parts = name.trim().split(' ').filter(Boolean);
-    if (parts.length >= 2) initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    else initials = name.substring(0, 2).toUpperCase();
-  }
-  document.getElementById('profile-avatar-display').textContent = initials;
-
-  const dept = document.getElementById('input-dept').value;
-  const team = document.getElementById('input-team').value;
-  const mgr = document.getElementById('input-manager').value;
-  const loc = document.getElementById('input-location').value;
-  const date = document.getElementById('input-date').value;
-
-  document.getElementById('val-dept').textContent = dept;
-  document.getElementById('val-team').textContent = team;
-  document.getElementById('val-manager').textContent = mgr;
-  document.getElementById('val-location').textContent = loc;
-  document.getElementById('val-date').textContent = date;
-
-  const email = document.getElementById('input-email').value;
-  const phone = document.getElementById('input-phone').value;
-
-  document.getElementById('val-email').textContent = email;
-  document.getElementById('val-phone').textContent = phone;
-
-  const profileData = {
-    name: name,
-    role: role,
-    employeeId: id,
-    initials: initials,
-    department: dept,
-    team: team,
-    reportingManager: mgr,
-    workLocation: loc,
-    joiningDate: date,
-    email: email,
-    phone: phone
-  };
-
-  window.USER_PROFILE = profileData;
-  if (window.parent) {
-    window.parent.USER_PROFILE = profileData;
-  }
-  try {
-    sessionStorage.setItem('USER_PROFILE', JSON.stringify(profileData));
-  } catch(e) {}
-
-  cancelProfileEdit();
-}
-
-(function loadSavedProfile() {
-  let p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
-  if (!p) {
+  function handleNavTab(target, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    var parentWin = window.parent || window;
+    var isManager = false;
     try {
-      const stored = sessionStorage.getItem('USER_PROFILE');
-      if (stored) p = JSON.parse(stored);
+      if (parentWin.AUTH_USER && parentWin.AUTH_USER.role === 'manager') isManager = true;
+      else if (window.AUTH_USER && window.AUTH_USER.role === 'manager') isManager = true;
     } catch(e) {}
-  }
-  if (p) {
-    window.USER_PROFILE = p;
-    if (p.name) {
-      if (document.getElementById('profile-name-display')) document.getElementById('profile-name-display').textContent = p.name;
-      if (document.getElementById('edit-profile-name')) document.getElementById('edit-profile-name').value = p.name;
-    }
-    if (p.role) {
-      if (document.getElementById('profile-role-display')) document.getElementById('profile-role-display').textContent = p.role;
-      if (document.getElementById('edit-profile-role')) document.getElementById('edit-profile-role').value = p.role;
-    }
-    if (p.employeeId) {
-      if (document.getElementById('profile-id-display')) document.getElementById('profile-id-display').textContent = p.employeeId;
-      if (document.getElementById('edit-profile-id')) document.getElementById('edit-profile-id').value = p.employeeId;
-    }
-    if (p.initials && document.getElementById('profile-avatar-display')) {
-      document.getElementById('profile-avatar-display').textContent = p.initials;
-    }
-    if (p.department) {
-      if (document.getElementById('val-dept')) document.getElementById('val-dept').textContent = p.department;
-      if (document.getElementById('input-dept')) document.getElementById('input-dept').value = p.department;
-    }
-    if (p.team) {
-      if (document.getElementById('val-team')) document.getElementById('val-team').textContent = p.team;
-      if (document.getElementById('input-team')) document.getElementById('input-team').value = p.team;
-    }
-    if (p.reportingManager) {
-      if (document.getElementById('val-manager')) document.getElementById('val-manager').textContent = p.reportingManager;
-      if (document.getElementById('input-manager')) document.getElementById('input-manager').value = p.reportingManager;
-    }
-    if (p.workLocation) {
-      if (document.getElementById('val-location')) document.getElementById('val-location').textContent = p.workLocation;
-      if (document.getElementById('input-location')) document.getElementById('input-location').value = p.workLocation;
-    }
-    if (p.joiningDate) {
-      if (document.getElementById('val-date')) document.getElementById('val-date').textContent = p.joiningDate;
-      if (document.getElementById('input-date')) document.getElementById('input-date').value = p.joiningDate;
-    }
-    if (p.email) {
-      if (document.getElementById('val-email')) document.getElementById('val-email').textContent = p.email;
-      if (document.getElementById('input-email')) document.getElementById('input-email').value = p.email;
-    }
-    if (p.phone) {
-      if (document.getElementById('val-phone')) document.getElementById('val-phone').textContent = p.phone;
-      if (document.getElementById('input-phone')) document.getElementById('input-phone').value = p.phone;
-    }
-  }
 
-  // ── Employment Status: compute from leave schedule ──────────────────────────
-  (function updateEmploymentStatus() {
-    const st = window.parent || window;
+    if (target === 'dashboard') {
+      var screen = isManager ? 'tpl-ManagerDashboard' : 'tpl-EmployeeDashboard';
+      var path = isManager ? '../ManagerDashboard/preview.html' : '../EmployeeDashboard/preview.html';
+      if (parentWin.loadScreen) {
+        parentWin.loadScreen(screen);
+      } else if (typeof loadScreen === 'function') {
+        loadScreen(screen);
+      } else if (typeof navTo === 'function') {
+        navTo(isManager ? 'ManagerDashboard' : 'Dashboard');
+      } else {
+        window.location.href = path;
+      }
+    } else if (target === 'attendance') {
+      var screen = isManager ? 'tpl-TeamAttendance' : 'tpl-MyAttendance';
+      var path = isManager ? '../TeamAttendance/preview.html' : '../MyAttendance/preview.html';
+      if (parentWin.loadScreen) {
+        parentWin.loadScreen(screen);
+      } else if (typeof loadScreen === 'function') {
+        loadScreen(screen);
+      } else if (typeof navTo === 'function') {
+        navTo('Attendance');
+      } else {
+        window.location.href = path;
+      }
+    } else if (target === 'apply') {
+      if (parentWin.loadScreen) {
+        parentWin.loadScreen('tpl-ApplyLeave');
+      } else if (typeof loadScreen === 'function') {
+        loadScreen('tpl-ApplyLeave');
+      } else if (typeof navTo === 'function') {
+        navTo('Apply');
+      } else {
+        window.location.href = '../ApplyLeave/preview.html';
+      }
+    } else if (target === 'history') {
+      if (isManager) {
+        alert('Access Restricted: Manager account is not authorized to access My Requests (History).');
+        return;
+      }
+      if (parentWin.loadScreen) {
+        parentWin.loadScreen('tpl-LeaveHistory');
+      } else if (typeof loadScreen === 'function') {
+        loadScreen('tpl-LeaveHistory');
+      } else if (typeof navTo === 'function') {
+        navTo('History');
+      } else {
+        window.location.href = '../LeaveHistory/preview.html';
+      }
+    } else if (target === 'profile') {
+      if (parentWin.loadScreen) {
+        parentWin.loadScreen('tpl-MyProfile');
+      } else if (typeof loadScreen === 'function') {
+        loadScreen('tpl-MyProfile');
+      } else if (typeof navTo === 'function') {
+        navTo('Profile');
+      } else {
+        window.location.href = '../MyProfile/preview.html';
+      }
+    }
+  }
+  window.handleNavTab = handleNavTab;
 
-    // Read schedule from parent global or sessionStorage
-    let schedule = st.LEAVE_STATUS_SCHEDULE || null;
-    if (!schedule) {
+  function setActiveNav(el) {
+    document.querySelectorAll('.bottom-nav .tab').forEach(function(t) { t.classList.remove('active'); });
+    el.classList.add('active');
+  }
+  window.setActiveNav = setActiveNav;
+
+  function handleProfileBackNav() {
+    var parentWin = window.parent || window;
+    if (parentWin.loadScreen) {
+      parentWin.loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof loadScreen === 'function') {
+      loadScreen('tpl-EmployeeDashboard');
+    } else {
+      location.href = '../EmployeeDashboard/preview.html';
+    }
+  }
+  window.handleProfileBackNav = handleProfileBackNav;
+
+  function handleLogoutClick() {
+    var parentWin = window.parent || window;
+    if (parentWin.logoutUser) {
+      parentWin.logoutUser();
+    } else if (window.logoutUser) {
+      window.logoutUser();
+    } else if (parentWin.loadScreen) {
+      parentWin.loadScreen('tpl-Login');
+    } else {
+      location.href = '../Login/preview.html';
+    }
+  }
+  window.handleLogoutClick = handleLogoutClick;
+
+  function enableProfileEdit() {
+    document.getElementById('profile-view-mode').style.display = 'none';
+    document.getElementById('profile-edit-mode').style.display = 'block';
+    document.getElementById('job-read-mode').style.display = 'none';
+    document.getElementById('job-edit-mode').style.display = 'flex';
+    document.getElementById('contact-read-mode').style.display = 'none';
+    document.getElementById('contact-edit-mode').style.display = 'flex';
+
+    document.getElementById('profile-edit-btn-wrap').style.display = 'none';
+    document.getElementById('profile-save-cancel-wrap').style.display = 'flex';
+  }
+  window.enableProfileEdit = enableProfileEdit;
+
+  function cancelProfileEdit() {
+    var p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
+    if (p) {
+      if (document.getElementById('edit-profile-name') && p.name) document.getElementById('edit-profile-name').value = p.name;
+      if (document.getElementById('edit-profile-role') && p.role) document.getElementById('edit-profile-role').value = p.role;
+      if (document.getElementById('edit-profile-id') && p.employeeId) document.getElementById('edit-profile-id').value = p.employeeId;
+      if (document.getElementById('input-dept') && p.department) document.getElementById('input-dept').value = p.department;
+      if (document.getElementById('input-team') && p.team) document.getElementById('input-team').value = p.team;
+      if (document.getElementById('input-manager') && p.reportingManager) document.getElementById('input-manager').value = p.reportingManager;
+      if (document.getElementById('input-location') && p.workLocation) document.getElementById('input-location').value = p.workLocation;
+      if (document.getElementById('input-date') && p.joiningDate) document.getElementById('input-date').value = p.joiningDate;
+      if (document.getElementById('input-email') && p.email) document.getElementById('input-email').value = p.email;
+      if (document.getElementById('input-phone') && p.phone) document.getElementById('input-phone').value = p.phone;
+    }
+    document.getElementById('profile-view-mode').style.display = 'block';
+    document.getElementById('profile-edit-mode').style.display = 'none';
+    document.getElementById('job-read-mode').style.display = 'block';
+    document.getElementById('job-edit-mode').style.display = 'none';
+    document.getElementById('contact-read-mode').style.display = 'block';
+    document.getElementById('contact-edit-mode').style.display = 'none';
+
+    document.getElementById('profile-edit-btn-wrap').style.display = 'block';
+    document.getElementById('profile-save-cancel-wrap').style.display = 'none';
+  }
+  window.cancelProfileEdit = cancelProfileEdit;
+
+  function saveProfileEdit() {
+    var name = document.getElementById('edit-profile-name').value;
+    var role = document.getElementById('edit-profile-role').value;
+    var id = document.getElementById('edit-profile-id').value;
+
+    document.getElementById('profile-name-display').textContent = name;
+    document.getElementById('profile-role-display').textContent = role;
+    document.getElementById('profile-id-display').textContent = id;
+
+    var initials = 'JD';
+    if (name) {
+      var parts = name.trim().split(' ').filter(Boolean);
+      if (parts.length >= 2) initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      else initials = name.substring(0, 2).toUpperCase();
+    }
+    document.getElementById('profile-avatar-display').textContent = initials;
+
+    var dept = document.getElementById('input-dept').value;
+    var team = document.getElementById('input-team').value;
+    var mgr = document.getElementById('input-manager').value;
+    var loc = document.getElementById('input-location').value;
+    var date = document.getElementById('input-date').value;
+
+    document.getElementById('val-dept').textContent = dept;
+    document.getElementById('val-team').textContent = team;
+    document.getElementById('val-manager').textContent = mgr;
+    document.getElementById('val-location').textContent = loc;
+    document.getElementById('val-date').textContent = date;
+
+    var email = document.getElementById('input-email').value;
+    var phone = document.getElementById('input-phone').value;
+
+    document.getElementById('val-email').textContent = email;
+    document.getElementById('val-phone').textContent = phone;
+
+    var profileData = {
+      name: name,
+      role: role,
+      employeeId: id,
+      initials: initials,
+      department: dept,
+      team: team,
+      reportingManager: mgr,
+      workLocation: loc,
+      joiningDate: date,
+      email: email,
+      phone: phone
+    };
+
+    window.USER_PROFILE = profileData;
+    if (window.parent) {
+      window.parent.USER_PROFILE = profileData;
+      if (window.parent.PERSON_DATA && window.parent.PERSON_DATA['priya']) {
+        window.parent.PERSON_DATA['priya'].name = name;
+        window.parent.PERSON_DATA['priya'].role = role;
+        window.parent.PERSON_DATA['priya'].empId = id;
+        window.parent.PERSON_DATA['priya'].initials = initials;
+        window.parent.PERSON_DATA['priya'].contact = phone;
+      }
+    }
+
+    try {
+      sessionStorage.setItem('USER_PROFILE', JSON.stringify(profileData));
+    } catch(e) {}
+
+    var pDoc = (window.parent && window.parent.document) || document;
+    var empTpl = pDoc.getElementById('tpl-EmployeeDashboard');
+    if (empTpl) {
+      var tplHtml = empTpl.innerHTML;
+      tplHtml = tplHtml.replace(/<h1 class="greeting"[^>]*>[\s\S]*?<\/h1>/i, '<h1 class="greeting" id="dash-greeting">Hello, ' + name + '</h1>');
+      if (tplHtml.indexOf('dash-role-meta') !== -1) {
+        tplHtml = tplHtml.replace(/<p class="dash-role-meta"[^>]*>[\s\S]*?<\/p>/i, '<p class="dash-role-meta" id="dash-role-meta"><span id="dash-role-text">' + role + '</span> &bull; <span id="dash-id-text">' + id + '</span></p>');
+      } else {
+        tplHtml = tplHtml.replace(/(<h1 class="greeting"[^>]*>[\s\S]*?<\/h1>)/i, '$1\n          <p class="dash-role-meta" id="dash-role-meta"><span id="dash-role-text">' + role + '</span> &bull; <span id="dash-id-text">' + id + '</span></p>');
+      }
+      empTpl.innerHTML = tplHtml;
+    }
+
+    document.getElementById('profile-view-mode').style.display = 'block';
+    document.getElementById('profile-edit-mode').style.display = 'none';
+    document.getElementById('job-read-mode').style.display = 'block';
+    document.getElementById('job-edit-mode').style.display = 'none';
+    document.getElementById('contact-read-mode').style.display = 'block';
+    document.getElementById('contact-edit-mode').style.display = 'none';
+
+    document.getElementById('profile-edit-btn-wrap').style.display = 'block';
+    document.getElementById('profile-save-cancel-wrap').style.display = 'none';
+  }
+  window.saveProfileEdit = saveProfileEdit;
+
+  // Sync profile details from parent or sessionStorage on mount
+  window.addEventListener('DOMContentLoaded', function() {
+    var p = (window.parent && window.parent.USER_PROFILE) || window.USER_PROFILE;
+    if (!p) {
       try {
-        const raw = sessionStorage.getItem('LEAVE_STATUS_SCHEDULE');
-        if (raw) schedule = JSON.parse(raw);
+        var s = sessionStorage.getItem('USER_PROFILE');
+        if (s) p = JSON.parse(s);
       } catch(e) {}
     }
-
-    let empStatus = st.EMPLOYMENT_STATUS || null;
-    if (!empStatus) {
-      try { empStatus = sessionStorage.getItem('EMPLOYMENT_STATUS'); } catch(e) {}
-    }
-
-    if (schedule && schedule.fromDate) {
-      const today = new Date();
-      const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-      function parseDateStr(s) {
-        if (!s) return null;
-        const d = new Date(s);
-        if (!isNaN(d.getTime())) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        return null;
+    if (p) {
+      if (p.name) {
+        var nameEl = document.getElementById('profile-name-display');
+        if (nameEl) nameEl.textContent = p.name;
+        var editName = document.getElementById('edit-profile-name');
+        if (editName) editName.value = p.name;
+        var av = document.getElementById('profile-avatar-display');
+        if (av) {
+          var parts = p.name.trim().split(' ').filter(Boolean);
+          var inits = parts.length >= 2 ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase() : p.name.substring(0,2).toUpperCase();
+          av.textContent = inits;
+        }
       }
-      function nextWorkDay(d) {
-        const n = new Date(d);
-        n.setDate(n.getDate() + 1);
-        while (n.getDay() === 0 || n.getDay() === 6) n.setDate(n.getDate() + 1);
-        return n;
+      if (p.role) {
+        var roleEl = document.getElementById('profile-role-display');
+        if (roleEl) roleEl.textContent = p.role;
+        var editRole = document.getElementById('edit-profile-role');
+        if (editRole) editRole.value = p.role;
       }
-
-      const from = parseDateStr(schedule.fromDate);
-      const to = parseDateStr(schedule.toDate);
-      const leaveEnd = to || from;
-      const resumeDay = nextWorkDay(leaveEnd);
-
-      if (todayMid >= from && todayMid < resumeDay) {
-        empStatus = 'Inactive';
-        st.EMPLOYMENT_STATUS = 'Inactive';
-        try { sessionStorage.setItem('EMPLOYMENT_STATUS', 'Inactive'); } catch(e) {}
-      } else if (todayMid >= resumeDay) {
-        empStatus = 'Active';
-        st.EMPLOYMENT_STATUS = 'Active';
-        st.LEAVE_STATUS_SCHEDULE = null;
-        try {
-          sessionStorage.setItem('EMPLOYMENT_STATUS', 'Active');
-          sessionStorage.setItem('LEAVE_STATUS_SCHEDULE', '');
-        } catch(e) {}
+      if (p.employeeId) {
+        var idEl = document.getElementById('profile-id-display');
+        if (idEl) idEl.textContent = p.employeeId;
+        var editId = document.getElementById('edit-profile-id');
+        if (editId) editId.value = p.employeeId;
+      }
+      if (p.department) {
+        var dEl = document.getElementById('val-dept');
+        if (dEl) dEl.textContent = p.department;
+        var inDept = document.getElementById('input-dept');
+        if (inDept) inDept.value = p.department;
+      }
+      if (p.team) {
+        var tEl = document.getElementById('val-team');
+        if (tEl) tEl.textContent = p.team;
+        var inTeam = document.getElementById('input-team');
+        if (inTeam) inTeam.value = p.team;
+      }
+      if (p.reportingManager) {
+        var mEl = document.getElementById('val-manager');
+        if (mEl) mEl.textContent = p.reportingManager;
+        var inMgr = document.getElementById('input-manager');
+        if (inMgr) inMgr.value = p.reportingManager;
+      }
+      if (p.workLocation) {
+        var lEl = document.getElementById('val-location');
+        if (lEl) lEl.textContent = p.workLocation;
+        var inLoc = document.getElementById('input-location');
+        if (inLoc) inLoc.value = p.workLocation;
+      }
+      if (p.joiningDate) {
+        var jEl = document.getElementById('val-date');
+        if (jEl) jEl.textContent = p.joiningDate;
+        var inDate = document.getElementById('input-date');
+        if (inDate) inDate.value = p.joiningDate;
+      }
+      if (p.email) {
+        var eEl = document.getElementById('val-email');
+        if (eEl) eEl.textContent = p.email;
+        var inEmail = document.getElementById('input-email');
+        if (inEmail) inEmail.value = p.email;
+      }
+      if (p.phone) {
+        var phEl = document.getElementById('val-phone');
+        if (phEl) phEl.textContent = p.phone;
+        var inPhone = document.getElementById('input-phone');
+        if (inPhone) inPhone.value = p.phone;
       }
     }
-
-    const badge = document.getElementById('profile-emp-status');
-    if (badge && empStatus) {
-      badge.textContent = empStatus;
-      badge.className = empStatus === 'Active' ? 'badge success' : 'badge danger';
-    }
-  })();
-  // ────────────────────────────────────────────────────────────────────────────
-})();
-
+  });
 </script>
-</body></html>
+</body>
+</html>
