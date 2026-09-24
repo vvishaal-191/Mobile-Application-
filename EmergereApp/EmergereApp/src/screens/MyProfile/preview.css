@@ -117,30 +117,35 @@ body {
   font-weight: 400;
 }
 
-/* Main Profile Hero Card */
+/* Main Profile Hero Card - Exact Reference with Image 2 */
 .profile-hero-card {
   margin: -26px 14px 14px 14px;
   background: #FFFFFF;
   border-radius: 24px;
   padding: 24px 16px 22px 16px;
   box-shadow: 0 10px 30px rgba(15, 30, 80, 0.07);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.85);
   position: relative;
   overflow: hidden;
   text-align: center;
   z-index: 2;
 }
 
-/* Subtle decorative wave backdrop inside Hero Card matching Image 2 */
-.profile-hero-wave {
+/* Background Flowing Waves matching Image 2 */
+.profile-hero-waves-svg {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 110px;
-  background: linear-gradient(180deg, #F0F6FF 0%, rgba(240, 246, 255, 0) 100%);
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  border-radius: 24px 24px 50% 50%;
+  z-index: 1;
+}
+
+#profile-view-mode,
+#profile-edit-mode {
+  position: relative;
+  z-index: 2;
 }
 
 /* Edit Pill Button */
@@ -151,10 +156,10 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: #EFF6FF;
-  border: 1px solid #DBEAFE;
+  background: #EEF5FF;
+  border: 1px solid rgba(0, 102, 255, 0.12);
   border-radius: 20px;
-  padding: 5px 12px;
+  padding: 5px 13px;
   color: #0066FF;
   font-size: 13px;
   font-weight: 700;
@@ -203,32 +208,31 @@ body {
 /* Avatar with Camera Badge */
 .profile-avatar-wrap {
   position: relative;
-  width: 86px;
-  height: 86px;
-  margin: 6px auto 12px;
+  width: 82px;
+  height: 82px;
+  margin: 4px auto 10px;
 }
 
 .profile-avatar-circle {
-  width: 86px;
-  height: 86px;
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  background: #DBEAFE;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #0066FF;
   font-size: 28px;
   font-weight: 800;
-  box-shadow: 0 4px 14px rgba(0, 102, 255, 0.15);
-  border: 3px solid #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 102, 255, 0.12);
 }
 
 .profile-camera-badge {
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 26px;
-  height: 26px;
+  width: 27px;
+  height: 27px;
   border-radius: 50%;
   background: #0066FF;
   border: 2.5px solid #FFFFFF;
@@ -240,30 +244,29 @@ body {
 }
 
 .profile-name {
-  font-size: 20px;
+  font-size: 19.5px;
   font-weight: 800;
   color: #0F172A;
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
   line-height: 1.25;
 }
 
 .profile-role {
   font-size: 13.5px;
   color: #64748B;
-  font-weight: 400;
-  margin: 0 0 10px 0;
+  font-weight: 500;
+  margin: 0 0 9px 0;
 }
 
 .profile-id-chip {
   display: inline-block;
-  background: #EFF6FF;
-  border: 1px solid #DBEAFE;
+  background: #E8F2FE;
   color: #0066FF;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   padding: 4px 14px;
-  border-radius: 999px;
-  letter-spacing: 0.2px;
+  border-radius: 12px;
+  letter-spacing: 0.1px;
 }
 
 /* Status Card */

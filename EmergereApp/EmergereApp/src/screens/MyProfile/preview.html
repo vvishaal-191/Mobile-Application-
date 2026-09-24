@@ -26,7 +26,35 @@
 
     <!-- MAIN PROFILE HERO CARD -->
     <div class="profile-hero-card" id="profile-main-card">
-      <div class="profile-hero-wave"></div>
+      <!-- Flowing Waves SVG Background matching Image 2 -->
+      <svg class="profile-hero-waves-svg" viewBox="0 0 400 220" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pWaveLeft1" x1="0%" y1="0%" x2="100%" y2="80%">
+            <stop offset="0%" stop-color="#BFDBFE" stop-opacity="0.75"/>
+            <stop offset="45%" stop-color="#DBEAFE" stop-opacity="0.45"/>
+            <stop offset="100%" stop-color="#EFF6FF" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="pWaveLeft2" x1="0%" y1="15%" x2="85%" y2="85%">
+            <stop offset="0%" stop-color="#93C5FD" stop-opacity="0.55"/>
+            <stop offset="50%" stop-color="#BFDBFE" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#DBEAFE" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="pWaveRight1" x1="100%" y1="100%" x2="0%" y2="10%">
+            <stop offset="0%" stop-color="#BFDBFE" stop-opacity="0.7"/>
+            <stop offset="45%" stop-color="#DBEAFE" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#EFF6FF" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="pWaveRight2" x1="100%" y1="80%" x2="15%" y2="20%">
+            <stop offset="0%" stop-color="#93C5FD" stop-opacity="0.48"/>
+            <stop offset="50%" stop-color="#BFDBFE" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#DBEAFE" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,0 C75,12 145,50 162,105 C180,152 142,198 96,220 L0,220 Z" fill="url(#pWaveLeft1)"/>
+        <path d="M0,30 C58,45 106,88 116,138 C124,178 92,210 56,220 L0,220 Z" fill="url(#pWaveLeft2)"/>
+        <path d="M400,220 C325,212 260,175 242,115 C228,70 265,25 315,0 L400,0 Z" fill="url(#pWaveRight1)"/>
+        <path d="M400,185 C345,170 296,128 290,80 C284,40 310,14 342,0 L400,0 Z" fill="url(#pWaveRight2)"/>
+      </svg>
       
       <!-- Top Right Edit Action Buttons -->
       <div id="profile-edit-btn-wrap">

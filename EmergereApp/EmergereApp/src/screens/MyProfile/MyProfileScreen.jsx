@@ -202,6 +202,12 @@ export default function MyProfileScreen({ navigation, route }) {
 
         {/* MAIN PROFILE HERO CARD */}
         <View style={styles.profileHeroCard}>
+          {/* Decorative Flowing Wave Elements matching Image 2 */}
+          <View style={styles.cardWaveLeft1} pointerEvents="none" />
+          <View style={styles.cardWaveLeft2} pointerEvents="none" />
+          <View style={styles.cardWaveRight1} pointerEvents="none" />
+          <View style={styles.cardWaveRight2} pointerEvents="none" />
+
           {/* Top Right Edit Buttons */}
           <View style={styles.editBtnWrap}>
             {!isEditing ? (
