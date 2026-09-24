@@ -247,7 +247,7 @@ function syncDashboardRequests() {
     c.id = reqId;
     c.style.marginTop = '8px';
     c.onclick = () => {
-      if (pWin.loadScreen) pWin.loadScreen('tpl-MyRequests');
+      if (pWin.loadScreen) pWin.loadScreen('tpl-LeaveHistory');
       else window.location.href = '../LeaveHistory/preview.html';
     };
     c.innerHTML = '<div class="recent-request-left">'

@@ -2262,7 +2262,7 @@
             </div>
 
             <!-- My Requests -->
-            <div class="dash-action-card card-reqs" id="btn-action-reqs" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyRequests')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyRequests')}">
+            <div class="dash-action-card card-reqs" id="btn-action-reqs" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}">
               <div class="action-top-row">
                 <div class="action-icon-box" style="background:#8B5CF6;">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2482,7 +2482,7 @@
               <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyLeave')">Apply Leave</button>
               <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyPermission')">Apply Permission</button>
               <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-LeaveBalance')">Leave Balance</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyRequests')">My Requests (History)</button>
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-LeaveHistory')">My Requests (History)</button>
               <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-HolidayCalendar')">Holiday Calendar</button>
               <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-Notifications')">Notifications</button>
               <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyProfile')">My Profile</button>
@@ -2639,8 +2639,8 @@
               c.id = reqId;
               c.style.marginTop = '8px';
               c.onclick = function() {
-                if (pWin.loadScreen) pWin.loadScreen('tpl-MyRequests');
-                else if (typeof loadScreen === 'function') loadScreen('tpl-MyRequests');
+                if (pWin.loadScreen) pWin.loadScreen('tpl-LeaveHistory');
+                else if (typeof loadScreen === 'function') loadScreen('tpl-LeaveHistory');
               };
               c.innerHTML = '<div class="recent-request-left">'
                 + '<div class="recent-request-title">' + title + '</div>'
@@ -14275,6 +14275,7 @@ body {
           'tpl-ApplyPermission',
           'tpl-LeaveBalance',
           'tpl-LeaveHistory',
+          'tpl-MyRequests',
           'tpl-HolidayCalendar',
           'tpl-Notifications',
           'tpl-MyProfile'
@@ -14412,6 +14413,13 @@ body {
         window.logoutUser = logoutUser;
 
         function loadScreen(tplId, personKey) {
+          // Normalize screen aliases
+          if (tplId === 'tpl-MyRequests') {
+            tplId = 'tpl-LeaveHistory';
+          }
+          if (tplId === 'tpl-Dashboard') {
+            tplId = (window.AUTH_USER && window.AUTH_USER.role === 'manager') ? 'tpl-ManagerDashboard' : 'tpl-EmployeeDashboard';
+          }
           if (tplId === 'tpl-Login') {
             window.AUTH_USER = null;
             try {
