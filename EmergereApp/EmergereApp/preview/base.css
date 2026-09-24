@@ -68,8 +68,24 @@ body {
 .screen:has(.perm-header-banner),
 .screen.has-perm-header,
 .screen:has(.profile-header-banner),
-.screen.has-profile-header {
+.screen.has-profile-header,
+.screen:has(.mr-header-banner),
+.screen.has-mr-header,
+.screen:has(.lb-header-banner),
+.screen.has-lb-header {
   padding-top: 0 !important;
+}
+
+.dash-header,
+.al-header-banner,
+.perm-header-banner,
+.profile-header-banner,
+.mr-header-banner,
+.lb-header-banner {
+  margin-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  width: 100% !important;
 }
 .screen::-webkit-scrollbar {
   display: none !important;

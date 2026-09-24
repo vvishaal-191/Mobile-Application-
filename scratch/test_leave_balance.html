@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Leave Balances Redesign Test</title>
+  <style>
+    :root {
+      --bg: #F4F8FD;
+      --primary: #0066FF;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: #0B0F19;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+    .device {
+      width: 390px;
+      height: 844px;
+      background: #F4F8FD;
+      border-radius: 44px;
+      overflow: hidden;
+      border: 8px solid #1E293B;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 96px;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    /* ── Header Gradient Banner ── */
+    .lb-header-banner {
+      position: relative;
+      width: 100%;
+      margin: 0 !important;
+      padding: 16px 18px 24px 18px !important;
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0, 102, 255, 0.22);
+      background: linear-gradient(135deg, #005CE6 0%, #0066FF 45%, #1A73E8 100%);
+      color: #FFFFFF;
+      box-sizing: border-box;
+    }
+    .lb-header-banner::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -30px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+    }
+    .lb-header-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      left: -20px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+    }
+    .lb-header-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 2;
+    }
+    .lb-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    .lb-back-btn {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.2s ease;
+      padding: 0;
+    }
+    .lb-back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+    .lb-header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    .lb-header-subtitle {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 4px 0 0 0;
+      font-weight: 400;
+    }
+    .lb-header-illustration {
+      position: relative;
+      z-index: 2;
+      margin-top: -8px;
+      margin-right: -4px;
+    }
+
+    .lb-header-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      position: relative;
+      z-index: 2;
+      gap: 12px;
+    }
+    .lb-period-pill {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      box-shadow: 0 4px 14px rgba(0, 30, 100, 0.08);
+    }
+    .lb-period-icon {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 8px;
+      background: #EBF3FE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0066FF;
+    }
+    .lb-period-label {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+    .lb-period-val {
+      font-size: 13px;
+      color: #0F172A;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+    .lb-year-pill {
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(0, 30, 100, 0.08);
+      cursor: pointer;
+      color: #0066FF;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* Cards Container */
+    .lb-cards-container {
+      padding: 16px 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .lb-card {
+      background: #FFFFFF;
+      border-radius: 22px;
+      padding: 16px 16px 14px 16px;
+      box-shadow: 0 4px 20px rgba(0, 50, 150, 0.05);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .lb-card.casual {
+      background-image: radial-gradient(circle at 5% 95%, rgba(0, 102, 255, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+    }
+    .lb-card.sick {
+      background-image: radial-gradient(circle at 5% 95%, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+    }
+    .lb-card.earned {
+      background-image: radial-gradient(circle at 5% 95%, rgba(245, 158, 11, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+    }
+    .lb-card.privilege {
+      background-image: radial-gradient(circle at 5% 95%, rgba(139, 92, 246, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+    }
+    .lb-card.emergency {
+      background-image: radial-gradient(circle at 5% 95%, rgba(239, 68, 68, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+    }
+
+    .lb-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .lb-card-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    .lb-icon-circle {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+    }
+    .lb-icon-circle.casual {
+      background: linear-gradient(135deg, #2563EB 0%, #0066FF 100%);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
+    }
+    .lb-icon-circle.sick {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+    .lb-icon-circle.earned {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+    .lb-icon-circle.privilege {
+      background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    }
+    .lb-icon-circle.emergency {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+
+    .lb-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0;
+      line-height: 1.25;
+    }
+    .lb-card-subtitle {
+      font-size: 12px;
+      color: #64748B;
+      margin: 3px 0 0 0;
+      font-weight: 400;
+    }
+    .lb-available-pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .lb-available-pill.casual {
+      background: #EBF3FE;
+      color: #0066FF;
+    }
+    .lb-available-pill.sick {
+      background: #E8F8F0;
+      color: #10B981;
+    }
+    .lb-available-pill.earned {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+    .lb-available-pill.privilege {
+      background: #F3E8FF;
+      color: #7C3AED;
+    }
+    .lb-available-pill.emergency {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+
+    .lb-progress-track {
+      height: 6px;
+      background: #E2E8F0;
+      border-radius: 999px;
+      margin: 14px 0 12px 0;
+      overflow: hidden;
+      width: 100%;
+    }
+    .lb-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+    .lb-progress-fill.casual { background: #0066FF; }
+    .lb-progress-fill.sick { background: #10B981; }
+    .lb-progress-fill.earned { background: #F59E0B; }
+    .lb-progress-fill.privilege { background: #8B5CF6; }
+    .lb-progress-fill.emergency { background: #EF4444; }
+
+    .lb-stats-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    .lb-stat-box {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 12px;
+      box-sizing: border-box;
+    }
+    .lb-stat-box.neutral {
+      background: #F1F5F9;
+    }
+    .lb-stat-box.tint-casual {
+      background: #EDF4FE;
+    }
+    .lb-stat-box.tint-sick {
+      background: #E8F8F0;
+    }
+    .lb-stat-box.tint-earned {
+      background: #FEF3C7;
+    }
+    .lb-stat-box.tint-privilege {
+      background: #F3E8FF;
+    }
+    .lb-stat-box.tint-emergency {
+      background: #FEE2E2;
+    }
+
+    .lb-stat-lbl {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+    .lb-stat-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-top: 4px;
+      line-height: 1.1;
+    }
+    .lb-stat-val.val-casual { color: #0066FF; }
+    .lb-stat-val.val-sick { color: #10B981; }
+    .lb-stat-val.val-earned { color: #D97706; }
+    .lb-stat-val.val-privilege { color: #7C3AED; }
+    .lb-stat-val.val-emergency { color: #DC2626; }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 76px;
+      background: #FFFFFF;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 10px;
+      z-index: 10;
+    }
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748B;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+    }
+    .tab.active {
+      color: #0066FF;
+    }
+    .nav-apply-btn-wrap {
+      position: relative;
+      margin-top: -24px;
+    }
+    .nav-apply-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #0066FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(0, 102, 255, 0.4);
+    }
+    .nav-pill-wrap {
+      background: #EBF3FE;
+      border-radius: 999px;
+      padding: 4px 16px;
+      margin-bottom: 2px;
+    }
+    .active-dot-indicator {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #0066FF;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="screen has-lb-header">
+      <!-- Royal Blue Curved Banner Header matching Image 2 -->
+      <div class="lb-header-banner">
+        <div class="lb-header-top-row">
+          <div class="lb-header-left">
+            <button class="lb-back-btn" title="Back" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else{window.history.back()}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <div class="lb-header-text">
+              <h1 class="lb-header-title">Leave Balances</h1>
+              <p class="lb-header-subtitle">Employee Balance Summary for 2026</p>
+            </div>
+          </div>
+          <div class="lb-header-illustration">
+            <!-- 3D Calendar with Clock Badge -->
+            <svg width="78" height="78" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="calShadow" x="4" y="10" width="84" height="82" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                  <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#002D80" flood-opacity="0.28"/>
+                </filter>
+                <filter id="clockShadow" x="48" y="48" width="46" height="46" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                  <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#001F5C" flood-opacity="0.32"/>
+                </filter>
+              </defs>
+              <!-- Calendar Back & Base -->
+              <rect x="14" y="20" width="62" height="58" rx="14" fill="#FFFFFF" filter="url(#calShadow)"/>
+              <!-- Calendar Blue Header Bar -->
+              <path d="M14 34C14 26.268 20.268 20 28 20H62C69.732 20 76 26.268 76 34V36H14V34Z" fill="#3B82F6"/>
+              <!-- Spiral Rings -->
+              <rect x="25" y="13" width="5" height="13" rx="2.5" fill="#BFDBFE"/>
+              <rect x="42" y="13" width="5" height="13" rx="2.5" fill="#BFDBFE"/>
+              <rect x="59" y="13" width="5" height="13" rx="2.5" fill="#BFDBFE"/>
+              <!-- Calendar Grid Cells -->
+              <rect x="23" y="44" width="8" height="8" rx="2.5" fill="#BFDBFE" fill-opacity="0.75"/>
+              <rect x="37" y="44" width="8" height="8" rx="2.5" fill="#BFDBFE" fill-opacity="0.75"/>
+              <rect x="51" y="44" width="8" height="8" rx="2.5" fill="#BFDBFE" fill-opacity="0.75"/>
+              <rect x="23" y="56" width="8" height="8" rx="2.5" fill="#BFDBFE" fill-opacity="0.75"/>
+              <rect x="37" y="56" width="8" height="8" rx="2.5" fill="#BFDBFE" fill-opacity="0.75"/>
+              <rect x="51" y="56" width="8" height="8" rx="2.5" fill="#3B82F6"/>
+              <!-- Circular Clock Badge -->
+              <g filter="url(#clockShadow)">
+                <circle cx="68" cy="68" r="18" fill="#0066FF" stroke="#FFFFFF" stroke-width="3.5"/>
+                <path d="M68 58V68H75" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="lb-header-bottom-row">
+          <div class="lb-period-pill">
+            <div class="lb-period-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="lb-period-label">Current Period</div>
+              <div class="lb-period-val">Jan - Dec 2026</div>
+            </div>
+          </div>
+          <div class="lb-year-pill">
+            <span>2026</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#0066FF"><path d="M7 10l5 5 5-5z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Cards Container matching Image 2 -->
+      <div class="lb-cards-container">
+        <!-- 1. Casual Leave -->
+        <div class="lb-card casual">
+          <div class="lb-card-top">
+            <div class="lb-card-info">
+              <div class="lb-icon-circle casual">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="3" ry="3"></rect>
+                  <path d="M16 7V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3"></path>
+                  <line x1="12" y1="11" x2="12" y2="13"></line>
+                </svg>
+              </div>
+              <div>
+                <h3 class="lb-card-title">Casual Leave</h3>
+                <p class="lb-card-subtitle">For personal reasons</p>
+              </div>
+            </div>
+            <div class="lb-available-pill casual">8 Available</div>
+          </div>
+          <div class="lb-progress-track">
+            <div class="lb-progress-fill casual" style="width: 66.7%;"></div>
+          </div>
+          <div class="lb-stats-row">
+            <div class="lb-stat-box tint-casual">
+              <div class="lb-stat-lbl">Allocated</div>
+              <div class="lb-stat-val">12</div>
+            </div>
+            <div class="lb-stat-box neutral">
+              <div class="lb-stat-lbl">Used</div>
+              <div class="lb-stat-val">4</div>
+            </div>
+            <div class="lb-stat-box tint-casual">
+              <div class="lb-stat-lbl">Available</div>
+              <div class="lb-stat-val val-casual">8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Sick Leave -->
+        <div class="lb-card sick">
+          <div class="lb-card-top">
+            <div class="lb-card-info">
+              <div class="lb-icon-circle sick">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="3" ry="3"></rect>
+                  <path d="M16 7V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3"></path>
+                  <line x1="12" y1="11" x2="12" y2="17"></line>
+                  <line x1="9" y1="14" x2="15" y2="14"></line>
+                </svg>
+              </div>
+              <div>
+                <h3 class="lb-card-title">Sick Leave</h3>
+                <p class="lb-card-subtitle">For medical reasons</p>
+              </div>
+            </div>
+            <div class="lb-available-pill sick">5 Available</div>
+          </div>
+          <div class="lb-progress-track">
+            <div class="lb-progress-fill sick" style="width: 71.4%;"></div>
+          </div>
+          <div class="lb-stats-row">
+            <div class="lb-stat-box tint-sick">
+              <div class="lb-stat-lbl">Allocated</div>
+              <div class="lb-stat-val">7</div>
+            </div>
+            <div class="lb-stat-box neutral">
+              <div class="lb-stat-lbl">Used</div>
+              <div class="lb-stat-val">2</div>
+            </div>
+            <div class="lb-stat-box tint-sick">
+              <div class="lb-stat-lbl">Available</div>
+              <div class="lb-stat-val val-sick">5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Earned Leave -->
+        <div class="lb-card earned">
+          <div class="lb-card-top">
+            <div class="lb-card-info">
+              <div class="lb-icon-circle earned">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="6" rx="8" ry="3"></ellipse>
+                  <path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"></path>
+                  <path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="lb-card-title">Earned Leave</h3>
+                <p class="lb-card-subtitle">Annual earned leaves</p>
+              </div>
+            </div>
+            <div class="lb-available-pill earned">8 Available</div>
+          </div>
+          <div class="lb-progress-track">
+            <div class="lb-progress-fill earned" style="width: 53.3%;"></div>
+          </div>
+          <div class="lb-stats-row">
+            <div class="lb-stat-box tint-earned">
+              <div class="lb-stat-lbl">Allocated</div>
+              <div class="lb-stat-val">15</div>
+            </div>
+            <div class="lb-stat-box neutral">
+              <div class="lb-stat-lbl">Used</div>
+              <div class="lb-stat-val">5</div>
+            </div>
+            <div class="lb-stat-box tint-earned">
+              <div class="lb-stat-lbl">Pending</div>
+              <div class="lb-stat-val val-earned">2</div>
+            </div>
+            <div class="lb-stat-box tint-earned">
+              <div class="lb-stat-lbl">Available</div>
+              <div class="lb-stat-val val-earned">8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Privilege Leave -->
+        <div class="lb-card privilege">
+          <div class="lb-card-top">
+            <div class="lb-card-info">
+              <div class="lb-icon-circle privilege">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 4l3 12h14l3-12-5 6-5-8-5 8-5-6z"></path>
+                  <path d="M5 20h14"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="lb-card-title">Privilege Leave</h3>
+                <p class="lb-card-subtitle">Special privilege leaves</p>
+              </div>
+            </div>
+            <div class="lb-available-pill privilege">3 Available</div>
+          </div>
+          <div class="lb-progress-track">
+            <div class="lb-progress-fill privilege" style="width: 100%;"></div>
+          </div>
+          <div class="lb-stats-row">
+            <div class="lb-stat-box tint-privilege">
+              <div class="lb-stat-lbl">Allocated</div>
+              <div class="lb-stat-val">3</div>
+            </div>
+            <div class="lb-stat-box neutral">
+              <div class="lb-stat-lbl">Used</div>
+              <div class="lb-stat-val">0</div>
+            </div>
+            <div class="lb-stat-box tint-privilege">
+              <div class="lb-stat-lbl">Available</div>
+              <div class="lb-stat-val val-privilege">3</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Emergency Leave -->
+        <div class="lb-card emergency">
+          <div class="lb-card-top">
+            <div class="lb-card-info">
+              <div class="lb-icon-circle emergency">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v3"></path>
+                  <path d="M18.5 5.5l-2.1 2.1"></path>
+                  <path d="M5.5 5.5l2.1 2.1"></path>
+                  <path d="M7 11a5 5 0 0 1 10 0v5H7v-5z"></path>
+                  <rect x="5" y="16" width="14" height="4" rx="1.5"></rect>
+                  <circle cx="12" cy="11" r="1.5" fill="#FFFFFF"></circle>
+                </svg>
+              </div>
+              <div>
+                <h3 class="lb-card-title">Emergency Leave</h3>
+                <p class="lb-card-subtitle">For urgent situations</p>
+              </div>
+            </div>
+            <div class="lb-available-pill emergency">2 Available</div>
+          </div>
+          <div class="lb-progress-track">
+            <div class="lb-progress-fill emergency" style="width: 40%;"></div>
+          </div>
+          <div class="lb-stats-row">
+            <div class="lb-stat-box tint-emergency">
+              <div class="lb-stat-lbl">Allocated</div>
+              <div class="lb-stat-val val-emergency">5</div>
+            </div>
+            <div class="lb-stat-box neutral">
+              <div class="lb-stat-lbl">Used</div>
+              <div class="lb-stat-val">3</div>
+            </div>
+            <div class="lb-stat-box tint-emergency">
+              <div class="lb-stat-lbl">Available</div>
+              <div class="lb-stat-val val-emergency">2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+      <div class="tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span>Attendance</span>
+      </div>
+      <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+        <div class="nav-apply-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <span style="font-size: 11px; font-weight: 700; color: #1E293B; margin-top: 4px;">Apply</span>
+      </div>
+      <div class="tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+          <polyline points="12 7 12 12 15 15"></polyline>
+        </svg>
+        <span>History</span>
+      </div>
+      <div class="tab active" id="tab-profile">
+        <div class="nav-pill-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <span>Profile</span>
+        <span class="active-dot-indicator"></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
