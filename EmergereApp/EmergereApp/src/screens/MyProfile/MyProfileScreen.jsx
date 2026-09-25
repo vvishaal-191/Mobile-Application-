@@ -189,7 +189,14 @@ export default function MyProfileScreen({ navigation, route }) {
 
           <TouchableOpacity
             style={styles.backBtn}
-            onPress={() => (navigation && navigation.canGoBack ? navigation.goBack() : go('Dashboard'))}
+            onPress={() => {
+              if (navigation && navigation.canGoBack && navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                const isManager = (typeof global !== 'undefined' && global.AUTH_USER && global.AUTH_USER.role === 'manager');
+                go(isManager ? 'ManagerDashboard' : 'Dashboard');
+              }
+            }}
             activeOpacity={0.8}
             accessibilityLabel="Back"
           >

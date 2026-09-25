@@ -414,7 +414,14 @@
       }
     } else if (target === 'history') {
       if (isManager) {
-        alert('Access Restricted: Manager account is not authorized to access My Requests (History).');
+        var mScreen = 'tpl-HolidayCalendar';
+        if (parentWin.loadScreen) {
+          parentWin.loadScreen(mScreen);
+        } else if (typeof loadScreen === 'function') {
+          loadScreen(mScreen);
+        } else {
+          window.location.href = '../HolidayCalendar/preview.html';
+        }
         return;
       }
       if (parentWin.loadScreen) {
@@ -447,13 +454,25 @@
   window.setActiveNav = setActiveNav;
 
   function handleProfileBackNav() {
-    var parentWin = window.parent || window;
+    var parentWin = (window.parent && window.parent !== window) ? window.parent : window;
+    var isManager = false;
+    try {
+      if (parentWin.AUTH_USER && parentWin.AUTH_USER.role === 'manager') isManager = true;
+      else if (window.AUTH_USER && window.AUTH_USER.role === 'manager') isManager = true;
+      else if (parentWin.USER_PROFILE && (parentWin.USER_PROFILE.role || '').toLowerCase().indexOf('manager') !== -1) isManager = true;
+      else if (window.USER_PROFILE && (window.USER_PROFILE.role || '').toLowerCase().indexOf('manager') !== -1) isManager = true;
+      else if (localStorage.getItem('user_role') === 'manager' || localStorage.getItem('auth_role') === 'manager') isManager = true;
+    } catch(e) {}
+
+    var targetScreen = isManager ? 'tpl-ManagerDashboard' : 'tpl-EmployeeDashboard';
+    var targetPath = isManager ? '../ManagerDashboard/preview.html' : '../EmployeeDashboard/preview.html';
+
     if (parentWin.loadScreen) {
-      parentWin.loadScreen('tpl-EmployeeDashboard');
+      parentWin.loadScreen(targetScreen);
     } else if (typeof loadScreen === 'function') {
-      loadScreen('tpl-EmployeeDashboard');
+      loadScreen(targetScreen);
     } else {
-      location.href = '../EmployeeDashboard/preview.html';
+      location.href = targetPath;
     }
   }
   window.handleProfileBackNav = handleProfileBackNav;
@@ -588,6 +607,12 @@
       }
       empTpl.innerHTML = tplHtml;
     }
+    var mgrTpl = pDoc.getElementById('tpl-ManagerDashboard');
+    if (mgrTpl) {
+      var mgrHtml = mgrTpl.innerHTML;
+      mgrHtml = mgrHtml.replace(/<div class="mgr-user-name"[^>]*>[\s\S]*?<\/div>/i, '<div class="mgr-user-name">' + name + '</div>');
+      mgrTpl.innerHTML = mgrHtml;
+    }
 
     document.getElementById('profile-view-mode').style.display = 'block';
     document.getElementById('profile-edit-mode').style.display = 'none';
@@ -677,6 +702,20 @@
         var inPhone = document.getElementById('input-phone');
         if (inPhone) inPhone.value = p.phone;
       }
+    }
+
+    var isManager = false;
+    try {
+      var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+      if (pWin.AUTH_USER && pWin.AUTH_USER.role === 'manager') isManager = true;
+      else if (window.AUTH_USER && window.AUTH_USER.role === 'manager') isManager = true;
+      else if (p && (p.role || '').toLowerCase().indexOf('manager') !== -1) isManager = true;
+    } catch(e) {}
+    if (isManager) {
+      var histSpan = document.querySelector('#tab-history span');
+      if (histSpan) histSpan.textContent = 'Calendar';
+      var subEl = document.querySelector('.profile-header-subtitle');
+      if (subEl) subEl.textContent = 'Manager Details';
     }
   });
 </script>

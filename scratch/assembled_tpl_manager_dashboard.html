@@ -1,40 +1,925 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Manager Dashboard - Preview</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../preview/base.css" />
-  <link rel="stylesheet" href="./preview.css" />
-</head>
-<body class="standalone">
+
+  <template id="tpl-ManagerDashboard">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+      <style>
+
+    :root {
+      --primary: #2F6BFF;
+      --primary-dark: #1E4FD6;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --navy: #0F172A;
+      --text: #0F172A;
+      --text-secondary: #64748B;
+      --text-muted: #94A3B8;
+      --success: #10B981;
+      --danger: #EF4444;
+      --border: #E2E8F0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    *::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    body {
+      background: #0B1120;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .device {
+      width: 375px;
+      height: 812px;
+      background: var(--bg);
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 0 10px #1e293b;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 90px;
+      background: #F8FAFC;
+    }
+
+    /* ── Top Blue Banner Header ── */
+    .mgr-header {
+      background: linear-gradient(135deg, #0050D8 0%, #0036A8 50%, #001A5E 100%);
+      padding: 16px 16px 36px 16px;
+      position: relative;
+      overflow: hidden;
+      color: #FFFFFF;
+    }
+
+    .mgr-header-waves {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.85;
+    }
+
+    .mgr-header-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .mgr-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .mgr-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Hamburger icon matching Image 3 */
+    .hamburger-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .hamburger-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: scale(1.03);
+    }
+
+    .hamburger-btn:active {
+      transform: scale(0.96);
+    }
+
+    .mgr-header-titles {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mgr-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+
+    .mgr-subtitle {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: rgba(224, 242, 254, 0.8);
+      margin-top: 2px;
+    }
+
+    .mgr-bell-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.15s ease;
+    }
+
+    .mgr-bell-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .mgr-bell-dot {
+      position: absolute;
+      top: 6px;
+      right: 7px;
+      width: 8px;
+      height: 8px;
+      background: #EF4444;
+      border-radius: 50%;
+      border: 1.5px solid #0036A8;
+    }
+
+    /* Greeting row with 3D Illustration */
+    .mgr-greeting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .mgr-greeting-col {
+      flex: 1;
+    }
+
+    .mgr-greeting-sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(224, 242, 254, 0.85);
+      margin-bottom: 2px;
+    }
+
+    .mgr-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mgr-user-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+
+    .mgr-role-badge {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .mgr-date-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: rgba(224, 242, 254, 0.85);
+      margin-top: 6px;
+    }
+
+    /* 3D Art Graphic */
+    .mgr-header-art-wrap {
+      flex-shrink: 0;
+      width: 120px;
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Top 4 Stat Cards Row ── */
+    .mgr-stats-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 12px 8px;
+      margin: -24px 14px 14px 14px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .stat-item {
+      background: #FFFFFF;
+      border: 1px solid #F1F5F9;
+      border-radius: 14px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .stat-icon-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-chevron {
+      color: #CBD5E1;
+      font-size: 11px;
+    }
+
+    .stat-num {
+      font-size: 19px;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.1;
+      margin-bottom: 3px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      color: #64748B;
+      line-height: 1.25;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Wave curves on stat cards */
+    .stat-wave-bg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 26px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.65;
+    }
+
+    /* ── Quick Actions Card ── */
+    .mgr-section-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 16px 14px;
+      margin: 0 14px 14px 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      border: 1px solid #F1F5F9;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-head-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-title-wrap h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0F172A;
+      line-height: 1.2;
+    }
+
+    .section-title-wrap p {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748B;
+      margin-top: 2px;
+    }
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .qa-card {
+      border-radius: 14px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      overflow: hidden;
+      min-height: 98px;
+    }
+
+    .qa-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .qa-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .qa-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .qa-chevron-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .qa-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+
+    .qa-desc {
+      font-size: 10.5px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    /* Specific Quick Action Themes */
+    /* 1. Team Attendance (Royal Blue Gradient) */
+    .qa-attendance {
+      background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 50%, #3B82F6 100%);
+      color: #FFFFFF;
+    }
+    .qa-attendance .qa-icon-box {
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+    }
+    .qa-attendance .qa-chevron-circle {
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+    }
+    .qa-attendance .qa-desc {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* 2. Leave Approvals (Soft Ice Blue) */
+    .qa-leave {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      color: #0F172A;
+      border: 1px solid #BFDBFE;
+    }
+    .qa-leave .qa-icon-box {
+      background: #2563EB;
+      color: #FFFFFF;
+    }
+    .qa-leave .qa-chevron-circle {
+      background: #FFFFFF;
+      color: #2563EB;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+    }
+    .qa-leave .qa-desc {
+      color: #64748B;
+    }
+
+    /* 3. Perm. Approvals (Soft Amber) */
+    .qa-perm {
+      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+      color: #0F172A;
+      border: 1px solid #FDE68A;
+    }
+    .qa-perm .qa-icon-box {
+      background: #F59E0B;
+      color: #FFFFFF;
+    }
+    .qa-perm .qa-chevron-circle {
+      background: #FFFFFF;
+      color: #D97706;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+    }
+    .qa-perm .qa-desc {
+      color: #64748B;
+    }
+
+    /* 4. Team Calendar (Soft Lilac) */
+    .qa-calendar {
+      background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%);
+      color: #0F172A;
+      border: 1px solid #E9D5FF;
+    }
+    .qa-calendar .qa-icon-box {
+      background: #8B5CF6;
+      color: #FFFFFF;
+    }
+    .qa-calendar .qa-chevron-circle {
+      background: #FFFFFF;
+      color: #8B5CF6;
+      box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);
+    }
+    .qa-calendar .qa-desc {
+      color: #64748B;
+    }
+
+    .qbadge {
+      background: #EF4444;
+      color: #FFFFFF;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      margin-left: 6px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* ── Recent Requests Card ── */
+    .empty-requests-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 10px 10px 10px;
+      text-align: center;
+    }
+
+    .empty-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-top: 8px;
+    }
+
+    .empty-desc {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #64748B;
+      margin-top: 4px;
+      max-width: 240px;
+      line-height: 1.35;
+    }
+
+    /* ── Bottom Navigation ── */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: #FFFFFF;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 100;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .nav-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #64748B;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-tab.active {
+      color: #0066FF;
+      font-weight: 700;
+    }
+
+    .dashboard-pill-wrap {
+      width: 44px;
+      height: 28px;
+      background: #EFF6FF;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-apply-btn-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: -24px;
+      cursor: pointer;
+    }
+
+    .nav-apply-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(29, 78, 216, 0.4);
+    }
+
+    .nav-apply-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-top: 4px;
+    }
+
+    /* ── Sidebar Overlay & Drawer ── */
+    .sidebar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 8, 24, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar-drawer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 320px;
+      max-width: 84%;
+      background: linear-gradient(180deg, #002888 0%, #001A5E 140px, #00103A 260px, #000924 100%);
+      border-top-right-radius: 28px;
+      border-bottom-right-radius: 28px;
+      padding: 24px 16px 28px 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 16px 0 40px rgba(0, 0, 0, 0.65);
+      transform: translateX(-100%);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .sidebar-overlay.open .sidebar-drawer {
+      transform: translateX(0);
+    }
+
+    .sidebar-bg-waves {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 310px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2px;
+      padding-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .sidebar-logo {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(56, 189, 248, 0.45));
+    }
+
+    .sidebar-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-close-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .sidebar-close-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .sidebar-profile-card {
+      background: linear-gradient(135deg, rgba(20, 85, 220, 0.42) 0%, rgba(8, 42, 135, 0.55) 100%);
+      border: 1px solid rgba(120, 180, 255, 0.38);
+      border-radius: 20px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 24px rgba(0, 15, 60, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+
+    .sidebar-profile-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sidebar-avatar-circle {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1E78FF 0%, #0056D2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 19px;
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(0, 86, 210, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .sidebar-profile-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+
+    .sidebar-role-badge {
+      background: #1D4ED8;
+      color: #FFFFFF;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.6px;
+      align-self: flex-start;
+      margin-top: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-logout-btn {
+      width: 100%;
+      margin-top: 14px;
+      background: rgba(220, 38, 38, 0.12);
+      border: 1.2px solid rgba(239, 68, 68, 0.55);
+      border-radius: 12px;
+      padding: 9px 12px;
+      color: #F87171;
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      box-sizing: border-box;
+    }
+
+    .sidebar-logout-btn:hover {
+      background: rgba(220, 38, 38, 0.22);
+      border-color: rgba(239, 68, 68, 0.75);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sidebar-nav-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 14px;
+      padding: 8px 12px 8px 10px;
+      color: #FFFFFF;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.15s ease;
+      user-select: none;
+      box-sizing: border-box;
+      gap: 12px;
+    }
+
+    .sidebar-nav-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .sidebar-item-icon-box {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .sidebar-item-label {
+      flex: 1;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #FFFFFF;
+      letter-spacing: -0.1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-item-chevron {
+      color: rgba(147, 197, 253, 0.65);
+      flex-shrink: 0;
+    }
+
+    .sidebar-nav-item.active {
+      background: #DCE9FE !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-nav-item.active .sidebar-item-icon-box {
+      background: #0066FF !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 3px 10px rgba(0, 102, 255, 0.35);
+    }
+
+    .sidebar-nav-item.active .sidebar-item-label {
+      color: #0A2540 !important;
+      font-weight: 700 !important;
+    }
+
+    .sidebar-nav-item.active .sidebar-item-chevron {
+      color: #2563EB !important;
+      stroke-width: 2.6 !important;
+    }
+  
+      </style>
+    </head>
+    <body>
 
   <div class="device">
-    <div class="screen has-mgr-header">
+    <div class="screen">
       <!-- Top Blue Banner Header matching Image 2 -->
       <div class="mgr-header">
         <!-- SVG Luminous Wave Background -->
-        <svg class="mgr-header-waves" viewBox="0 0 400 220" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="mgr-header-waves" viewBox="0 0 375 220" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <radialGradient id="mgrHdrGlow" cx="25%" cy="25%" r="75%">
-              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.32"/>
-              <stop offset="60%" stop-color="#0066FF" stop-opacity="0.14"/>
+            <radialGradient id="mgrHdrGlow" cx="20%" cy="20%" r="70%">
+              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.35"/>
+              <stop offset="60%" stop-color="#0066FF" stop-opacity="0.15"/>
               <stop offset="100%" stop-color="#001855" stop-opacity="0"/>
             </radialGradient>
             <linearGradient id="mgrWave1" x1="0%" y1="0%" x2="100%" y2="80%">
-              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.4"/>
-              <stop offset="50%" stop-color="#2563EB" stop-opacity="0.2"/>
+              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.45"/>
+              <stop offset="50%" stop-color="#2563EB" stop-opacity="0.25"/>
               <stop offset="100%" stop-color="#001F6B" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="mgrWave2" x1="100%" y1="100%" x2="30%" y2="20%">
-              <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.3"/>
+              <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.35"/>
               <stop offset="100%" stop-color="#001444" stop-opacity="0"/>
             </linearGradient>
           </defs>
-          <rect width="400" height="220" fill="url(#mgrHdrGlow)"/>
-          <path d="M0 60 C 80 20 160 85 260 70 C 320 60 360 30 400 20 V 0 H 0 Z" fill="url(#mgrWave1)"/>
-          <path d="M400 120 C 300 130 220 170 190 220 H 400 Z" fill="url(#mgrWave2)"/>
+          <rect width="375" height="220" fill="url(#mgrHdrGlow)"/>
+          <path d="M-20 60 C 60 20 140 85 240 70 C 300 60 340 30 395 20 V 0 H -20 Z" fill="url(#mgrWave1)"/>
+          <path d="M395 120 C 300 130 220 170 190 220 H 395 Z" fill="url(#mgrWave2)"/>
         </svg>
 
         <div class="mgr-header-content">
@@ -125,87 +1010,87 @@
         </div>
       </div>
 
-      <!-- Top 4 Stat Cards Row matching Image 3 -->
+      <!-- Top 4 Stat Cards Row matching Image 2 -->
       <div class="mgr-stats-card">
         <!-- 1. Pending Requests -->
-        <div class="stat-item stat-pending" onclick="handleCardNav('tpl-LeaveApprovals')">
+        <div class="stat-item" onclick="handleCardNav('tpl-LeaveApprovals')">
           <div class="stat-item-top">
-            <div class="stat-icon-circle" style="background: #DBEAFE;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="8" y1="12" x2="14" y2="12"></line>
-                <line x1="8" y1="16" x2="12" y2="16"></line>
-                <circle cx="18" cy="18" r="3" stroke="#0066FF" stroke-width="2.3"></circle>
-              </svg>
-            </div>
-          </div>
-          <div class="stat-num" id="mgr-stat-pending" style="color: #0066FF;">18</div>
-          <div class="stat-lbl">Pending<br>Requests</div>
-          <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 14 C 22 24 55 4 80 12 V 26 H 0 Z" fill="#BFDBFE" fill-opacity="0.8"/>
-          </svg>
-        </div>
-
-        <!-- 2. Approved This Month -->
-        <div class="stat-item stat-approved" onclick="handleCardNav('tpl-LeaveApprovals')">
-          <div class="stat-item-top">
-            <div class="stat-icon-circle" style="background: #DCFCE7;">
-              <div style="width: 22px; height: 22px; border-radius: 50%; background: #00A859; display: flex; align-items: center; justify-content: center;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="stat-num" id="mgr-stat-approved" style="color: #00A859;">24</div>
-          <div class="stat-lbl">Approved<br>This Month</div>
-          <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 12 C 25 4 52 20 80 8 V 26 H 0 Z" fill="#BBF7D0" fill-opacity="0.85"/>
-          </svg>
-        </div>
-
-        <!-- 3. Rejected This Month -->
-        <div class="stat-item stat-rejected" onclick="handleCardNav('tpl-LeaveApprovals')">
-          <div class="stat-item-top">
-            <div class="stat-icon-circle" style="background: #FEE2E2;">
-              <div style="width: 22px; height: 22px; border-radius: 50%; background: #EF4444; display: flex; align-items: center; justify-content: center;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="stat-num" id="mgr-stat-rejected" style="color: #EF4444;">3</div>
-          <div class="stat-lbl">Rejected<br>This Month</div>
-          <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 16 C 28 22 55 8 80 14 V 26 H 0 Z" fill="#FECDD3" fill-opacity="0.85"/>
-          </svg>
-        </div>
-
-        <!-- 4. Request Detail -->
-        <div class="stat-item stat-members" onclick="handleCardNav('tpl-LeaveApprovalDetail', 'priya')">
-          <div class="stat-item-top">
-            <div class="stat-icon-circle" style="background: #EDE9FE;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <div class="stat-icon-box" style="background: #EFF6FF; color: #2563EB;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
-                <line x1="10" y1="9" x2="8" y2="9"></line>
               </svg>
             </div>
+            <span class="stat-chevron">›</span>
           </div>
-          <div class="stat-num" id="mgr-stat-members" style="color: #7C3AED;">12</div>
-          <div class="stat-lbl">Request<br>Detail</div>
+          <div class="stat-num" id="mgr-stat-pending">18</div>
+          <div class="stat-lbl">Pending<br>Requests</div>
           <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 10 C 26 4 54 18 80 11 V 26 H 0 Z" fill="#E9D5FF" fill-opacity="0.85"/>
+            <path d="M0 12 C 25 4 55 18 80 8 V 26 H 0 Z" fill="#E0F2FE"/>
+          </svg>
+        </div>
+
+        <!-- 2. Approved This Month -->
+        <div class="stat-item" onclick="handleCardNav('tpl-LeaveApprovals')">
+          <div class="stat-item-top">
+            <div class="stat-icon-box" style="background: #ECFDF5; color: #10B981;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <span class="stat-chevron">›</span>
+          </div>
+          <div class="stat-num" id="mgr-stat-approved">24</div>
+          <div class="stat-lbl">Approved<br>This Month</div>
+          <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
+            <path d="M0 14 C 30 8 50 18 80 10 V 26 H 0 Z" fill="#DCFCE7"/>
+          </svg>
+        </div>
+
+        <!-- 3. Rejected This Month -->
+        <div class="stat-item" onclick="handleCardNav('tpl-LeaveApprovals')">
+          <div class="stat-item-top">
+            <div class="stat-icon-box" style="background: #FEF2F2; color: #EF4444;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+              </svg>
+            </div>
+            <span class="stat-chevron">›</span>
+          </div>
+          <div class="stat-num" id="mgr-stat-rejected">3</div>
+          <div class="stat-lbl">Rejected<br>This Month</div>
+          <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
+            <path d="M0 10 C 25 18 55 6 80 14 V 26 H 0 Z" fill="#FEE2E2"/>
+          </svg>
+        </div>
+
+        <!-- 4. Team Members -->
+        <div class="stat-item" onclick="handleCardNav('tpl-TeamAttendance')">
+          <div class="stat-item-top">
+            <div class="stat-icon-box" style="background: #FAF5FF; color: #8B5CF6;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <span class="stat-chevron">›</span>
+          </div>
+          <div class="stat-num" id="mgr-stat-members">12</div>
+          <div class="stat-lbl">Team<br>Members</div>
+          <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
+            <path d="M0 15 C 30 5 50 18 80 10 V 26 H 0 Z" fill="#F3E8FF"/>
           </svg>
         </div>
       </div>
 
-      <!-- Quick Actions Section matching Image 2 -->
+      <!-- Quick Actions Section matching Image 2 (WITHOUT "View All") -->
       <div class="mgr-section-card">
         <div class="section-head">
           <div class="section-head-left">
@@ -219,6 +1104,7 @@
               <p>Manage your team activities</p>
             </div>
           </div>
+          <!-- NOTE: "View All" text intentionally removed as per user instruction 2 -->
         </div>
 
         <div class="quick-actions-grid">
@@ -313,7 +1199,7 @@
         </div>
       </div>
 
-      <!-- Recent Requests Section matching Image 2 -->
+      <!-- Recent Requests Section matching Image 2 (WITHOUT "View All") -->
       <div class="mgr-section-card">
         <div class="section-head">
           <div class="section-head-left">
@@ -328,6 +1214,7 @@
               <p>Latest leave and permission requests from your team</p>
             </div>
           </div>
+          <!-- NOTE: "View All" text intentionally removed as per user instruction 2 -->
         </div>
 
         <!-- Requests list or empty state -->
@@ -615,9 +1502,9 @@
       setTimeout(function() {
         const pWin = (window.parent && window.parent !== window) ? window.parent : window;
         if (pWin.loadScreen) {
-          pWin.loadScreen(screenId, personKey || (screenId === "tpl-LeaveApprovalDetail" ? "priya" : undefined));
+          pWin.loadScreen(screenId);
         } else if (typeof loadScreen === 'function') {
-          loadScreen(screenId, personKey || (screenId === "tpl-LeaveApprovalDetail" ? "priya" : undefined));
+          loadScreen(screenId);
         }
       }, 120);
     }
@@ -636,12 +1523,12 @@
       }, 100);
     }
 
-    function handleCardNav(screenId, personKey) {
+    function handleCardNav(screenId) {
       const pWin = (window.parent && window.parent !== window) ? window.parent : window;
       if (pWin.loadScreen) {
-        pWin.loadScreen(screenId, personKey || (screenId === "tpl-LeaveApprovalDetail" ? "priya" : undefined));
+        pWin.loadScreen(screenId);
       } else if (typeof loadScreen === 'function') {
-        loadScreen(screenId, personKey || (screenId === "tpl-LeaveApprovalDetail" ? "priya" : undefined));
+        loadScreen(screenId);
       }
     }
 
@@ -650,7 +1537,6 @@
     }
   </script>
 
-  <script src="../../../preview/shared.js"></script>
-  <script src="./preview.js"></script>
-</body>
-</html>
+    </body>
+    </html>
+  </template>

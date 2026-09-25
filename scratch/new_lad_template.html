@@ -1,0 +1,1114 @@
+<template id="tpl-LeaveApprovalDetail">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <title>Request Detail</title>
+      <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          -webkit-tap-highlight-color: transparent;
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+        *::-webkit-scrollbar, html::-webkit-scrollbar, body::-webkit-scrollbar, .device::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+        body {
+          background: #E8EEF5;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          min-height: 100vh;
+          padding: 0;
+          margin: 0;
+        }
+        .device {
+          width: 100%;
+          max-width: 412px;
+          min-height: 100vh;
+          background: #F4F7FC;
+          position: relative;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .screen-content {
+          flex: 1;
+          padding-bottom: 95px;
+          overflow-y: auto;
+        }
+
+        /* Top Banner Header */
+        .top-header-banner {
+          background: linear-gradient(135deg, #0052D4 0%, #1A6BFF 50%, #4392F9 100%);
+          padding: 24px 18px 46px 18px;
+          position: relative;
+          overflow: hidden;
+        }
+        .header-bubble-1 {
+          position: absolute;
+          top: 15px;
+          right: 110px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.02) 75%);
+          pointer-events: none;
+        }
+        .header-bubble-2 {
+          position: absolute;
+          top: 38px;
+          right: 85px;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.02) 75%);
+          pointer-events: none;
+        }
+        .header-bubble-3 {
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          width: 110px;
+          height: 110px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+          pointer-events: none;
+        }
+        .header-art-wrap {
+          position: absolute;
+          top: 12px;
+          right: 14px;
+          width: 68px;
+          height: 70px;
+          pointer-events: none;
+        }
+        .header-top-row {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          position: relative;
+          z-index: 2;
+        }
+        .back-btn-circle {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.22);
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: background 0.15s, transform 0.15s;
+        }
+        .back-btn-circle:active {
+          transform: scale(0.94);
+          background: rgba(255, 255, 255, 0.35);
+        }
+        .header-titles {
+          display: flex;
+          flex-direction: column;
+        }
+        .header-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #FFFFFF;
+          line-height: 1.25;
+          letter-spacing: -0.2px;
+        }
+        .header-subtitle {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.88);
+          font-weight: 500;
+          margin-top: 3px;
+        }
+        .header-wave-bottom {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 28px;
+          pointer-events: none;
+        }
+
+        /* Main Container */
+        .page-body {
+          padding: 0 16px;
+          position: relative;
+          z-index: 5;
+          margin-top: -24px;
+        }
+
+        /* Card 1: Employee Header Card */
+        .emp-card {
+          background: #FFFFFF;
+          border-radius: 20px;
+          padding: 16px;
+          box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+          border: 1px solid #E2E8F0;
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .emp-left {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex: 1;
+        }
+        .emp-avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: #1D68F2;
+          color: #FFFFFF;
+          font-size: 17px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 14px rgba(29, 104, 242, 0.28);
+          flex-shrink: 0;
+        }
+        .emp-info {
+          display: flex;
+          flex-direction: column;
+        }
+        .emp-name {
+          font-size: 16px;
+          font-weight: 700;
+          color: #0F172A;
+          line-height: 1.2;
+        }
+        .emp-role {
+          font-size: 12.5px;
+          color: #64748B;
+          font-weight: 400;
+          margin-top: 3px;
+        }
+        .emp-id-badge {
+          font-size: 12px;
+          color: #1D68F2;
+          font-weight: 700;
+          margin-top: 4px;
+          letter-spacing: 0.2px;
+        }
+        .emp-role-pill {
+          background: #EFF6FF;
+          border: 1px solid #DBEAFE;
+          color: #2563EB;
+          font-size: 11.5px;
+          font-weight: 600;
+          padding: 5px 11px;
+          border-radius: 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          flex-shrink: 0;
+        }
+        .emp-wave-decor {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          width: 140px;
+          height: 35px;
+          pointer-events: none;
+          opacity: 0.8;
+        }
+
+        /* Common Card Styles */
+        .card-block {
+          background: #FFFFFF;
+          border-radius: 18px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+          border: 1px solid #E2E8F0;
+          margin-top: 14px;
+          overflow: hidden;
+        }
+
+        /* Card 2: Leave Details */
+        .ribbon-header {
+          background: linear-gradient(90deg, #1055E8 0%, #2974F8 50%, #438EF9 100%);
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .ribbon-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .ribbon-title {
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #FFFFFF;
+          margin-left: 8px;
+          letter-spacing: 0.1px;
+        }
+        .ribbon-wave {
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          height: 100%;
+          opacity: 0.25;
+          pointer-events: none;
+        }
+        .details-body {
+          padding: 14px 16px;
+        }
+        .details-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          column-gap: 12px;
+          row-gap: 14px;
+        }
+        .details-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          position: relative;
+        }
+        .details-item.with-border-left {
+          padding-left: 10px;
+          border-left: 1px solid #F1F5F9;
+        }
+        .details-icon-box {
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          background: #EFF6FF;
+          border: 1px solid #DBEAFE;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .details-text-group {
+          display: flex;
+          flex-direction: column;
+        }
+        .details-label {
+          font-size: 11px;
+          color: #64748B;
+          font-weight: 500;
+        }
+        .details-val {
+          font-size: 13.5px;
+          font-weight: 700;
+          color: #0F172A;
+          margin-top: 2px;
+        }
+        .details-full-row {
+          margin-top: 14px;
+          padding-top: 14px;
+          border-top: 1px solid #F1F5F9;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        /* Card 3: Reason for Leave */
+        .card-title-bar {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 16px 0 16px;
+        }
+        .card-title-icon-box {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: #EFF6FF;
+          border: 1px solid #DBEAFE;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .card-title-text {
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #0F172A;
+        }
+        .reason-content-box {
+          margin: 12px 16px 16px 16px;
+          background: #EFF6FF;
+          border-radius: 14px;
+          padding: 12px 14px;
+          border: 1px solid #DBEAFE;
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .quote-icon {
+          flex-shrink: 0;
+          margin-top: 1px;
+        }
+        .reason-text-val {
+          font-size: 13px;
+          color: #1E293B;
+          line-height: 1.45;
+          font-weight: 500;
+        }
+
+        /* Card 4: Approval Path */
+        .approval-path-body {
+          padding: 16px 16px 20px 16px;
+        }
+        .stepper-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+        .step-node {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-width: 68px;
+        }
+        .step-circle {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .step-circle.green {
+          background: #16A34A;
+          box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+        }
+        .step-circle.orange {
+          background: #EA580C;
+          box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+        }
+        .step-circle.grey {
+          background: #F1F5F9;
+          border: 1.5px solid #CBD5E1;
+        }
+        .step-name {
+          font-size: 11.5px;
+          font-weight: 700;
+          color: #0F172A;
+          margin-top: 6px;
+        }
+        .step-pill {
+          font-size: 10.5px;
+          font-weight: 600;
+          padding: 2px 8px;
+          border-radius: 8px;
+          margin-top: 3px;
+        }
+        .step-pill.applied {
+          background: #DCFCE7;
+          color: #15803D;
+        }
+        .step-pill.pending {
+          background: #FEF3C7;
+          color: #D97706;
+        }
+        .step-pill.upcoming {
+          background: #F1F5F9;
+          color: #64748B;
+        }
+        .step-line-solid {
+          flex: 1;
+          height: 2px;
+          background: #2563EB;
+          margin: 0 4px;
+          margin-bottom: 24px;
+        }
+        .step-line-dotted {
+          flex: 1;
+          height: 0;
+          border-top: 2px dashed #CBD5E1;
+          margin: 0 4px;
+          margin-bottom: 24px;
+        }
+
+        /* Card 5: Manager Remarks (Optional) & Action Buttons */
+        .remarks-card {
+          margin-bottom: 20px;
+        }
+        .remarks-body {
+          padding: 12px 16px 16px 16px;
+        }
+        .remarks-textarea {
+          width: 100%;
+          border: 1.5px solid #E2E8F0;
+          border-radius: 12px;
+          padding: 10px 12px;
+          font-size: 12.5px;
+          min-height: 52px;
+          background: #F8FAFC;
+          resize: none;
+          color: #1E293B;
+          outline: none;
+          box-sizing: border-box;
+          transition: border-color 0.2s, background 0.2s;
+        }
+        .remarks-textarea:focus {
+          border-color: #2563EB;
+          background: #FFFFFF;
+        }
+        .char-counter {
+          text-align: right;
+          font-size: 10.5px;
+          color: #64748B;
+          margin-top: 4px;
+          font-weight: 500;
+        }
+        .actions-row {
+          display: flex;
+          gap: 12px;
+          margin-top: 14px;
+        }
+        .btn-action {
+          flex: 1;
+          height: 44px;
+          border-radius: 12px;
+          font-size: 13.5px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: transform 0.15s, opacity 0.15s;
+        }
+        .btn-action:active {
+          transform: scale(0.97);
+        }
+        .btn-approve {
+          background: #DCFCE7;
+          border: 1.5px solid #86EFAC;
+          color: #15803D;
+        }
+        .btn-reject {
+          background: #FEE2E2;
+          border: 1.5px solid #FCA5A5;
+          color: #DC2626;
+        }
+        .btn-circle-icon {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .btn-circle-icon.green {
+          background: #16A34A;
+        }
+        .btn-circle-icon.red {
+          background: #EF4444;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+          position: fixed;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 412px;
+          height: 72px;
+          background: #FFFFFF;
+          border-top: 1px solid #E2E8F0;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          padding: 0 8px;
+          box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+          z-index: 100;
+        }
+        .nav-tab {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          cursor: pointer;
+          color: #64748B;
+          font-size: 11px;
+          font-weight: 500;
+          flex: 1;
+          padding: 6px 0;
+          position: relative;
+        }
+        .nav-tab.active {
+          color: #2563EB;
+          font-weight: 700;
+        }
+        .nav-tab svg {
+          width: 22px;
+          height: 22px;
+        }
+        .nav-apply-wrap {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          position: relative;
+          top: -12px;
+          flex: 1;
+        }
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: #1D68F2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(29, 104, 242, 0.38);
+          transition: transform 0.15s;
+        }
+        .nav-apply-circle:active {
+          transform: scale(0.93);
+        }
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1D68F2;
+          margin-top: 4px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="device">
+        <div class="screen-content">
+          <!-- Top Banner Header -->
+          <div class="top-header-banner">
+            <div class="header-bubble-1"></div>
+            <div class="header-bubble-2"></div>
+            <div class="header-bubble-3"></div>
+            
+            <!-- 3D Document Illustration with Magnifying Glass -->
+            <div class="header-art-wrap">
+              <svg width="68" height="70" viewBox="0 0 68 70" fill="none">
+                <!-- Paper shadow -->
+                <rect x="14" y="10" width="46" height="52" rx="7" fill="#00359E" opacity="0.35" transform="rotate(-6 14 10)"/>
+                <!-- White paper sheet -->
+                <rect x="18" y="6" width="44" height="54" rx="7" fill="#FFFFFF"/>
+                <!-- Paper fold or top ribbon -->
+                <path d="M18 13 C18 9.13 21.13 6 25 6 H55 C58.87 6 62 9.13 62 13 V17 H18 V13 Z" fill="#EBF3FE"/>
+                <!-- Lines on document -->
+                <rect x="24" y="22" width="28" height="3" rx="1.5" fill="#3B82F6"/>
+                <rect x="24" y="29" width="32" height="2.5" rx="1.25" fill="#93C5FD"/>
+                <rect x="24" y="35" width="22" height="2.5" rx="1.25" fill="#93C5FD"/>
+                <rect x="24" y="41" width="18" height="2.5" rx="1.25" fill="#CBD5E1"/>
+                <!-- Magnifying Glass -->
+                <circle cx="50" cy="46" r="10.5" fill="none" stroke="#2563EB" stroke-width="3.5"/>
+                <line x1="58" y1="54" x2="65" y2="61" stroke="#1D4ED8" stroke-width="4.5" stroke-linecap="round"/>
+                <circle cx="50" cy="46" r="7.5" fill="#60A5FA" fill-opacity="0.3"/>
+                <path d="M46 43 C47 41.5 49 41 51 41.5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="header-top-row">
+              <div class="back-btn-circle" onclick="handleDetailBackNav()" title="Back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </div>
+              <div class="header-titles">
+                <div class="header-title" id="lad-header-title">Request Detail</div>
+                <div class="header-subtitle" id="lad-subtitle">Casual Leave Application</div>
+              </div>
+            </div>
+
+            <!-- Wave background curve -->
+            <svg class="header-wave-bottom" viewBox="0 0 375 28" fill="none" preserveAspectRatio="none">
+              <path d="M0,8 C110,24 240,2 375,14 L375,28 L0,28 Z" fill="#F4F7FC"/>
+            </svg>
+          </div>
+
+          <div class="page-body">
+            <!-- Card 1: Employee Info Card -->
+            <div class="emp-card">
+              <div class="emp-left">
+                <div class="emp-avatar" id="lad-avatar">PS</div>
+                <div class="emp-info">
+                  <div class="emp-name" id="lad-name">Priya Sharma</div>
+                  <div class="emp-role" id="lad-role">Senior Software Engineer</div>
+                  <div class="emp-id-badge" id="lad-empid">EMP-2024-0156</div>
+                </div>
+              </div>
+              <div class="emp-role-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Employee</span>
+              </div>
+              <svg class="emp-wave-decor" viewBox="0 0 140 35" fill="none">
+                <path d="M0,25 C45,10 90,32 140,15 L140,35 L0,35 Z" fill="#EFF6FF"/>
+              </svg>
+            </div>
+
+            <!-- Card 2: Leave Details Card -->
+            <div class="card-block" id="lad-specifics-card">
+              <div class="ribbon-header">
+                <div class="ribbon-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </div>
+                <div class="ribbon-title" id="lad-section-title">Leave Details</div>
+                <svg class="ribbon-wave" viewBox="0 0 80 40" fill="none">
+                  <path d="M0,0 C30,30 50,10 80,20 L80,0 Z" fill="#FFFFFF"/>
+                </svg>
+              </div>
+              <div class="details-body">
+                <div class="details-grid">
+                  <!-- Leave Type -->
+                  <div class="details-item" id="lad-row-type">
+                    <div class="details-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                      </svg>
+                    </div>
+                    <div class="details-text-group">
+                      <span class="details-label" id="lad-type-label">Leave Type</span>
+                      <span class="details-val" id="lad-leavetype">Casual Leave</span>
+                    </div>
+                  </div>
+                  <!-- From Date -->
+                  <div class="details-item with-border-left" id="lad-row-from">
+                    <div class="details-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
+                    <div class="details-text-group">
+                      <span class="details-label" id="lad-from-label">From Date</span>
+                      <span class="details-val" id="lad-fromdate">Sep 10, 2026</span>
+                    </div>
+                  </div>
+                  <!-- To Date -->
+                  <div class="details-item" id="lad-row-todate">
+                    <div class="details-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
+                    <div class="details-text-group">
+                      <span class="details-label" id="lad-to-label">To Date</span>
+                      <span class="details-val" id="lad-todate">Sep 11, 2026</span>
+                    </div>
+                  </div>
+                  <!-- Total Days -->
+                  <div class="details-item with-border-left" id="lad-row-dur">
+                    <div class="details-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                    <div class="details-text-group">
+                      <span class="details-label" id="lad-duration-label">Total Days</span>
+                      <span class="details-val" id="lad-totaldays">2 Days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Emergency Contact Row -->
+                <div class="details-full-row" id="lad-row-contact">
+                  <div class="details-icon-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                  </div>
+                  <div class="details-text-group">
+                    <span class="details-label" id="lad-contact-label">Emergency Contact</span>
+                    <span class="details-val" id="lad-contact">+91 98765 43210</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Reason for Leave -->
+            <div class="card-block">
+              <div class="card-title-bar">
+                <div class="card-title-icon-box">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.5">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                  </svg>
+                </div>
+                <div class="card-title-text" id="lad-reason-label">Reason for Leave</div>
+              </div>
+              <div class="reason-content-box">
+                <div class="quote-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#2563EB">
+                    <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/>
+                  </svg>
+                </div>
+                <div class="reason-text-val" id="lad-reason">Family function - attending sister's wedding ceremony in Bangalore.</div>
+              </div>
+            </div>
+
+            <!-- Card 4: Approval Path -->
+            <div class="card-block">
+              <div class="card-title-bar">
+                <div class="card-title-icon-box">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                  </svg>
+                </div>
+                <div class="card-title-text">Approval Path</div>
+              </div>
+              <div class="approval-path-body">
+                <div class="stepper-container">
+                  <!-- Step 1: Priya -->
+                  <div class="step-node">
+                    <div class="step-circle green">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                    <div class="step-name" id="lad-applied-name">Priya</div>
+                    <div class="step-pill applied" id="lad-applied-path">Applied</div>
+                  </div>
+
+                  <!-- Connector 1 -->
+                  <div class="step-line-solid"></div>
+
+                  <!-- Step 2: Manager -->
+                  <div class="step-node">
+                    <div class="step-circle orange">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                    <div class="step-name">Manager</div>
+                    <div class="step-pill pending" id="lad-manager-path">Pending</div>
+                  </div>
+
+                  <!-- Connector 2 -->
+                  <div class="step-line-dotted"></div>
+
+                  <!-- Step 3: HR Desk -->
+                  <div class="step-node">
+                    <div class="step-circle grey">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="21" x2="21" y2="21"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <polyline points="12 3 2 10 22 10"></polyline>
+                        <line x1="6" y1="10" x2="6" y2="21"></line>
+                        <line x1="10" y1="10" x2="10" y2="21"></line>
+                        <line x1="14" y1="10" x2="14" y2="21"></line>
+                        <line x1="18" y1="10" x2="18" y2="21"></line>
+                      </svg>
+                    </div>
+                    <div class="step-name">HR Desk</div>
+                    <div class="step-pill upcoming">Upcoming</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 5: Manager Remarks (Optional) & Action Buttons -->
+            <div class="card-block remarks-card">
+              <div class="card-title-bar">
+                <div class="card-title-icon-box">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </div>
+                <div class="card-title-text">Manager Remarks (Optional)</div>
+              </div>
+              <div class="remarks-body">
+                <textarea class="remarks-textarea" id="lad-remarks-input" placeholder="Add remarks here..." oninput="handleRemarksInput(this)"></textarea>
+                <div class="char-counter" id="lad-char-counter">0/500</div>
+
+                <div class="actions-row" id="lad-btn-row">
+                  <button class="btn-action btn-approve" id="lad-btn-approve" onclick="handleDetailLeaveDecision('approved')">
+                    <span class="btn-circle-icon green">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span>Approve</span>
+                  </button>
+                  <button class="btn-action btn-reject" id="lad-btn-reject" onclick="handleDetailLeaveDecision('rejected')">
+                    <span class="btn-circle-icon red">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </span>
+                    <span>Reject</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+          <div class="nav-tab active" id="tab-dashboard" onclick="handleDetailBackNav()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else{window.location.href='../TeamAttendance/preview.html'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="nav-apply-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveApprovals')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveApprovals')}else{window.location.href='../LeaveApprovals/preview.html'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function handleRemarksInput(el) {
+          const counter = document.getElementById('lad-char-counter');
+          if (counter) {
+            counter.textContent = el.value.length + '/500';
+          }
+        }
+
+        function handleDetailBackNav() {
+          const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+          if (pWin.loadScreen) {
+            pWin.loadScreen('tpl-ManagerDashboard');
+          } else if (typeof loadScreen === 'function') {
+            loadScreen('tpl-ManagerDashboard');
+          } else {
+            window.location.href = '../ManagerDashboard/preview.html';
+          }
+        }
+
+        function handleDetailLeaveDecision(status) {
+          const isApproved = status === 'approved';
+          const labelText = isApproved ? 'Approved' : 'Rejected';
+          const badgeClass = isApproved ? 'badge success' : 'badge danger';
+
+          const store = window.parent || window;
+          const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+          const currentPerson = (store.SELECTED_PERSON) || 'priya';
+
+          if (!store.PERSON_DATA) store.PERSON_DATA = {};
+          if (store.PERSON_DATA[currentPerson]) {
+            store.PERSON_DATA[currentPerson].status = status;
+          }
+
+          store.LAST_LEAVE_DECISION = {
+            id: currentPerson === 'priya' ? '1' : currentPerson,
+            personKey: currentPerson,
+            status: status,
+            labelText: labelText,
+            badgeClass: badgeClass,
+            lType: (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType) || 'Casual Leave'
+          };
+          store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
+
+          if (store.PERSON_DATA && store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].isPermission) {
+            store.LAST_PERMISSION_DECISION = {
+              id: currentPerson,
+              status: status,
+              type: store.PERSON_DATA[currentPerson].leaveType || 'Permission',
+              date: store.PERSON_DATA[currentPerson].fromDate || '04-Sep-2026'
+            };
+            if (store.PERM_STATE) {
+              store.PERM_STATE.forEach(function(req) {
+                if (String(req.id) === String(currentPerson) || req.type === store.PERSON_DATA[currentPerson].leaveType) {
+                  req.status = status;
+                }
+              });
+            }
+          }
+
+          // 1. Update tpl-ManagerDashboard counters if needed
+          const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
+          if (mgrTpl) {
+            let tplHtml = mgrTpl.innerHTML;
+            const pObj = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
+            if (pObj.isPermission) {
+              tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-perm-badge">[0-9]+/, 'class="qbadge" id="manager-dash-perm-badge">0');
+            } else {
+              tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-leave-badge">[0-9]+/, 'class="qbadge" id="manager-dash-leave-badge">0');
+            }
+            mgrTpl.innerHTML = tplHtml;
+          }
+
+          // 2. Update EMP_LEAVE_REQUESTS & PERM_STATE so Employee Dashboard reflects it
+          if (store.EMP_LEAVE_REQUESTS && store.EMP_LEAVE_REQUESTS.length > 0) {
+            store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+              var pData = store.PERSON_DATA && store.PERSON_DATA[currentPerson];
+              var idMatch = String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson) || String(req.id) === ('perm-' + currentPerson);
+              var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName)) && (req.leaveType === (pData.leaveType || pData.type));
+              if (idMatch || detailMatch) {
+                req.status = status;
+                if (isApproved) req.approvedAt = Date.now();
+              }
+            });
+            var pObjDetail = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
+            if (typeof store.updateEmploymentStatusAfterApproval === 'function') {
+              store.updateEmploymentStatusAfterApproval(pObjDetail.name || pObjDetail.employeeName, pObjDetail.leaveType || pObjDetail.type, status);
+            }
+          }
+          if (store.PERM_STATE && store.PERM_STATE.length > 0) {
+            store.PERM_STATE.forEach(function(req) {
+              if (String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson)) {
+                req.status = status;
+              }
+            });
+          }
+
+          // Mark new notification & trigger subtle glow on Employee Dashboard
+          store.HAS_NEW_NOTIFICATION = true;
+          try { store.sessionStorage.setItem('HAS_NEW_NOTIFICATION', 'true'); } catch (e) {}
+          if (typeof window !== 'undefined') {
+            window.HAS_NEW_NOTIFICATION = true;
+            try { sessionStorage.setItem('HAS_NEW_NOTIFICATION', 'true'); } catch (e) {}
+          }
+          const detailLiveBell = parentDoc.getElementById('dash-bell-btn') || parentDoc.querySelector('.dash-top .bell');
+          if (detailLiveBell) detailLiveBell.classList.add('has-glow');
+
+          // Inject notification into tpl-Notifications template if not present
+          const notifTpl = parentDoc.getElementById('tpl-Notifications');
+          if (notifTpl) {
+            const pObj = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
+            const isPermReq = !!(pObj.isPermission || (store.LAST_PERMISSION_DECISION && store.LAST_PERMISSION_DECISION.id === currentPerson));
+            if (isPermReq) {
+              if (!store.PERM_NOTIFICATIONS) store.PERM_NOTIFICATIONS = [];
+              store.PERM_NOTIFICATIONS.unshift({
+                status: status,
+                type: pObj.leaveType || pObj.type || 'Permission',
+                date: pObj.fromDate || pObj.schedule || '04-Sep-2026',
+                managerName: (store.USER_PROFILE && store.USER_PROFILE.reportingManager) || 'Your Manager',
+                employeeName: pObj.name || 'Employee'
+              });
+            } else {
+              const lType = (pObj.leaveType || pObj.type || 'Casual Leave');
+              const fromDate = (pObj.fromDate || 'Sep 10, 2026');
+              const icoClass = isApproved ? 'success' : 'danger';
+              const icoChar = isApproved ? '✓' : '✕';
+              const msgText = isApproved
+                ? 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Approved</b> by the Manager'
+                : 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Rejected</b> by the Manager';
+              const notifCard = '<div class="card notif-card unread" id="dynamic-leave-notif-' + currentPerson + '">'
+                + '<div class="notif-row">'
+                + '<span class="ico-wrap ' + icoClass + '">' + icoChar + '</span>'
+                + '<div class="notif-text"><p>' + msgText + '</p><small>Just now</small></div>'
+                + '<span class="dot"></span>'
+                + '<span class="close-item-btn" onclick="this.closest(\'.notif-card\').remove()" title="Delete">✕</span>'
+                + '</div></div>';
+              let notifHtml = notifTpl.innerHTML;
+              if (notifHtml.indexOf('dynamic-leave-notif-' + currentPerson) === -1) {
+                notifHtml = notifHtml.replace('<div id="notif-container">', '<div id="notif-container">' + notifCard);
+                notifTpl.innerHTML = notifHtml;
+              }
+            }
+          }
+
+          // 4. Update status on live Manager Dashboard if rendered
+          const priyaMgrBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+          if (priyaMgrBadge && (currentPerson === 'priya' || currentPerson === '1')) {
+            priyaMgrBadge.className = badgeClass;
+            priyaMgrBadge.textContent = labelText;
+          }
+
+          const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+          if (liveEmpBadge) {
+            liveEmpBadge.className = badgeClass;
+            liveEmpBadge.textContent = labelText;
+          }
+
+          const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
+          if (liveQBadge) {
+            liveQBadge.textContent = '2';
+          }
+
+          // 5. Update the current Request Detail screen's approval path, banner, and buttons dynamically
+          const mgrPath = document.getElementById('lad-manager-path');
+          if (mgrPath) {
+            mgrPath.className = 'step-pill ' + (isApproved ? 'applied' : 'pending');
+            mgrPath.style.background = isApproved ? '#DCFCE7' : '#FEE2E2';
+            mgrPath.style.color = isApproved ? '#15803D' : '#DC2626';
+            mgrPath.textContent = isApproved ? 'Approved' : 'Rejected';
+          }
+
+          const btnRow = document.getElementById('lad-btn-row');
+          if (btnRow) {
+            btnRow.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px;width:100%;">'
+              + '<div style="text-align:center;padding:12px;border-radius:12px;font-weight:700;font-size:14px;background:' + (isApproved ? '#DCFCE7' : '#FEE2E2') + ';color:' + (isApproved ? '#15803D' : '#DC2626') + ';border:1px solid ' + (isApproved ? '#86EFAC' : '#FCA5A5') + ';">'
+              + (isApproved ? '✓ Approved by Manager' : '✕ Rejected by Manager')
+              + '</div>'
+              + '<div style="display:flex;gap:10px;">'
+              + '<button class="btn-action ' + (isApproved ? 'btn-reject' : 'btn-approve') + '" style="flex:1;height:40px;font-size:13px;" onclick="handleDetailLeaveDecision(\'' + (isApproved ? 'rejected' : 'approved') + '\')">Change to ' + (isApproved ? 'Reject' : 'Approve') + '</button>'
+              + '<button class="btn-action" style="flex:1;height:40px;font-size:13px;background:#1D68F2;color:#FFFFFF;border:none;" onclick="handleDetailBackNav()">Done →</button>'
+              + '</div>'
+              + '</div>';
+          }
+        }
+      </script>
+    </body>
+    </html>
+  </template>
