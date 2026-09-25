@@ -44,7 +44,7 @@ const QUICK_ACTIONS_CONFIG = [
   },
   {
     key: 'PermissionApprovals',
-    title: 'Perm. Approvals',
+    title: 'Permission Approvals',
     desc: 'Review permission requests',
     icon: 'clock',
     target: 'PermissionApprovals',
@@ -75,7 +75,7 @@ const SIDEBAR_ITEMS = [
   { key: 'ManagerDashboard', label: 'Manager Dashboard', icon: 'home', target: 'ManagerDashboard', active: true },
   { key: 'TeamAttendance', label: 'Team Attendance', icon: 'users', target: 'TeamAttendance' },
   { key: 'LeaveApprovals', label: 'Leave Approvals', icon: 'file-text', target: 'LeaveApprovals' },
-  { key: 'PermissionApprovals', label: 'Perm. Approvals', icon: 'check-square', target: 'PermissionApprovals' },
+  { key: 'PermissionApprovals', label: 'Permission Approvals', icon: 'check-square', target: 'PermissionApprovals' },
   { key: 'TeamCalendar', label: 'Team Calendar', icon: 'calendar', target: 'HolidayCalendar' },
   { key: 'Notifications', label: 'Notifications', icon: 'bell', target: 'Notifications' },
   { key: 'MyProfile', label: 'My Profile', icon: 'user', target: 'MyProfile' },
@@ -99,7 +99,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
     const permReqs = (typeof global !== 'undefined' && global.PERMISSION_REQUESTS) || [];
 
     const allNew = [...leaveReqs, ...permReqs]
-      .filter((r) => r && r.id && (r.status || 'Pending').toLowerCase() !== 'pending')
+      .filter((r) => r && r.id)
       .map((r) => ({
         id: r.id,
         name: r.name || 'Employee',
@@ -113,8 +113,8 @@ export default function ManagerDashboardScreen({ navigation, route }) {
         emergencyContact: r.emergencyContact || '',
         reason: r.reason || '',
         subtitle: r.subtitle || `${r.leaveType || r.type || 'Leave'} • ${r.fromDate || r.schedule || ''}`,
-        status: (r.status && r.status.toLowerCase() === 'rejected') ? 'Rejected' : 'Approved',
-        tone: (r.status && r.status.toLowerCase() === 'rejected') ? 'danger' : 'success',
+        status: (r.status && r.status.toLowerCase() === 'rejected') ? 'Rejected' : ((r.status && r.status.toLowerCase() === 'approved') ? 'Approved' : 'Pending'),
+        tone: (r.status && r.status.toLowerCase() === 'rejected') ? 'danger' : ((r.status && r.status.toLowerCase() === 'approved') ? 'success' : 'warning'),
       }));
 
     const getSig = (item) =>
@@ -137,11 +137,15 @@ export default function ManagerDashboardScreen({ navigation, route }) {
         const fresh = allNew.filter((r) => !existingIds.has(r.id) && !existingSigs.has(getSig(r)));
         if (fresh.length === 0) return prev;
         setQuickActions((qa) =>
-          qa.map((action) =>
-            action.key === 'LeaveApprovals'
-              ? { ...action, badge: (action.badge || 0) + fresh.filter((r) => r.leaveType !== r.type).length || (action.badge || 0) + fresh.length }
-              : action
-          )
+          qa.map((action) => {
+            if (action.key === 'PermissionApprovals') {
+              return { ...action, badge: (action.badge || 0) + fresh.length };
+            }
+            if (action.key === 'LeaveApprovals') {
+              return { ...action, badge: (action.badge || 0) + fresh.filter((r) => !r.isPermission).length };
+            }
+            return action;
+          })
         );
         return dedupeList([...fresh, ...prev]);
       });

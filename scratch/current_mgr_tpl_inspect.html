@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Manager Dashboard - Aligned Test</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
+id="tpl-ManagerDashboard">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+      <style>
+
     :root {
       --primary: #2F6BFF;
       --primary-dark: #1E4FD6;
@@ -37,24 +38,29 @@
     }
 
     body {
-      background: #0B1120;
+      background: #F8FAFC;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: stretch;
       min-height: 100vh;
-      padding: 16px;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
     }
 
     .device {
-      width: 410px;
-      height: 844px;
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      height: 100dvh;
       background: #F8FAFC;
-      border-radius: 40px;
+      border-radius: 0;
       overflow: hidden;
       position: relative;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 0 8px #1f2937;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
+      margin: 0 auto;
     }
 
     .screen {
@@ -257,26 +263,24 @@
       justify-content: center;
     }
 
-    /* ── Top 4 Stat Cards Row ── */
+    /* ── Top 4 Stat Cards Row matching Image 3 ── */
     .mgr-stats-card {
       background: #FFFFFF;
       border-radius: 20px;
-      padding: 12px 8px;
+      padding: 10px 8px;
       margin: -24px 16px 14px 16px;
       position: relative;
       z-index: 10;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 10px 25px rgba(0, 40, 140, 0.08);
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      border: 1px solid #F1F5F9;
+      gap: 7px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
     }
 
     .stat-item {
-      background: #FFFFFF;
-      border: 1px solid #F1F5F9;
-      border-radius: 14px;
-      padding: 8px 6px;
+      border-radius: 16px;
+      padding: 10px 6px 12px 7px;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -285,39 +289,53 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
+    .stat-item.stat-pending {
+      background: linear-gradient(180deg, #F0F6FF 0%, #E2EDFE 100%);
+      border: 1px solid #D6E6FE;
+    }
+
+    .stat-item.stat-approved {
+      background: linear-gradient(180deg, #F0FDF4 0%, #E0F9E9 100%);
+      border: 1px solid #CEF3D8;
+    }
+
+    .stat-item.stat-rejected {
+      background: linear-gradient(180deg, #FEF2F2 0%, #FEE5E5 100%);
+      border: 1px solid #FCD4D4;
+    }
+
+    .stat-item.stat-members {
+      background: linear-gradient(180deg, #FAF5FF 0%, #F2E7FE 100%);
+      border: 1px solid #E9D8FE;
+    }
+
     .stat-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
     }
 
     .stat-item-top {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
+      justify-content: flex-start;
+      margin-bottom: 8px;
     }
 
-    .stat-icon-box {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+    .stat-icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-    .stat-chevron {
-      color: #CBD5E1;
-      font-size: 11px;
-    }
-
     .stat-num {
-      font-size: 19px;
+      font-size: 21px;
       font-weight: 800;
-      color: #0F172A;
       line-height: 1.1;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       position: relative;
       z-index: 2;
     }
@@ -325,7 +343,7 @@
     .stat-lbl {
       font-size: 10px;
       font-weight: 600;
-      color: #64748B;
+      color: #334155;
       line-height: 1.25;
       position: relative;
       z-index: 2;
@@ -336,10 +354,10 @@
       bottom: 0;
       left: 0;
       right: 0;
+      width: 100%;
       height: 26px;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.65;
     }
 
     /* ── Quick Actions & Recent Requests ── */
@@ -897,9 +915,11 @@
       color: #2563EB !important;
       stroke-width: 2.6 !important;
     }
-  </style>
-</head>
-<body>
+  
+      </style>
+    </head>
+    <body>
+
   <div class="device">
     <div class="screen has-mgr-header">
       <!-- Top Blue Banner Header matching Image 2 -->
@@ -1015,82 +1035,82 @@
         </div>
       </div>
 
-      <!-- Top 4 Stat Cards Row matching Image 2 -->
+      <!-- Top 4 Stat Cards Row matching Image 3 -->
       <div class="mgr-stats-card">
         <!-- 1. Pending Requests -->
-        <div class="stat-item" onclick="handleCardNav('tpl-LeaveApprovals')">
+        <div class="stat-item stat-pending" onclick="handleCardNav('tpl-LeaveApprovals')">
           <div class="stat-item-top">
-            <div class="stat-icon-box" style="background: #EFF6FF; color: #2563EB;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <div class="stat-icon-circle" style="background: #DBEAFE;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066FF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <line x1="8" y1="12" x2="14" y2="12"></line>
+                <line x1="8" y1="16" x2="12" y2="16"></line>
+                <circle cx="18" cy="18" r="3" stroke="#0066FF" stroke-width="2.3"></circle>
               </svg>
             </div>
-            <span class="stat-chevron">›</span>
           </div>
-          <div class="stat-num" id="mgr-stat-pending">18</div>
+          <div class="stat-num" id="mgr-stat-pending" style="color: #0066FF;">18</div>
           <div class="stat-lbl">Pending<br>Requests</div>
           <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 12 C 25 4 55 18 80 8 V 26 H 0 Z" fill="#E0F2FE"/>
+            <path d="M0 14 C 22 24 55 4 80 12 V 26 H 0 Z" fill="#BFDBFE" fill-opacity="0.8"/>
           </svg>
         </div>
 
         <!-- 2. Approved This Month -->
-        <div class="stat-item" onclick="handleCardNav('tpl-LeaveApprovals')">
+        <div class="stat-item stat-approved" onclick="handleCardNav('tpl-LeaveApprovals')">
           <div class="stat-item-top">
-            <div class="stat-icon-box" style="background: #ECFDF5; color: #10B981;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <polyline points="9 12 11 14 15 10"></polyline>
-              </svg>
+            <div class="stat-icon-circle" style="background: #DCFCE7;">
+              <div style="width: 22px; height: 22px; border-radius: 50%; background: #00A859; display: flex; align-items: center; justify-content: center;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
             </div>
-            <span class="stat-chevron">›</span>
           </div>
-          <div class="stat-num" id="mgr-stat-approved">24</div>
+          <div class="stat-num" id="mgr-stat-approved" style="color: #00A859;">24</div>
           <div class="stat-lbl">Approved<br>This Month</div>
           <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 14 C 30 8 50 18 80 10 V 26 H 0 Z" fill="#DCFCE7"/>
+            <path d="M0 12 C 25 4 52 20 80 8 V 26 H 0 Z" fill="#BBF7D0" fill-opacity="0.85"/>
           </svg>
         </div>
 
         <!-- 3. Rejected This Month -->
-        <div class="stat-item" onclick="handleCardNav('tpl-LeaveApprovals')">
+        <div class="stat-item stat-rejected" onclick="handleCardNav('tpl-LeaveApprovals')">
           <div class="stat-item-top">
-            <div class="stat-icon-box" style="background: #FEF2F2; color: #EF4444;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="9" y1="9" x2="15" y2="15"></line>
-                <line x1="15" y1="9" x2="9" y2="15"></line>
-              </svg>
+            <div class="stat-icon-circle" style="background: #FEE2E2;">
+              <div style="width: 22px; height: 22px; border-radius: 50%; background: #EF4444; display: flex; align-items: center; justify-content: center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
             </div>
-            <span class="stat-chevron">›</span>
           </div>
-          <div class="stat-num" id="mgr-stat-rejected">3</div>
+          <div class="stat-num" id="mgr-stat-rejected" style="color: #EF4444;">3</div>
           <div class="stat-lbl">Rejected<br>This Month</div>
           <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 10 C 25 18 55 6 80 14 V 26 H 0 Z" fill="#FEE2E2"/>
+            <path d="M0 16 C 28 22 55 8 80 14 V 26 H 0 Z" fill="#FECDD3" fill-opacity="0.85"/>
           </svg>
         </div>
 
-        <!-- 4. Team Members -->
-        <div class="stat-item" onclick="handleCardNav('tpl-TeamAttendance')">
+        <!-- 4. Request Detail -->
+        <div class="stat-item stat-members" onclick="handleCardNav('tpl-LeaveApprovalDetail', 'priya')">
           <div class="stat-item-top">
-            <div class="stat-icon-box" style="background: #FAF5FF; color: #8B5CF6;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            <div class="stat-icon-circle" style="background: #EDE9FE;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <line x1="10" y1="9" x2="8" y2="9"></line>
               </svg>
             </div>
-            <span class="stat-chevron">›</span>
           </div>
-          <div class="stat-num" id="mgr-stat-members">12</div>
-          <div class="stat-lbl">Team<br>Members</div>
+          <div class="stat-num" id="mgr-stat-members" style="color: #7C3AED;">12</div>
+          <div class="stat-lbl">Request<br>Detail</div>
           <svg class="stat-wave-bg" viewBox="0 0 80 26" fill="none" preserveAspectRatio="none">
-            <path d="M0 15 C 30 5 50 18 80 10 V 26 H 0 Z" fill="#F3E8FF"/>
+            <path d="M0 10 C 26 4 54 18 80 11 V 26 H 0 Z" fill="#E9D5FF" fill-opacity="0.85"/>
           </svg>
         </div>
       </div>
@@ -1526,12 +1546,12 @@
       }, 100);
     }
 
-    function handleCardNav(screenId) {
+    function handleCardNav(screenId, personKey) {
       const pWin = (window.parent && window.parent !== window) ? window.parent : window;
       if (pWin.loadScreen) {
-        pWin.loadScreen(screenId);
+        pWin.loadScreen(screenId, personKey || (screenId === 'tpl-LeaveApprovalDetail' ? 'priya' : undefined));
       } else if (typeof loadScreen === 'function') {
-        loadScreen(screenId);
+        loadScreen(screenId, personKey || (screenId === 'tpl-LeaveApprovalDetail' ? 'priya' : undefined));
       }
     }
 
@@ -1539,5 +1559,7 @@
       handleCardNav('tpl-Notifications');
     }
   </script>
-</body>
-</html>
+
+    </body>
+    </html>
+  

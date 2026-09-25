@@ -282,6 +282,17 @@ export default StyleSheet.create({
     color: '#64748B',
     marginTop: 2,
   },
+  statusPillInactive: {
+    backgroundColor: '#FEE2E2',
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  statusDotInactive: {
+    backgroundColor: '#EF4444',
+  },
+  statusTextInactive: {
+    color: '#DC2626',
+  },
   statusPill: {
     backgroundColor: '#DCFCE7',
     paddingHorizontal: 14,

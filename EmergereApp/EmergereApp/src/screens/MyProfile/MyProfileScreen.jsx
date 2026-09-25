@@ -293,9 +293,9 @@ export default function MyProfileScreen({ navigation, route }) {
               <Text style={styles.statusSub}>Current working status</Text>
             </View>
           </View>
-          <View style={styles.statusPill}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>{employmentStatus}</Text>
+          <View style={[styles.statusPill, employmentStatus === 'Inactive' && styles.statusPillInactive]}>
+            <View style={[styles.statusDot, employmentStatus === 'Inactive' && styles.statusDotInactive]} />
+            <Text style={[styles.statusText, employmentStatus === 'Inactive' && styles.statusTextInactive]}>{employmentStatus}</Text>
           </View>
         </View>
 
