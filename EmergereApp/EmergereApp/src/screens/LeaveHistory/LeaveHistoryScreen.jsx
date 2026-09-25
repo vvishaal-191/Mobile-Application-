@@ -181,17 +181,29 @@ export default function LeaveHistoryScreen({ navigation }) {
     <View style={styles.screen}>
       {/* Royal Blue Gradient Header Banner matching Image 2 */}
       <View style={styles.headerBanner}>
-        <Image
-          source={require('../../../assets/requests-header-banner.png')}
-          style={styles.headerBannerImg}
-          resizeMode="cover"
-        />
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => (navigation && navigation.canGoBack ? navigation.goBack() : go('Dashboard'))}
-          activeOpacity={0.7}
-          accessibilityLabel="Back"
-        />
+        <View style={styles.headerTopRow}>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity
+              style={styles.backBtn}
+              onPress={() => (navigation && navigation.canGoBack ? navigation.goBack() : go('Dashboard'))}
+              activeOpacity={0.7}
+              accessibilityLabel="Go Back"
+            >
+              <Feather name="arrow-left" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>My Requests</Text>
+              <Text style={styles.headerSubtitle}>Track your leaves & permissions</Text>
+            </View>
+          </View>
+          <View style={styles.headerIllustration}>
+            <Image
+              source={require('../../../assets/requests-header-art.png')}
+              style={styles.headerArtImg}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
       </View>
 
       {/* Filter Segment Bar matching Image 2 */}

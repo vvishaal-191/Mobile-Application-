@@ -1,25 +1,19 @@
 const fs = require('fs');
-const { tplContent } = require('./build_template');
 
-const files = [
-  'preview_app.html',
-  'index.html',
-  'EmergereApp/EmergereApp/preview_app.html',
-  'EmergereApp/EmergereApp/index.html'
-];
+const indexHtml = fs.readFileSync('index.html', 'utf8');
+const newTpl = fs.readFileSync('scratch/new_leave_history_tpl.html', 'utf8');
 
-files.forEach(file => {
-  if (!fs.existsSync(file)) {
-    console.log('File does not exist:', file);
-    return;
-  }
-  const content = fs.readFileSync(file, 'utf8');
-  const startTag = '<template id="tpl-EmployeeDashboard">';
-  const start = content.indexOf(startTag);
-  if (start === -1) {
-    console.error('Could not find start in', file);
-    return;
-  }
-  const end = content.indexOf('</template>', start) + '</template>'.length;
-  console.log(file, ': start =', start, ', end =', end, ', old len =', end - start, ', new len =', tplContent.length);
-});
+const startIdx = indexHtml.indexOf('<template id="tpl-LeaveHistory">');
+const endIdx = indexHtml.indexOf('</template>', startIdx);
+
+const replaced = indexHtml.substring(0, startIdx) + newTpl + indexHtml.substring(endIdx);
+
+const newStart = replaced.indexOf('<template id="tpl-LeaveHistory">');
+const newEnd = replaced.indexOf('</template>', newStart);
+const nextTpl = replaced.indexOf('<template id="tpl-HolidayCalendar">');
+
+console.log('newStart:', newStart);
+console.log('newEnd:', newEnd);
+console.log('nextTpl:', nextTpl);
+console.log('Valid structure:', newStart < newEnd && newEnd < nextTpl);
+console.log('newEnd + </template>.length + indentation == nextTpl:', replaced.substring(newEnd, nextTpl));
