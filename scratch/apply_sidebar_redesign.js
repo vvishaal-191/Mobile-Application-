@@ -1,0 +1,602 @@
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = 'c:/Users/vishaal.poobalan/Downloads/files (7)';
+
+// Valid clean base64 data URI of emergere-circuit-logo.png
+const logoBuf = fs.readFileSync(path.join(ROOT, 'assets', 'emergere-circuit-logo.png'));
+const LOGO_DATA_URI = 'data:image/png;base64,' + logoBuf.toString('base64');
+
+console.log('Valid logo data URI ready, length:', LOGO_DATA_URI.length);
+
+// Generate Drawer HTML
+function getDrawerHtml(isMainTemplate) {
+  const navClick = (tplId, relUrl) => {
+    if (isMainTemplate) {
+      return `handleSidebarNav('${tplId}')`;
+    } else {
+      return `handleSidebarNav('${relUrl}', '${tplId}')`;
+    }
+  };
+
+  return `<!-- Sidebar Drawer Overlay (Image 2 Redesign) -->
+        <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebarDrawer()">
+          <div class="sidebar-drawer" onclick="event.stopPropagation()">
+            <!-- Luminous Wave Graphic in Header Background matching Image 2 -->
+            <svg class="sidebar-bg-waves" viewBox="0 0 320 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="sbGlow1" cx="30%" cy="15%" r="70%">
+                  <stop offset="0%" stop-color="#0066FF" stop-opacity="0.6"/>
+                  <stop offset="55%" stop-color="#0044CC" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#001855" stop-opacity="0"/>
+                </radialGradient>
+                <!-- Upper luminous wave sweeping down-right -->
+                <linearGradient id="sbWaveSweep1" x1="0%" y1="0%" x2="100%" y2="80%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.7"/>
+                  <stop offset="35%" stop-color="#2563EB" stop-opacity="0.5"/>
+                  <stop offset="70%" stop-color="#1D4ED8" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#001F6B" stop-opacity="0"/>
+                </linearGradient>
+                <!-- Second luminous wave swooping under profile card right -->
+                <linearGradient id="sbWaveSweep2" x1="100%" y1="70%" x2="30%" y2="20%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55"/>
+                  <stop offset="50%" stop-color="#1D4ED8" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#001444" stop-opacity="0"/>
+                </linearGradient>
+                <filter id="waveGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <rect width="320" height="310" fill="url(#sbGlow1)"/>
+              <!-- Top sweeping luminous wave -->
+              <path d="M-20 40 C 60 20 140 75 220 70 C 270 66 300 45 340 30 V 0 H -20 Z" fill="url(#sbWaveSweep1)" filter="url(#waveGlow)"/>
+              <path d="M-20 75 C 60 45 150 100 235 85 C 280 75 310 50 340 38 V 0 H -20 Z" fill="url(#sbWaveSweep1)" opacity="0.6"/>
+              <!-- Lower sweeping luminous wave behind card right -->
+              <path d="M340 130 C 270 140 210 190 200 260 C 195 290 210 310 240 320 H 340 Z" fill="url(#sbWaveSweep2)" filter="url(#waveGlow)"/>
+              <path d="M340 160 C 280 170 235 210 230 270 C 228 290 240 310 260 320 H 340 Z" fill="url(#sbWaveSweep2)" opacity="0.7"/>
+            </svg>
+
+            <!-- Header matching Image 2 with Logo -->
+            <div class="sidebar-header">
+              <div class="sidebar-brand">
+                <img src="${LOGO_DATA_URI}" class="sidebar-logo" alt="Mobile Application Logo" />
+                <span class="sidebar-title">Mobile Application</span>
+              </div>
+              <button class="sidebar-close-btn" onclick="closeSidebarDrawer()" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="sidebar-profile-card">
+              <div class="sidebar-profile-top">
+                <div class="sidebar-avatar-circle" id="sidebar-avatar-circle">
+                  <span id="sidebar-initials">JD</span>
+                </div>
+                <div class="sidebar-profile-info">
+                  <div class="sidebar-profile-name" id="sidebar-name">John Doe</div>
+                  <span class="sidebar-role-badge">EMPLOYEE</span>
+                </div>
+              </div>
+              <button class="sidebar-logout-btn" onclick="handleSidebarLogout()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Log Out</span>
+              </button>
+            </div>
+
+            <!-- Navigation Links Matching Image 2 Reference -->
+            <nav class="sidebar-nav">
+              <!-- 1. Employee Dashboard (Active in Image 2) -->
+              <button class="sidebar-nav-item active" onclick="${navClick('tpl-EmployeeDashboard', '../EmployeeDashboard/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Employee Dashboard</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 2. My Attendance -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-MyAttendance', '../MyAttendance/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Attendance</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 3. Apply Leave -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-ApplyLeave', '../ApplyLeave/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Apply Leave</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 4. Apply Permission -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-ApplyPermission', '../ApplyPermission/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <circle cx="18" cy="18" r="4"></circle>
+                    <polyline points="18 16 18 18 19.5 19.5"></polyline>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Apply Permission</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 5. Leave Balance -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-LeaveBalance', '../LeaveBalance/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Leave Balance</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 6. My Requests (History) -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-MyRequests', '../MyRequests/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <polyline points="12 7 12 12 15 15"></polyline>
+                    <path d="M3.05 11a9 9 0 0 1 .5-2m-.5 2h3m-3 0V8"></path>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Requests (History)</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 7. Holiday Calendar -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-HolidayCalendar', '../HolidayCalendar/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="12" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="16" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="8" cy="18" r="1.2" fill="currentColor"></circle>
+                    <circle cx="12" cy="18" r="1.2" fill="currentColor"></circle>
+                    <circle cx="16" cy="18" r="1.2" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Holiday Calendar</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 8. Notifications -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-Notifications', '../Notifications/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Notifications</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 9. My Profile -->
+              <button class="sidebar-nav-item" onclick="${navClick('tpl-MyProfile', '../MyProfile/preview.html')}">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Profile</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </nav>
+          </div>
+        </div>`;
+}
+
+// Generate CSS for Sidebar
+const NEW_SIDEBAR_CSS = `        /* ── Sidebar Overlay & Drawer matching Image 2 Reference ── */
+        .sidebar-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 8, 24, 0.6);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+          z-index: 9999;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.25s ease;
+        }
+
+        .sidebar-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .sidebar-drawer {
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 320px;
+          max-width: 84%;
+          background: linear-gradient(180deg, #002888 0%, #001A5E 140px, #00103A 260px, #000924 100%);
+          border-top-right-radius: 28px;
+          border-bottom-right-radius: 28px;
+          padding: 24px 16px 28px 16px;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 16px 0 40px rgba(0, 0, 0, 0.65);
+          transform: translateX(-100%);
+          transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+          overflow-y: auto;
+          overflow-x: hidden;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          box-sizing: border-box;
+          position: relative;
+        }
+
+        .sidebar-drawer::-webkit-scrollbar {
+          display: none;
+        }
+
+        .sidebar-overlay.open .sidebar-drawer {
+          transform: translateX(0);
+        }
+
+        .sidebar-bg-waves {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 310px;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .sidebar-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-top: 2px;
+          padding-bottom: 16px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .sidebar-brand {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+        }
+
+        .sidebar-logo {
+          width: 25px;
+          height: 25px;
+          object-fit: contain;
+          flex-shrink: 0;
+          filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(56, 189, 248, 0.45));
+        }
+
+        .sidebar-title {
+          font-size: 17px;
+          font-weight: 700;
+          color: #FFFFFF;
+          letter-spacing: -0.2px;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        .sidebar-close-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          transition: background 0.15s ease;
+        }
+
+        .sidebar-close-btn:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .sidebar-close-btn svg line {
+          stroke: #FFFFFF;
+        }
+
+        .sidebar-profile-card {
+          background: linear-gradient(135deg, rgba(20, 85, 220, 0.42) 0%, rgba(8, 42, 135, 0.55) 100%);
+          border: 1px solid rgba(120, 180, 255, 0.38);
+          border-radius: 20px;
+          padding: 16px 18px;
+          margin-bottom: 22px;
+          box-shadow: 0 8px 24px rgba(0, 15, 60, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          position: relative;
+          z-index: 2;
+          box-sizing: border-box;
+        }
+
+        .sidebar-profile-top {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .sidebar-avatar-circle {
+          width: 52px;
+          height: 52px;
+          min-width: 52px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #1E78FF 0%, #0056D2 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          font-size: 19px;
+          font-weight: 800;
+          box-shadow: 0 4px 16px rgba(0, 86, 210, 0.5);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-profile-info {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+
+        .sidebar-profile-name {
+          font-size: 18px;
+          font-weight: 700;
+          color: #FFFFFF;
+          letter-spacing: -0.2px;
+          line-height: 1.2;
+        }
+
+        .sidebar-role-badge {
+          background: #1D4ED8;
+          color: #FFFFFF;
+          font-size: 10.5px;
+          font-weight: 800;
+          padding: 3px 10px;
+          border-radius: 6px;
+          letter-spacing: 0.6px;
+          align-self: flex-start;
+          margin-top: 3px;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-logout-btn {
+          width: 100%;
+          margin-top: 14px;
+          background: rgba(220, 38, 38, 0.12);
+          border: 1.2px solid rgba(239, 68, 68, 0.55);
+          border-radius: 12px;
+          padding: 9px 12px;
+          color: #F87171;
+          font-size: 13.5px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: background 0.15s ease, border-color 0.15s ease;
+          box-sizing: border-box;
+        }
+
+        .sidebar-logout-btn:hover {
+          background: rgba(220, 38, 38, 0.22);
+          border-color: rgba(239, 68, 68, 0.75);
+        }
+
+        .sidebar-logout-btn:active {
+          transform: scale(0.98);
+        }
+
+        .sidebar-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .sidebar-nav-item {
+          width: 100%;
+          background: transparent;
+          border: none;
+          border-radius: 14px;
+          padding: 8px 12px 8px 10px;
+          color: #FFFFFF;
+          text-align: left;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          transition: all 0.15s ease;
+          user-select: none;
+          box-sizing: border-box;
+          gap: 12px;
+        }
+
+        .sidebar-nav-item:hover {
+          background: rgba(255, 255, 255, 0.07);
+        }
+
+        .sidebar-nav-item:active {
+          transform: scale(0.99);
+        }
+
+        .sidebar-item-icon-box {
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          transition: all 0.15s ease;
+          flex-shrink: 0;
+        }
+
+        .sidebar-item-label {
+          flex: 1;
+          font-size: 14.5px;
+          font-weight: 600;
+          color: #FFFFFF;
+          letter-spacing: -0.1px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-item-chevron {
+          color: rgba(147, 197, 253, 0.65);
+          flex-shrink: 0;
+          transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .sidebar-nav-item:hover .sidebar-item-chevron {
+          color: #FFFFFF;
+          transform: translateX(2px);
+        }
+
+        /* Active Item matching Image 2 ("Employee Dashboard") */
+        .sidebar-nav-item.active {
+          background: #DCE9FE !important;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-nav-item.active .sidebar-item-icon-box {
+          background: #0066FF !important;
+          color: #FFFFFF !important;
+          box-shadow: 0 3px 10px rgba(0, 102, 255, 0.35);
+        }
+
+        .sidebar-nav-item.active .sidebar-item-label {
+          color: #0A2540 !important;
+          font-weight: 700 !important;
+        }
+
+        .sidebar-nav-item.active .sidebar-item-chevron {
+          color: #2563EB !important;
+          stroke-width: 2.6 !important;
+        }`;
+
+// Function to update a file
+function updateFile(filePath, isMainTemplate) {
+  let content = fs.readFileSync(path.join(ROOT, filePath), 'utf8');
+
+  // 1. Replace the entire sidebar overlay HTML block
+  const overlayRegex = /<!-- Sidebar Drawer Overlay[^>]*-->\s*<div id="sidebar-overlay"[\s\S]*?<\/nav>\s*<\/div>\s*<\/div>/;
+  if (overlayRegex.test(content)) {
+    const newHtml = getDrawerHtml(isMainTemplate);
+    content = content.replace(overlayRegex, newHtml);
+    console.log(`✓ Replaced sidebar overlay HTML in ${filePath}`);
+  } else {
+    console.error(`✗ Could not match sidebar overlay HTML in ${filePath}`);
+  }
+
+  // 2. Replace sidebar CSS block
+  const cssRegex = /\/\* ── Sidebar Overlay & Drawer[\s\S]*?\.sidebar-nav-item\.active \.sidebar-item-chevron \{[^}]*?\}/;
+  if (cssRegex.test(content)) {
+    content = content.replace(cssRegex, NEW_SIDEBAR_CSS.trim());
+    console.log(`✓ Replaced sidebar CSS in ${filePath}`);
+  } else {
+    // Check if .sidebar-drawer exists in CSS
+    const cssRegex2 = /\.sidebar-overlay\s*\{[\s\S]*?\.sidebar-nav-item\.active \.sidebar-item-chevron \{[^}]*?\}/;
+    if (cssRegex2.test(content)) {
+      content = content.replace(cssRegex2, NEW_SIDEBAR_CSS.trim());
+      console.log(`✓ Replaced sidebar CSS (alt pattern) in ${filePath}`);
+    } else {
+      console.log(`- Note: No embedded CSS to replace in ${filePath}`);
+    }
+  }
+
+  fs.writeFileSync(path.join(ROOT, filePath), content, 'utf8');
+}
+
+// Update the 4 main application HTML files
+updateFile('index.html', true);
+updateFile('preview_app.html', true);
+updateFile('EmergereApp/EmergereApp/index.html', true);
+updateFile('EmergereApp/EmergereApp/preview_app.html', true);
+
+// Update EmployeeDashboard preview files
+updateFile('EmergereApp/EmergereApp/src/screens/EmployeeDashboard/preview.html', false);
+
+// Update EmployeeDashboard/preview.css
+let previewCss = fs.readFileSync(path.join(ROOT, 'EmergereApp/EmergereApp/src/screens/EmployeeDashboard/preview.css'), 'utf8');
+const cssRegex = /\/\* ── Sidebar Overlay & Drawer[\s\S]*?\.sidebar-nav-item\.active \.sidebar-item-chevron \{[^}]*?\}/;
+if (cssRegex.test(previewCss)) {
+  previewCss = previewCss.replace(cssRegex, NEW_SIDEBAR_CSS.trim());
+  console.log(`✓ Replaced sidebar CSS in EmployeeDashboard/preview.css`);
+} else {
+  const cssRegex2 = /\.sidebar-overlay\s*\{[\s\S]*?\.sidebar-nav-item\.active \.sidebar-item-chevron \{[^}]*?\}/;
+  if (cssRegex2.test(previewCss)) {
+    previewCss = previewCss.replace(cssRegex2, NEW_SIDEBAR_CSS.trim());
+    console.log(`✓ Replaced sidebar CSS in EmployeeDashboard/preview.css (alt pattern)`);
+  }
+}
+fs.writeFileSync(path.join(ROOT, 'EmergereApp/EmergereApp/src/screens/EmployeeDashboard/preview.css'), previewCss, 'utf8');
+
+console.log('\nAll updates completed successfully!');

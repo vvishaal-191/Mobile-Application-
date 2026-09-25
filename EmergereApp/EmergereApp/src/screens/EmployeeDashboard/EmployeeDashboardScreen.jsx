@@ -468,23 +468,31 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                   </TouchableOpacity>
                 </View>
 
-                {/* Navigation Links Matching Image 4 */}
+                {/* Navigation Links Matching Image 2 Reference */}
                 <View style={styles.sidebarNav}>
                   <TouchableOpacity
-                    style={[styles.sidebarNavItem, styles.sidebarNavItemHighlight]}
+                    style={[styles.sidebarNavItem, styles.sidebarNavItemActive]}
                     onPress={() => setSidebarVisible(false)}
                   >
-                    <Text style={styles.sidebarNavItemHighlightText}>Employee Dashboard</Text>
+                    <View style={styles.sidebarItemIconBoxActive}>
+                      <Feather name="home" size={20} color="#FFFFFF" />
+                    </View>
+                    <Text style={styles.sidebarNavItemActiveText}>Employee Dashboard</Text>
+                    <Feather name="chevron-right" size={18} color="#2563EB" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.sidebarNavItem, styles.sidebarNavItemActive]}
+                    style={styles.sidebarNavItem}
                     onPress={() => {
                       setSidebarVisible(false);
                       go('MyAttendance');
                     }}
                   >
-                    <Text style={styles.sidebarNavItemActiveText}>My Attendance</Text>
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="calendar" size={19} color="#FFFFFF" />
+                    </View>
+                    <Text style={styles.sidebarNavItemText}>My Attendance</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -494,7 +502,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('ApplyLeave');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="file-text" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>Apply Leave</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -504,7 +516,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('ApplyPermission');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="clock" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>Apply Permission</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -514,7 +530,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('LeaveBalance');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="bar-chart-2" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>Leave Balance</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -524,7 +544,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('LeaveHistory');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="rotate-ccw" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>My Requests (History)</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -534,7 +558,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('HolidayCalendar');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="calendar" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>Holiday Calendar</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -544,7 +572,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('Notifications');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="bell" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>Notifications</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -554,7 +586,11 @@ export default function EmployeeDashboardScreen({ navigation, route }) {
                       go('MyProfile');
                     }}
                   >
+                    <View style={styles.sidebarItemIconBox}>
+                      <Feather name="user" size={19} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.sidebarNavItemText}>My Profile</Text>
+                    <Feather name="chevron-right" size={18} color="rgba(147, 197, 253, 0.65)" style={styles.sidebarItemChevron} />
                   </TouchableOpacity>
                 </View>
               </View>

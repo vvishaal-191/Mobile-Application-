@@ -1841,19 +1841,21 @@
           transform: scale(1.1);
         }
 
-        /* ── Sidebar Drawer Overlay & Menu (Image 2 & Image 4) ── */
+        /* ── Sidebar Drawer Overlay & Menu (Image 2 Redesign) ── */
+        /* ── Sidebar Overlay & Drawer matching Image 2 Reference ── */
         .sidebar-overlay {
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(10, 15, 29, 0.65);
+          background: rgba(0, 8, 24, 0.6);
           backdrop-filter: blur(4px);
-          z-index: 1000;
+          -webkit-backdrop-filter: blur(4px);
+          z-index: 9999;
           opacity: 0;
           pointer-events: none;
-          transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: opacity 0.25s ease;
         }
 
         .sidebar-overlay.open {
@@ -1866,18 +1868,23 @@
           top: 0;
           left: 0;
           bottom: 0;
-          width: 290px;
-          max-width: 82%;
-          background: #1B2333;
-          padding: 24px 18px 24px 18px;
+          width: 320px;
+          max-width: 84%;
+          background: linear-gradient(180deg, #002888 0%, #001A5E 140px, #00103A 260px, #000924 100%);
+          border-top-right-radius: 28px;
+          border-bottom-right-radius: 28px;
+          padding: 24px 16px 28px 16px;
           display: flex;
           flex-direction: column;
-          box-shadow: 10px 0 30px rgba(0, 0, 0, 0.45);
+          box-shadow: 16px 0 40px rgba(0, 0, 0, 0.65);
           transform: translateX(-100%);
           transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
           overflow-y: auto;
+          overflow-x: hidden;
           -ms-overflow-style: none;
           scrollbar-width: none;
+          box-sizing: border-box;
+          position: relative;
         }
 
         .sidebar-drawer::-webkit-scrollbar {
@@ -1888,31 +1895,46 @@
           transform: translateX(0);
         }
 
+        .sidebar-bg-waves {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 310px;
+          pointer-events: none;
+          z-index: 0;
+        }
+
         .sidebar-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-bottom: 18px;
+          padding-top: 2px;
+          padding-bottom: 16px;
+          position: relative;
+          z-index: 2;
         }
 
         .sidebar-brand {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 11px;
         }
 
         .sidebar-logo {
-          width: 24px;
-          height: 24px;
+          width: 25px;
+          height: 25px;
           object-fit: contain;
           flex-shrink: 0;
+          filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(56, 189, 248, 0.45));
         }
 
         .sidebar-title {
-          font-size: 16px;
+          font-size: 17px;
           font-weight: 700;
           color: #FFFFFF;
           letter-spacing: -0.2px;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
 
         .sidebar-close-btn {
@@ -1928,129 +1950,193 @@
         }
 
         .sidebar-close-btn:hover {
-          background: rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.12);
         }
 
         .sidebar-close-btn svg line {
-          stroke: #94A3B8;
-          transition: stroke 0.15s ease;
-        }
-
-        .sidebar-close-btn:hover svg line {
           stroke: #FFFFFF;
         }
 
         .sidebar-profile-card {
-          background: #242E42;
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          border-radius: 16px;
-          padding: 14px 14px 12px 14px;
-          margin-bottom: 18px;
+          background: linear-gradient(135deg, rgba(20, 85, 220, 0.42) 0%, rgba(8, 42, 135, 0.55) 100%);
+          border: 1px solid rgba(120, 180, 255, 0.38);
+          border-radius: 20px;
+          padding: 16px 18px;
+          margin-bottom: 22px;
+          box-shadow: 0 8px 24px rgba(0, 15, 60, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          position: relative;
+          z-index: 2;
+          box-sizing: border-box;
         }
 
         .sidebar-profile-top {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 14px;
         }
 
         .sidebar-avatar-circle {
-          width: 44px;
-          height: 44px;
-          border-radius: 22px;
-          background: #2F6BFF;
+          width: 52px;
+          height: 52px;
+          min-width: 52px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #1E78FF 0%, #0056D2 100%);
           display: flex;
           align-items: center;
           justify-content: center;
           color: #FFFFFF;
-          font-size: 16px;
-          font-weight: 700;
+          font-size: 19px;
+          font-weight: 800;
+          box-shadow: 0 4px 16px rgba(0, 86, 210, 0.5);
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .sidebar-profile-info {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 3px;
         }
 
         .sidebar-profile-name {
-          font-size: 15px;
+          font-size: 18px;
           font-weight: 700;
           color: #FFFFFF;
           letter-spacing: -0.2px;
+          line-height: 1.2;
         }
 
         .sidebar-role-badge {
-          background: #3B82F6;
+          background: #1D4ED8;
           color: #FFFFFF;
           font-size: 10.5px;
-          font-weight: 700;
-          padding: 3px 8px;
+          font-weight: 800;
+          padding: 3px 10px;
           border-radius: 6px;
-          letter-spacing: 0.3px;
+          letter-spacing: 0.6px;
           align-self: flex-start;
+          margin-top: 3px;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
         }
 
         .sidebar-logout-btn {
           width: 100%;
-          margin-top: 12px;
-          background: #382A3A;
-          border: 1px solid rgba(239, 68, 68, 0.25);
-          border-radius: 10px;
-          padding: 8px 12px;
+          margin-top: 14px;
+          background: rgba(220, 38, 38, 0.12);
+          border: 1.2px solid rgba(239, 68, 68, 0.55);
+          border-radius: 12px;
+          padding: 9px 12px;
           color: #F87171;
-          font-size: 13px;
-          font-weight: 600;
+          font-size: 13.5px;
+          font-weight: 700;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 6px;
+          gap: 8px;
           cursor: pointer;
           transition: background 0.15s ease, border-color 0.15s ease;
+          box-sizing: border-box;
         }
 
         .sidebar-logout-btn:hover {
-          background: #4F3851;
-          border-color: rgba(239, 68, 68, 0.4);
+          background: rgba(220, 38, 38, 0.22);
+          border-color: rgba(239, 68, 68, 0.75);
+        }
+
+        .sidebar-logout-btn:active {
+          transform: scale(0.98);
         }
 
         .sidebar-nav {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 6px;
+          position: relative;
+          z-index: 2;
         }
 
         .sidebar-nav-item {
           width: 100%;
           background: transparent;
           border: none;
-          border-radius: 12px;
-          padding: 12px 14px;
-          color: #CBD5E1;
-          font-size: 14px;
-          font-weight: 500;
+          border-radius: 14px;
+          padding: 8px 12px 8px 10px;
+          color: #FFFFFF;
           text-align: left;
           cursor: pointer;
           display: flex;
           align-items: center;
-          transition: background 0.15s ease, color 0.15s ease;
+          transition: all 0.15s ease;
           user-select: none;
+          box-sizing: border-box;
+          gap: 12px;
         }
 
         .sidebar-nav-item:hover {
-          background: #242E42;
-          color: #FFFFFF;
+          background: rgba(255, 255, 255, 0.07);
         }
 
-        .sidebar-nav-item.highlight {
-          background: #2B3448;
-          color: #FFFFFF;
+        .sidebar-nav-item:active {
+          transform: scale(0.99);
         }
 
+        .sidebar-item-icon-box {
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          transition: all 0.15s ease;
+          flex-shrink: 0;
+        }
+
+        .sidebar-item-label {
+          flex: 1;
+          font-size: 14.5px;
+          font-weight: 600;
+          color: #FFFFFF;
+          letter-spacing: -0.1px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-item-chevron {
+          color: rgba(147, 197, 253, 0.65);
+          flex-shrink: 0;
+          transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .sidebar-nav-item:hover .sidebar-item-chevron {
+          color: #FFFFFF;
+          transform: translateX(2px);
+        }
+
+        /* Active Item matching Image 2 ("Employee Dashboard") */
         .sidebar-nav-item.active {
-          background: #2F6BFF !important;
+          background: #DCE9FE !important;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-nav-item.active .sidebar-item-icon-box {
+          background: #0066FF !important;
           color: #FFFFFF !important;
+          box-shadow: 0 3px 10px rgba(0, 102, 255, 0.35);
+        }
+
+        .sidebar-nav-item.active .sidebar-item-label {
+          color: #0A2540 !important;
           font-weight: 700 !important;
+        }
+
+        .sidebar-nav-item.active .sidebar-item-chevron {
+          color: #2563EB !important;
+          stroke-width: 2.6 !important;
         }
 
         /* ── Bottom Navigation Bar ── */
@@ -2437,17 +2523,55 @@
           </div>
         </div>
 
-        <!-- Sidebar Drawer Overlay (Image 2 & Image 4) -->
+        <!-- Sidebar Drawer Overlay (Image 2 Redesign) -->
         <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebarDrawer()">
           <div class="sidebar-drawer" onclick="event.stopPropagation()">
-            <!-- Header matching Image 2 with Image 3 Logo -->
+            <!-- Luminous Wave Graphic in Header Background matching Image 2 -->
+            <svg class="sidebar-bg-waves" viewBox="0 0 320 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="sbGlow1" cx="30%" cy="15%" r="70%">
+                  <stop offset="0%" stop-color="#0066FF" stop-opacity="0.6"/>
+                  <stop offset="55%" stop-color="#0044CC" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#001855" stop-opacity="0"/>
+                </radialGradient>
+                <!-- Upper luminous wave sweeping down-right -->
+                <linearGradient id="sbWaveSweep1" x1="0%" y1="0%" x2="100%" y2="80%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.7"/>
+                  <stop offset="35%" stop-color="#2563EB" stop-opacity="0.5"/>
+                  <stop offset="70%" stop-color="#1D4ED8" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#001F6B" stop-opacity="0"/>
+                </linearGradient>
+                <!-- Second luminous wave swooping under profile card right -->
+                <linearGradient id="sbWaveSweep2" x1="100%" y1="70%" x2="30%" y2="20%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55"/>
+                  <stop offset="50%" stop-color="#1D4ED8" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#001444" stop-opacity="0"/>
+                </linearGradient>
+                <filter id="waveGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <rect width="320" height="310" fill="url(#sbGlow1)"/>
+              <!-- Top sweeping luminous wave -->
+              <path d="M-20 40 C 60 20 140 75 220 70 C 270 66 300 45 340 30 V 0 H -20 Z" fill="url(#sbWaveSweep1)" filter="url(#waveGlow)"/>
+              <path d="M-20 75 C 60 45 150 100 235 85 C 280 75 310 50 340 38 V 0 H -20 Z" fill="url(#sbWaveSweep1)" opacity="0.6"/>
+              <!-- Lower sweeping luminous wave behind card right -->
+              <path d="M340 130 C 270 140 210 190 200 260 C 195 290 210 310 240 320 H 340 Z" fill="url(#sbWaveSweep2)" filter="url(#waveGlow)"/>
+              <path d="M340 160 C 280 170 235 210 230 270 C 228 290 240 310 260 320 H 340 Z" fill="url(#sbWaveSweep2)" opacity="0.7"/>
+            </svg>
+
+            <!-- Header matching Image 2 with Logo -->
             <div class="sidebar-header">
               <div class="sidebar-brand">
-                <img src="data:image/png;base64,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" alt="Logo" class="sidebar-logo" />
+                <img src="data:image/png;base64,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" class="sidebar-logo" alt="Mobile Application Logo" />
                 <span class="sidebar-title">Mobile Application</span>
               </div>
               <button class="sidebar-close-btn" onclick="closeSidebarDrawer()" aria-label="Close">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -2458,15 +2582,15 @@
             <div class="sidebar-profile-card">
               <div class="sidebar-profile-top">
                 <div class="sidebar-avatar-circle" id="sidebar-avatar-circle">
-                  <span id="sidebar-initials">SR</span>
+                  <span id="sidebar-initials">JD</span>
                 </div>
                 <div class="sidebar-profile-info">
-                  <div class="sidebar-profile-name" id="sidebar-name">Sneha Reddy</div>
+                  <div class="sidebar-profile-name" id="sidebar-name">John Doe</div>
                   <span class="sidebar-role-badge">EMPLOYEE</span>
                 </div>
               </div>
               <button class="sidebar-logout-btn" onclick="handleSidebarLogout()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
                   <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -2475,17 +2599,150 @@
               </button>
             </div>
 
-            <!-- Navigation Links -->
+            <!-- Navigation Links Matching Image 2 Reference -->
             <nav class="sidebar-nav">
-              <button class="sidebar-nav-item highlight" onclick="handleSidebarNav('tpl-EmployeeDashboard')">Employee Dashboard</button>
-              <button class="sidebar-nav-item active" onclick="handleSidebarNav('tpl-MyAttendance')">My Attendance</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyLeave')">Apply Leave</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyPermission')">Apply Permission</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-LeaveBalance')">Leave Balance</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-LeaveHistory')">My Requests (History)</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-HolidayCalendar')">Holiday Calendar</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-Notifications')">Notifications</button>
-              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyProfile')">My Profile</button>
+              <!-- 1. Employee Dashboard (Active in Image 2) -->
+              <button class="sidebar-nav-item active" onclick="handleSidebarNav('tpl-EmployeeDashboard')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Employee Dashboard</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 2. My Attendance -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyAttendance')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Attendance</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 3. Apply Leave -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyLeave')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Apply Leave</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 4. Apply Permission -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyPermission')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <circle cx="18" cy="18" r="4"></circle>
+                    <polyline points="18 16 18 18 19.5 19.5"></polyline>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Apply Permission</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 5. Leave Balance -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-LeaveBalance')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Leave Balance</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 6. My Requests (History) -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyRequests')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <polyline points="12 7 12 12 15 15"></polyline>
+                    <path d="M3.05 11a9 9 0 0 1 .5-2m-.5 2h3m-3 0V8"></path>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Requests (History)</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 7. Holiday Calendar -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-HolidayCalendar')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="12" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="16" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="8" cy="18" r="1.2" fill="currentColor"></circle>
+                    <circle cx="12" cy="18" r="1.2" fill="currentColor"></circle>
+                    <circle cx="16" cy="18" r="1.2" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Holiday Calendar</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 8. Notifications -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-Notifications')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Notifications</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 9. My Profile -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyProfile')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Profile</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
             </nav>
           </div>
         </div>
@@ -2514,6 +2771,9 @@
 
         function handleSidebarNav(screenId) {
           closeSidebarDrawer();
+          if (screenId === 'tpl-Profile' || screenId === 'Profile') {
+            screenId = 'tpl-MyProfile';
+          }
           setTimeout(function() {
             var pWin = (window.parent && window.parent !== window) ? window.parent : window;
             if (pWin.loadScreen) {
@@ -15639,7 +15899,8 @@ body {
           'tpl-MyRequests',
           'tpl-HolidayCalendar',
           'tpl-Notifications',
-          'tpl-MyProfile'
+          'tpl-MyProfile',
+          'tpl-Profile'
         ];
 
         var MANAGER_ALLOWED_SCREENS = [
@@ -15654,7 +15915,8 @@ body {
           'tpl-ApplyPermission',
           'tpl-LeaveBalance',
           'tpl-HolidayCalendar',
-          'tpl-MyProfile'
+          'tpl-MyProfile',
+          'tpl-Profile'
         ];
 
         window.AUTH_USER = null;
@@ -15777,6 +16039,9 @@ body {
           // Normalize screen aliases
           if (tplId === 'tpl-MyRequests') {
             tplId = 'tpl-LeaveHistory';
+          }
+          if (tplId === 'tpl-Profile' || tplId === 'Profile') {
+            tplId = 'tpl-MyProfile';
           }
           if (tplId === 'tpl-Dashboard') {
             tplId = (window.AUTH_USER && window.AUTH_USER.role === 'manager') ? 'tpl-ManagerDashboard' : 'tpl-EmployeeDashboard';

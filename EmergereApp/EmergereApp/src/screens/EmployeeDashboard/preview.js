@@ -90,6 +90,12 @@ window.closeSidebarDrawer = closeSidebarDrawer;
 
 function handleSidebarNav(href, tplId) {
   closeSidebarDrawer();
+  if (tplId === 'tpl-Profile' || tplId === 'Profile') {
+    tplId = 'tpl-MyProfile';
+  }
+  if (href === '../Profile/preview.html') {
+    href = '../MyProfile/preview.html';
+  }
   setTimeout(() => {
     const pWin = (window.parent && window.parent !== window) ? window.parent : window;
     if (pWin.loadScreen && tplId) {
