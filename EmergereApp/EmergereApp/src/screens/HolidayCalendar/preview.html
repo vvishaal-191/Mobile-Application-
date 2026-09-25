@@ -1,156 +1,735 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Holiday Calendar - Preview</title>
-<link rel="stylesheet" href="../../../preview/base.css"/>
-<link rel="stylesheet" href="./preview.css"/></head>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Holiday Calendar - Preview</title>
+  <link rel="stylesheet" href="../../../preview/base.css"/>
+  <link rel="stylesheet" href="./preview.css"/>
+</head>
 <body>
 <div class="device">
-<div class="screen">
-  <div class="header"><img class="mini-logo" src="../../../assets/emergere-logo.png"/><h1>Holiday Calendar</h1></div>
-  <p class="subtitle">Company & optional holidays 2026</p>
-  <div class="pill-tabs" style="overflow-x:auto; padding-bottom:8px; white-space:nowrap; -webkit-overflow-scrolling:touch;">
-    <div class="pill active" onclick="filterHolidayMonth('all', this)">All</div>
-    <div class="pill" onclick="filterHolidayMonth('jan', this)">Jan</div>
-    <div class="pill" onclick="filterHolidayMonth('feb', this)">Feb</div>
-    <div class="pill" onclick="filterHolidayMonth('mar', this)">Mar</div>
-    <div class="pill" onclick="filterHolidayMonth('apr', this)">Apr</div>
-    <div class="pill" onclick="filterHolidayMonth('may', this)">May</div>
-    <div class="pill" onclick="filterHolidayMonth('jun', this)">Jun</div>
-    <div class="pill" onclick="filterHolidayMonth('jul', this)">Jul</div>
-    <div class="pill" onclick="filterHolidayMonth('aug', this)">Aug</div>
-    <div class="pill" onclick="filterHolidayMonth('sep', this)">Sep</div>
-    <div class="pill" onclick="filterHolidayMonth('oct', this)">Oct</div>
-    <div class="pill" onclick="filterHolidayMonth('nov', this)">Nov</div>
-    <div class="pill" onclick="filterHolidayMonth('dec', this)">Dec</div>
-  </div>
-  <div id="holiday-list-container">
-    <div class="hol-month-group" data-month="jan">
-      <p class="month-label">JANUARY 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 01</b><span>Thu</span></div><div class="name">New Year's Day</div><span class="badge info">National</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 15</b><span>Thu</span></div><div class="name">Makar Sankranti / Pongal</div><span class="badge purple">Festival</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jan 26</b><span>Mon</span></div><div class="name">Republic Day</div><span class="badge info">National</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="feb">
-      <p class="month-label">FEBRUARY 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Feb 15</b><span>Sun</span></div><div class="name">Maha Shivratri</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="mar">
-      <p class="month-label">MARCH 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 03</b><span>Tue</span></div><div class="name">Holi / Dhulandi</div><span class="badge purple">Festival</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Mar 20</b><span>Fri</span></div><div class="name">Id-ul-Fitr (Ramzan)</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="apr">
-      <p class="month-label">APRIL 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 03</b><span>Fri</span></div><div class="name">Good Friday</div><span class="badge info">National</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Apr 14</b><span>Tue</span></div><div class="name">Ambedkar Jayanti / Tamil New Year</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="may">
-      <p class="month-label">MAY 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 01</b><span>Fri</span></div><div class="name">May Day / Labour Day</div><span class="badge info">National</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>May 27</b><span>Wed</span></div><div class="name">Bakrid / Id-ul-Zuha</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="jun">
-      <p class="month-label">JUNE 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jun 26</b><span>Fri</span></div><div class="name">Muharram</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="jul">
-      <p class="month-label">JULY 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Jul 26</b><span>Sun</span></div><div class="name">Regional Holiday</div><span class="badge purple">Optional</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="aug">
-      <p class="month-label">AUGUST 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 15</b><span>Sat</span></div><div class="name">Independence Day</div><span class="badge info">National</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Aug 26</b><span>Wed</span></div><div class="name">Milad-un-Nabi</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="sep">
-      <p class="month-label">SEPTEMBER 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 10</b><span>Wed</span></div><div class="name">Ganesh Chaturthi</div><span class="badge purple">Festival</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Sep 16</b><span>Wed</span></div><div class="name">Onam</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="oct">
-      <p class="month-label">OCTOBER 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 02</b><span>Fri</span></div><div class="name">Gandhi Jayanti</div><span class="badge info">National</span></div></div>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Oct 24</b><span>Sat</span></div><div class="name">Dussehra</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="nov">
-      <p class="month-label">NOVEMBER 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Nov 14</b><span>Sat</span></div><div class="name">Diwali</div><span class="badge purple">Festival</span></div></div>
-    </div>
-
-    <div class="hol-month-group" data-month="dec">
-      <p class="month-label">DECEMBER 2026</p>
-      <div class="card hol-card"><div class="hol-row"><div class="date-block"><b>Dec 25</b><span>Fri</span></div><div class="name">Christmas</div><span class="badge info">National</span></div></div>
-    </div>
-  </div>
-  <script>
-    function filterHolidayMonth(monthKey, el) {
-      if (el) {
-        const pills = el.parentElement.querySelectorAll('.pill');
-        pills.forEach(p => p.classList.remove('active'));
-        el.classList.add('active');
-      }
-      const groups = document.querySelectorAll('.hol-month-group');
-      groups.forEach(g => {
-        if (monthKey === 'all' || g.getAttribute('data-month') === monthKey) {
-          g.style.display = 'block';
-        } else {
-          g.style.display = 'none';
-        }
-      });
-    }
-  </script>
-</div>
-<div class="bottom-nav">
-          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else{window.location.href='../EmployeeDashboard/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        <div class="screen has-hc-header">
+          <!-- HEADER BANNER (Image 2 Redesign) -->
+          <div class="hc-header-banner">
+            <!-- Integrated Background Luminous Waves matching Image 2 -->
+            <svg style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;" preserveAspectRatio="none" viewBox="0 0 400 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="hcWaveGrad1" x1="0%" y1="100%" x2="40%" y2="0%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#60A5FA" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M-20 110 Q 30 75 90 85 T 180 110 Z" fill="url(#hcWaveGrad1)"/>
+              <path d="M-10 110 Q 40 90 85 96 T 150 110 Z" fill="#67E8F9" fill-opacity="0.2"/>
             </svg>
-            <span>Dashboard</span>
-          </div>
-          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else{window.location.href='../MyAttendance/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <span>Attendance</span>
-          </div>
-          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else{window.location.href='../ApplyLeave/preview.html'}">
-            <div class="nav-apply-circle">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+
+            <div class="hc-header-top-row">
+              <div class="hc-header-left">
+                <button class="hc-back-btn" title="Back" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else{window.history.back()}">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                </button>
+                <div class="hc-header-text">
+                  <h1 class="hc-header-title">Holiday Calendar</h1>
+                  <p class="hc-header-subtitle">Company &amp; optional holidays 2026</p>
+                </div>
+              </div>
+
+              <div class="hc-header-illustration">
+                <!-- 3D Calendar Illustration with Foliage & Bell Badge matching Image 2 -->
+                <svg width="104" height="92" viewBox="0 0 120 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <!-- 3D Calendar Drop Shadow -->
+                    <filter id="cal3dShadow" x="12" y="10" width="94" height="92" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                      <feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#002266" flood-opacity="0.38"/>
+                    </filter>
+                    
+                    <!-- Notification Bell Badge Shadow -->
+                    <filter id="bell3dShadow" x="62" y="52" width="52" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#001F5C" flood-opacity="0.45"/>
+                    </filter>
+
+                    <!-- Ring Drop Shadow -->
+                    <filter id="ringShadow" x="-20%" y="-10%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#00358E" flood-opacity="0.25"/>
+                    </filter>
+
+                    <!-- Calendar Base Shading Gradient -->
+                    <linearGradient id="calBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#FFFFFF"/>
+                      <stop offset="85%" stop-color="#F4F8FD"/>
+                      <stop offset="100%" stop-color="#E5EFFB"/>
+                    </linearGradient>
+
+                    <!-- Calendar Header Bar Gradient -->
+                    <linearGradient id="calHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#5B9BFC"/>
+                      <stop offset="50%" stop-color="#3B82F6"/>
+                      <stop offset="100%" stop-color="#2563EB"/>
+                    </linearGradient>
+
+                    <!-- 3D Ring Metallic / Plastic Gradient -->
+                    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#FFFFFF"/>
+                      <stop offset="35%" stop-color="#EBF3FD"/>
+                      <stop offset="70%" stop-color="#D0E3FC"/>
+                      <stop offset="100%" stop-color="#A5C7F9"/>
+                    </linearGradient>
+
+                    <!-- Debossed Day Cell Gradients -->
+                    <linearGradient id="cellGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#D3E5FD"/>
+                      <stop offset="100%" stop-color="#B8D7FC"/>
+                    </linearGradient>
+
+                    <!-- Bell Badge Gradient -->
+                    <linearGradient id="bellBadgeGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+                      <stop offset="0%" stop-color="#1E78FF"/>
+                      <stop offset="60%" stop-color="#0058F0"/>
+                      <stop offset="100%" stop-color="#0043C4"/>
+                    </linearGradient>
+
+                    <!-- Soft Botanical Leaf Gradients matching Image 2 -->
+                    <linearGradient id="leafGrad1" x1="0%" y1="100%" x2="70%" y2="0%">
+                      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.6"/>
+                      <stop offset="100%" stop-color="#93C5FD" stop-opacity="0.85"/>
+                    </linearGradient>
+                    <linearGradient id="leafGrad2" x1="0%" y1="100%" x2="50%" y2="0%">
+                      <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.5"/>
+                      <stop offset="100%" stop-color="#BFDBFE" stop-opacity="0.8"/>
+                    </linearGradient>
+                    <linearGradient id="leafGrad3" x1="100%" y1="100%" x2="30%" y2="0%">
+                      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.5"/>
+                      <stop offset="100%" stop-color="#93C5FD" stop-opacity="0.75"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- ================= BACKGROUND BOTANICAL LEAVES (Image 2) ================= -->
+                  <path d="M26 84 C16 75 12 58 20 48 C28 54 28 68 28 84 Z" fill="url(#leafGrad1)"/>
+                  <path d="M30 84 C22 65 24 38 42 26 C48 38 44 65 34 84 Z" fill="url(#leafGrad2)"/>
+                  <path d="M28 84 C25 72 28 52 38 42 C42 54 38 72 30 84 Z" fill="#93C5FD" fill-opacity="0.4"/>
+                  <path d="M88 80 C98 68 106 46 116 38 C116 52 108 72 90 84 Z" fill="url(#leafGrad3)"/>
+                  <path d="M86 84 C98 75 110 65 118 55 C118 68 108 82 88 88 Z" fill="#60A5FA" fill-opacity="0.35"/>
+                  <path d="M10 88 C40 70 80 92 120 78 V95 H10 Z" fill="#93C5FD" fill-opacity="0.25"/>
+
+                  <!-- ================= 3D CALENDAR BASE ================= -->
+                  <g filter="url(#cal3dShadow)">
+                    <rect x="24" y="20" width="68" height="64" rx="14" fill="url(#calBodyGrad)"/>
+                    <path d="M24 32 C24 25.37 29.37 20 36 20 H80 C86.63 20 92 25.37 92 32 V36 H24 V32 Z" fill="url(#calHeaderGrad)"/>
+                    <path d="M26 22 C30 20.8 35 20.5 40 20.5 H76 C81 20.5 86 20.8 90 22" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.6"/>
+
+                    <!-- 6 Day Cells (2 Rows of 3) matching Image 2 -->
+                    <rect x="33" y="44" width="13" height="12" rx="3.5" fill="url(#cellGrad)"/>
+                    <rect x="33" y="44" width="13" height="12" rx="3.5" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.8"/>
+                    <rect x="51.5" y="44" width="13" height="12" rx="3.5" fill="url(#cellGrad)"/>
+                    <rect x="51.5" y="44" width="13" height="12" rx="3.5" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.8"/>
+                    <rect x="70" y="44" width="13" height="12" rx="3.5" fill="url(#cellGrad)"/>
+                    <rect x="70" y="44" width="13" height="12" rx="3.5" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.8"/>
+
+                    <rect x="33" y="60" width="13" height="12" rx="3.5" fill="url(#cellGrad)"/>
+                    <rect x="33" y="60" width="13" height="12" rx="3.5" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.8"/>
+                    <rect x="51.5" y="60" width="13" height="12" rx="3.5" fill="url(#cellGrad)"/>
+                    <rect x="51.5" y="60" width="13" height="12" rx="3.5" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.8"/>
+                    <rect x="70" y="60" width="13" height="12" rx="3.5" fill="url(#cellGrad)"/>
+                    <rect x="70" y="60" width="13" height="12" rx="3.5" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.8"/>
+                  </g>
+
+                  <!-- ================= 4 3D SPIRAL BINDER RINGS ================= -->
+                  <g filter="url(#ringShadow)">
+                    <rect x="33" y="12" width="6" height="16" rx="3" fill="url(#ringGrad)"/>
+                    <path d="M34 13.5 V24.5" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.9"/>
+                    <ellipse cx="36" cy="27" rx="3" ry="1.5" fill="#1E40AF" fill-opacity="0.35"/>
+                  </g>
+                  <g filter="url(#ringShadow)">
+                    <rect x="48" y="12" width="6" height="16" rx="3" fill="url(#ringGrad)"/>
+                    <path d="M49 13.5 V24.5" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.9"/>
+                    <ellipse cx="51" cy="27" rx="3" ry="1.5" fill="#1E40AF" fill-opacity="0.35"/>
+                  </g>
+                  <g filter="url(#ringShadow)">
+                    <rect x="63" y="12" width="6" height="16" rx="3" fill="url(#ringGrad)"/>
+                    <path d="M64 13.5 V24.5" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.9"/>
+                    <ellipse cx="66" cy="27" rx="3" ry="1.5" fill="#1E40AF" fill-opacity="0.35"/>
+                  </g>
+                  <g filter="url(#ringShadow)">
+                    <rect x="77" y="12" width="6" height="16" rx="3" fill="url(#ringGrad)"/>
+                    <path d="M78 13.5 V24.5" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.9"/>
+                    <ellipse cx="80" cy="27" rx="3" ry="1.5" fill="#1E40AF" fill-opacity="0.35"/>
+                  </g>
+
+                  <!-- ================= 3D NOTIFICATION BELL BADGE ================= -->
+                  <g filter="url(#bell3dShadow)">
+                    <circle cx="86" cy="74" r="18" fill="url(#bellBadgeGrad)" stroke="#FFFFFF" stroke-width="3.5"/>
+                    <circle cx="84" cy="71" r="13" fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.3"/>
+                    <circle cx="86" cy="62.5" r="1.5" fill="#FFFFFF"/>
+                    <path d="M86 63.8 C83.2 63.8 81 66 81 68.8 V73 L78.8 75.2 C78.3 75.7 78.6 76.5 79.3 76.5 H92.7 C93.4 76.5 93.7 75.7 93.2 75.2 L91 73 V68.8 C91 66 88.8 63.8 86 63.8 Z" fill="#FFFFFF"/>
+                    <path d="M84.2 77.5 C84.5 78.5 85.2 79.2 86 79.2 C86.8 79.2 87.5 78.5 87.8 77.5 H84.2 Z" fill="#FFFFFF"/>
+                  </g>
+                </svg>
+              </div>
             </div>
-            <span class="nav-apply-label">Apply</span>
           </div>
-          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else{window.location.href='../LeaveHistory/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-              <path d="M3 3v5h5"></path>
-              <polyline points="12 7 12 12 15 15"></polyline>
-            </svg>
-            <span>History</span>
-          </div>
-          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else{window.location.href='../MyProfile/preview.html'}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>Profile</span>
-          </div>
-        </div>
+
+          <!-- MONTH FILTER PILL TABS -->
+    <div class="hc-pill-bar">
+      <div class="pill active" onclick="filterHolidayMonth('all', this)">All</div>
+      <div class="pill" onclick="filterHolidayMonth('jan', this)">Jan</div>
+      <div class="pill" onclick="filterHolidayMonth('feb', this)">Feb</div>
+      <div class="pill" onclick="filterHolidayMonth('mar', this)">Mar</div>
+      <div class="pill" onclick="filterHolidayMonth('apr', this)">Apr</div>
+      <div class="pill" onclick="filterHolidayMonth('may', this)">May</div>
+      <div class="pill" onclick="filterHolidayMonth('jun', this)">Jun</div>
+      <div class="pill" onclick="filterHolidayMonth('jul', this)">Jul</div>
+      <div class="pill" onclick="filterHolidayMonth('aug', this)">Aug</div>
+      <div class="pill" onclick="filterHolidayMonth('sep', this)">Sep</div>
+      <div class="pill" onclick="filterHolidayMonth('oct', this)">Oct</div>
+      <div class="pill" onclick="filterHolidayMonth('nov', this)">Nov</div>
+      <div class="pill" onclick="filterHolidayMonth('dec', this)">Dec</div>
+    </div>
+
+    <!-- HOLIDAY CARDS CONTAINER -->
+    <div id="holiday-list-container">
+
+            <div class="hol-month-group" data-month="jan">
+              <div class="hc-month-header">
+                <span class="hc-month-title">JANUARY 2026</span>
+                <span class="hc-month-badge">3 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card hc-card-highlight">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">01</span>
+                    <span class="hc-date-day">Thu</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">New Year's Day</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">15</span>
+                    <span class="hc-date-day">Thu</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Makar Sankranti / Pongal</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L20 10L12 18L4 10L12 2Z"/><path d="M12 2V18"/><path d="M4 10H20"/><path d="M12 18C14 20 16 21 18 20"/><path d="M12 18C10 20 8 21 6 20"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">26</span>
+                    <span class="hc-date-day">Mon</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Republic Day</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="feb">
+              <div class="hc-month-header">
+                <span class="hc-month-title">FEBRUARY 2026</span>
+                <span class="hc-month-badge">1 Holiday</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block hc-date-sunday">
+                    <span class="hc-date-num">15</span>
+                    <span class="hc-date-day">Sun</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Maha Shivratri</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 4a3.5 3.5 0 0 0-3.5 3.5c0 1.2.6 2.3 1.5 2.9-.9.6-1.5 1.7-1.5 2.9 0 2.2 1.8 4 4 4 1.3 0 2.4-.6 3.1-1.6.4 1 1.4 1.6 2.5 1.6 1.7 0 3-1.3 3-3v-.3c1-.6 1.9-1.6 1.9-2.9 0-1.7-1.3-3-3-3-.4 0-.8.1-1.1.2C14.6 6.3 12.8 4.7 10.6 4.1 9.9 4 9.2 4 8.5 4zm0 2c.4 0 .9 0 1.3.1 1.6.4 3 1.7 3.5 3.3-.6.4-1.1.9-1.4 1.6-.6-.6-1.4-1-2.4-1a2.5 2.5 0 0 0 0 5c.8 0 1.5-.4 2-1 .3 1.2 1.4 2 2.6 2 .8 0 1.5-.4 1.8-1 .3.6 1 1 1.7 1 1.1 0 2-.9 2-2 0-.8-.5-1.5-1.2-1.8.1-.4.2-.8.2-1.2 0-1.1-.9-2-2-2-.6 0-1.1.3-1.4.7-.1-.2-.2-.5-.4-.7-.2-.2-.4-.4-.7-.5C13.2 6.6 11.2 6 9.5 6 9.2 6 8.8 6 8.5 6zm10.5-3a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="mar">
+              <div class="hc-month-header">
+                <span class="hc-month-title">MARCH 2026</span>
+                <span class="hc-month-badge">2 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">03</span>
+                    <span class="hc-date-day">Tue</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Holi / Dhulandi</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">20</span>
+                    <span class="hc-date-day">Fri</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Id-ul-Fitr (Ramzan)</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1zM19 3l1.1 2.3L22.5 6l-1.8 1.7.4 2.5L19 9l-2.1 1.2.4-2.5L15.5 6l2.4-.7L19 3z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="apr">
+              <div class="hc-month-header">
+                <span class="hc-month-title">APRIL 2026</span>
+                <span class="hc-month-badge">2 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">03</span>
+                    <span class="hc-date-day">Fri</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Good Friday</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">14</span>
+                    <span class="hc-date-day">Tue</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Ambedkar Jayanti / Tamil New Year</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9 6.9 2.4-6.9 2.4L12 22l-2.4-6.9L2.7 12.7l6.9-2.4L12 2z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="may">
+              <div class="hc-month-header">
+                <span class="hc-month-title">MAY 2026</span>
+                <span class="hc-month-badge">2 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">01</span>
+                    <span class="hc-date-day">Fri</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">May Day / Labour Day</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">27</span>
+                    <span class="hc-date-day">Wed</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Bakrid / Id-ul-Zuha</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1zM19 3l1.1 2.3L22.5 6l-1.8 1.7.4 2.5L19 9l-2.1 1.2.4-2.5L15.5 6l2.4-.7L19 3z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="jun">
+              <div class="hc-month-header">
+                <span class="hc-month-title">JUNE 2026</span>
+                <span class="hc-month-badge">1 Holiday</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">26</span>
+                    <span class="hc-date-day">Fri</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Muharram</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1zM19 3l1.1 2.3L22.5 6l-1.8 1.7.4 2.5L19 9l-2.1 1.2.4-2.5L15.5 6l2.4-.7L19 3z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="jul">
+              <div class="hc-month-header">
+                <span class="hc-month-title">JULY 2026</span>
+                <span class="hc-month-badge">1 Holiday</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block hc-date-sunday">
+                    <span class="hc-date-num">26</span>
+                    <span class="hc-date-day">Sun</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Regional Holiday</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9 6.9 2.4-6.9 2.4L12 22l-2.4-6.9L2.7 12.7l6.9-2.4L12 2z"/></svg>
+                    <span>Optional</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="aug">
+              <div class="hc-month-header">
+                <span class="hc-month-title">AUGUST 2026</span>
+                <span class="hc-month-badge">2 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">15</span>
+                    <span class="hc-date-day">Sat</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Independence Day</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">26</span>
+                    <span class="hc-date-day">Wed</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Milad-un-Nabi</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1zM19 3l1.1 2.3L22.5 6l-1.8 1.7.4 2.5L19 9l-2.1 1.2.4-2.5L15.5 6l2.4-.7L19 3z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="sep">
+              <div class="hc-month-header">
+                <span class="hc-month-title">SEPTEMBER 2026</span>
+                <span class="hc-month-badge">2 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">10</span>
+                    <span class="hc-date-day">Wed</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Ganesh Chaturthi</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9 6.9 2.4-6.9 2.4L12 22l-2.4-6.9L2.7 12.7l6.9-2.4L12 2z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">16</span>
+                    <span class="hc-date-day">Wed</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Onam</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 0-4 4c0 2 2 4 4 4s4-2 4-4a4 4 0 0 0-4-4z"/><path d="M12 14c-2 0-4 2-4 4a4 4 0 0 0 8 0c0-2-2-4-4-4z"/><path d="M2 12a4 4 0 0 0 4 4c2 0 4-2 4-4s-2-4-4-4a4 4 0 0 0-4 4z"/><path d="M14 12c0 2 2 4 4 4a4 4 0 0 0 0-8c-2 0-4 2-4 4z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="oct">
+              <div class="hc-month-header">
+                <span class="hc-month-title">OCTOBER 2026</span>
+                <span class="hc-month-badge">2 Holidays</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">02</span>
+                    <span class="hc-date-day">Fri</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Gandhi Jayanti</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">24</span>
+                    <span class="hc-date-day">Sat</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Dussehra</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9 6.9 2.4-6.9 2.4L12 22l-2.4-6.9L2.7 12.7l6.9-2.4L12 2z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="nov">
+              <div class="hc-month-header">
+                <span class="hc-month-title">NOVEMBER 2026</span>
+                <span class="hc-month-badge">1 Holiday</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#FAF5FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">14</span>
+                    <span class="hc-date-day">Sat</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Diwali</div>
+                    <div class="hc-card-sub">Optional Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-festival">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1.5 2-2 3.5-2 5a2 2 0 0 0 4 0c0-1.5-.5-3-2-5z"/><path d="M4 14c0 3.866 3.582 7 8 7s8-3.134 8-7H4z"/></svg>
+                    <span>Festival</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="hol-month-group" data-month="dec">
+              <div class="hc-month-header">
+                <span class="hc-month-title">DECEMBER 2026</span>
+                <span class="hc-month-badge">1 Holiday</span>
+              </div>
+              <div class="hc-month-cards">
+                
+              <div class="card hol-card hc-card">
+                <svg class="hc-card-wave" viewBox="0 0 120 70" fill="none">
+                  <path d="M0 70C40 70 60 50 80 40C100 30 110 15 120 0V70H0Z" fill="#EFF6FF" fill-opacity="0.8"/>
+                </svg>
+                <div class="hol-row hc-card-row">
+                  <div class="date-block hc-date-block">
+                    <span class="hc-date-num">25</span>
+                    <span class="hc-date-day">Fri</span>
+                  </div>
+                  <div class="hc-card-divider"></div>
+                  <div class="hc-card-info">
+                    <div class="name hc-card-name">Christmas</div>
+                    <div class="hc-card-sub">Company Holiday</div>
+                  </div>
+                  <div class="hc-badge hc-badge-national">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 9V11H22V9L12 3ZM4 13H7V19H4V13ZM10 13H14V19H10V13ZM17 13H20V19H17V13ZM2 20H22V22H2V20Z"/></svg>
+                    <span>National</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+    </div>
+  </div>
 </div>
-<script src="../../../preview/shared.js"></script>
-<script src="./preview.js"></script>
-</body></html>
+
+<script>
+  function filterHolidayMonth(monthKey, el) {
+    if (el) {
+      const pills = el.parentElement.querySelectorAll('.pill');
+      pills.forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    }
+    const groups = document.querySelectorAll('.hol-month-group');
+    groups.forEach(g => {
+      if (monthKey === 'all' || g.getAttribute('data-month') === monthKey) {
+        g.style.display = 'block';
+      } else {
+        g.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>
