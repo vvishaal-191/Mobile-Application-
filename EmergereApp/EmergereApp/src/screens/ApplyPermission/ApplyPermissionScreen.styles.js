@@ -7,7 +7,7 @@ export default StyleSheet.create({
     backgroundColor: '#EEF4FB',
   },
   scrollContent: {
-    paddingBottom: 140,
+    paddingBottom: 110,
   },
 
   /* Header Banner - Flush to top with vibrant blue gradient */

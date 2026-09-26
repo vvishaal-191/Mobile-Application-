@@ -389,6 +389,9 @@ export default function ApplyPermissionScreen({ navigation }) {
             <Text style={styles.submitText}>Submit Request</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Extra scrollable bottom space ensuring Submit button never touches bottom navbar */}
+        <View style={{ height: 80 }} />
       </ScrollView>
 
       {/* Success Popup Modal */}

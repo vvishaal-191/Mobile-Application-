@@ -30,8 +30,7 @@ body {
 .screen.has-al-header {
   background: var(--perm-bg) !important;
   padding-top: 0 !important;
-  padding-bottom: 140px;
-  min-height: 100vh;
+  padding-bottom: 90px;
   box-sizing: border-box;
   position: relative;
 }

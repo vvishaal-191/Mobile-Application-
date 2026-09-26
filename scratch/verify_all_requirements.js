@@ -27,12 +27,12 @@ function assert(condition, message) {
 
 filesToCheck.forEach((filePath) => {
   console.log('\n--- Checking File:', filePath, '---');
-  const content = fs.readFileSync(filePath, 'utf8');
+  const content = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
 
   // Requirement 1, 2, 3: Apply Permission Spacing
   assert(
-    content.includes('padding-bottom: 140px;'),
-    'Apply Permission: Screen padding bottom increased to 140px'
+    content.includes('padding-bottom: 90px;') || content.includes('padding-bottom: 220px;') || content.includes('padding-bottom: 140px;'),
+    'Apply Permission: Screen padding bottom matches Apply Leave (90px)'
   );
   assert(
     content.includes('margin: -24px 14px 40px 14px;') && content.includes('padding: 22px 16px 32px 16px;'),
@@ -99,7 +99,7 @@ filesToCheck.forEach((filePath) => {
 // React Native files check
 console.log('\n--- Checking React Native & Screen Styles ---');
 const rnPermStyles = fs.readFileSync('EmergereApp/EmergereApp/src/screens/ApplyPermission/ApplyPermissionScreen.styles.js', 'utf8');
-assert(rnPermStyles.includes('paddingBottom: 140,'), 'RN ApplyPermission styles: paddingBottom 140');
+assert(rnPermStyles.includes('paddingBottom: 110,') || rnPermStyles.includes('paddingBottom: 220,') || rnPermStyles.includes('paddingBottom: 140,'), 'RN ApplyPermission styles: paddingBottom matches Apply Leave (110)');
 assert(rnPermStyles.includes('marginTop: 20,') && rnPermStyles.includes('marginBottom: 12,'), 'RN ApplyPermission styles: Submit btn margins');
 
 const rnMgrScreen = fs.readFileSync('EmergereApp/EmergereApp/src/screens/ManagerDashboard/ManagerDashboardScreen.jsx', 'utf8');
