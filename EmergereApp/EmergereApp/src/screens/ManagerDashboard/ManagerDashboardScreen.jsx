@@ -57,8 +57,8 @@ const QUICK_ACTIONS_CONFIG = [
     badge: 0,
   },
   {
-    key: 'TeamCalendar',
-    title: 'Team Calendar',
+    key: 'HolidayCalendar',
+    title: 'Holiday Calendar',
     desc: 'View leaves, holidays and team schedule',
     icon: 'calendar',
     target: 'HolidayCalendar',
@@ -76,7 +76,7 @@ const SIDEBAR_ITEMS = [
   { key: 'TeamAttendance', label: 'Team Attendance', icon: 'users', target: 'TeamAttendance' },
   { key: 'LeaveApprovals', label: 'Leave Approvals', icon: 'file-text', target: 'LeaveApprovals' },
   { key: 'PermissionApprovals', label: 'Permission Approvals', icon: 'check-square', target: 'PermissionApprovals' },
-  { key: 'TeamCalendar', label: 'Team Calendar', icon: 'calendar', target: 'HolidayCalendar' },
+  { key: 'HolidayCalendar', label: 'Holiday Calendar', icon: 'calendar', target: 'HolidayCalendar' },
   { key: 'Notifications', label: 'Notifications', icon: 'bell', target: 'Notifications' },
   { key: 'MyProfile', label: 'My Profile', icon: 'user', target: 'MyProfile' },
 ];
@@ -139,7 +139,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
         setQuickActions((qa) =>
           qa.map((action) => {
             if (action.key === 'PermissionApprovals') {
-              return { ...action, badge: (action.badge || 0) + fresh.length };
+              return { ...action, badge: (action.badge || 0) + fresh.filter((r) => r.isPermission).length };
             }
             if (action.key === 'LeaveApprovals') {
               return { ...action, badge: (action.badge || 0) + fresh.filter((r) => !r.isPermission).length };

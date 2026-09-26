@@ -87,11 +87,29 @@ const server = http.createServer((req, res) => {
 });
 
 const localIp = getLocalIp();
+let currentPort = Number(PORT);
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n==================================================`);
-  console.log(` Mobile Application Server Started!`);
-  console.log(` 🚀 On Computer Browser: http://localhost:${PORT}`);
-  console.log(` 📱 On Mobile Phone Browser: http://${localIp}:${PORT}`);
-  console.log(`==================================================\n`);
+function startServer(port) {
+  server.listen(port, '0.0.0.0', () => {
+    console.log(`\n==================================================`);
+    console.log(` Mobile Application Server Started!`);
+    console.log(` 🚀 On Computer Browser: http://localhost:${port}`);
+    console.log(` 📱 On Mobile Phone Browser: http://${localIp}:${port}`);
+    console.log(`==================================================\n`);
+  });
+}
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.warn(`⚠️  Port ${currentPort} is already in use. Trying port ${currentPort + 1}...`);
+    currentPort += 1;
+    setTimeout(() => {
+      startServer(currentPort);
+    }, 200);
+  } else {
+    console.error('Server error:', err);
+  }
 });
+
+startServer(currentPort);
+

@@ -25,7 +25,7 @@
 
             <div class="hc-header-top-row">
               <div class="hc-header-left">
-                <button class="hc-back-btn" title="Back" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else{window.history.back()}">
+                <button class="hc-back-btn" title="Back" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen((window.parent.AUTH_USER&&window.parent.AUTH_USER.role==='manager')?'tpl-ManagerDashboard':'tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen((window.AUTH_USER&&window.AUTH_USER.role==='manager')?'tpl-ManagerDashboard':'tpl-EmployeeDashboard')}else{window.history.back()}">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>

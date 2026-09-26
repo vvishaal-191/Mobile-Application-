@@ -7,7 +7,7 @@ export default StyleSheet.create({
     backgroundColor: '#EEF4FB',
   },
   scrollContent: {
-    paddingBottom: 110,
+    paddingBottom: 140,
   },
 
   /* Header Banner - Flush to top with vibrant blue gradient */
@@ -153,6 +153,8 @@ export default StyleSheet.create({
     borderRadius: 26,
     paddingHorizontal: 16,
     paddingVertical: 22,
+    paddingBottom: 32,
+    marginBottom: 36,
     shadowColor: '#0F1E50',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.07,
@@ -288,7 +290,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
-    marginTop: 6,
+    marginTop: 20,
+    marginBottom: 12,
     shadowColor: '#0066FF',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.38,

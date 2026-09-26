@@ -15,6 +15,20 @@ const TABS = [
 ];
 
 export default function BottomNavBar({ active, onNavigate }) {
+  const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
+  const effectiveTabs = TABS.map((tab) => {
+    if (tab.key === 'History' && isManager) {
+      return { key: 'HolidayCalendar', label: 'Holiday Calendar', icon: 'calendar' };
+    }
+    return tab;
+  });
+  const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
+  const effectiveTabs = TABS.map((tab) => {
+    if (tab.key === 'History' && isManager) {
+      return { key: 'HolidayCalendar', label: 'Holiday Calendar', icon: 'calendar' };
+    }
+    return tab;
+  });
   const handlePress = (tabKey) => {
     if (!onNavigate) return;
     const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
@@ -24,12 +38,12 @@ export default function BottomNavBar({ active, onNavigate }) {
       onNavigate(isManager ? 'TeamAttendance' : 'MyAttendance');
     } else if (tabKey === 'Apply') {
       onNavigate('ApplyLeave');
-    } else if (tabKey === 'History') {
+    } else if (tabKey === 'History' || tabKey === 'HolidayCalendar') {
       if (isManager) {
-        alert('Access Restricted: Manager account is not authorized to access My Requests (History).');
-        return;
+        onNavigate('HolidayCalendar');
+      } else {
+        onNavigate('LeaveHistory');
       }
-      onNavigate('LeaveHistory');
     } else if (tabKey === 'Profile') {
       onNavigate('MyProfile');
     } else {
@@ -39,8 +53,8 @@ export default function BottomNavBar({ active, onNavigate }) {
 
   return (
     <View style={styles.container}>
-      {TABS.map((tab) => {
-        const isActive = active === tab.key || (tab.key === 'Profile' && (active === 'Profile' || active === 'More'));
+      {effectiveTabs.map((tab) => {
+        const isActive = active === tab.key || (tab.key === 'HolidayCalendar' && active === 'HolidayCalendar') || (tab.key === 'Profile' && (active === 'Profile' || active === 'More'));
 
         if (tab.isElevated) {
           return (
