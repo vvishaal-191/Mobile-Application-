@@ -75,6 +75,8 @@ body {
 .screen.has-lb-header,
 .screen:has(.hc-header-banner),
 .screen.has-hc-header,
+.screen:has(.la-header-banner),
+.screen.has-la-header,
 .screen:has(.mgr-header),
 .screen.has-mgr-header {
   padding-top: 0 !important;
@@ -87,6 +89,7 @@ body {
 .mr-header-banner,
 .lb-header-banner,
 .hc-header-banner,
+.la-header-banner,
 .mgr-header {
   margin-top: 0 !important;
   border-top-left-radius: 0 !important;

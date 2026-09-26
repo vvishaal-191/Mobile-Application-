@@ -22,16 +22,9 @@ export default function BottomNavBar({ active, onNavigate }) {
     }
     return tab;
   });
-  const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
-  const effectiveTabs = TABS.map((tab) => {
-    if (tab.key === 'History' && isManager) {
-      return { key: 'HolidayCalendar', label: 'Holiday Calendar', icon: 'calendar' };
-    }
-    return tab;
-  });
+
   const handlePress = (tabKey) => {
     if (!onNavigate) return;
-    const isManager = typeof global !== 'undefined' && global.USER_ROLE === 'manager';
     if (tabKey === 'Dashboard') {
       onNavigate(isManager ? 'ManagerDashboard' : 'EmployeeDashboard');
     } else if (tabKey === 'Attendance') {

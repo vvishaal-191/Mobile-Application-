@@ -1,15 +1,29 @@
 // src/screens/LeaveApprovals/LeaveApprovalsScreen.jsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import Avatar from '../../components/Avatar';
-import Card from '../../components/Card';
 import StatusBadge from '../../components/StatusBadge';
-import PillTabs from '../../components/PillTabs';
-import ScreenHeader from '../../components/ScreenHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './LeaveApprovalsScreen.styles';
 
-const INITIAL_REQUESTS = [];
+const HEADER_BANNER_IMG = require('../../../assets/leave-approvals-header-banner.png');
+const EMPTY_ART_IMG = require('../../../assets/leave-approvals-empty.png');
+
+// Initial request reproduces exact counts (Pending 0, Approved 1, Rejected 0) from Image 2 reference
+const INITIAL_REQUESTS = [
+  {
+    id: '1',
+    initials: 'PS',
+    name: 'Priya Sharma',
+    empId: 'EMP-2024-0156',
+    type: 'Casual Leave',
+    duration: '2 Days (Sep 10 – Sep 11)',
+    reason: 'Family function in hometown',
+    typeTone: 'info',
+    status: 'approved',
+  },
+];
 
 /** Helper: get manager name from global profile for notification text */
 function getManagerName() {
@@ -52,9 +66,30 @@ export default function LeaveApprovalsScreen({ navigation, route }) {
   const rejectedCount = requests.filter((r) => r.status === 'rejected').length;
 
   const tabs = [
-    { key: 'pending', label: `Pending (${pendingCount})` },
-    { key: 'approved', label: `Approved (${approvedCount})` },
-    { key: 'rejected', label: `Rejected (${rejectedCount})` },
+    {
+      key: 'pending',
+      label: 'Pending',
+      count: pendingCount,
+      icon: 'clock',
+      iconColor: '#0066FF',
+      badgeStyle: styles.badgePending,
+    },
+    {
+      key: 'approved',
+      label: 'Approved',
+      count: approvedCount,
+      icon: 'check',
+      iconColor: '#10B981',
+      badgeStyle: styles.badgeApproved,
+    },
+    {
+      key: 'rejected',
+      label: 'Rejected',
+      count: rejectedCount,
+      icon: 'x',
+      iconColor: '#EF4444',
+      badgeStyle: styles.badgeRejected,
+    },
   ];
 
   const handleApprove = (id) => {
@@ -161,85 +196,150 @@ export default function LeaveApprovalsScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <ScreenHeader
-        title="Leave Approvals"
-        subtitle="Manage Team Requests"
-        onBack={() => navigation && navigation.goBack()}
-      />
+      {/* Royal Blue Header Banner matching Image 2 */}
+      <View style={styles.headerBannerWrap}>
+        <Image
+          source={HEADER_BANNER_IMG}
+          style={styles.headerBannerImg}
+          resizeMode="cover"
+        />
+        <TouchableOpacity
+          style={styles.backBtnHitbox}
+          activeOpacity={0.7}
+          onPress={() => navigation && navigation.goBack()}
+          accessibilityLabel="Go back"
+        />
+      </View>
 
-      <PillTabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
-
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-        {filteredRequests.length === 0 ? (
-          <Card style={styles.requestCard}>
-            <Text style={{ textAlign: 'center', color: '#6B7280', paddingVertical: 20, fontWeight: '600' }}>
-              No {activeTab} leave requests found.
-            </Text>
-          </Card>
-        ) : (
-          filteredRequests.map((item) => (
+      {/* Floating Segmented Tab Bar matching Image 2 */}
+      <View style={styles.tabBarCard}>
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.key;
+          return (
             <TouchableOpacity
-              key={item.id}
+              key={tab.key}
+              style={[styles.tabPill, isActive && styles.tabPillActive]}
               activeOpacity={0.8}
-              onPress={() => go('LeaveApprovalDetail', {
-                person: {
-                  id: item.id,
-                  name: item.name,
-                  initials: item.initials,
-                  empId: item.empId,
-                  leaveType: item.type,
-                  reason: item.reason,
-                  totalDays: item.duration,
-                  fromDate: item.duration.includes('(') ? item.duration.split('(')[1].replace(')', '') : item.duration,
-                  toDate: item.duration.includes('(') ? item.duration.split('(')[1].replace(')', '') : item.duration,
-                }
-              })}
+              onPress={() => setActiveTab(tab.key)}
             >
-              <Card style={styles.requestCard}>
-                <View style={styles.topRow}>
-                  <View style={styles.employeeRow}>
-                    <Avatar initials={item.initials} size={48} />
-                    <View>
-                      <Text style={styles.name}>{item.name}</Text>
-                      <Text style={styles.empId}>{item.empId}</Text>
-                    </View>
-                  </View>
-                  <StatusBadge label={item.type} tone={item.typeTone || 'info'} />
+              <View style={styles.tabTopRow}>
+                <View style={[styles.tabBadge, tab.badgeStyle]}>
+                  <Feather
+                    name={tab.icon}
+                    size={12}
+                    color={tab.iconColor}
+                  />
                 </View>
-
-                <View style={styles.divider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Duration</Text>
-                  <Text style={styles.detailValue}>{item.duration}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Reason</Text>
-                  <Text style={styles.detailValue}>{item.reason}</Text>
-                </View>
-
-                {item.status === 'pending' ? (
-                  <View style={styles.actionsRow}>
-                    <TouchableOpacity style={styles.rejectBtn} onPress={() => handleReject(item.id)}>
-                      <Text style={styles.rejectText}>Reject</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.approveBtn} onPress={() => handleApprove(item.id)}>
-                      <Text style={styles.approveText}>Approve</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : item.status === 'approved' ? (
-                  <View style={{ marginTop: 12, alignItems: 'flex-end' }}>
-                    <StatusBadge label="Approved" tone="success" />
-                  </View>
-                ) : (
-                  <View style={{ marginTop: 12, alignItems: 'flex-end' }}>
-                    <StatusBadge label="Rejected" tone="danger" />
-                  </View>
-                )}
-              </Card>
+                <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
+                  {tab.label} ({tab.count})
+                </Text>
+              </View>
+              {isActive && <View style={styles.tabIndicator} />}
             </TouchableOpacity>
-          ))
-        )}
+          );
+        })}
+      </View>
+
+      {/* Main Content Area */}
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
+        <View style={styles.approvalsCardContainer}>
+          {filteredRequests.length === 0 ? (
+            <View style={styles.emptyCardWrapper}>
+              <View style={styles.emptyArtWrap}>
+                <Image
+                  source={EMPTY_ART_IMG}
+                  style={styles.emptyArtImg}
+                  resizeMode="contain"
+                />
+              </View>
+              <Text style={styles.emptyTitle}>No leave requests found</Text>
+              <Text style={styles.emptySubtitle}>
+                There are no leave requests in this category.
+              </Text>
+            </View>
+          ) : (
+            filteredRequests.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.85}
+                onPress={() =>
+                  go('LeaveApprovalDetail', {
+                    person: {
+                      id: item.id,
+                      name: item.name,
+                      initials: item.initials,
+                      empId: item.empId,
+                      leaveType: item.type,
+                      reason: item.reason,
+                      totalDays: item.duration,
+                      fromDate: item.duration.includes('(')
+                        ? item.duration.split('(')[1].replace(')', '')
+                        : item.duration,
+                      toDate: item.duration.includes('(')
+                        ? item.duration.split('(')[1].replace(')', '')
+                        : item.duration,
+                    },
+                  })
+                }
+              >
+                <View style={styles.requestCard}>
+                  <View style={styles.topRow}>
+                    <View style={styles.employeeRow}>
+                      <Avatar initials={item.initials} size={46} />
+                      <View>
+                        <Text style={styles.name}>{item.name}</Text>
+                        <Text style={styles.empId}>{item.empId}</Text>
+                      </View>
+                    </View>
+                    <StatusBadge label={item.type} tone={item.typeTone || 'info'} />
+                  </View>
+
+                  <View style={styles.divider} />
+
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Duration</Text>
+                    <Text style={styles.detailValue}>{item.duration}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Reason</Text>
+                    <Text style={styles.detailValue}>{item.reason}</Text>
+                  </View>
+
+                  {item.status === 'pending' ? (
+                    <View style={styles.actionsRow}>
+                      <TouchableOpacity
+                        style={styles.rejectBtn}
+                        activeOpacity={0.8}
+                        onPress={() => handleReject(item.id)}
+                      >
+                        <Text style={styles.rejectText}>Reject</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.approveBtn}
+                        activeOpacity={0.8}
+                        onPress={() => handleApprove(item.id)}
+                      >
+                        <Text style={styles.approveText}>Approve</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : item.status === 'approved' ? (
+                    <View style={{ marginTop: 10, alignItems: 'flex-end' }}>
+                      <StatusBadge label="Approved" tone="success" />
+                    </View>
+                  ) : (
+                    <View style={{ marginTop: 10, alignItems: 'flex-end' }}>
+                      <StatusBadge label="Rejected" tone="danger" />
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
+        </View>
       </ScrollView>
 
       <BottomNavBar active="Dashboard" onNavigate={go} />
