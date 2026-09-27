@@ -121,42 +121,29 @@ export default function MyAttendanceScreen({ navigation }) {
         </Card>
       </ScrollView>
 
-      {/* Month/Year Selection Modal */}
+      {/* Coming Soon Modal */}
       <Modal
-        visible={showMonthPicker}
+        visible={true}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowMonthPicker(false)}
+        onRequestClose={() => go('EmployeeDashboard')}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowMonthPicker(false)}
-        >
-          <View style={styles.monthPickerCard}>
-            <Text style={styles.monthPickerTitle}>Select Month & Year</Text>
-            <ScrollView style={{ maxHeight: 300 }} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-              {MONTHS_LIST.map((m) => (
-                <TouchableOpacity
-                  key={m}
-                  style={[styles.monthOption, m === monthLabel && styles.monthOptionSelected]}
-                  onPress={() => selectMonth(m)}
-                >
-                  <Text style={[styles.monthOptionText, m === monthLabel && styles.monthOptionTextSelected]}>
-                    {m}
-                  </Text>
-                  {m === monthLabel && <Feather name="check" size={16} color="#2F6BFF" />}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+        <View style={styles.comingSoonOverlay}>
+          <View style={styles.comingSoonCard}>
+            <View style={styles.comingSoonIconWrap}>
+              <Feather name="calendar" size={30} color="#2563EB" />
+            </View>
+            <Text style={styles.comingSoonTitle}>Coming Soon</Text>
+            <Text style={styles.comingSoonMsg}>This feature is currently under development and will be available soon.</Text>
             <TouchableOpacity
-              style={styles.closePickerBtn}
-              onPress={() => setShowMonthPicker(false)}
+              style={styles.comingSoonBtn}
+              activeOpacity={0.8}
+              onPress={() => go('EmployeeDashboard')}
             >
-              <Text style={styles.closePickerText}>Cancel</Text>
+              <Text style={styles.comingSoonBtnText}>Done</Text>
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </View>
       </Modal>
 
       <BottomNavBar active="Attendance" onNavigate={go} />

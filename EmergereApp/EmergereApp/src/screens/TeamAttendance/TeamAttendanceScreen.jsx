@@ -359,6 +359,31 @@ export default function TeamAttendanceScreen({ navigation }) {
         </TouchableOpacity>
       </Modal>
 
+      {/* Coming Soon Modal */}
+      <Modal
+        visible={true}
+        transparent
+        animationType="fade"
+        onRequestClose={() => go('ManagerDashboard')}
+      >
+        <View style={styles.comingSoonOverlay}>
+          <View style={styles.comingSoonCard}>
+            <View style={styles.comingSoonIconWrap}>
+              <Feather name="calendar" size={30} color="#2563EB" />
+            </View>
+            <Text style={styles.comingSoonTitle}>Coming Soon</Text>
+            <Text style={styles.comingSoonMsg}>This feature is currently under development and will be available soon.</Text>
+            <TouchableOpacity
+              style={styles.comingSoonBtn}
+              activeOpacity={0.8}
+              onPress={() => go('ManagerDashboard')}
+            >
+              <Text style={styles.comingSoonBtnText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <BottomNavBar active="Attendance" onNavigate={go} />
     </View>
   );
