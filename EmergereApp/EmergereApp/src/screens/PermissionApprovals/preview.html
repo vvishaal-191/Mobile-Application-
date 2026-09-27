@@ -596,7 +596,7 @@
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </span>
-            <span class="tab-label">Rejected (<span id="perm-count-rejected">1</span>)</span>
+            <span class="tab-label">Rejected (<span id="perm-count-rejected">0</span>)</span>
           </div>
           <div class="tab-indicator"></div>
         </div>
@@ -691,7 +691,7 @@
       const store = (window.parent && window.parent.PERM_STATE) ? window.parent : (window.PERM_STATE ? window : (window.parent || window));
       const reqs = store.PERM_STATE || [];
 
-      let pending = 0, approved = 0, rejected = 1;
+      let pending = 0, approved = 0, rejected = 0;
       reqs.forEach(r => {
         const s = (r.status || 'pending').toLowerCase();
         if (s === 'approved') approved++;

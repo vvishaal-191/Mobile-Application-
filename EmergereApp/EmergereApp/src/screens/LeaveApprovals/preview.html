@@ -583,7 +583,7 @@
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </span>
-            <span class="tab-label">Approved (<span id="count-approved">1</span>)</span>
+            <span class="tab-label">Approved<span id="count-approved-wrap" style="display:none;"> (<span id="count-approved">0</span>)</span></span>
           </div>
           <div class="tab-indicator"></div>
         </div>
@@ -691,7 +691,7 @@
       const store = (window.parent && window.parent.EMP_LEAVE_REQUESTS) ? window.parent : (window.EMP_LEAVE_REQUESTS ? window : (window.parent || window));
       const reqs = store.EMP_LEAVE_REQUESTS || [];
 
-      let pending = 0, approved = 1, rejected = 0;
+      let pending = 0, approved = 0, rejected = 0;
       reqs.forEach(r => {
         const s = (r.status || 'pending').toLowerCase();
         if (s === 'approved') approved++;
@@ -705,6 +705,8 @@
 
       if (countPending) countPending.textContent = pending;
       if (countApproved) countApproved.textContent = approved;
+      const wrapApproved = document.getElementById("count-approved-wrap");
+      if (wrapApproved) wrapApproved.style.display = approved > 0 ? "inline" : "none";
       if (countRejected) countRejected.textContent = rejected;
     }
 

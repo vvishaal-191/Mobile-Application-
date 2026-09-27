@@ -244,10 +244,7 @@ export default function ManagerDashboardScreen({ navigation, route }) {
                 <Text style={styles.headerSubtitle}>IT Solutions</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.bellButton} onPress={() => go('Notifications')}>
-              <Feather name="bell" size={18} color="#FFFFFF" />
-              <View style={styles.bellDot} />
-            </TouchableOpacity>
+            
           </View>
 
           {/* Greeting Row */}
