@@ -13269,52 +13269,93 @@ body {
       if (!doc) return;
       const store = (window.parent && window.parent.EMP_LEAVE_REQUESTS) ? window.parent : (window.EMP_LEAVE_REQUESTS ? window : (window.parent || window));
 
-      // 1. Gather all leave and permission requests with composite deduplication
-      const allRequests = [];
-      const seenKeys = {};
-
-      function addReq(r) {
-        if (!r) return;
-        const key = r.id || (
-          (r.employeeName || r.name || '') + '_' +
-          (r.leaveType || r.type || r.permissionType || '') + '_' +
-          (r.fromDate || r.date || '') + '_' +
-          (r.reason || '')
-        );
-        if (key && !seenKeys[key]) {
-          seenKeys[key] = true;
-          if (r.id) seenKeys[r.id] = true;
-          allRequests.push(r);
-        }
-      }
-
-      if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
-        store.EMP_LEAVE_REQUESTS.forEach(addReq);
-      }
-      if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
-        store.PERM_STATE.forEach(addReq);
-      }
-
       function isPermReq(r) {
+        if (!r) return false;
         if (r.isPermission === true) return true;
         const t = (r.leaveType || r.type || r.permissionType || '').toLowerCase();
         return t.includes('permission') || t.includes('early going') || t.includes('late coming');
       }
 
-      const pendingPerms = allRequests.filter(function(r) {
-        return isPermReq(r) && (r.status || 'pending').toLowerCase() === 'pending';
-      });
+      const submittedMap = store.MANAGER_SUBMITTED_DECISIONS || {};
+      function isDecidedAndSubmitted(r) {
+        if (!r) return false;
+        const s = (r.status || '').toLowerCase();
+        const isDecided = (s === 'approved' || s === 'rejected');
+        if (!isDecided) return false;
+        const isSubmitted = r.managerDecisionSubmitted === true ||
+                            r.decisionSubmitted === true ||
+                            !!submittedMap[r.id] ||
+                            (r.id && !!submittedMap[String(r.id).replace(/^perm-/, '')]) ||
+                            (r.id && !!submittedMap['perm-' + r.id]) ||
+                            !!r.approvedAt ||
+                            !!r.rejectedAt;
+        return isSubmitted;
+      }
 
-      const pendingLeaves = allRequests.filter(function(r) {
-        return !isPermReq(r) && (r.status || 'pending').toLowerCase() === 'pending';
-      });
+      // 1. Completely separate Leave Requests and Permission Requests into distinct collections
+      const leaveMap = {};
+      const permMap = {};
 
-      const totalPending = allRequests.filter(function(r) {
+      function addLeaveReq(r) {
+        if (!r || isPermReq(r)) return;
+        const key = r.id || ((r.employeeName || r.name || 'emp') + '_' + (r.leaveType || r.type || 'leave') + '_' + (r.fromDate || r.date || '') + '_' + (r.reason || ''));
+        if (!leaveMap[key]) {
+          leaveMap[key] = r;
+        } else {
+          if (!isDecidedAndSubmitted(leaveMap[key]) && isDecidedAndSubmitted(r)) {
+            leaveMap[key] = r;
+          }
+        }
+      }
+
+      function addPermReq(r) {
+        if (!r || !isPermReq(r)) return;
+        const cleanId = r.id ? String(r.id).replace(/^perm-/, '') : null;
+        const key = cleanId || ((r.employeeName || r.name || 'emp') + '_' + (r.leaveType || r.type || r.permissionType || 'perm') + '_' + (r.date || r.fromDate || '') + '_' + (r.reason || ''));
+        if (!permMap[key]) {
+          permMap[key] = r;
+        } else {
+          if (!isDecidedAndSubmitted(permMap[key]) && isDecidedAndSubmitted(r)) {
+            permMap[key] = r;
+          }
+        }
+      }
+
+      if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
+        store.EMP_LEAVE_REQUESTS.forEach(function(r) {
+          if (isPermReq(r)) addPermReq(r);
+          else addLeaveReq(r);
+        });
+      }
+
+      if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
+        store.PERM_STATE.forEach(addPermReq);
+      }
+
+      if (store.PERSON_DATA && typeof store.PERSON_DATA === 'object') {
+        Object.keys(store.PERSON_DATA).forEach(function(k) {
+          const p = store.PERSON_DATA[k];
+          if (p && typeof p === 'object') {
+            if (isPermReq(p)) addPermReq(p);
+            else if (p.leaveType && p.status && p.status !== 'pending') addLeaveReq(p);
+          }
+        });
+      }
+
+      const allLeaves = Object.values(leaveMap);
+      const allPerms = Object.values(permMap);
+
+      const pendingLeaves = allLeaves.filter(function(r) {
         return (r.status || 'pending').toLowerCase() === 'pending';
       });
 
+      const pendingPerms = allPerms.filter(function(r) {
+        return (r.status || 'pending').toLowerCase() === 'pending';
+      });
+
+      const totalPending = pendingLeaves.length + pendingPerms.length;
+
       // 2. Notification Counts:
-      // Permission Approvals card (Image 2) displays accurate count of pending permission requests
       const permBadge = doc.getElementById('manager-dash-perm-badge');
       if (permBadge) {
         const notifCount = pendingPerms.length;
@@ -13342,18 +13383,24 @@ body {
 
       const statPending = doc.getElementById('mgr-stat-pending');
       if (statPending) {
-        statPending.textContent = String(18 + totalPending.length);
+        statPending.textContent = String(18 + totalPending);
       }
 
       // 3. Recent Requests Section
       // Only requests that have been approved or rejected by the manager AND submitted appear in Recent Requests.
       // Newly submitted pending requests do not appear here until approved/rejected and submitted.
-      const submittedMap = store.MANAGER_SUBMITTED_DECISIONS || {};
-      const processedRequests = allRequests.filter(function(r) {
-        const s = (r.status || '').toLowerCase();
-        const isDecided = s === 'approved' || s === 'rejected';
-        const isSubmitted = r.managerDecisionSubmitted === true || r.decisionSubmitted === true || !!submittedMap[r.id] || !!r.approvedAt || !!r.rejectedAt;
-        return isDecided && isSubmitted;
+      const processedLeaves = allLeaves.filter(isDecidedAndSubmitted);
+      const processedPerms = allPerms.filter(isDecidedAndSubmitted);
+
+      // Separate Leave cards and Permission cards - NEVER combine them into a single card
+      const processedRequests = [];
+      processedLeaves.forEach(function(l) { processedRequests.push(Object.assign({}, l, { _isPermCard: false })); });
+      processedPerms.forEach(function(p) { processedRequests.push(Object.assign({}, p, { _isPermCard: true })); });
+
+      processedRequests.sort(function(a, b) {
+        const tA = a.approvedAt || a.rejectedAt || a.createdAt || 0;
+        const tB = b.approvedAt || b.rejectedAt || b.createdAt || 0;
+        return tB - tA;
       });
 
       const requestsLabel = doc.getElementById('mgr-dash-requests-label');
@@ -13365,7 +13412,6 @@ body {
 
       if (requestsList) {
         if (processedRequests.length === 0) {
-          // Empty state matching Image 3
           requestsList.innerHTML = '<div class="empty-requests-wrap">'
             + '<svg width="100" height="85" viewBox="0 0 100 85" fill="none" xmlns="http://www.w3.org/2000/svg">'
             + '<defs>'
@@ -13391,19 +13437,29 @@ body {
         } else {
           let htmlCards = '';
           processedRequests.forEach(function(req) {
-            const isPerm = !!req.isPermission;
-            const empName = req.employeeName || req.name || 'Sneha Reddy';
-            const empInitials = req.employeeInitials || req.initials || (empName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0, 2)) || 'SR';
+            const isPerm = req._isPermCard === true || isPermReq(req);
+            const empName = req.employeeName || req.name || (isPerm ? 'John Doe' : 'Sneha Reddy');
+            const empInitials = req.employeeInitials || req.initials || (empName.trim().split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0, 2)) || (isPerm ? 'JD' : 'SR');
             const empRole = req.employeeRole || req.role || (isPerm ? 'UI/UX Designer' : 'Senior Software Engineer');
-            const reqType = req.leaveType || req.type || (isPerm ? 'Early Going' : 'Casual Leave');
-            const duration = req.daysText || req.duration || req.totalDays || (isPerm ? '2 Hours' : '2 Days');
-            const dates = req.date || (req.fromDate === req.toDate ? req.fromDate : (req.fromDate + ' – ' + (req.toDate || req.fromDate)));
+            const reqType = isPerm ? (req.type || req.permissionType || req.leaveType || 'Early Going') : (req.leaveType || req.type || 'Casual Leave');
+            const duration = req.duration || req.daysText || req.totalDays || (isPerm ? '1 Hour' : '2 Days');
+
+            let dates = req.date;
+            if (!dates) {
+              if (req.fromDate && req.toDate) {
+                dates = req.fromDate === req.toDate ? (req.fromDate + ' – ' + req.toDate) : (req.fromDate + ' – ' + req.toDate);
+              } else {
+                dates = req.fromDate || req.toDate || '04-Sep-2026';
+              }
+            }
+
             const reason = req.reason || (isPerm ? 'Personal work / checkup' : "Family function - attending sister's wedding ceremony in Bangalore.");
             const status = (req.status || 'pending').toLowerCase();
             const statusLabel = status === 'approved' ? 'Approved' : (status === 'rejected' ? 'Rejected' : 'Pending');
 
-            // Card without circled Active button (Requirement 3)
-            htmlCards += '<div class="recent-req-item" onclick="handleCardNav(\'tpl-LeaveApprovalDetail\', \'' + (req.id || 'priya') + '\')" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:14px 16px; margin-bottom:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.03); transition:all 0.2s;">'
+            const cardKey = req.id || (isPerm ? 'perm-init-1' : 'priya');
+
+            htmlCards += '<div class="recent-req-item" onclick="handleCardNav(\'tpl-LeaveApprovalDetail\', \'' + cardKey + '\')" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:14px 16px; margin-bottom:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.03); transition:all 0.2s;">'
               + '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">'
               + '<div style="display:flex; align-items:center; gap:10px;">'
               + '<div style="width:38px; height:38px; border-radius:50%; background:#2563EB; color:#FFFFFF; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">' + empInitials + '</div>'
@@ -15871,80 +15927,131 @@ body {
           if (!store.PERSON_DATA) store.PERSON_DATA = {};
           if (store.PERSON_DATA[currentPerson]) {
             store.PERSON_DATA[currentPerson].status = status;
+            store.PERSON_DATA[currentPerson].managerDecisionSubmitted = true;
+            store.PERSON_DATA[currentPerson].decisionSubmitted = true;
+            if (isApproved) store.PERSON_DATA[currentPerson].approvedAt = Date.now();
+            else store.PERSON_DATA[currentPerson].rejectedAt = Date.now();
           }
 
-          store.LAST_LEAVE_DECISION = {
-            id: currentPerson === 'priya' ? '1' : currentPerson,
-            personKey: currentPerson,
-            status: status,
-            managerDecisionSubmitted: true,
-            decisionSubmitted: true,
-            approvedAt: isApproved ? Date.now() : null,
-            rejectedAt: !isApproved ? Date.now() : null,
-            labelText: labelText,
-            badgeClass: badgeClass,
-            lType: (store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].leaveType) || 'Casual Leave'
-          };
-          store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
+          if (typeof activeRecord !== 'undefined' && activeRecord) {
+            activeRecord.status = status;
+            activeRecord.managerDecisionSubmitted = true;
+            activeRecord.decisionSubmitted = true;
+            if (isApproved) activeRecord.approvedAt = Date.now();
+            else activeRecord.rejectedAt = Date.now();
+          }
 
-          if (store.PERSON_DATA && store.PERSON_DATA[currentPerson] && store.PERSON_DATA[currentPerson].isPermission) {
+          if (!store.MANAGER_SUBMITTED_DECISIONS) store.MANAGER_SUBMITTED_DECISIONS = {};
+          store.MANAGER_SUBMITTED_DECISIONS[currentPerson] = true;
+          store.MANAGER_SUBMITTED_DECISIONS[String(currentPerson)] = true;
+          if (String(currentPerson).startsWith('perm-')) {
+            store.MANAGER_SUBMITTED_DECISIONS[String(currentPerson).replace(/^perm-/, '')] = true;
+          } else {
+            store.MANAGER_SUBMITTED_DECISIONS['perm-' + currentPerson] = true;
+          }
+          if (currentPerson === 'priya' || currentPerson === '1') {
+            store.MANAGER_SUBMITTED_DECISIONS['priya'] = true;
+            store.MANAGER_SUBMITTED_DECISIONS['1'] = true;
+          }
+
+          const pData = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || (typeof activeRecord !== 'undefined' ? activeRecord : null);
+          const isPerm = !!(
+            (pData && pData.isPermission) ||
+            String(currentPerson).startsWith('perm-') ||
+            (pData && pData.type && (pData.type.includes('Going') || pData.type.includes('Coming'))) ||
+            (pData && pData.leaveType && (pData.leaveType.includes('Going') || pData.leaveType.includes('Coming')))
+          );
+
+          if (isPerm) {
             store.LAST_PERMISSION_DECISION = {
               id: currentPerson,
               status: status,
-              type: store.PERSON_DATA[currentPerson].leaveType || 'Permission',
-              date: store.PERSON_DATA[currentPerson].fromDate || '04-Sep-2026'
+              type: (pData && (pData.leaveType || pData.type)) || 'Permission',
+              date: (pData && (pData.fromDate || pData.date)) || '04-Sep-2026',
+              managerDecisionSubmitted: true,
+              decisionSubmitted: true,
+              approvedAt: isApproved ? Date.now() : null,
+              rejectedAt: !isApproved ? Date.now() : null
             };
-            if (store.PERM_STATE) {
+            if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
               store.PERM_STATE.forEach(function(req) {
-                if (String(req.id) === String(currentPerson) || req.type === store.PERSON_DATA[currentPerson].leaveType || req.id === 'perm-init-1') {
+                var idMatch = String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson) || String(req.id) === ('perm-' + currentPerson);
+                var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName));
+                if (idMatch || detailMatch || req.id === 'perm-init-1') {
                   req.status = status;
                   req.managerDecisionSubmitted = true;
                   req.decisionSubmitted = true;
                   if (isApproved) req.approvedAt = Date.now();
                   else req.rejectedAt = Date.now();
+                  store.MANAGER_SUBMITTED_DECISIONS[req.id] = true;
                 }
               });
             }
+            if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
+              store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+                var idMatch = String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson) || String(req.id) === ('perm-' + currentPerson);
+                if (idMatch) {
+                  req.status = status;
+                  req.managerDecisionSubmitted = true;
+                  req.decisionSubmitted = true;
+                  if (isApproved) req.approvedAt = Date.now();
+                  else req.rejectedAt = Date.now();
+                  store.MANAGER_SUBMITTED_DECISIONS[req.id] = true;
+                }
+              });
+            }
+          } else {
+            store.LAST_LEAVE_DECISION = {
+              id: currentPerson === 'priya' ? '1' : currentPerson,
+              personKey: currentPerson,
+              status: status,
+              managerDecisionSubmitted: true,
+              decisionSubmitted: true,
+              approvedAt: isApproved ? Date.now() : null,
+              rejectedAt: !isApproved ? Date.now() : null,
+              labelText: labelText,
+              badgeClass: badgeClass,
+              lType: (pData && (pData.leaveType || pData.type)) || 'Casual Leave'
+            };
+            store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
+
+            if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
+              store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+                var idMatch = String(req.id) === String(currentPerson) || (currentPerson === 'priya' && String(req.id) === '1') || (currentPerson === '1' && String(req.id) === '1');
+                var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName)) && (req.leaveType === (pData.leaveType || pData.type));
+                if (idMatch || detailMatch) {
+                  req.status = status;
+                  req.managerDecisionSubmitted = true;
+                  req.decisionSubmitted = true;
+                  if (isApproved) req.approvedAt = Date.now();
+                  else req.rejectedAt = Date.now();
+                  store.MANAGER_SUBMITTED_DECISIONS[req.id] = true;
+                }
+              });
+              if (typeof store.updateEmploymentStatusAfterApproval === 'function') {
+                store.updateEmploymentStatusAfterApproval((pData && (pData.name || pData.employeeName)), (pData && (pData.leaveType || pData.type)), status);
+              }
+            }
+          }
+
+          // Trigger syncManagerDashboard if available
+          if (typeof store.syncManagerDashboard === 'function') {
+            try { store.syncManagerDashboard(parentDoc); } catch(e){}
+          }
+          if (typeof syncManagerDashboard === 'function') {
+            try { syncManagerDashboard(parentDoc); } catch(e){}
           }
 
           // 1. Update tpl-ManagerDashboard counters if needed
           const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
           if (mgrTpl) {
             let tplHtml = mgrTpl.innerHTML;
-            const pObj = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
-            if (pObj.isPermission) {
+            if (isPerm) {
               tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-perm-badge">[0-9]+/, 'class="qbadge" id="manager-dash-perm-badge">0');
             } else {
               tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-leave-badge">[0-9]+/, 'class="qbadge" id="manager-dash-leave-badge">0');
             }
             mgrTpl.innerHTML = tplHtml;
-          }
-
-          // 2. Update EMP_LEAVE_REQUESTS & PERM_STATE so Employee Dashboard reflects it
-          if (store.EMP_LEAVE_REQUESTS && store.EMP_LEAVE_REQUESTS.length > 0) {
-            store.EMP_LEAVE_REQUESTS.forEach(function(req) {
-              var pData = store.PERSON_DATA && store.PERSON_DATA[currentPerson];
-              var idMatch = String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson) || String(req.id) === ('perm-' + currentPerson);
-              var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName)) && (req.leaveType === (pData.leaveType || pData.type));
-              if (idMatch || detailMatch) {
-                req.status = status;
-                req.managerDecisionSubmitted = true;
-                req.decisionSubmitted = true;
-                if (isApproved) req.approvedAt = Date.now();
-                else req.rejectedAt = Date.now();
-              }
-            });
-            var pObjDetail = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
-            if (typeof store.updateEmploymentStatusAfterApproval === 'function') {
-              store.updateEmploymentStatusAfterApproval(pObjDetail.name || pObjDetail.employeeName, pObjDetail.leaveType || pObjDetail.type, status);
-            }
-          }
-          if (store.PERM_STATE && store.PERM_STATE.length > 0) {
-            store.PERM_STATE.forEach(function(req) {
-              if (String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson)) {
-                req.status = status;
-              }
-            });
           }
 
           // Mark new notification & trigger subtle glow on Employee Dashboard
@@ -15960,20 +16067,18 @@ body {
           // Inject notification into tpl-Notifications template if not present
           const notifTpl = parentDoc.getElementById('tpl-Notifications');
           if (notifTpl) {
-            const pObj = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || {};
-            const isPermReq = !!(pObj.isPermission || (store.LAST_PERMISSION_DECISION && store.LAST_PERMISSION_DECISION.id === currentPerson));
-            if (isPermReq) {
+            if (isPerm) {
               if (!store.PERM_NOTIFICATIONS) store.PERM_NOTIFICATIONS = [];
               store.PERM_NOTIFICATIONS.unshift({
                 status: status,
-                type: pObj.leaveType || pObj.type || 'Permission',
-                date: pObj.fromDate || pObj.schedule || '04-Sep-2026',
+                type: (pData && (pData.leaveType || pData.type)) || 'Permission',
+                date: (pData && (pData.fromDate || pData.schedule || pData.date)) || '04-Sep-2026',
                 managerName: (store.USER_PROFILE && store.USER_PROFILE.reportingManager) || 'Your Manager',
-                employeeName: pObj.name || 'Employee'
+                employeeName: (pData && pData.name) || 'Employee'
               });
             } else {
-              const lType = (pObj.leaveType || pObj.type || 'Casual Leave');
-              const fromDate = (pObj.fromDate || 'Sep 10, 2026');
+              const lType = (pData && (pData.leaveType || pData.type)) || 'Casual Leave';
+              const fromDate = (pData && (pData.fromDate || 'Sep 10, 2026'));
               const icoClass = isApproved ? 'success' : 'danger';
               const icoChar = isApproved ? '✓' : '✕';
               const msgText = isApproved
@@ -16007,12 +16112,7 @@ body {
             liveEmpBadge.textContent = labelText;
           }
 
-          const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
-          if (liveQBadge) {
-            liveQBadge.textContent = '2';
-          }
-
-          // 5. Update the current Request Detail screen's approval path, banner, and buttons dynamically
+          // 5. Update the current Request Detail screen approval path and buttons
           const mgrPath = document.getElementById('lad-manager-path');
           if (mgrPath) {
             mgrPath.className = 'step-pill ' + (isApproved ? 'applied' : 'pending');
@@ -17332,52 +17432,93 @@ body {
       if (!doc) return;
       const store = (window.parent && window.parent.EMP_LEAVE_REQUESTS) ? window.parent : (window.EMP_LEAVE_REQUESTS ? window : (window.parent || window));
 
-      // 1. Gather all leave and permission requests with composite deduplication
-      const allRequests = [];
-      const seenKeys = {};
-
-      function addReq(r) {
-        if (!r) return;
-        const key = r.id || (
-          (r.employeeName || r.name || '') + '_' +
-          (r.leaveType || r.type || r.permissionType || '') + '_' +
-          (r.fromDate || r.date || '') + '_' +
-          (r.reason || '')
-        );
-        if (key && !seenKeys[key]) {
-          seenKeys[key] = true;
-          if (r.id) seenKeys[r.id] = true;
-          allRequests.push(r);
-        }
-      }
-
-      if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
-        store.EMP_LEAVE_REQUESTS.forEach(addReq);
-      }
-      if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
-        store.PERM_STATE.forEach(addReq);
-      }
-
       function isPermReq(r) {
+        if (!r) return false;
         if (r.isPermission === true) return true;
         const t = (r.leaveType || r.type || r.permissionType || '').toLowerCase();
         return t.includes('permission') || t.includes('early going') || t.includes('late coming');
       }
 
-      const pendingPerms = allRequests.filter(function(r) {
-        return isPermReq(r) && (r.status || 'pending').toLowerCase() === 'pending';
-      });
+      const submittedMap = store.MANAGER_SUBMITTED_DECISIONS || {};
+      function isDecidedAndSubmitted(r) {
+        if (!r) return false;
+        const s = (r.status || '').toLowerCase();
+        const isDecided = (s === 'approved' || s === 'rejected');
+        if (!isDecided) return false;
+        const isSubmitted = r.managerDecisionSubmitted === true ||
+                            r.decisionSubmitted === true ||
+                            !!submittedMap[r.id] ||
+                            (r.id && !!submittedMap[String(r.id).replace(/^perm-/, '')]) ||
+                            (r.id && !!submittedMap['perm-' + r.id]) ||
+                            !!r.approvedAt ||
+                            !!r.rejectedAt;
+        return isSubmitted;
+      }
 
-      const pendingLeaves = allRequests.filter(function(r) {
-        return !isPermReq(r) && (r.status || 'pending').toLowerCase() === 'pending';
-      });
+      // 1. Completely separate Leave Requests and Permission Requests into distinct collections
+      const leaveMap = {};
+      const permMap = {};
 
-      const totalPending = allRequests.filter(function(r) {
+      function addLeaveReq(r) {
+        if (!r || isPermReq(r)) return;
+        const key = r.id || ((r.employeeName || r.name || 'emp') + '_' + (r.leaveType || r.type || 'leave') + '_' + (r.fromDate || r.date || '') + '_' + (r.reason || ''));
+        if (!leaveMap[key]) {
+          leaveMap[key] = r;
+        } else {
+          if (!isDecidedAndSubmitted(leaveMap[key]) && isDecidedAndSubmitted(r)) {
+            leaveMap[key] = r;
+          }
+        }
+      }
+
+      function addPermReq(r) {
+        if (!r || !isPermReq(r)) return;
+        const cleanId = r.id ? String(r.id).replace(/^perm-/, '') : null;
+        const key = cleanId || ((r.employeeName || r.name || 'emp') + '_' + (r.leaveType || r.type || r.permissionType || 'perm') + '_' + (r.date || r.fromDate || '') + '_' + (r.reason || ''));
+        if (!permMap[key]) {
+          permMap[key] = r;
+        } else {
+          if (!isDecidedAndSubmitted(permMap[key]) && isDecidedAndSubmitted(r)) {
+            permMap[key] = r;
+          }
+        }
+      }
+
+      if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
+        store.EMP_LEAVE_REQUESTS.forEach(function(r) {
+          if (isPermReq(r)) addPermReq(r);
+          else addLeaveReq(r);
+        });
+      }
+
+      if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
+        store.PERM_STATE.forEach(addPermReq);
+      }
+
+      if (store.PERSON_DATA && typeof store.PERSON_DATA === 'object') {
+        Object.keys(store.PERSON_DATA).forEach(function(k) {
+          const p = store.PERSON_DATA[k];
+          if (p && typeof p === 'object') {
+            if (isPermReq(p)) addPermReq(p);
+            else if (p.leaveType && p.status && p.status !== 'pending') addLeaveReq(p);
+          }
+        });
+      }
+
+      const allLeaves = Object.values(leaveMap);
+      const allPerms = Object.values(permMap);
+
+      const pendingLeaves = allLeaves.filter(function(r) {
         return (r.status || 'pending').toLowerCase() === 'pending';
       });
 
+      const pendingPerms = allPerms.filter(function(r) {
+        return (r.status || 'pending').toLowerCase() === 'pending';
+      });
+
+      const totalPending = pendingLeaves.length + pendingPerms.length;
+
       // 2. Notification Counts:
-      // Permission Approvals card (Image 2) displays accurate count of pending permission requests
       const permBadge = doc.getElementById('manager-dash-perm-badge');
       if (permBadge) {
         const notifCount = pendingPerms.length;
@@ -17405,18 +17546,24 @@ body {
 
       const statPending = doc.getElementById('mgr-stat-pending');
       if (statPending) {
-        statPending.textContent = String(18 + totalPending.length);
+        statPending.textContent = String(18 + totalPending);
       }
 
       // 3. Recent Requests Section
       // Only requests that have been approved or rejected by the manager AND submitted appear in Recent Requests.
       // Newly submitted pending requests do not appear here until approved/rejected and submitted.
-      const submittedMap = store.MANAGER_SUBMITTED_DECISIONS || {};
-      const processedRequests = allRequests.filter(function(r) {
-        const s = (r.status || '').toLowerCase();
-        const isDecided = s === 'approved' || s === 'rejected';
-        const isSubmitted = r.managerDecisionSubmitted === true || r.decisionSubmitted === true || !!submittedMap[r.id] || !!r.approvedAt || !!r.rejectedAt;
-        return isDecided && isSubmitted;
+      const processedLeaves = allLeaves.filter(isDecidedAndSubmitted);
+      const processedPerms = allPerms.filter(isDecidedAndSubmitted);
+
+      // Separate Leave cards and Permission cards - NEVER combine them into a single card
+      const processedRequests = [];
+      processedLeaves.forEach(function(l) { processedRequests.push(Object.assign({}, l, { _isPermCard: false })); });
+      processedPerms.forEach(function(p) { processedRequests.push(Object.assign({}, p, { _isPermCard: true })); });
+
+      processedRequests.sort(function(a, b) {
+        const tA = a.approvedAt || a.rejectedAt || a.createdAt || 0;
+        const tB = b.approvedAt || b.rejectedAt || b.createdAt || 0;
+        return tB - tA;
       });
 
       const requestsLabel = doc.getElementById('mgr-dash-requests-label');
@@ -17428,7 +17575,6 @@ body {
 
       if (requestsList) {
         if (processedRequests.length === 0) {
-          // Empty state matching Image 3
           requestsList.innerHTML = '<div class="empty-requests-wrap">'
             + '<svg width="100" height="85" viewBox="0 0 100 85" fill="none" xmlns="http://www.w3.org/2000/svg">'
             + '<defs>'
@@ -17454,19 +17600,29 @@ body {
         } else {
           let htmlCards = '';
           processedRequests.forEach(function(req) {
-            const isPerm = !!req.isPermission;
-            const empName = req.employeeName || req.name || 'Sneha Reddy';
-            const empInitials = req.employeeInitials || req.initials || (empName.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0, 2)) || 'SR';
+            const isPerm = req._isPermCard === true || isPermReq(req);
+            const empName = req.employeeName || req.name || (isPerm ? 'John Doe' : 'Sneha Reddy');
+            const empInitials = req.employeeInitials || req.initials || (empName.trim().split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0, 2)) || (isPerm ? 'JD' : 'SR');
             const empRole = req.employeeRole || req.role || (isPerm ? 'UI/UX Designer' : 'Senior Software Engineer');
-            const reqType = req.leaveType || req.type || (isPerm ? 'Early Going' : 'Casual Leave');
-            const duration = req.daysText || req.duration || req.totalDays || (isPerm ? '2 Hours' : '2 Days');
-            const dates = req.date || (req.fromDate === req.toDate ? req.fromDate : (req.fromDate + ' – ' + (req.toDate || req.fromDate)));
+            const reqType = isPerm ? (req.type || req.permissionType || req.leaveType || 'Early Going') : (req.leaveType || req.type || 'Casual Leave');
+            const duration = req.duration || req.daysText || req.totalDays || (isPerm ? '1 Hour' : '2 Days');
+
+            let dates = req.date;
+            if (!dates) {
+              if (req.fromDate && req.toDate) {
+                dates = req.fromDate === req.toDate ? (req.fromDate + ' – ' + req.toDate) : (req.fromDate + ' – ' + req.toDate);
+              } else {
+                dates = req.fromDate || req.toDate || '04-Sep-2026';
+              }
+            }
+
             const reason = req.reason || (isPerm ? 'Personal work / checkup' : "Family function - attending sister's wedding ceremony in Bangalore.");
             const status = (req.status || 'pending').toLowerCase();
             const statusLabel = status === 'approved' ? 'Approved' : (status === 'rejected' ? 'Rejected' : 'Pending');
 
-            // Card without circled Active button (Requirement 3)
-            htmlCards += '<div class="recent-req-item" onclick="handleCardNav(\'tpl-LeaveApprovalDetail\', \'' + (req.id || 'priya') + '\')" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:14px 16px; margin-bottom:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.03); transition:all 0.2s;">'
+            const cardKey = req.id || (isPerm ? 'perm-init-1' : 'priya');
+
+            htmlCards += '<div class="recent-req-item" onclick="handleCardNav(\'tpl-LeaveApprovalDetail\', \'' + cardKey + '\')" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:14px 16px; margin-bottom:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.03); transition:all 0.2s;">'
               + '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">'
               + '<div style="display:flex; align-items:center; gap:10px;">'
               + '<div style="width:38px; height:38px; border-radius:50%; background:#2563EB; color:#FFFFFF; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">' + empInitials + '</div>'

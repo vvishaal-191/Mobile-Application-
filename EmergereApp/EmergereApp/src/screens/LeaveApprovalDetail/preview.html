@@ -1039,59 +1039,199 @@
       const labelText = isApproved ? 'Approved' : 'Rejected';
       const badgeClass = isApproved ? 'badge success' : 'badge danger';
 
-      const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
       const store = window.parent || window;
+      const parentDoc = (window.parent && window.parent.document) ? window.parent.document : document;
+      const currentPerson = (store.SELECTED_PERSON) || 'priya';
 
-      if (activeRecord) {
+      if (!store.PERSON_DATA) store.PERSON_DATA = {};
+      if (store.PERSON_DATA[currentPerson]) {
+        store.PERSON_DATA[currentPerson].status = status;
+        store.PERSON_DATA[currentPerson].managerDecisionSubmitted = true;
+        store.PERSON_DATA[currentPerson].decisionSubmitted = true;
+        if (isApproved) store.PERSON_DATA[currentPerson].approvedAt = Date.now();
+        else store.PERSON_DATA[currentPerson].rejectedAt = Date.now();
+      }
+
+      if (typeof activeRecord !== 'undefined' && activeRecord) {
         activeRecord.status = status;
-      activeRecord.managerDecisionSubmitted = true;
-      activeRecord.decisionSubmitted = true;
-      if (isApproved) activeRecord.approvedAt = Date.now(); else activeRecord.rejectedAt = Date.now();
-      store.MANAGER_SUBMITTED_DECISIONS = store.MANAGER_SUBMITTED_DECISIONS || {};
-      store.MANAGER_SUBMITTED_DECISIONS["priya"] = true;
-      if (currentPermId) store.MANAGER_SUBMITTED_DECISIONS[currentPermId] = true;
-        if (store.PERSON_DATA) {
-          if (store.SELECTED_PERSON) store.PERSON_DATA[store.SELECTED_PERSON] = activeRecord;
-          if (currentPermId) store.PERSON_DATA['perm-' + currentPermId] = activeRecord;
+        activeRecord.managerDecisionSubmitted = true;
+        activeRecord.decisionSubmitted = true;
+        if (isApproved) activeRecord.approvedAt = Date.now();
+        else activeRecord.rejectedAt = Date.now();
+      }
+
+      if (!store.MANAGER_SUBMITTED_DECISIONS) store.MANAGER_SUBMITTED_DECISIONS = {};
+      store.MANAGER_SUBMITTED_DECISIONS[currentPerson] = true;
+      store.MANAGER_SUBMITTED_DECISIONS[String(currentPerson)] = true;
+      if (String(currentPerson).startsWith('perm-')) {
+        store.MANAGER_SUBMITTED_DECISIONS[String(currentPerson).replace(/^perm-/, '')] = true;
+      } else {
+        store.MANAGER_SUBMITTED_DECISIONS['perm-' + currentPerson] = true;
+      }
+      if (currentPerson === 'priya' || currentPerson === '1') {
+        store.MANAGER_SUBMITTED_DECISIONS['priya'] = true;
+        store.MANAGER_SUBMITTED_DECISIONS['1'] = true;
+      }
+
+      const pData = (store.PERSON_DATA && store.PERSON_DATA[currentPerson]) || (typeof activeRecord !== 'undefined' ? activeRecord : null);
+      const isPerm = !!(
+        (pData && pData.isPermission) ||
+        String(currentPerson).startsWith('perm-') ||
+        (pData && pData.type && (pData.type.includes('Going') || pData.type.includes('Coming'))) ||
+        (pData && pData.leaveType && (pData.leaveType.includes('Going') || pData.leaveType.includes('Coming')))
+      );
+
+      if (isPerm) {
+        store.LAST_PERMISSION_DECISION = {
+          id: currentPerson,
+          status: status,
+          type: (pData && (pData.leaveType || pData.type)) || 'Permission',
+          date: (pData && (pData.fromDate || pData.date)) || '04-Sep-2026',
+          managerDecisionSubmitted: true,
+          decisionSubmitted: true,
+          approvedAt: isApproved ? Date.now() : null,
+          rejectedAt: !isApproved ? Date.now() : null
+        };
+        if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
+          store.PERM_STATE.forEach(function(req) {
+            var idMatch = String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson) || String(req.id) === ('perm-' + currentPerson);
+            var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName));
+            if (idMatch || detailMatch || req.id === 'perm-init-1') {
+              req.status = status;
+              req.managerDecisionSubmitted = true;
+              req.decisionSubmitted = true;
+              if (isApproved) req.approvedAt = Date.now();
+              else req.rejectedAt = Date.now();
+              store.MANAGER_SUBMITTED_DECISIONS[req.id] = true;
+            }
+          });
+        }
+        if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
+          store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+            var idMatch = String(req.id) === String(currentPerson) || ('perm-' + req.id) === String(currentPerson) || String(req.id) === ('perm-' + currentPerson);
+            if (idMatch) {
+              req.status = status;
+              req.managerDecisionSubmitted = true;
+              req.decisionSubmitted = true;
+              if (isApproved) req.approvedAt = Date.now();
+              else req.rejectedAt = Date.now();
+              store.MANAGER_SUBMITTED_DECISIONS[req.id] = true;
+            }
+          });
+        }
+      } else {
+        store.LAST_LEAVE_DECISION = {
+          id: currentPerson === 'priya' ? '1' : currentPerson,
+          personKey: currentPerson,
+          status: status,
+          managerDecisionSubmitted: true,
+          decisionSubmitted: true,
+          approvedAt: isApproved ? Date.now() : null,
+          rejectedAt: !isApproved ? Date.now() : null,
+          labelText: labelText,
+          badgeClass: badgeClass,
+          lType: (pData && (pData.leaveType || pData.type)) || 'Casual Leave'
+        };
+        store.lastLeaveDecision = store.LAST_LEAVE_DECISION;
+
+        if (store.EMP_LEAVE_REQUESTS && Array.isArray(store.EMP_LEAVE_REQUESTS)) {
+          store.EMP_LEAVE_REQUESTS.forEach(function(req) {
+            var idMatch = String(req.id) === String(currentPerson) || (currentPerson === 'priya' && String(req.id) === '1') || (currentPerson === '1' && String(req.id) === '1');
+            var detailMatch = pData && (req.employeeName === (pData.name || pData.employeeName)) && (req.leaveType === (pData.leaveType || pData.type));
+            if (idMatch || detailMatch) {
+              req.status = status;
+              req.managerDecisionSubmitted = true;
+              req.decisionSubmitted = true;
+              if (isApproved) req.approvedAt = Date.now();
+              else req.rejectedAt = Date.now();
+              store.MANAGER_SUBMITTED_DECISIONS[req.id] = true;
+            }
+          });
+          if (typeof store.updateEmploymentStatusAfterApproval === 'function') {
+            store.updateEmploymentStatusAfterApproval((pData && (pData.name || pData.employeeName)), (pData && (pData.leaveType || pData.type)), status);
+          }
         }
       }
 
-      // Update global LAST_LEAVE_DECISION
-      const pKey = store.SELECTED_PERSON || 'priya';
-      store.LAST_LEAVE_DECISION = {
-        personKey: pKey,
-        status: status,
-        updatedAt: new Date().toISOString()
-      };
+      // Trigger syncManagerDashboard if available
+      if (typeof store.syncManagerDashboard === 'function') {
+        try { store.syncManagerDashboard(parentDoc); } catch(e){}
+      }
+      if (typeof syncManagerDashboard === 'function') {
+        try { syncManagerDashboard(parentDoc); } catch(e){}
+      }
 
-      // Update tpl-ManagerDashboard template string in DOM if present
+      // 1. Update tpl-ManagerDashboard counters if needed
       const mgrTpl = parentDoc.getElementById('tpl-ManagerDashboard');
       if (mgrTpl) {
         let tplHtml = mgrTpl.innerHTML;
-        tplHtml = tplHtml.replace(
-          /id="dash-priya-status-badge"[^>]*>[^<]*/,
-          'id="dash-priya-status-badge" class="' + badgeClass + '">' + labelText
-        );
-        tplHtml = tplHtml.replace(
-          /class="qbadge" id="manager-dash-leave-badge">3/,
-          'class="qbadge" id="manager-dash-leave-badge">2'
-        );
+        if (isPerm) {
+          tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-perm-badge">[0-9]+/, 'class="qbadge" id="manager-dash-perm-badge">0');
+        } else {
+          tplHtml = tplHtml.replace(/class="qbadge" id="manager-dash-leave-badge">[0-9]+/, 'class="qbadge" id="manager-dash-leave-badge">0');
+        }
         mgrTpl.innerHTML = tplHtml;
       }
 
-      // Update live badges if present
-      const liveBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
-      if (liveBadge) {
-        liveBadge.className = badgeClass;
-        liveBadge.textContent = labelText;
+      // Mark new notification & trigger subtle glow on Employee Dashboard
+      store.HAS_NEW_NOTIFICATION = true;
+      try { store.sessionStorage.setItem('HAS_NEW_NOTIFICATION', 'true'); } catch (e) {}
+      if (typeof window !== 'undefined') {
+        window.HAS_NEW_NOTIFICATION = true;
+        try { sessionStorage.setItem('HAS_NEW_NOTIFICATION', 'true'); } catch (e) {}
+      }
+      const detailLiveBell = parentDoc.getElementById('dash-bell-btn') || parentDoc.querySelector('.dash-top .bell');
+      if (detailLiveBell) detailLiveBell.classList.add('has-glow');
+
+      // Inject notification into tpl-Notifications template if not present
+      const notifTpl = parentDoc.getElementById('tpl-Notifications');
+      if (notifTpl) {
+        if (isPerm) {
+          if (!store.PERM_NOTIFICATIONS) store.PERM_NOTIFICATIONS = [];
+          store.PERM_NOTIFICATIONS.unshift({
+            status: status,
+            type: (pData && (pData.leaveType || pData.type)) || 'Permission',
+            date: (pData && (pData.fromDate || pData.schedule || pData.date)) || '04-Sep-2026',
+            managerName: (store.USER_PROFILE && store.USER_PROFILE.reportingManager) || 'Your Manager',
+            employeeName: (pData && pData.name) || 'Employee'
+          });
+        } else {
+          const lType = (pData && (pData.leaveType || pData.type)) || 'Casual Leave';
+          const fromDate = (pData && (pData.fromDate || 'Sep 10, 2026'));
+          const icoClass = isApproved ? 'success' : 'danger';
+          const icoChar = isApproved ? '✓' : '✕';
+          const msgText = isApproved
+            ? 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Approved</b> by the Manager'
+            : 'Your ' + lType + ' request for ' + fromDate + ' has been <b>Rejected</b> by the Manager';
+          const notifCard = '<div class="card notif-card unread" id="dynamic-leave-notif-' + currentPerson + '">'
+            + '<div class="notif-row">'
+            + '<span class="ico-wrap ' + icoClass + '">' + icoChar + '</span>'
+            + '<div class="notif-text"><p>' + msgText + '</p><small>Just now</small></div>'
+            + '<span class="dot"></span>'
+            + '<span class="close-item-btn" onclick="this.closest(\'.notif-card\').remove()" title="Delete">✕</span>'
+            + '</div></div>';
+          let notifHtml = notifTpl.innerHTML;
+          if (notifHtml.indexOf('dynamic-leave-notif-' + currentPerson) === -1) {
+            notifHtml = notifHtml.replace('<div id="notif-container">', '<div id="notif-container">' + notifCard);
+            notifTpl.innerHTML = notifHtml;
+          }
+        }
       }
 
-      const liveQBadge = parentDoc.getElementById('manager-dash-leave-badge') || document.getElementById('manager-dash-leave-badge');
-      if (liveQBadge) {
-        liveQBadge.textContent = '2';
+      // 4. Update status on live Manager Dashboard if rendered
+      const priyaMgrBadge = parentDoc.getElementById('dash-priya-status-badge') || document.getElementById('dash-priya-status-badge');
+      if (priyaMgrBadge && (currentPerson === 'priya' || currentPerson === '1')) {
+        priyaMgrBadge.className = badgeClass;
+        priyaMgrBadge.textContent = labelText;
       }
 
-      // Update Approval Path node for Manager
+      const liveEmpBadge = parentDoc.getElementById('emp-dash-casual-leave-badge') || document.getElementById('emp-dash-casual-leave-badge');
+      if (liveEmpBadge) {
+        liveEmpBadge.className = badgeClass;
+        liveEmpBadge.textContent = labelText;
+      }
+
+      // 5. Update the current Request Detail screen approval path and buttons
       const mgrPath = document.getElementById('lad-manager-path');
       if (mgrPath) {
         mgrPath.className = 'step-pill ' + (isApproved ? 'applied' : 'pending');
@@ -1100,7 +1240,6 @@
         mgrPath.textContent = isApproved ? 'Approved' : 'Rejected';
       }
 
-      // Update buttons to show status banner and Done button
       const btnRow = document.getElementById('lad-btn-row');
       if (btnRow) {
         btnRow.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px;width:100%;">'
