@@ -1,1 +1,32 @@
 /* Reuses ../LeaveApprovals/preview.css for card/detail/btn-row layout */
+
+/* Permission Approvals - Flush Header Banner matching overall layout */
+.screen,
+.screen.has-pa-header,
+.screen.has-perm-header,
+.screen.has-la-header,
+.screen.has-mr-header {
+  background: var(--bg, #F8FAFC) !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  padding-bottom: 96px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.pa-header-banner-wrap,
+.pa-header-banner,
+.perm-header-banner,
+.la-header-banner {
+  position: relative;
+  width: 100% !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  box-shadow: 0 10px 28px rgba(0, 102, 255, 0.22);
+  background: #0066FF;
+}

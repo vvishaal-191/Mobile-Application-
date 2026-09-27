@@ -77,6 +77,10 @@ body {
 .screen.has-hc-header,
 .screen:has(.la-header-banner),
 .screen.has-la-header,
+.screen:has(.la-header-banner-wrap),
+.screen:has(.pa-header-banner),
+.screen.has-pa-header,
+.screen:has(.pa-header-banner-wrap),
 .screen:has(.mgr-header),
 .screen.has-mgr-header {
   padding-top: 0 !important;
@@ -90,6 +94,9 @@ body {
 .lb-header-banner,
 .hc-header-banner,
 .la-header-banner,
+.la-header-banner-wrap,
+.pa-header-banner,
+.pa-header-banner-wrap,
 .mgr-header {
   margin-top: 0 !important;
   border-top-left-radius: 0 !important;
