@@ -162,12 +162,15 @@ function syncManagerDashboard(targetDoc) {
         statPending.textContent = String(18 + totalPending.length);
       }
 
-      // 3. Recent Requests Section (matching Image 1)
-      // Only requests that have been approved or rejected by the manager appear in Recent Requests.
-      // Newly submitted pending requests do not appear here until approved/rejected.
+      // 3. Recent Requests Section
+      // Only requests that have been approved or rejected by the manager AND submitted appear in Recent Requests.
+      // Newly submitted pending requests do not appear here until approved/rejected and submitted.
+      const submittedMap = store.MANAGER_SUBMITTED_DECISIONS || {};
       const processedRequests = allRequests.filter(function(r) {
         const s = (r.status || '').toLowerCase();
-        return s === 'approved' || s === 'rejected';
+        const isDecided = s === 'approved' || s === 'rejected';
+        const isSubmitted = r.managerDecisionSubmitted === true || r.decisionSubmitted === true || !!submittedMap[r.id] || !!r.approvedAt || !!r.rejectedAt;
+        return isDecided && isSubmitted;
       });
 
       const requestsLabel = doc.getElementById('mgr-dash-requests-label');
@@ -216,49 +219,25 @@ function syncManagerDashboard(targetDoc) {
             const status = (req.status || 'pending').toLowerCase();
             const statusLabel = status === 'approved' ? 'Approved' : (status === 'rejected' ? 'Rejected' : 'Pending');
 
-            // Employee Status Button: Green when Active, Red when Inactive (Requirement 1)
-            let isEmpInactive = false;
-            if (status === 'approved' && !isPerm) {
-              isEmpInactive = true;
-            } else if (typeof store.computeEmploymentStatus === 'function') {
-              isEmpInactive = store.computeEmploymentStatus({ name: empName }) === 'Inactive';
-            } else if (store.EMPLOYMENT_STATUS === 'Inactive') {
-              isEmpInactive = true;
-            }
-            const empStatusText = isEmpInactive ? 'Inactive' : 'Active';
-            const empStatusPillStyle = isEmpInactive
-              ? 'background: #FEE2E2 !important; border: 1px solid #FCA5A5 !important; color: #DC2626 !important;'
-              : 'background: #DCFCE7 !important; border: 1px solid #86EFAC !important; color: #15803D !important;';
-            const empStatusDotStyle = isEmpInactive
-              ? 'background: #EF4444 !important;'
-              : 'background: #16A34A !important;';
-            const empStatusTextStyle = isEmpInactive
-              ? 'color: #DC2626 !important;'
-              : 'color: #15803D !important;';
-
+            // Card without circled Active button (Requirement 3)
             htmlCards += '<div class="recent-req-item" onclick="handleCardNav(\'tpl-LeaveApprovalDetail\', \'' + (req.id || 'priya') + '\')" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:14px 16px; margin-bottom:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.03); transition:all 0.2s;">'
               + '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">'
               + '<div style="display:flex; align-items:center; gap:10px;">'
-              + '<div style="width:38px; height:38px; border-radius:50%; background:' + (isPerm ? '#D97706' : '#2563EB') + '; color:#FFFFFF; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">' + empInitials + '</div>'
+              + '<div style="width:38px; height:38px; border-radius:50%; background:#2563EB; color:#FFFFFF; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">' + empInitials + '</div>'
               + '<div>'
               + '<div style="font-size:14px; font-weight:700; color:#0F172A;">' + empName + '</div>'
               + '<div style="font-size:11.5px; color:#64748B;">' + empRole + '</div>'
               + '</div>'
               + '</div>'
-              // Employee Status Button (Requirement 1)
-              + '<div class="profile-status-pill ' + (isEmpInactive ? 'inactive-status' : 'active-status') + '" style="' + empStatusPillStyle + ' padding:4px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700;">'
-              + '<span class="profile-status-dot" style="' + empStatusDotStyle + ' width:7px; height:7px; border-radius:50%; display:inline-block;"></span>'
-              + '<span class="profile-status-text" style="' + empStatusTextStyle + '">' + empStatusText + '</span>'
-              + '</div>'
               + '</div>'
 
               + '<div style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:6px;">'
-              + '<span style="background:' + (isPerm ? '#FFFBEB' : '#EFF6FF') + '; color:' + (isPerm ? '#D97706' : '#2563EB') + '; border:1px solid ' + (isPerm ? '#FDE68A' : '#DBEAFE') + '; padding:2px 8px; border-radius:6px; font-weight:600;">' + reqType + ' (' + duration + ')</span>'
+              + '<span style="background:#EFF6FF; color:#0066FF; border:1px solid #DBEAFE; padding:3px 10px; border-radius:8px; font-weight:600;">' + reqType + ' (' + duration + ')</span>'
               + '<span style="color:#475569; font-weight:500;">' + dates + '</span>'
-              + '<span style="margin-left:auto; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; background:' + (status === 'approved' ? '#DCFCE7' : (status === 'rejected' ? '#FEE2E2' : '#FEF3C7')) + '; color:' + (status === 'approved' ? '#15803D' : (status === 'rejected' ? '#DC2626' : '#D97706')) + ';">' + statusLabel + '</span>'
+              + '<span style="margin-left:auto; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:8px; background:' + (status === 'approved' ? '#DCFCE7' : '#FEE2E2') + '; color:' + (status === 'approved' ? '#15803D' : '#DC2626') + ';">' + statusLabel + '</span>'
               + '</div>'
 
-              + '<div style="font-size:12px; color:#475569; background:#F8FAFC; padding:8px 10px; border-radius:8px; line-height:1.4; border-left:3px solid ' + (isPerm ? '#F59E0B' : '#3B82F6') + ';">'
+              + '<div style="font-size:12.5px; color:#475569; background:#F8FAFC; padding:8px 12px; border-radius:8px; line-height:1.4; border-left:3px solid #0066FF;">'
               + '"' + reason + '"'
               + '</div>'
               + '</div>';

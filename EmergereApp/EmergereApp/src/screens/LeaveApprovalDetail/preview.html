@@ -1044,6 +1044,12 @@
 
       if (activeRecord) {
         activeRecord.status = status;
+      activeRecord.managerDecisionSubmitted = true;
+      activeRecord.decisionSubmitted = true;
+      if (isApproved) activeRecord.approvedAt = Date.now(); else activeRecord.rejectedAt = Date.now();
+      store.MANAGER_SUBMITTED_DECISIONS = store.MANAGER_SUBMITTED_DECISIONS || {};
+      store.MANAGER_SUBMITTED_DECISIONS["priya"] = true;
+      if (currentPermId) store.MANAGER_SUBMITTED_DECISIONS[currentPermId] = true;
         if (store.PERSON_DATA) {
           if (store.SELECTED_PERSON) store.PERSON_DATA[store.SELECTED_PERSON] = activeRecord;
           if (currentPermId) store.PERSON_DATA['perm-' + currentPermId] = activeRecord;
