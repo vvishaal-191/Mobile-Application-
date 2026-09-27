@@ -148,7 +148,7 @@
         </div>
 
         <!-- 2. Approved This Month -->
-        <div class="stat-item stat-approved" onclick="handleCardNav('tpl-LeaveApprovals')">
+        <div class="stat-item stat-approved" onclick="openLeaveApprovalsTab('approved')">
           <div class="stat-item-top">
             <div class="stat-icon-circle" style="background: #DCFCE7;">
               <div style="width: 22px; height: 22px; border-radius: 50%; background: #00A859; display: flex; align-items: center; justify-content: center;">
@@ -166,7 +166,7 @@
         </div>
 
         <!-- 3. Rejected This Month -->
-        <div class="stat-item stat-rejected" onclick="handleCardNav('tpl-LeaveApprovals')">
+        <div class="stat-item stat-rejected" onclick="openLeaveApprovalsTab('rejected')">
           <div class="stat-item-top">
             <div class="stat-icon-circle" style="background: #FEE2E2;">
               <div style="width: 22px; height: 22px; border-radius: 50%; background: #EF4444; display: flex; align-items: center; justify-content: center;">
@@ -608,7 +608,7 @@
       if (overlay) overlay.classList.remove('open');
     }
 
-    function handleSidebarNav(screenId) {
+    function handleSidebarNav(screenId, personKey, tabName) {
       closeSidebarDrawer();
       if (screenId === 'tpl-Profile' || screenId === 'Profile') {
         screenId = 'tpl-MyProfile';
@@ -637,13 +637,38 @@
       }, 100);
     }
 
-    function handleCardNav(screenId, personKey) {
+    function handleCardNav(screenId, personKey, tabName) {
       const pWin = (window.parent && window.parent !== window) ? window.parent : window;
-      if (pWin.loadScreen) {
-        pWin.loadScreen(screenId, personKey || (screenId === "tpl-LeaveApprovalDetail" ? "priya" : undefined));
-      } else if (typeof loadScreen === 'function') {
-        loadScreen(screenId, personKey || (screenId === "tpl-LeaveApprovalDetail" ? "priya" : undefined));
+      if (tabName) {
+        pWin.TARGET_LEAVE_TAB = tabName;
       }
+      if (pWin.loadScreen) {
+        pWin.loadScreen(screenId, personKey || (screenId === 'tpl-LeaveApprovalDetail' ? 'priya' : undefined));
+      } else if (typeof loadScreen === 'function') {
+        loadScreen(screenId, personKey || (screenId === 'tpl-LeaveApprovalDetail' ? 'priya' : undefined));
+      } else {
+        const screenMap = {
+          'tpl-ManagerDashboard': '../ManagerDashboard/preview.html',
+          'tpl-TeamAttendance': '../TeamAttendance/preview.html',
+          'tpl-LeaveApprovals': '../LeaveApprovals/preview.html',
+          'tpl-LeaveApprovalDetail': '../LeaveApprovalDetail/preview.html',
+          'tpl-PermissionApprovals': '../PermissionApprovals/preview.html',
+          'tpl-HolidayCalendar': '../HolidayCalendar/preview.html',
+          'tpl-Notifications': '../Notifications/preview.html',
+          'tpl-MyProfile': '../MyProfile/preview.html'
+        };
+        if (screenMap[screenId]) {
+          let q = personKey ? '?person=' + encodeURIComponent(personKey) : '';
+          if (tabName) q += (q ? '&' : '?') + 'tab=' + encodeURIComponent(tabName);
+          window.location.href = screenMap[screenId] + q;
+        }
+      }
+    }
+
+    function openLeaveApprovalsTab(tabName) {
+      const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+      pWin.TARGET_LEAVE_TAB = tabName;
+      handleCardNav('tpl-LeaveApprovals', null, tabName);
     }
 
     function openNotificationsFromManager() {

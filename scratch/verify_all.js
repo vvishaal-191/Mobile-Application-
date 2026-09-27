@@ -1,70 +1,79 @@
 const fs = require('fs');
+const http = require('http');
 
-const filesToCheck = [
-  'index.html',
+console.log('=== VERIFYING EXACT DESIGN IMPLEMENTATION ===\n');
+
+const files = [
   'preview_app.html',
-  'EmergereApp/EmergereApp/index.html',
+  'index.html',
   'EmergereApp/EmergereApp/preview_app.html',
-  'EmergereApp/EmergereApp/src/screens/LeaveHistory/preview.html',
-  'EmergereApp/EmergereApp/src/screens/LeaveHistory/preview.css',
-  'EmergereApp/EmergereApp/src/screens/LeaveHistory/LeaveHistoryScreen.jsx',
-  'EmergereApp/EmergereApp/src/screens/LeaveHistory/LeaveHistoryScreen.styles.js'
+  'EmergereApp/EmergereApp/index.html',
+  'EmergereApp/EmergereApp/src/screens/LeaveApprovals/preview.html',
+  'EmergereApp/EmergereApp/src/screens/PermissionApprovals/preview.html'
 ];
 
 let allPassed = true;
 
-filesToCheck.forEach(file => {
-  const content = fs.readFileSync(file, 'utf8');
-  
-  // Check 1: No more requests-header-banner.png anywhere
-  const hasOldBannerPng = content.includes('requests-header-banner.png');
-  if (hasOldBannerPng) {
-    console.error(`FAIL: ${file} still contains requests-header-banner.png!`);
+files.forEach(f => {
+  if (!fs.existsSync(f)) {
+    console.error(`[FAIL] File missing: ${f}`);
     allPassed = false;
+    return;
+  }
+  const c = fs.readFileSync(f, 'utf8');
+  console.log(`Checking ${f} (size: ${c.length} bytes)...`);
+
+  const checks = [];
+  if (f.endsWith('LeaveApprovals/preview.html')) {
+    checks.push({ name: 'Header Banner', ok: c.includes('alt="Leave Approvals"') });
+    checks.push({ name: 'Empty Card Title', ok: c.includes('No leave requests found') });
+    checks.push({ name: 'Pending Tab', ok: c.includes('Pending (<span id="count-pending">') });
+    checks.push({ name: 'Bottom Nav active dashboard', ok: c.includes('dashboard-pill-wrap') });
+    checks.push({ name: 'Bottom Wave Decor', ok: c.includes('page-bottom-wave-decor') });
+  } else if (f.endsWith('PermissionApprovals/preview.html')) {
+    checks.push({ name: 'Header Banner', ok: c.includes('alt="Permission Approvals"') });
+    checks.push({ name: 'Empty Card Title', ok: c.includes('No permission requests found') });
+    checks.push({ name: 'Pending Tab', ok: c.includes('Pending (<span id="perm-count-pending">') });
+    checks.push({ name: 'Bottom Nav active dashboard', ok: c.includes('dashboard-pill-wrap') });
+    checks.push({ name: 'Bottom Wave Decor', ok: c.includes('page-bottom-wave-decor') });
   } else {
-    console.log(`PASS: ${file} does not contain requests-header-banner.png.`);
+    checks.push({ name: 'tpl-LeaveApprovals exists', ok: c.includes('<template id="tpl-LeaveApprovals">') });
+    checks.push({ name: 'tpl-PermissionApprovals exists', ok: c.includes('<template id="tpl-PermissionApprovals">') });
+    checks.push({ name: 'LA Empty Card Title', ok: c.includes('No leave requests found') });
+    checks.push({ name: 'PA Empty Card Title', ok: c.includes('No permission requests found') });
+    checks.push({ name: 'Dashboard Pill Wrap', ok: c.includes('dashboard-pill-wrap') });
+    checks.push({ name: 'Bottom Wave Decor', ok: c.includes('page-bottom-wave-decor') });
   }
 
-  // Check 2: HTML files check
-  if (file.endsWith('.html')) {
-    const hasTitle = content.includes('My Requests');
-    const hasSub = content.includes('Track your leaves &amp; permissions') || content.includes('Track your leaves & permissions');
-    const hasBackBtn = content.includes('handleRequestsBackNav');
-    const hasFilterBar = content.includes('mr-filter-bar');
-    const hasHistoryActive = content.includes('id="tab-history"') || content.includes("class=\"tab nav-tab active\"");
-    
-    if (!hasTitle || !hasSub || !hasBackBtn || !hasFilterBar) {
-      console.error(`FAIL: ${file} missing critical elements: title=${hasTitle}, sub=${hasSub}, backBtn=${hasBackBtn}, filterBar=${hasFilterBar}`);
-      allPassed = false;
+  checks.forEach(chk => {
+    if (chk.ok) {
+      console.log(`  [PASS] ${chk.name}`);
     } else {
-      console.log(`PASS: ${file} contains title, subtitle, backBtn handler, and filterBar.`);
-    }
-
-    if (file.includes('index') || file.includes('preview_app')) {
-      const startTpl = content.indexOf('<template id="tpl-LeaveHistory">');
-      const endTpl = content.indexOf('</template>', startTpl);
-      if (startTpl === -1 || endTpl === -1 || startTpl >= endTpl) {
-        console.error(`FAIL: ${file} has malformed <template id="tpl-LeaveHistory">`);
-        allPassed = false;
-      } else {
-        console.log(`PASS: ${file} template tags are well-formed.`);
-      }
-    }
-  }
-
-  // Check 3: JSX checks
-  if (file.endsWith('.jsx')) {
-    const hasTitle = content.includes('<Text style={styles.headerTitle}>My Requests</Text>');
-    const hasSub = content.includes('Track your leaves & permissions');
-    const hasFeatherBack = content.includes('name="arrow-left"');
-    const hasArtImg = content.includes('requests-header-art.png');
-    if (!hasTitle || !hasSub || !hasFeatherBack || !hasArtImg) {
-      console.error(`FAIL: ${file} missing JSX components: title=${hasTitle}, sub=${hasSub}, back=${hasFeatherBack}, art=${hasArtImg}`);
+      console.error(`  [FAIL] ${chk.name}`);
       allPassed = false;
-    } else {
-      console.log(`PASS: ${file} JSX structure is complete.`);
     }
-  }
+  });
 });
 
-console.log('\nFinal Verdict:', allPassed ? 'ALL AUDITS PASSED 100%' : 'SOME AUDITS FAILED');
+console.log('\n=== TESTING DEV SERVER HTTP 200 ===');
+const req = http.get('http://localhost:3000/preview_app.html', (res) => {
+  console.log(`HTTP Status: ${res.statusCode}`);
+  let data = '';
+  res.on('data', chunk => data += chunk);
+  res.on('end', () => {
+    console.log(`Received ${data.length} bytes from http://localhost:3000/preview_app.html`);
+    const hasLA = data.includes('No leave requests found');
+    const hasPA = data.includes('No permission requests found');
+    console.log(`Server serves updated Leave Approvals: ${hasLA}`);
+    console.log(`Server serves updated Permission Approvals: ${hasPA}`);
+    if (allPassed && res.statusCode === 200 && hasLA && hasPA) {
+      console.log('\n*** ALL VERIFICATION CHECKS PASSED PERFECTLY! ***');
+    } else {
+      console.error('\n*** SOME VERIFICATION CHECKS FAILED! ***');
+    }
+  });
+});
+
+req.on('error', (e) => {
+  console.error(`Server request error: ${e.message}`);
+});
