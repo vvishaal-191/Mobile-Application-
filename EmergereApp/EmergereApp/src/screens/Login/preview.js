@@ -17,9 +17,9 @@ const EYE_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none
 const EYE_OFF_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="23" x2="23" y2="1"></line></svg>';
 
 function updatePasswordEyeVisibility(id) {
-  const input = document.getElementById(id || 'pwd');
+  const input = document.getElementById(id) || document.getElementById('password') || document.getElementById('pwd');
   if (!input) return;
-  const eyeBtn = document.getElementById(input.id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
+  const eyeBtn = document.getElementById(input.id + '-eye') || document.getElementById('toggle-pwd-btn') || (input.parentElement ? input.parentElement.querySelector('.eye-btn, .login-eye-btn') : null);
   if (!eyeBtn) return;
   eyeBtn.style.display = 'inline-flex';
   eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
@@ -28,11 +28,11 @@ function updatePasswordEyeVisibility(id) {
 }
 
 function toggleVisibility(id) {
-  const input = document.getElementById(id);
+  const input = document.getElementById(id) || document.getElementById('password') || document.getElementById('pwd');
   if (!input) return;
   const isPass = input.type === 'password';
   input.type = isPass ? 'text' : 'password';
-  const eyeBtn = document.getElementById(id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
+  const eyeBtn = document.getElementById(input.id + '-eye') || document.getElementById('toggle-pwd-btn') || (input.parentElement ? input.parentElement.querySelector('.eye-btn, .login-eye-btn') : null);
   if (eyeBtn) {
     eyeBtn.innerHTML = isPass ? EYE_OFF_SVG_ICON : EYE_SVG_ICON;
     eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'Show password');
@@ -49,17 +49,29 @@ function isPasswordMatch(expected, actual) {
 
 function handleLogin() {
   const emailInput = document.getElementById('email');
-  const pwdInput = document.getElementById('pwd');
+  const pwdInput = document.getElementById('password') || document.getElementById('pwd');
   const errBox = document.getElementById('login-auth-err');
-  const pwdErr = document.getElementById('pwd-error');
+  const pwdErr = document.getElementById('pwd-error') || document.getElementById('password-err');
+  const emailErr = document.getElementById('email-err');
 
   if (errBox) errBox.style.display = 'none';
   if (pwdErr) pwdErr.style.display = 'none';
+  if (emailErr) emailErr.style.display = 'none';
 
   const emailVal = emailInput ? emailInput.value.trim().toLowerCase() : '';
   const pwdVal = pwdInput ? pwdInput.value.trim() : '';
 
-  if (!emailVal || !pwdVal) {
+  let hasErr = false;
+  if (!emailVal) {
+    if (emailErr) emailErr.style.display = 'block';
+    hasErr = true;
+  }
+  if (!pwdVal) {
+    if (pwdErr) pwdErr.style.display = 'block';
+    hasErr = true;
+  }
+
+  if (hasErr) {
     if (errBox) {
       errBox.textContent = 'Please enter both email address and password.';
       errBox.style.display = 'block';
@@ -67,34 +79,132 @@ function handleLogin() {
     return;
   }
 
+  const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+
   // 1. Check Manager (vishnu@gmail.com, ram@gmail.com, rahul@gmail.com)
   const matchedManager = PREDEFINED_MANAGERS.find(
     m => m.email.toLowerCase() === emailVal
   );
-  if (matchedManager && isPasswordMatch(matchedManager.password, pwdVal)) {
-    if (window.parent && typeof window.parent.setAuthUser === 'function') {
-      window.parent.setAuthUser('manager', matchedManager);
-    }
-    if (window.parent && window.parent.loadScreen) {
-      window.parent.loadScreen('tpl-ManagerDashboard');
+  if (matchedManager) {
+    if (isPasswordMatch(matchedManager.password, pwdVal)) {
+      const mgrProfile = {
+        name: matchedManager.name,
+        role: matchedManager.role,
+        employeeId: matchedManager.empId,
+        initials: matchedManager.initials,
+        email: matchedManager.email,
+        department: 'Management',
+        team: 'Leadership',
+        workLocation: 'Bangalore',
+        joiningDate: 'Jun 01, 2022',
+        phone: matchedManager.phone,
+        reportingManager: matchedManager.reportingManager
+      };
+
+      if (typeof pWin.setAuthUser === 'function') {
+        pWin.setAuthUser('manager', mgrProfile);
+      } else {
+        pWin.AUTH_USER = { ...mgrProfile, role: 'manager' };
+        pWin.USER_PROFILE = mgrProfile;
+        try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(mgrProfile)); } catch(e) {}
+      }
+
+      if (typeof pWin.loadScreen === 'function') {
+        pWin.loadScreen('tpl-ManagerDashboard');
+      } else if (typeof pWin.navigateScreen === 'function') {
+        pWin.navigateScreen('ManagerDashboard');
+      } else if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({ type: 'NAVIGATE', screen: 'ManagerDashboard', role: 'manager', email: emailVal }, '*');
+      } else {
+        alert('Manager login successful! Redirecting to Manager Dashboard.');
+      }
+      return;
     } else {
-      alert('Manager login successful! Redirecting to Manager Dashboard.');
+      if (errBox) {
+        errBox.textContent = 'Invalid manager password. Use: manager@123';
+        errBox.style.display = 'block';
+      }
+      return;
     }
-    return;
   }
 
   // 2. Check Employee (john@gmail.com, jack@gmail.com, sneha@gmail.com)
   const matchedEmp = PREDEFINED_EMPLOYEES.find(
     e => e.email.toLowerCase() === emailVal
   );
-  if (matchedEmp && isPasswordMatch(matchedEmp.password, pwdVal)) {
-    if (window.parent && typeof window.parent.setAuthUser === 'function') {
-      window.parent.setAuthUser('employee', matchedEmp);
-    }
-    if (window.parent && window.parent.loadScreen) {
-      window.parent.loadScreen('tpl-EmployeeDashboard');
+  if (matchedEmp) {
+    if (isPasswordMatch(matchedEmp.password, pwdVal)) {
+      const empProfile = {
+        name: matchedEmp.name,
+        role: matchedEmp.role,
+        employeeId: matchedEmp.empId,
+        initials: matchedEmp.initials,
+        email: matchedEmp.email,
+        department: 'Engineering',
+        team: 'Mobile Development',
+        workLocation: 'Bangalore - Tech Park',
+        joiningDate: '15-Jan-2024',
+        phone: matchedEmp.phone,
+        reportingManager: matchedEmp.reportingManager
+      };
+
+      if (typeof pWin.setAuthUser === 'function') {
+        pWin.setAuthUser('employee', empProfile);
+      } else {
+        pWin.AUTH_USER = { ...empProfile, role: 'employee' };
+        pWin.USER_PROFILE = empProfile;
+        try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(empProfile)); } catch(e) {}
+      }
+
+      if (typeof pWin.loadScreen === 'function') {
+        pWin.loadScreen('tpl-EmployeeDashboard');
+      } else if (typeof pWin.navigateScreen === 'function') {
+        pWin.navigateScreen('EmployeeDashboard');
+      } else if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({ type: 'NAVIGATE', screen: 'EmployeeDashboard', role: 'employee', email: emailVal }, '*');
+      } else {
+        alert('Employee login successful! Redirecting to Employee Dashboard.');
+      }
+      return;
     } else {
-      alert('Employee login successful! Redirecting to Employee Dashboard.');
+      if (errBox) {
+        errBox.textContent = 'Invalid employee password. Use: employee@123';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+  }
+
+  // 3. Fallback credentials if length >= 6
+  if (pwdVal.length >= 6) {
+    const fallbackProfile = {
+      name: emailVal.split('@')[0],
+      email: emailVal,
+      role: 'Senior Software Engineer',
+      employeeId: 'EMP-2024-0101',
+      initials: 'JD',
+      department: 'Engineering',
+      team: 'Mobile Development',
+      workLocation: 'Bangalore - Tech Park',
+      joiningDate: '15-Jan-2024',
+      phone: '+91 98765 11001',
+      reportingManager: 'Vishnu Kumar'
+    };
+
+    if (typeof pWin.setAuthUser === 'function') {
+      pWin.setAuthUser('employee', fallbackProfile);
+    } else {
+      pWin.AUTH_USER = { ...fallbackProfile, role: 'employee' };
+      pWin.USER_PROFILE = fallbackProfile;
+      try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(fallbackProfile)); } catch(e) {}
+    }
+
+    if (typeof pWin.loadScreen === 'function') {
+      pWin.loadScreen('tpl-EmployeeDashboard');
+    } else if (typeof pWin.navigateScreen === 'function') {
+      pWin.navigateScreen('EmployeeDashboard');
+    } else {
+      alert('Login successful! Redirecting to Employee Dashboard.');
     }
     return;
   }
@@ -112,10 +222,10 @@ function toggleRemember(el) {
   if (chk) {
     if (isRememberChecked) {
       chk.classList.remove('unchecked');
-      chk.textContent = '✓';
+      chk.innerHTML = '&#10003;';
     } else {
       chk.classList.add('unchecked');
-      chk.textContent = '';
+      chk.innerHTML = '';
     }
   }
 }
@@ -129,37 +239,37 @@ function toggleLoginTheme() {
 
 function handleSocialClick(platform) {
   const emailInput = document.getElementById('email');
-  const pwdInput = document.getElementById('pwd');
+  const pwdInput = document.getElementById('password') || document.getElementById('pwd');
   if (emailInput) {
     emailInput.value = 'sneha@gmail.com';
     if (pwdInput) {
       pwdInput.value = 'employee@123';
-      updatePasswordEyeVisibility('pwd');
+      updatePasswordEyeVisibility('password');
     }
   }
 }
 
 function openForgotModal() {
-  const forgotEmail = document.getElementById('forgot-email');
-  const forgotContact = document.getElementById('forgot-contact');
+  const forgotEmail = document.getElementById('forgot-email') || document.getElementById('modal-email-input');
+  const forgotContact = document.getElementById('forgot-contact') || document.getElementById('modal-contact-input');
   const modalErr = document.getElementById('modal-err');
   
   if (forgotEmail) forgotEmail.value = '';
   if (forgotContact) forgotContact.value = '';
   if (modalErr) modalErr.style.display = 'none';
 
-  const modal = document.getElementById('forgot-modal');
+  const modal = document.getElementById('forgot-modal') || document.getElementById('forgot-pwd-modal');
   if (modal) modal.style.display = 'flex';
 }
 
 function closeForgotModal() {
-  const modal = document.getElementById('forgot-modal');
+  const modal = document.getElementById('forgot-modal') || document.getElementById('forgot-pwd-modal');
   if (modal) modal.style.display = 'none';
 }
 
 function confirmForgot() {
-  const emailInput = document.getElementById('forgot-email');
-  const contactInput = document.getElementById('forgot-contact');
+  const emailInput = document.getElementById('forgot-email') || document.getElementById('modal-email-input');
+  const contactInput = document.getElementById('forgot-contact') || document.getElementById('modal-contact-input');
   const modalErr = document.getElementById('modal-err');
 
   const emailVal = emailInput ? emailInput.value.trim() : '';
@@ -187,9 +297,31 @@ function confirmForgot() {
   if (modalErr) modalErr.style.display = 'none';
   closeForgotModal();
 
-  if (window.parent && window.parent.loadScreen) {
-    window.parent.loadScreen('tpl-EmployeeDashboard');
+  const pWin = (window.parent && window.parent !== window) ? window.parent : window;
+  if (typeof pWin.loadScreen === 'function') {
+    pWin.loadScreen('tpl-EmployeeDashboard');
+  } else if (typeof pWin.navigateScreen === 'function') {
+    pWin.navigateScreen('EmployeeDashboard');
   } else {
     alert('Verification successful! Redirecting to Employee Dashboard.');
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  const loginBtn = document.getElementById('btn-login-submit') || document.getElementById('btn-login');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', handleLogin);
+  }
+  const toggleBtn = document.getElementById('toggle-pwd-btn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() { toggleVisibility('password'); });
+  }
+  const rememberRow = document.getElementById('remember-me-toggle');
+  if (rememberRow) {
+    rememberRow.addEventListener('click', function() { toggleRemember(rememberRow); });
+  }
+  const forgotLnk = document.getElementById('forgot-password-link');
+  if (forgotLnk) {
+    forgotLnk.addEventListener('click', openForgotModal);
+  }
+});

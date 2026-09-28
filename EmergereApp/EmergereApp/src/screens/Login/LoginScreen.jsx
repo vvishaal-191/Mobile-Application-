@@ -204,13 +204,13 @@ export default function LoginScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
         bounces={false}
       >
-        {/* Top Royal Blue Banner with Skyscrapers & Tech Circuit Logo (Exact Image 2 Reference) */}
-        <View style={styles.headerBannerContainer} accessibilityLabel="Welcome Back - Sign in to continue to your account">
+        {/* Top Royal Blue Banner with Circuit Logo & Welcome Back (Exact Reference Design) */}
+        <View style={styles.headerBannerContainer} accessibilityLabel="Welcome Back - Sign in to continue">
           <Image
             source={require('../../../assets/login-top-header.png')}
             style={styles.headerBannerImage}
             resizeMode="cover"
-            accessibilityLabel="Welcome Back - Sign in to continue to your account"
+            accessibilityLabel="Welcome Back - Sign in to continue"
           />
         </View>
 
@@ -295,6 +295,13 @@ export default function LoginScreen({ navigation }) {
               <Feather name="arrow-right" size={18} color="#FFFFFF" />
             </View>
           </TouchableOpacity>
+
+          {/* OR Divider (matching Image 2) */}
+          <View style={styles.orDivider}>
+            <View style={styles.orLine} />
+            <Text style={styles.orText}>OR</Text>
+            <View style={styles.orLine} />
+          </View>
         </View>
 
         {/* Bottom Luminous Blue Waves Decoration (Exact Image 2 Reference) */}

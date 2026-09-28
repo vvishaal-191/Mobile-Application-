@@ -19,12 +19,12 @@ ${cssContent}
   <div class="device">
     <div class="screen login-redesign-screen" id="login-screen-wrap">
       
-      <!-- Top Royal Blue Banner with Skyscrapers & Circuit Logo (Exact Image 2 Reference) -->
+      <!-- Top Royal Blue Banner with Circuit Logo Aligned Upward (Exact Reference Image 2) -->
       <div class="login-header-banner-container">
-        <img class="login-header-banner-img" src="${b64Data.topHeader}" alt="Welcome Back - Sign in to continue to your account" />
+        <img class="login-header-banner-img" src="${b64Data.topHeader}" alt="Welcome Back - Sign in to continue" />
       </div>
 
-      <!-- Floating Main Form Card -->
+      <!-- Floating Main Form Card (Center-Aligned Evenly on Page) -->
       <div class="login-card-container">
         <!-- Auth Error Banner -->
         <div id="login-auth-err" class="login-err-banner" style="display:none;"></div>
@@ -69,7 +69,7 @@ ${cssContent}
         </div>
 
         <!-- Gradient Login Button with Circular Arrow Disc -->
-        <button type="button" id="btn-login" class="btn-login-gradient">
+        <button type="button" id="btn-login-submit" class="btn-login-gradient">
           <span class="btn-login-text">Login</span>
           <div class="login-btn-arrow-disc">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -78,6 +78,13 @@ ${cssContent}
             </svg>
           </div>
         </button>
+
+        <!-- OR Section Divider (matching Reference Design) -->
+        <div class="login-or-divider">
+          <div class="or-line"></div>
+          <span class="or-text">OR</span>
+          <div class="or-line"></div>
+        </div>
       </div>
 
       <!-- Bottom Luminous Blue Waves Decoration -->
@@ -118,15 +125,15 @@ ${cssContent}
       let isPwdVisible = false;
 
       const emailInput = document.getElementById('email');
-      const pwdInput = document.getElementById('password');
+      const pwdInput = document.getElementById('password') || document.getElementById('pwd');
       const emailErr = document.getElementById('email-err');
-      const pwdErr = document.getElementById('password-err');
+      const pwdErr = document.getElementById('password-err') || document.getElementById('pwd-error');
       const authErr = document.getElementById('login-auth-err');
       const togglePwdBtn = document.getElementById('toggle-pwd-btn');
       const eyeIcon = document.getElementById('eye-icon');
       const rememberToggle = document.getElementById('remember-me-toggle');
       const rememberChk = document.getElementById('remember-chk');
-      const loginBtn = document.getElementById('btn-login');
+      const loginBtn = document.getElementById('btn-login-submit') || document.getElementById('btn-login');
 
       const forgotLink = document.getElementById('forgot-password-link');
       const forgotModal = document.getElementById('forgot-pwd-modal');
@@ -200,15 +207,38 @@ ${cssContent}
           if (hasErr) return;
 
           authErr.style.display = 'none';
+          const pWin = (window.parent && window.parent !== window) ? window.parent : window;
 
           // Check Manager
           const matchedManager = PREDEFINED_MANAGERS.find(m => m.email.toLowerCase() === emailVal.toLowerCase());
           if (matchedManager) {
             if (matchedManager.password === pwdVal) {
-              if (window.parent && window.parent.navigateScreen) {
-                window.parent.USER_ROLE = 'manager';
-                window.parent.USER_PROFILE = { ...matchedManager, department: 'Management', team: 'Leadership', workLocation: 'Bangalore', joiningDate: 'Jun 01, 2022' };
-                window.parent.navigateScreen('ManagerDashboard');
+              const mgrProfile = {
+                name: matchedManager.name,
+                role: matchedManager.role,
+                employeeId: matchedManager.empId,
+                initials: matchedManager.initials,
+                email: matchedManager.email,
+                department: 'Management',
+                team: 'Leadership',
+                workLocation: 'Bangalore',
+                joiningDate: 'Jun 01, 2022',
+                phone: matchedManager.phone,
+                reportingManager: matchedManager.reportingManager
+              };
+
+              if (typeof pWin.setAuthUser === 'function') {
+                pWin.setAuthUser('manager', mgrProfile);
+              } else {
+                pWin.AUTH_USER = { ...mgrProfile, role: 'manager' };
+                pWin.USER_PROFILE = mgrProfile;
+                try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(mgrProfile)); } catch(e) {}
+              }
+
+              if (typeof pWin.loadScreen === 'function') {
+                pWin.loadScreen('tpl-ManagerDashboard');
+              } else if (typeof pWin.navigateScreen === 'function') {
+                pWin.navigateScreen('ManagerDashboard');
               } else if (window.parent && window.parent.postMessage) {
                 window.parent.postMessage({ type: 'NAVIGATE', screen: 'ManagerDashboard', role: 'manager', email: emailVal }, '*');
               }
@@ -224,10 +254,32 @@ ${cssContent}
           const matchedEmployee = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal.toLowerCase());
           if (matchedEmployee) {
             if (matchedEmployee.password === pwdVal) {
-              if (window.parent && window.parent.navigateScreen) {
-                window.parent.USER_ROLE = 'employee';
-                window.parent.USER_PROFILE = { ...matchedEmployee, department: 'Engineering', team: 'Frontend Core', workLocation: 'Bangalore', joiningDate: 'Jan 15, 2023' };
-                window.parent.navigateScreen('EmployeeDashboard');
+              const empProfile = {
+                name: matchedEmployee.name,
+                role: matchedEmployee.role,
+                employeeId: matchedEmployee.empId,
+                initials: matchedEmployee.initials,
+                email: matchedEmployee.email,
+                department: 'Engineering',
+                team: 'Mobile Development',
+                workLocation: 'Bangalore - Tech Park',
+                joiningDate: '15-Jan-2024',
+                phone: matchedEmployee.phone,
+                reportingManager: matchedEmployee.reportingManager
+              };
+
+              if (typeof pWin.setAuthUser === 'function') {
+                pWin.setAuthUser('employee', empProfile);
+              } else {
+                pWin.AUTH_USER = { ...empProfile, role: 'employee' };
+                pWin.USER_PROFILE = empProfile;
+                try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(empProfile)); } catch(e) {}
+              }
+
+              if (typeof pWin.loadScreen === 'function') {
+                pWin.loadScreen('tpl-EmployeeDashboard');
+              } else if (typeof pWin.navigateScreen === 'function') {
+                pWin.navigateScreen('EmployeeDashboard');
               } else if (window.parent && window.parent.postMessage) {
                 window.parent.postMessage({ type: 'NAVIGATE', screen: 'EmployeeDashboard', role: 'employee', email: emailVal }, '*');
               }
@@ -241,9 +293,32 @@ ${cssContent}
 
           // Fallback credentials
           if (pwdVal.length >= 6) {
-            if (window.parent && window.parent.navigateScreen) {
-              window.parent.USER_ROLE = 'employee';
-              window.parent.navigateScreen('EmployeeDashboard');
+            const fallbackProfile = {
+              name: emailVal.split('@')[0],
+              email: emailVal,
+              role: 'Senior Software Engineer',
+              employeeId: 'EMP-2024-0101',
+              initials: 'JD',
+              department: 'Engineering',
+              team: 'Mobile Development',
+              workLocation: 'Bangalore - Tech Park',
+              joiningDate: '15-Jan-2024',
+              phone: '+91 98765 11001',
+              reportingManager: 'Vishnu Kumar'
+            };
+
+            if (typeof pWin.setAuthUser === 'function') {
+              pWin.setAuthUser('employee', fallbackProfile);
+            } else {
+              pWin.AUTH_USER = { ...fallbackProfile, role: 'employee' };
+              pWin.USER_PROFILE = fallbackProfile;
+              try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(fallbackProfile)); } catch(e) {}
+            }
+
+            if (typeof pWin.loadScreen === 'function') {
+              pWin.loadScreen('tpl-EmployeeDashboard');
+            } else if (typeof pWin.navigateScreen === 'function') {
+              pWin.navigateScreen('EmployeeDashboard');
             } else if (window.parent && window.parent.postMessage) {
               window.parent.postMessage({ type: 'NAVIGATE', screen: 'EmployeeDashboard', role: 'employee', email: emailVal }, '*');
             }
@@ -315,7 +390,43 @@ const targetFiles = [
 targetFiles.forEach(f => {
   if (fs.existsSync(f)) {
     let content = fs.readFileSync(f, 'utf8');
+
+    // 1. Replace template
     content = content.replace(/<template id="tpl-Login">[\s\S]*?<\/template>/, tplLoginContent);
+
+    // 2. Add window.navigateScreen & message listener in parent if not already present
+    if (!content.includes('window.navigateScreen =')) {
+      const targetAnchor = 'window.loadScreen = loadScreen;';
+      if (content.includes(targetAnchor)) {
+        const navAddition = `window.loadScreen = loadScreen;
+        function navigateScreen(screenName) {
+          var tplName = (screenName && screenName.indexOf('tpl-') === 0) ? screenName : ('tpl-' + screenName);
+          loadScreen(tplName);
+        }
+        window.navigateScreen = navigateScreen;
+
+        window.addEventListener('message', function(event) {
+          if (event.data && (event.data.type === 'NAVIGATE' || event.data.screen)) {
+            var screen = event.data.screen || 'EmployeeDashboard';
+            var role = event.data.role || 'employee';
+            var email = event.data.email || '';
+            var user = (role === 'manager' ? PREDEFINED_MANAGERS : PREDEFINED_EMPLOYEES).find(function(u) {
+              return u.email.toLowerCase() === (email || '').toLowerCase();
+            }) || (role === 'manager' ? PREDEFINED_MANAGERS[0] : PREDEFINED_EMPLOYEES[0]);
+            setAuthUser(role, user);
+            navigateScreen(screen);
+          }
+        });`;
+        content = content.replace(targetAnchor, navAddition);
+      }
+    }
+
+    // 3. Update frame.onload loginBtn selector so it matches new button
+    content = content.replace(
+      "var loginBtn = doc.querySelector('button.btn-primary, .btn-primary');",
+      "var loginBtn = doc.querySelector('button.btn-primary, .btn-primary, #btn-login, #btn-login-submit, .btn-login-gradient');"
+    );
+
     fs.writeFileSync(f, content, 'utf8');
     console.log('Updated', f, 'successfully!');
   } else {

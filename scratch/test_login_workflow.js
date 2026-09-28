@@ -30,7 +30,7 @@ htmlAndJsxFiles.forEach(f => {
   const c = fs.readFileSync(f, 'utf8');
   check(c.length > 500, `${f} exists and has valid content (${c.length} bytes)`);
   check(c.includes('Welcome') && (c.includes('Back') || c.includes('accent-sky') || c.includes('headerTitleAccent')), `${f} contains Welcome Back title`);
-  check(c.includes('Sign in to continue to your account'), `${f} contains exact subtitle 'Sign in to continue to your account'`);
+  check(c.includes('Sign in to continue'), `${f} contains exact subtitle 'Sign in to continue'`);
   check(c.includes('Username or Email') && c.includes('Password'), `${f} contains Username or Email and Password fields`);
   check(c.includes('Remember Me') && c.includes('Forgot Password?'), `${f} contains Remember Me and Forgot Password options`);
   check(c.includes('Login'), `${f} contains Login button`);

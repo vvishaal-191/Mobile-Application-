@@ -15,7 +15,7 @@ export default StyleSheet.create({
   },
   headerBannerContainer: {
     width: '100%',
-    height: width * 0.72,
+    height: width * 0.583,
     position: 'relative',
     overflow: 'hidden',
     zIndex: 5,
@@ -36,7 +36,7 @@ export default StyleSheet.create({
     marginHorizontal: 18,
     marginVertical: 'auto',
     paddingHorizontal: 20,
-    paddingVertical: 24,
+    paddingVertical: 22,
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
     borderRadius: 28,
     shadowColor: '#0046C8',

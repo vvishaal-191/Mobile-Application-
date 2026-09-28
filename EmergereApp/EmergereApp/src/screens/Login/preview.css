@@ -89,10 +89,10 @@ body {
   display: none;
 }
 
-/* ── Floating Main Form Card ── */
+/* ── Floating Main Form Card (Center-Aligned Evenly on Page) ── */
 .login-card-container {
   margin: auto 20px;
-  padding: 24px 20px 24px 20px;
+  padding: 24px 20px 20px 20px;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 28px;
   box-shadow: 0 16px 40px rgba(0, 70, 200, 0.09), 0 2px 8px rgba(0, 0, 0, 0.03);
@@ -282,7 +282,24 @@ body {
 
 /* ── OR Divider ── */
 .login-or-divider {
-  display: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0 2px 0;
+  gap: 14px;
+}
+
+.or-line {
+  flex: 1;
+  height: 1px;
+  background: #E2E8F0;
+}
+
+.or-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lgn-text-muted);
+  letter-spacing: 1px;
 }
 
 /* ── Bottom Waves ── */
