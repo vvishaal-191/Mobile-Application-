@@ -304,6 +304,11 @@ export default StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
+  sidebarLogo: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
   sidebarTitle: {
     fontSize: 16,
     fontWeight: '700',

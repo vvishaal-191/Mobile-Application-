@@ -1,6 +1,6 @@
 // src/screens/ManagerDashboard/ManagerDashboardScreen.jsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import StatusBadge from '../../components/StatusBadge';
@@ -380,7 +380,11 @@ export default function ManagerDashboardScreen({ navigation, route }) {
           <View style={styles.sidebarDrawer} onStartShouldSetResponder={() => true}>
             <View style={styles.sidebarHeader}>
               <View style={styles.sidebarBrand}>
-                <Feather name="shield" size={20} color="#38BDF8" />
+                <Image
+                  source={require('../../../assets/tech-circuit-logo.png')}
+                  style={styles.sidebarLogo}
+                  resizeMode="contain"
+                />
                 <Text style={styles.sidebarTitle}>Mobile Application</Text>
               </View>
               <TouchableOpacity onPress={() => setSidebarVisible(false)}>
