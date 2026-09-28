@@ -10,6 +10,17 @@ import styles from './PermissionApprovalsScreen.styles';
 const HEADER_BANNER_IMG = require('../../../assets/permission-approvals-header-banner.png');
 const EMPTY_ART_IMG = require('../../../assets/permission-approvals-empty.png');
 
+/** Helper: detect if a request is a Permission request */
+function isPermissionRequest(r) {
+  if (!r) return false;
+  if (r.isPermission === true || r._isPermCard === true) return true;
+  if (r.isPermission === false) return false;
+  if (r.permissionType) return true;
+  const permTypes = ['Early Going', 'Late Coming', 'Personal Work', 'Official Work', 'Permission'];
+  const t = (r.type || r.leaveType || r.permissionType || '').trim();
+  return permTypes.includes(t);
+}
+
 /** Helper: get manager name for notification text */
 function getManagerName() {
   const profile = (typeof global !== 'undefined' && global.USER_PROFILE) || {};
@@ -26,54 +37,75 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
 
   React.useEffect(() => {
     const globalPerms = (typeof global !== 'undefined' && (global.PERMISSION_REQUESTS || global.PERM_STATE)) || [];
-    if (globalPerms.length > 0) {
-      setRequests((prev) => {
-        const existingIds = new Set(prev.map((r) => String(r.id)));
-        const fresh = globalPerms
-          .filter((r) => r && r.id && !existingIds.has(String(r.id)))
-          .map((r) => ({
-            id: String(r.id),
-            initials: r.employeeInitials || r.initials || 'EE',
-            name: r.employeeName || r.name || 'Employee',
-            type: r.type || 'Early Going',
-            tag: r.type || 'Early Going',
-            tagTone: r.type === 'Late Coming' ? 'purple' : r.type === 'Early Going' ? 'warning' : 'info',
-            schedule: r.schedule || (r.date ? `${r.date} (${r.duration || '2 Hours'})` : 'Today'),
-            duration: r.duration || '2 Hours',
-            reason: r.reason || 'Personal work',
-            status: (r.status || 'pending').toLowerCase(),
-          }));
-        if (fresh.length === 0) return prev;
-        return [...fresh, ...prev];
-      });
-    }
+    setRequests((prev) => {
+      const existingIds = new Set(prev.map((r) => String(r.id)));
+      const fresh = globalPerms
+        .filter((r) => r && r.id && isPermissionRequest(r) && !existingIds.has(String(r.id)))
+        .map((r) => ({
+          id: String(r.id),
+          initials: r.employeeInitials || r.initials || 'EE',
+          name: r.employeeName || r.name || 'Employee',
+          type: r.permissionType || r.type || 'Early Going',
+          tag: r.permissionType || r.type || 'Early Going',
+          tagTone: (r.permissionType || r.type) === 'Late Coming' ? 'purple' : (r.permissionType || r.type) === 'Early Going' ? 'warning' : 'info',
+          schedule: r.schedule || (r.date ? `${r.date} (${r.duration || '2 Hours'})` : 'Today'),
+          duration: r.duration || '2 Hours',
+          reason: r.reason || 'Personal work',
+          status: (r.status || 'pending').toLowerCase(),
+          isPermission: true,
+        }));
 
-    if (route?.params?.newPermissionRequest) {
+      let merged = fresh.length > 0 ? [...fresh, ...prev] : prev;
+
+      // Sync status updates for existing requests
+      const globalStatusMap = {};
+      globalPerms.forEach((r) => {
+        if (r && r.id && isPermissionRequest(r)) {
+          globalStatusMap[String(r.id)] = (r.status || 'pending').toLowerCase();
+        }
+      });
+
+      merged = merged.map((r) => {
+        if (globalStatusMap[String(r.id)] && globalStatusMap[String(r.id)] !== r.status) {
+          return { ...r, status: globalStatusMap[String(r.id)] };
+        }
+        return r;
+      });
+
+      return merged.filter(isPermissionRequest);
+    });
+
+    if (route?.params?.newPermissionRequest && isPermissionRequest(route.params.newPermissionRequest)) {
       const newReq = route.params.newPermissionRequest;
       setRequests((prev) => {
-        if (prev.some((r) => String(r.id) === String(newReq.id))) return prev;
+        if (prev.some((r) => String(r.id) === String(newReq.id))) {
+          return prev.filter(isPermissionRequest);
+        }
         return [
           {
             id: String(newReq.id || Date.now().toString()),
             initials: newReq.initials || newReq.employeeInitials || 'EE',
             name: newReq.name || newReq.employeeName || 'Employee',
-            type: newReq.type || 'Early Going',
-            tag: newReq.type || 'Early Going',
-            tagTone: newReq.type === 'Late Coming' ? 'purple' : newReq.type === 'Early Going' ? 'warning' : 'info',
+            type: newReq.permissionType || newReq.type || 'Early Going',
+            tag: newReq.permissionType || newReq.type || 'Early Going',
+            tagTone: (newReq.permissionType || newReq.type) === 'Late Coming' ? 'purple' : (newReq.permissionType || newReq.type) === 'Early Going' ? 'warning' : 'info',
             schedule: newReq.schedule || (newReq.date ? `${newReq.date} (${newReq.duration || '2 Hours'})` : 'Sep 04 (03:00 - 05:00 PM)'),
             duration: newReq.duration || '2 Hours',
             reason: newReq.reason || 'Personal work',
             status: (newReq.status || 'pending').toLowerCase(),
+            isPermission: true,
           },
-          ...prev,
+          ...prev.filter(isPermissionRequest),
         ];
       });
     }
   }, [route?.params?.newPermissionRequest]);
 
-  const pendingCount = requests.filter((r) => r.status === 'pending').length;
-  const approvedCount = requests.filter((r) => r.status === 'approved').length;
-  const rejectedCount = requests.filter((r) => r.status === 'rejected').length;
+  // Strictly calculate counts for Permission requests only (NO Leave requests)
+  const permOnlyRequests = requests.filter(isPermissionRequest);
+  const pendingCount = permOnlyRequests.filter((r) => r.status === 'pending').length;
+  const approvedCount = permOnlyRequests.filter((r) => r.status === 'approved').length;
+  const rejectedCount = permOnlyRequests.filter((r) => r.status === 'rejected').length;
 
   const tabs = [
     {
@@ -126,14 +158,15 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       global.LAST_PERMISSION_DECISION = {
         id,
         status: 'Approved',
-        type: targetItem?.type || 'Permission',
+        type: targetItem?.type || 'Early Going',
         schedule: targetItem?.schedule,
         duration: targetItem?.duration,
         name: targetItem?.name || 'Employee',
+        approvedAt: Date.now(),
       };
       if (global.PERMISSION_REQUESTS) {
         global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
-          r.id === id ? { ...r, status: 'approved' } : r
+          String(r.id) === String(id) ? { ...r, status: 'approved', approvedAt: Date.now() } : r
         );
       }
     }
@@ -147,18 +180,14 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       empId: targetItem?.empId || (typeof global !== 'undefined' && global.USER_PROFILE?.employeeId) || 'EMP-2024-0101',
       role: targetItem?.role || (typeof global !== 'undefined' && global.USER_PROFILE?.role) || 'Software Engineer',
       isPermission: true,
-      type: targetItem?.type || 'Permission',
-      leaveType: targetItem?.type || 'Permission',
-      permissionType: targetItem?.type || 'Permission',
+      type: targetItem?.type || 'Early Going',
+      leaveType: targetItem?.type || 'Early Going',
       schedule: targetItem?.schedule || 'Today',
       duration: targetItem?.duration || '2 Hours',
-      totalDays: targetItem?.duration || '2 Hours',
       reason: targetItem?.reason || 'Personal work',
-      emergencyContact: targetItem?.approvingManager || '+91 98765 22003',
-      approvingManager: targetItem?.approvingManager || 'Rahul Sharma (Team Lead)',
       status: 'Approved',
     };
-    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Approved' });
+    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Approved', isPermission: true });
   };
 
   const handleReject = (id) => {
@@ -185,14 +214,15 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       global.LAST_PERMISSION_DECISION = {
         id,
         status: 'Rejected',
-        type: targetItem?.type || 'Permission',
+        type: targetItem?.type || 'Early Going',
         schedule: targetItem?.schedule,
         duration: targetItem?.duration,
         name: targetItem?.name || 'Employee',
+        rejectedAt: Date.now(),
       };
       if (global.PERMISSION_REQUESTS) {
         global.PERMISSION_REQUESTS = global.PERMISSION_REQUESTS.map((r) =>
-          r.id === id ? { ...r, status: 'rejected' } : r
+          String(r.id) === String(id) ? { ...r, status: 'rejected', rejectedAt: Date.now() } : r
         );
       }
     }
@@ -206,25 +236,22 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
       empId: targetItem?.empId || (typeof global !== 'undefined' && global.USER_PROFILE?.employeeId) || 'EMP-2024-0101',
       role: targetItem?.role || (typeof global !== 'undefined' && global.USER_PROFILE?.role) || 'Software Engineer',
       isPermission: true,
-      type: targetItem?.type || 'Permission',
-      leaveType: targetItem?.type || 'Permission',
-      permissionType: targetItem?.type || 'Permission',
+      type: targetItem?.type || 'Early Going',
+      leaveType: targetItem?.type || 'Early Going',
       schedule: targetItem?.schedule || 'Today',
       duration: targetItem?.duration || '2 Hours',
-      totalDays: targetItem?.duration || '2 Hours',
       reason: targetItem?.reason || 'Personal work',
-      emergencyContact: targetItem?.approvingManager || '+91 98765 22003',
-      approvingManager: targetItem?.approvingManager || 'Rahul Sharma (Team Lead)',
       status: 'Rejected',
     };
-    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Rejected' });
+    go('LeaveApprovalDetail', { person: updatedItem, decision: 'Rejected', isPermission: true });
   };
 
-  const filteredRequests = requests.filter((item) => item.status === activeTab);
+  // Only show Permission requests for the active tab (NO Leave requests)
+  const filteredRequests = permOnlyRequests.filter((item) => item.status === activeTab);
 
   return (
     <View style={styles.screen}>
-      {/* Royal Blue Header Banner */}
+      {/* Amber/Gold Header Banner matching Permission Approvals Design */}
       <View style={styles.headerBannerWrap}>
         <Image
           source={HEADER_BANNER_IMG}
@@ -300,61 +327,36 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
                       id: item.id,
                       name: item.name,
                       initials: item.initials,
-                      empId:
-                        item.empId ||
-                        (typeof global !== 'undefined' && global.USER_PROFILE?.employeeId) ||
-                        'EMP-2024-0156',
-                      role:
-                        item.role ||
-                        (typeof global !== 'undefined' && global.USER_PROFILE?.role) ||
-                        'Senior Software Engineer',
-                      isPermission: true,
+                      empId: item.empId || 'EMP-2024-0101',
                       leaveType: item.type,
-                      permissionType: item.type,
-                      date: item.schedule
-                        ? item.schedule.split('(')[0].trim()
-                        : item.date || 'Sep 04, 2026',
-                      fromDate: item.schedule
-                        ? item.schedule.split('(')[0].trim()
-                        : item.date || 'Sep 04, 2026',
-                      schedule: item.schedule,
-                      duration: item.duration,
-                      totalDays: item.duration,
+                      type: item.type,
                       reason: item.reason,
-                      approvingManager:
-                        item.approvingManager ||
-                        (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
-                        'Rahul Sharma (Team Lead)',
-                      emergencyContact:
-                        item.approvingManager ||
-                        (typeof global !== 'undefined' && global.USER_PROFILE?.reportingManager) ||
-                        'Rahul Sharma (Team Lead)',
-                      status: item.status,
+                      duration: item.duration,
+                      schedule: item.schedule,
+                      isPermission: true,
                     },
+                    decision: item.status === 'approved' ? 'Approved' : (item.status === 'rejected' ? 'Rejected' : 'Pending'),
+                    isPermission: true,
                   })
                 }
               >
                 <View style={styles.requestCard}>
                   <View style={styles.topRow}>
                     <View style={styles.employeeRow}>
-                      <Avatar initials={item.initials} size={48} />
+                      <Avatar initials={item.initials} size={46} />
                       <View>
                         <Text style={styles.name}>{item.name}</Text>
-                        <Text style={styles.subLabel}>{item.type}</Text>
+                        <Text style={styles.empId}>{item.schedule}</Text>
                       </View>
                     </View>
-                    <StatusBadge label={item.tag} tone={item.tagTone} />
+                    <StatusBadge label={item.type} tone={item.tagTone || 'warning'} />
                   </View>
 
                   <View style={styles.divider} />
 
                   <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Schedule</Text>
-                    <Text style={styles.detailValue}>{item.schedule}</Text>
-                  </View>
-                  <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Duration</Text>
-                    <Text style={styles.detailValueBold}>{item.duration}</Text>
+                    <Text style={styles.detailValue}>{item.duration}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Reason</Text>

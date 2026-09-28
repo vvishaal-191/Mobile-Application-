@@ -676,6 +676,21 @@
   <script>
     let currentPermTab = 'pending';
 
+    function isPermissionRequest(r) {
+      if (!r) return false;
+      if (r.isPermission === true || r._isPermCard === true) return true;
+      if (r.isPermission === false) return false;
+      if (r.permissionType) return true;
+      const permTypes = ['early going', 'late coming', 'personal work', 'official work', 'permission'];
+      const t = (r.type || r.leaveType || r.permissionType || '').trim().toLowerCase();
+      return permTypes.includes(t) || t.includes('early going') || t.includes('late coming');
+    }
+
+    function isLeaveRequest(r) {
+      if (!r) return false;
+      return !isPermissionRequest(r);
+    }
+
     function switchPermTab(status, el) {
       currentPermTab = status;
       const pills = document.querySelectorAll('.tab-bar-card .tab-pill');
@@ -685,8 +700,9 @@
     }
 
     function updatePermTabCounts() {
-      const store = (window.parent && window.parent.PERM_STATE) ? window.parent : (window.PERM_STATE ? window : (window.parent || window));
-      const reqs = store.PERM_STATE || [];
+      const store = (window.parent && (window.parent.PERM_STATE || window.parent.PERMISSION_REQUESTS)) ? window.parent : (window.PERM_STATE ? window : (window.parent || window));
+      const rawReqs = (store.PERM_STATE && store.PERM_STATE.length > 0) ? store.PERM_STATE : (store.PERMISSION_REQUESTS || []);
+      const reqs = rawReqs.filter(isPermissionRequest);
 
       let pending = 0, approved = 0, rejected = 0;
       reqs.forEach(r => {
@@ -706,8 +722,9 @@
     }
 
     function renderPermissionApprovals() {
-      const store = (window.parent && window.parent.PERM_STATE) ? window.parent : (window.PERM_STATE ? window : (window.parent || window));
-      const reqs = store.PERM_STATE || [];
+      const store = (window.parent && (window.parent.PERM_STATE || window.parent.PERMISSION_REQUESTS)) ? window.parent : (window.PERM_STATE ? window : (window.parent || window));
+      const rawReqs = (store.PERM_STATE && store.PERM_STATE.length > 0) ? store.PERM_STATE : (store.PERMISSION_REQUESTS || []);
+      const reqs = rawReqs.filter(isPermissionRequest);
       const listEl = document.getElementById('perm-cards-list');
       const msg = document.getElementById('no-perm-msg');
 
@@ -721,16 +738,16 @@
         if (listEl) {
           let html = '';
           filtered.forEach(r => {
-            const empName = r.employeeName || 'Priya Sharma';
-            const empRole = r.employeeRole || 'Senior Software Engineer';
-            const pType = r.type || 'Early Going';
-            const duration = r.duration || '2 Hours';
-            const date = r.date || '04-Sep-2026';
+            const empName = r.employeeName || r.name || 'Priya Sharma';
+            const empRole = r.employeeRole || r.role || 'Senior Software Engineer';
+            const pType = r.permissionType || r.type || 'Early Going';
+            const duration = r.duration || r.totalDays || r.daysText || '2 Hours';
+            const date = r.date || r.schedule || r.fromDate || '04-Sep-2026';
             const reason = r.reason || 'Personal work';
             const status = (r.status || 'pending').toLowerCase();
             const badgeClass = status === 'approved' ? 'badge success' : (status === 'rejected' ? 'badge danger' : 'badge warning');
 
-            html += '<div class="approval-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + (r.id || 'priya') + '\')}">'
+            html += '<div class="approval-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + (r.id || 'perm-init-1') + '\')}else if(typeof loadScreen===\'function\'){loadScreen(\'tpl-LeaveApprovalDetail\', \'' + (r.id || 'perm-init-1') + '\')}else{window.location.href=\'../LeaveApprovalDetail/preview.html?person=' + encodeURIComponent(r.id || 'perm-init-1') + '\'}">'
               + '<div class="top-row">'
               + '<div class="emp-row">'
               + '<div class="avatar" style="background:#FEF3C7; color:#D97706;">' + empName.slice(0, 2).toUpperCase() + '</div>'

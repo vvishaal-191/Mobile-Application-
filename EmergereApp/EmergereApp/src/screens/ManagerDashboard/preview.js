@@ -88,9 +88,17 @@ function syncManagerDashboard(targetDoc) {
 
       function isPermReq(r) {
         if (!r) return false;
-        if (r.isPermission === true) return true;
-        const t = (r.leaveType || r.type || r.permissionType || '').toLowerCase();
-        return t.includes('permission') || t.includes('early going') || t.includes('late coming');
+        if (r.isPermission === true || r._isPermCard === true) return true;
+        if (r.isPermission === false) return false;
+        if (r.permissionType) return true;
+        const permTypes = ['early going', 'late coming', 'personal work', 'official work', 'permission'];
+        const t = (r.leaveType || r.type || r.permissionType || '').trim().toLowerCase();
+        return permTypes.includes(t) || t.includes('early going') || t.includes('late coming');
+      }
+
+      function isLeaveReq(r) {
+        if (!r) return false;
+        return !isPermReq(r);
       }
 
       const submittedMap = store.MANAGER_SUBMITTED_DECISIONS || {};
@@ -114,7 +122,7 @@ function syncManagerDashboard(targetDoc) {
       const permMap = {};
 
       function addLeaveReq(r) {
-        if (!r || isPermReq(r)) return;
+        if (!r || !isLeaveReq(r)) return;
         const key = r.id || ((r.employeeName || r.name || 'emp') + '_' + (r.leaveType || r.type || 'leave') + '_' + (r.fromDate || r.date || '') + '_' + (r.reason || ''));
         if (!leaveMap[key]) {
           leaveMap[key] = r;
@@ -147,6 +155,10 @@ function syncManagerDashboard(targetDoc) {
 
       if (store.PERM_STATE && Array.isArray(store.PERM_STATE)) {
         store.PERM_STATE.forEach(addPermReq);
+      }
+
+      if (store.PERMISSION_REQUESTS && Array.isArray(store.PERMISSION_REQUESTS)) {
+        store.PERMISSION_REQUESTS.forEach(addPermReq);
       }
 
       if (store.PERSON_DATA && typeof store.PERSON_DATA === 'object') {
@@ -204,8 +216,7 @@ function syncManagerDashboard(targetDoc) {
       }
 
       // 3. Recent Requests Section
-      // Only requests that have been approved or rejected by the manager AND submitted appear in Recent Requests.
-      // Newly submitted pending requests do not appear here until approved/rejected and submitted.
+      // Only requests that have been approved or rejected by the manager appear in Recent Requests.
       const processedLeaves = allLeaves.filter(isDecidedAndSubmitted);
       const processedPerms = allPerms.filter(isDecidedAndSubmitted);
 
@@ -264,7 +275,7 @@ function syncManagerDashboard(targetDoc) {
             let dates = req.date;
             if (!dates) {
               if (req.fromDate && req.toDate) {
-                dates = req.fromDate === req.toDate ? (req.fromDate + ' – ' + req.toDate) : (req.fromDate + ' – ' + req.toDate);
+                dates = req.fromDate === req.toDate ? (req.fromDate) : (req.fromDate + ' – ' + req.toDate);
               } else {
                 dates = req.fromDate || req.toDate || '04-Sep-2026';
               }
@@ -279,7 +290,7 @@ function syncManagerDashboard(targetDoc) {
             htmlCards += '<div class="recent-req-item" onclick="handleCardNav(\'tpl-LeaveApprovalDetail\', \'' + cardKey + '\')" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:14px 16px; margin-bottom:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.03); transition:all 0.2s;">'
               + '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">'
               + '<div style="display:flex; align-items:center; gap:10px;">'
-              + '<div style="width:38px; height:38px; border-radius:50%; background:#2563EB; color:#FFFFFF; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">' + empInitials + '</div>'
+              + '<div style="width:38px; height:38px; border-radius:50%; background:' + (isPerm ? '#D97706' : '#2563EB') + '; color:#FFFFFF; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">' + empInitials + '</div>'
               + '<div>'
               + '<div style="font-size:14px; font-weight:700; color:#0F172A;">' + empName + '</div>'
               + '<div style="font-size:11.5px; color:#64748B;">' + empRole + '</div>'
@@ -288,12 +299,12 @@ function syncManagerDashboard(targetDoc) {
               + '</div>'
 
               + '<div style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:6px;">'
-              + '<span style="background:#EFF6FF; color:#0066FF; border:1px solid #DBEAFE; padding:3px 10px; border-radius:8px; font-weight:600;">' + reqType + ' (' + duration + ')</span>'
+              + '<span style="background:' + (isPerm ? '#FEF3C7' : '#EFF6FF') + '; color:' + (isPerm ? '#D97706' : '#0066FF') + '; border:1px solid ' + (isPerm ? '#FDE68A' : '#DBEAFE') + '; padding:3px 10px; border-radius:8px; font-weight:600;">' + reqType + ' (' + duration + ')</span>'
               + '<span style="color:#475569; font-weight:500;">' + dates + '</span>'
               + '<span style="margin-left:auto; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:8px; background:' + (status === 'approved' ? '#DCFCE7' : '#FEE2E2') + '; color:' + (status === 'approved' ? '#15803D' : '#DC2626') + ';">' + statusLabel + '</span>'
               + '</div>'
 
-              + '<div style="font-size:12.5px; color:#475569; background:#F8FAFC; padding:8px 12px; border-radius:8px; line-height:1.4; border-left:3px solid #0066FF;">'
+              + '<div style="font-size:12.5px; color:#475569; background:#F8FAFC; padding:8px 12px; border-radius:8px; line-height:1.4; border-left:3px solid ' + (isPerm ? '#D97706' : '#0066FF') + ';">'
               + '"' + reason + '"'
               + '</div>'
               + '</div>';

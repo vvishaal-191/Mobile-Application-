@@ -676,6 +676,21 @@
   <script>
     let currentLeaveTab = 'pending';
 
+    function isPermissionRequest(r) {
+      if (!r) return false;
+      if (r.isPermission === true || r._isPermCard === true) return true;
+      if (r.isPermission === false) return false;
+      if (r.permissionType) return true;
+      const permTypes = ['early going', 'late coming', 'personal work', 'official work', 'permission'];
+      const t = (r.type || r.leaveType || r.permissionType || '').trim().toLowerCase();
+      return permTypes.includes(t) || t.includes('early going') || t.includes('late coming');
+    }
+
+    function isLeaveRequest(r) {
+      if (!r) return false;
+      return !isPermissionRequest(r);
+    }
+
     function switchLeaveTab(status, el) {
       currentLeaveTab = status;
       const pills = document.querySelectorAll('.tab-bar-card .tab-pill');
@@ -686,7 +701,7 @@
 
     function updateLeaveTabCounts() {
       const store = (window.parent && window.parent.EMP_LEAVE_REQUESTS) ? window.parent : (window.EMP_LEAVE_REQUESTS ? window : (window.parent || window));
-      const reqs = store.EMP_LEAVE_REQUESTS || [];
+      const reqs = (store.EMP_LEAVE_REQUESTS || []).filter(isLeaveRequest);
 
       let pending = 0, approved = 0, rejected = 0;
       reqs.forEach(r => {
@@ -709,7 +724,7 @@
 
     function renderLeaveApprovals() {
       const store = (window.parent && window.parent.EMP_LEAVE_REQUESTS) ? window.parent : (window.EMP_LEAVE_REQUESTS ? window : (window.parent || window));
-      const reqs = store.EMP_LEAVE_REQUESTS || [];
+      const reqs = (store.EMP_LEAVE_REQUESTS || []).filter(isLeaveRequest);
       const listEl = document.getElementById('leave-cards-list');
       const msg = document.getElementById('no-leave-msg');
 
@@ -731,7 +746,7 @@
             const status = (r.status || 'pending').toLowerCase();
             const badgeClass = status === 'approved' ? 'badge success' : (status === 'rejected' ? 'badge danger' : 'badge warning');
 
-            html += '<div class="approval-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + (r.id || 'priya') + '\')}">'
+            html += '<div class="approval-card" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen(\'tpl-LeaveApprovalDetail\', \'' + (r.id || 'priya') + '\')}else if(typeof loadScreen===\'function\'){loadScreen(\'tpl-LeaveApprovalDetail\', \'' + (r.id || 'priya') + '\')}else{window.location.href=\'../LeaveApprovalDetail/preview.html?person=' + encodeURIComponent(r.id || 'priya') + '\'}">'
               + '<div class="top-row">'
               + '<div class="emp-row">'
               + '<div class="avatar">' + empName.slice(0, 2).toUpperCase() + '</div>'

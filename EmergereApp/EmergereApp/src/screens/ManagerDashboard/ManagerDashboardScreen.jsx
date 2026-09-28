@@ -81,6 +81,17 @@ const SIDEBAR_ITEMS = [
   { key: 'MyProfile', label: 'My Profile', icon: 'user', target: 'MyProfile' },
 ];
 
+/** Helper: detect if a request is a Permission request */
+function isPermissionRequest(r) {
+  if (!r) return false;
+  if (r.isPermission === true || r._isPermCard === true) return true;
+  if (r.isPermission === false) return false;
+  if (r.permissionType) return true;
+  const permTypes = ['Early Going', 'Late Coming', 'Personal Work', 'Official Work', 'Permission'];
+  const t = (r.type || r.leaveType || r.permissionType || '').trim();
+  return permTypes.includes(t);
+}
+
 export default function ManagerDashboardScreen({ navigation, route }) {
   const [requests, setRequests] = useState([]);
   const [quickActions, setQuickActions] = useState(QUICK_ACTIONS_CONFIG);
@@ -94,144 +105,141 @@ export default function ManagerDashboardScreen({ navigation, route }) {
   };
 
   useEffect(() => {
-    // Sync any leave/permission requests that have been decided (approved or rejected)
     const leaveReqs = (typeof global !== 'undefined' && global.LEAVE_REQUESTS) || [];
-    const permReqs = (typeof global !== 'undefined' && global.PERMISSION_REQUESTS) || [];
+    const permReqs = (typeof global !== 'undefined' && (global.PERMISSION_REQUESTS || global.PERM_STATE)) || [];
 
-    const allNew = [...leaveReqs, ...permReqs]
-      .filter((r) => r && r.id)
+    // Calculate pending badges for Quick Actions separately
+    const pendingLeavesCount = leaveReqs.filter((r) => !isPermissionRequest(r) && (r.status || 'pending').toLowerCase() === 'pending').length;
+    const pendingPermsCount = permReqs.filter((r) => isPermissionRequest(r) && (r.status || 'pending').toLowerCase() === 'pending').length;
+
+    setQuickActions((qa) =>
+      qa.map((action) => {
+        if (action.key === 'LeaveApprovals') {
+          return { ...action, badge: pendingLeavesCount };
+        }
+        if (action.key === 'PermissionApprovals') {
+          return { ...action, badge: pendingPermsCount };
+        }
+        return action;
+      })
+    );
+
+    // Build Recent Requests: ONLY approved or rejected requests appear in Recent Requests
+    // Both Leave and Permission requests are kept completely independent and separate
+    const decidedLeaves = leaveReqs
+      .filter((r) => {
+        const s = (r.status || '').toLowerCase();
+        return !isPermissionRequest(r) && (s === 'approved' || s === 'rejected');
+      })
       .map((r) => ({
-        id: r.id,
-        name: r.name || 'Employee',
-        role: r.role || '',
-        empId: r.empId || '',
-        initials: r.initials || 'EE',
-        leaveType: r.leaveType || r.type || 'Leave',
-        fromDate: r.fromDate || r.schedule || '',
+        id: String(r.id),
+        name: r.name || r.employeeName || 'Employee',
+        role: r.role || r.employeeRole || 'Senior Software Engineer',
+        empId: r.empId || r.employeeId || 'EMP-2024-0156',
+        initials: r.initials || r.employeeInitials || 'EE',
+        leaveType: r.leaveType || r.type || 'Casual Leave',
+        type: r.leaveType || r.type || 'Casual Leave',
+        fromDate: r.fromDate || '',
         toDate: r.toDate || '',
-        totalDays: r.totalDays || r.duration || '',
+        totalDays: r.totalDays || r.duration || '1 Day',
         emergencyContact: r.emergencyContact || '',
-        reason: r.reason || '',
-        subtitle: r.subtitle || `${r.leaveType || r.type || 'Leave'} • ${r.fromDate || r.schedule || ''}`,
-        status: (r.status && r.status.toLowerCase() === 'rejected') ? 'Rejected' : ((r.status && r.status.toLowerCase() === 'approved') ? 'Approved' : 'Pending'),
-        tone: (r.status && r.status.toLowerCase() === 'rejected') ? 'danger' : ((r.status && r.status.toLowerCase() === 'approved') ? 'success' : 'warning'),
+        reason: r.reason || 'Personal work',
+        subtitle: `${r.leaveType || r.type || 'Leave'} • ${r.fromDate ? `${r.fromDate}${r.toDate ? ' – ' + r.toDate : ''}` : (r.duration || 'Recent')}`,
+        status: (r.status || '').toLowerCase() === 'approved' ? 'Approved' : 'Rejected',
+        tone: (r.status || '').toLowerCase() === 'approved' ? 'success' : 'danger',
+        isPermission: false,
+        timestamp: r.approvedAt || r.rejectedAt || r.createdAt || Date.now(),
       }));
 
-    const getSig = (item) =>
-      `${(item.name || '').trim().toLowerCase()}|${(item.leaveType || item.type || '').trim().toLowerCase()}|${(item.fromDate || item.schedule || '').trim().toLowerCase()}`;
-
-    const dedupeList = (list) => {
-      const seen = new Set();
-      return list.filter((item) => {
-        const sig = getSig(item);
-        if (seen.has(sig)) return false;
-        seen.add(sig);
-        return true;
-      });
-    };
-
-    if (allNew.length > 0) {
-      setRequests((prev) => {
-        const existingIds = new Set(prev.map((r) => r.id));
-        const existingSigs = new Set(prev.map(getSig));
-        const fresh = allNew.filter((r) => !existingIds.has(r.id) && !existingSigs.has(getSig(r)));
-        if (fresh.length === 0) return prev;
-        setQuickActions((qa) =>
-          qa.map((action) => {
-            if (action.key === 'PermissionApprovals') {
-              return { ...action, badge: (action.badge || 0) + fresh.filter((r) => r.isPermission).length };
-            }
-            if (action.key === 'LeaveApprovals') {
-              return { ...action, badge: (action.badge || 0) + fresh.filter((r) => !r.isPermission).length };
-            }
-            return action;
-          })
-        );
-        return dedupeList([...fresh, ...prev]);
-      });
-    }
-
-    // Handle status change from LeaveApprovalDetail or global store
-    const routeDecision = route?.params?.newStatus;
-    const targetPerson = route?.params?.person;
-    const isPermission = route?.params?.isPermission;
-    const targetId = route?.params?.requestId || targetPerson?.id;
+    const decidedPerms = permReqs
+      .filter((r) => {
+        const s = (r.status || '').toLowerCase();
+        return isPermissionRequest(r) && (s === 'approved' || s === 'rejected');
+      })
+      .map((r) => ({
+        id: String(r.id),
+        name: r.name || r.employeeName || 'Employee',
+        role: r.role || r.employeeRole || 'UI/UX Designer',
+        empId: r.empId || r.employeeId || 'EMP-2024-0101',
+        initials: r.initials || r.employeeInitials || 'EE',
+        leaveType: r.permissionType || r.type || 'Early Going',
+        type: r.permissionType || r.type || 'Early Going',
+        permissionType: r.permissionType || r.type || 'Early Going',
+        schedule: r.schedule || (r.date ? `${r.date} (${r.duration || '2 Hours'})` : 'Today'),
+        fromDate: r.date || r.fromDate || '',
+        totalDays: r.duration || '2 Hours',
+        reason: r.reason || 'Personal work',
+        subtitle: `${r.permissionType || r.type || 'Early Going'} • ${r.schedule || r.date || 'Today'}`,
+        status: (r.status || '').toLowerCase() === 'approved' ? 'Approved' : 'Rejected',
+        tone: (r.status || '').toLowerCase() === 'approved' ? 'success' : 'danger',
+        isPermission: true,
+        timestamp: r.approvedAt || r.rejectedAt || r.createdAt || Date.now(),
+      }));
 
     const leaveDec = typeof global !== 'undefined' ? global.LAST_LEAVE_DECISION : null;
     const permDec = typeof global !== 'undefined' ? global.LAST_PERMISSION_DECISION : null;
 
-    const activeStatus = routeDecision || (leaveDec && leaveDec.status) || (permDec && permDec.status);
+    const combined = [...decidedLeaves, ...decidedPerms];
 
-    if (activeStatus) {
-      const isApproved = activeStatus.toLowerCase() === 'approved';
-      const statusText = isApproved ? 'Approved' : 'Rejected';
-      const tone = isApproved ? 'success' : 'danger';
-
-      setRequests((prev) => {
-        let matched = false;
-        const updated = prev.map((r) => {
-          const nameMatch = targetPerson?.name && r.name && r.name.toLowerCase() === targetPerson.name.toLowerCase();
-          const globalMatch = (leaveDec?.name && r.name && r.name.toLowerCase() === leaveDec.name.toLowerCase()) ||
-                              (permDec?.name && r.name && r.name.toLowerCase() === permDec.name.toLowerCase());
-          const idMatch = targetId && (r.id === targetId || (targetId === 'priya' && r.name === 'Priya Sharma') || (targetId === 'sneha' && r.name === 'Sneha Gupta'));
-
-          if ((idMatch && !targetPerson?.name) || nameMatch || (idMatch && (!r.leaveType || !targetPerson?.leaveType || r.leaveType === targetPerson.leaveType)) || (!targetId && globalMatch)) {
-            matched = true;
-            return {
-              ...r,
-              status: statusText,
-              tone: tone,
-            };
-          }
-          return r;
-        });
-
-        if (!matched && targetPerson) {
-          const newReq = {
-            id: targetPerson.id || Date.now().toString(),
-            name: targetPerson.name || 'Employee',
-            role: targetPerson.role || 'Team Member',
-            empId: targetPerson.empId || 'EMP-2024-0000',
-            initials: targetPerson.initials || 'EM',
-            leaveType: targetPerson.leaveType || targetPerson.type || (isPermission ? 'Permission' : 'Leave'),
-            fromDate: targetPerson.fromDate || targetPerson.schedule || '',
-            toDate: targetPerson.toDate || '',
-            totalDays: targetPerson.totalDays || targetPerson.duration || '1 Day',
-            emergencyContact: targetPerson.emergencyContact || '',
-            reason: targetPerson.reason || '',
-            subtitle: `${targetPerson.leaveType || targetPerson.type || 'Request'} • ${targetPerson.schedule || targetPerson.fromDate || 'Recent'}`,
-            status: statusText,
-            tone: tone,
-          };
-          return dedupeList([newReq, ...updated]);
-        }
-
-        return dedupeList(updated);
+    if (leaveDec && !combined.some((c) => !c.isPermission && (String(c.id) === String(leaveDec.id) || c.name === leaveDec.name))) {
+      combined.unshift({
+        id: String(leaveDec.id || Date.now()),
+        name: leaveDec.name || 'Priya Sharma',
+        role: 'Senior Software Engineer',
+        empId: 'EMP-2024-0156',
+        initials: 'PS',
+        leaveType: leaveDec.type || 'Casual Leave',
+        type: leaveDec.type || 'Casual Leave',
+        subtitle: `${leaveDec.type || 'Casual Leave'} • Sep 10 – Sep 11`,
+        status: leaveDec.status || 'Approved',
+        tone: (leaveDec.status || '').toLowerCase() === 'approved' ? 'success' : 'danger',
+        isPermission: false,
+        reason: 'Family function in hometown',
+        timestamp: leaveDec.approvedAt || leaveDec.rejectedAt || Date.now(),
       });
-
-      // Update badge counts in Quick Actions
-      setQuickActions((prev) =>
-        prev.map((qa) => {
-          if (qa.key === 'LeaveApprovals' && (leaveDec || (!isPermission && routeDecision))) {
-            return { ...qa, badge: 2 };
-          }
-          if (qa.key === 'PermissionApprovals' && (permDec || (isPermission && routeDecision))) {
-            return { ...qa, badge: Math.max(0, (qa.badge || 0) - 1) };
-          }
-          return qa;
-        })
-      );
     }
+
+    if (permDec && !combined.some((c) => c.isPermission && (String(c.id) === String(permDec.id) || c.name === permDec.name))) {
+      combined.unshift({
+        id: String(permDec.id || Date.now()),
+        name: permDec.name || 'Employee',
+        role: 'UI/UX Designer',
+        empId: 'EMP-2024-0101',
+        initials: 'EE',
+        leaveType: permDec.type || 'Early Going',
+        type: permDec.type || 'Early Going',
+        permissionType: permDec.type || 'Early Going',
+        subtitle: `${permDec.type || 'Early Going'} • ${permDec.schedule || 'Today'}`,
+        status: permDec.status || 'Approved',
+        tone: (permDec.status || '').toLowerCase() === 'approved' ? 'success' : 'danger',
+        isPermission: true,
+        reason: 'Personal work',
+        timestamp: permDec.approvedAt || permDec.rejectedAt || Date.now(),
+      });
+    }
+
+    // Sort by latest timestamp
+    combined.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    // Deduplicate by key
+    const seen = new Set();
+    const finalRecent = combined.filter((item) => {
+      const key = `${item.isPermission ? 'perm' : 'leave'}_${item.id}_${item.name}_${item.type}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    setRequests(finalRecent);
   }, [route?.params]);
 
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Top Header matching Image 2 */}
+        {/* Top Header */}
         <View style={styles.headerWrap}>
           <View style={styles.headerTop}>
             <View style={styles.headerLeft}>
-              {/* Sidebar Icon replacing circled logo (Image 3) */}
               <TouchableOpacity
                 style={styles.hamburgerBtn}
                 activeOpacity={0.8}
@@ -244,99 +252,80 @@ export default function ManagerDashboardScreen({ navigation, route }) {
                 <Text style={styles.headerSubtitle}>IT Solutions</Text>
               </View>
             </View>
-            
           </View>
 
           {/* Greeting Row */}
           <View style={styles.greetingRow}>
-            <View>
-              <Text style={styles.greetingSub}>Good Morning,</Text>
-              <View style={styles.nameRow}>
-                <Text style={styles.userName}>Rahul Sharma</Text>
-                <View style={styles.roleBadge}>
-                  <Text style={styles.roleBadgeText}>Manager</Text>
-                </View>
-              </View>
-              <View style={styles.dateRow}>
-                <Feather name="calendar" size={13} color="rgba(224, 242, 254, 0.85)" />
-                <Text style={styles.dateText}>Thu, Sep 03 2026</Text>
-              </View>
+            <View style={styles.greetingLeft}>
+              <Text style={styles.greetingTitle}>Welcome back, Rahul 👋</Text>
+              <Text style={styles.greetingSub}>Manage your team leave and permission requests</Text>
+            </View>
+            <View style={styles.mgrAvatarWrap}>
+              <Text style={styles.mgrAvatarText}>RS</Text>
             </View>
           </View>
         </View>
 
-        {/* 4 Stat Cards Row matching Image 3 */}
-        <View style={styles.statsCardRow}>
-          {STATS.map((item) => (
+        {/* Stats Grid */}
+        <View style={styles.statsGrid}>
+          {STATS.map((s) => (
             <TouchableOpacity
-              key={item.key}
-              style={[styles.statItem, { backgroundColor: item.cardBg, borderWidth: 1, borderColor: item.borderColor }]}
-              activeOpacity={0.7}
-              onPress={() => go(item.target)}
+              key={s.key}
+              style={[styles.statCard, { backgroundColor: s.cardBg, borderColor: s.borderColor }]}
+              activeOpacity={0.8}
+              onPress={() => go(s.target)}
             >
-              <View style={[styles.statIconBox, { backgroundColor: item.haloBg }]}>
-                <Feather name={item.icon} size={16} color={item.color} />
+              <View style={[styles.statHalo, { backgroundColor: s.haloBg }]}>
+                <Feather name={s.icon} size={20} color={s.color} />
               </View>
-              <Text style={[styles.statValue, { color: item.numColor }]}>{item.value}</Text>
-              <Text style={styles.statLabel}>{item.label}</Text>
+              <Text style={[styles.statValue, { color: s.numColor }]}>{s.value}</Text>
+              <Text style={styles.statLabel}>{s.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Quick Actions */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}>
-            <View style={[styles.sectionIconCircle, { backgroundColor: '#0066FF' }]}>
-              <Feather name="zap" size={16} color="#FFFFFF" />
-            </View>
-            <View>
-              <Text style={styles.sectionTitle}>Quick Actions</Text>
-              <Text style={styles.sectionSubtitle}>Manage your team activities</Text>
-            </View>
-          </View>
-
-          <View style={styles.quickGrid}>
-            {quickActions.map((action) => (
-              <TouchableOpacity
-                key={action.key}
-                style={[styles.quickCard, { backgroundColor: action.bg }]}
-                activeOpacity={0.8}
-                onPress={() => go(action.target)}
-              >
-                <View style={styles.quickCardTop}>
-                  <View style={[styles.quickIconBox, { backgroundColor: action.iconBg }]}>
-                    <Feather name={action.icon} size={16} color={action.key === 'TeamAttendance' ? '#FFFFFF' : '#FFFFFF'} />
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {action.badge !== undefined && action.badge > 0 ? (
-                      <View style={styles.qbadge}>
-                        <Text style={styles.qbadgeText}>{action.badge}</Text>
-                      </View>
-                    ) : null}
-                    <View style={[styles.chevronCircle, { backgroundColor: action.chevronBg }]}>
-                      <Feather name="chevron-right" size={14} color={action.chevronColor} />
-                    </View>
-                  </View>
-                </View>
-                <Text style={[styles.quickCardTitle, { color: action.textColor }]}>{action.title}</Text>
-                <Text style={[styles.quickCardDesc, { color: action.descColor }]}>{action.desc}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        {/* Quick Actions Section */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <Text style={styles.sectionSub}>Manage your team activities</Text>
         </View>
 
-        {/* Recent Requests */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}>
-            <View style={[styles.sectionIconCircle, { backgroundColor: '#EFF6FF' }]}>
-              <Feather name="clock" size={16} color="#2563EB" />
-            </View>
-            <View>
-              <Text style={styles.sectionTitle}>Recent Requests ({requests.length})</Text>
-              <Text style={styles.sectionSubtitle}>Latest leave and permission requests from your team</Text>
-            </View>
-          </View>
+        <View style={styles.qaGrid}>
+          {quickActions.map((qa) => (
+            <TouchableOpacity
+              key={qa.key}
+              style={[styles.qaCard, { backgroundColor: qa.bg }]}
+              activeOpacity={0.85}
+              onPress={() => go(qa.target)}
+            >
+              <View style={styles.qaTop}>
+                <View style={[styles.qaIconWrap, { backgroundColor: qa.iconBg }]}>
+                  <Feather name={qa.icon} size={18} color="#FFFFFF" />
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  {qa.badge !== undefined && qa.badge > 0 && (
+                    <View style={styles.qaBadge}>
+                      <Text style={styles.qaBadgeText}>{qa.badge}</Text>
+                    </View>
+                  )}
+                  <View style={[styles.qaChevron, { backgroundColor: qa.chevronBg }]}>
+                    <Feather name="chevron-right" size={14} color={qa.chevronColor} />
+                  </View>
+                </View>
+              </View>
+              <Text style={[styles.qaTitle, { color: qa.textColor }]}>{qa.title}</Text>
+              <Text style={[styles.qaDesc, { color: qa.descColor }]}>{qa.desc}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
+        {/* Recent Requests Section (Approved/Rejected Leave and Permission Requests) */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent Requests ({requests.length})</Text>
+          <Text style={styles.sectionSub}>Processed leave and permission requests</Text>
+        </View>
+
+        <View style={styles.recentList}>
           {requests.length === 0 ? (
             <View style={styles.emptyWrap}>
               <Feather name="file-text" size={42} color="#BFDBFE" />
@@ -346,13 +335,13 @@ export default function ManagerDashboardScreen({ navigation, route }) {
           ) : (
             requests.map((r) => (
               <TouchableOpacity
-                key={r.id}
+                key={`${r.isPermission ? 'perm' : 'leave'}_${r.id}`}
                 activeOpacity={0.7}
-                onPress={() => go('LeaveApprovalDetail', { person: r, decision: r.status })}
+                onPress={() => go('LeaveApprovalDetail', { person: r, decision: r.status, isPermission: r.isPermission })}
               >
                 <Card style={{ marginBottom: 10, padding: 12 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View>
+                    <View style={{ flex: 1, marginRight: 8 }}>
                       <Text style={{ fontSize: 15, fontWeight: '700', color: '#0F172A' }}>{r.name}</Text>
                       <Text style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{r.subtitle}</Text>
                     </View>

@@ -1,3 +1,4 @@
+// src/screens/Login/LoginScreen.jsx
 import React, { useState } from 'react';
 import {
   View,
@@ -9,6 +10,7 @@ import {
   Platform,
   Modal,
   Image,
+  ScrollView,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import styles from './LoginScreen.styles';
@@ -195,104 +197,115 @@ export default function LoginScreen({ navigation }) {
       style={styles.screen}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#EEF3F9" />
+      <StatusBar barStyle="light-content" backgroundColor="#0056FF" />
 
-      <View style={styles.centerContainer}>
-        {/* Logo Plate */}
-        <View style={styles.logoCard}>
-        <Image
-          source={require('../../../assets/emergere-circuit-logo.png')}
-          style={styles.logoImage}
-          resizeMode="contain"
-        />
-      </View>
-
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
-
-      {!!authError && (
-        <View style={styles.authErrorBox}>
-          <Feather name="alert-circle" size={18} color="#E5484D" />
-          <Text style={styles.authErrorText}>{authError}</Text>
-        </View>
-      )}
-
-      {/* Username or Email Input */}
-      <View style={styles.inputWrap}>
-        <Feather name="user" size={18} color="#64748B" style={styles.inputIcon} />
-        <TextInput
-          style={styles.textInputField}
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
-            setAuthError('');
-          }}
-          placeholder="Username or Email"
-          placeholderTextColor="#94A3B8"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-      </View>
-
-      {/* Password Input */}
-      <View style={styles.inputWrap}>
-        <Feather name="lock" size={18} color="#64748B" style={styles.inputIcon} />
-        <TextInput
-          style={styles.textInputField}
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            if (text.length >= 8) setPasswordError('');
-          }}
-          placeholder="Password"
-          placeholderTextColor="#94A3B8"
-          secureTextEntry={!showPassword}
-        />
-        <TouchableOpacity
-          onPress={() => setShowPassword((v) => !v)}
-          activeOpacity={0.7}
-          style={styles.eyeBtn}
-          accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
-          accessibilityRole="button"
-        >
-          <Feather
-            name={showPassword ? 'eye-off' : 'eye'}
-            size={18}
-            color="#64748B"
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        {/* Top Royal Blue Banner with Skyscrapers & Tech Circuit Logo (Exact Image 2 Reference) */}
+        <View style={styles.headerBannerContainer} accessibilityLabel="Welcome Back - Sign in to continue to your account">
+          <Image
+            source={require('../../../assets/login-top-header.png')}
+            style={styles.headerBannerImage}
+            resizeMode="cover"
+            accessibilityLabel="Welcome Back - Sign in to continue to your account"
           />
-        </TouchableOpacity>
-      </View>
-      {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
-
-      {/* Remember Me and Forgot Password Row */}
-      <View style={styles.optionsRow}>
-        <TouchableOpacity
-          style={styles.rememberRow}
-          onPress={() => setRememberMe(!rememberMe)}
-          activeOpacity={0.8}
-        >
-          <View style={[styles.checkbox, !rememberMe && styles.checkboxUnchecked]}>
-            {rememberMe && <Text style={styles.checkboxCheck}>✓</Text>}
-          </View>
-          <Text style={styles.rememberText}>Remember Me</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleOpenForgotModal} activeOpacity={0.7}>
-          <Text style={styles.forgotText}>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Primary Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.85}>
-        <Text style={styles.loginButtonText}>Login</Text>
-        <View style={styles.arrowCircle}>
-          <Feather name="arrow-right" size={18} color="#FFFFFF" />
         </View>
-      </TouchableOpacity>
-      </View>
 
+        {/* Floating Main Form Card */}
+        <View style={styles.formCard}>
+          {!!authError && (
+            <View style={styles.authErrorBox}>
+              <Feather name="alert-circle" size={16} color="#DC2626" />
+              <Text style={styles.authErrorText}>{authError}</Text>
+            </View>
+          )}
 
+          {/* Username or Email Input */}
+          <View style={styles.inputWrap}>
+            <Feather name="user" size={18} color="#0066FF" style={styles.inputIcon} />
+            <TextInput
+              style={styles.textInputField}
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setAuthError('');
+              }}
+              placeholder="Username or Email"
+              placeholderTextColor="#94A3B8"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
 
+          {/* Password Input */}
+          <View style={styles.inputWrap}>
+            <Feather name="lock" size={18} color="#0066FF" style={styles.inputIcon} />
+            <TextInput
+              style={styles.textInputField}
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (text.length >= 8) setPasswordError('');
+              }}
+              placeholder="Password"
+              placeholderTextColor="#94A3B8"
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword((v) => !v)}
+              activeOpacity={0.7}
+              style={styles.eyeBtn}
+              accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+              accessibilityRole="button"
+            >
+              <Feather
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={18}
+                color="#94A3B8"
+              />
+            </TouchableOpacity>
+          </View>
+          {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+
+          {/* Remember Me and Forgot Password Row */}
+          <View style={styles.optionsRow}>
+            <TouchableOpacity
+              style={styles.rememberRow}
+              onPress={() => setRememberMe(!rememberMe)}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.checkbox, !rememberMe && styles.checkboxUnchecked]}>
+                {rememberMe && <Text style={styles.checkboxCheck}>✓</Text>}
+              </View>
+              <Text style={styles.rememberText}>Remember Me</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleOpenForgotModal} activeOpacity={0.7}>
+              <Text style={styles.forgotText}>Forgot Password?</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Primary Login Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.85}>
+            <Text style={styles.loginButtonText}>Login</Text>
+            <View style={styles.arrowCircle}>
+              <Feather name="arrow-right" size={18} color="#FFFFFF" />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Bottom Luminous Blue Waves Decoration (Exact Image 2 Reference) */}
+        <View style={styles.bottomWaveContainer}>
+          <Image
+            source={require('../../../assets/login-bottom-wave.png')}
+            style={styles.bottomWaveImage}
+            resizeMode="cover"
+          />
+        </View>
+      </ScrollView>
 
       {/* Forgot Password Modal */}
       <Modal
@@ -370,8 +383,6 @@ export default function LoginScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-
-
     </KeyboardAvoidingView>
   );
 }

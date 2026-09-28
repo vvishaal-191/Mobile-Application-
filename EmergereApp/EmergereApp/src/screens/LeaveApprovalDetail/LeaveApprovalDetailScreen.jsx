@@ -62,14 +62,12 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
   };
 
   const isPermission = !!(
-    person.isPermission ||
-    person.duration ||
-    person.schedule ||
-    person.type === 'Early Going' ||
-    person.type === 'Late Coming' ||
-    person.leaveType === 'Early Going' ||
-    person.leaveType === 'Late Coming' ||
-    person.permissionType
+    person.isPermission === true ||
+    route?.params?.isPermission === true ||
+    person.permissionType ||
+    ['Early Going', 'Late Coming', 'Personal Work', 'Official Work', 'Permission'].includes(person.type) ||
+    ['Early Going', 'Late Coming', 'Personal Work', 'Official Work', 'Permission'].includes(person.leaveType) ||
+    (person.schedule && !person.toDate)
   );
 
   const initialDecision = route?.params?.decision || person.status || 'Pending';

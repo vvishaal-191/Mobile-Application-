@@ -407,11 +407,7 @@
       parentWin.PERM_STATE.unshift(entry);
     }
 
-    if (!parentWin.EMP_LEAVE_REQUESTS) parentWin.EMP_LEAVE_REQUESTS = [];
-    var existsEmpReq = parentWin.EMP_LEAVE_REQUESTS.some(function(r){ return r.leaveType === pType && r.fromDate === fmtDate && r.reason === pReason; });
-    if (!existsEmpReq) {
-      parentWin.EMP_LEAVE_REQUESTS.unshift({ id: newId, leaveType: pType, fromDate: fmtDate, daysText: pDuration, reason: pReason, isPermission: true, employeeName: permEmpName, employeeEmail: permEmpEmail, employeeId: permEmpId, employeeRole: permEmpRole, status: 'pending' });
-    }
+    
 
     var permPersonObj = {
       id: newId,

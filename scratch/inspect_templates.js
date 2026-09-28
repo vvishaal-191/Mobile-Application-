@@ -1,31 +1,26 @@
 const fs = require('fs');
-
-const c = fs.readFileSync('preview_app.html', 'utf8');
+const content = fs.readFileSync('preview_app.html', 'utf8');
 
 function inspectTemplate(tplId) {
-  const start = c.indexOf('<template id="' + tplId + '">');
+  const start = content.indexOf('id="' + tplId + '"');
   if (start === -1) {
     console.log(tplId, 'NOT FOUND');
     return;
   }
-  const end = c.indexOf('</template>', start);
-  const content = c.substring(start + ('<template id="' + tplId + '">').length, end).trim();
-  console.log('=== ' + tplId + ' ===');
-  console.log('Length:', content.length);
-  console.log('Starts with:', content.slice(0, 150));
-  console.log('Ends with:', content.slice(-150));
+  const end = content.indexOf('</template>', start);
+  console.log('=== ' + tplId + ' === (Length: ' + (end - start) + ')');
+  const tplContent = content.substring(start, end);
+  const scripts = tplContent.match(/<script[\s\S]*?<\/script>/g) || [];
+  console.log('Script count:', scripts.length);
+  scripts.forEach((s, idx) => {
+    console.log('--- Script ' + idx + ' (lines ' + s.split('\n').length + '): ---');
+    console.log(s.substring(0, 400));
+    console.log('...\n' + s.substring(Math.max(0, s.length - 300)));
+  });
 }
 
 inspectTemplate('tpl-LeaveApprovals');
 inspectTemplate('tpl-PermissionApprovals');
 inspectTemplate('tpl-ManagerDashboard');
-inspectTemplate('tpl-LeaveBalance');
-
-// Also inspect loadScreen function in preview_app.html
-const lsMatch = c.match(/function loadScreen[\s\S]*?\{[\s\S]*?\n\}/);
-if (lsMatch) {
-  console.log('=== loadScreen function ===\n', lsMatch[0]);
-} else {
-  const lsIdx = c.indexOf('loadScreen');
-  console.log('=== loadScreen context ===\n', c.substring(lsIdx, lsIdx + 500));
-}
+inspectTemplate('tpl-ApplyLeave');
+inspectTemplate('tpl-ApplyPermission');
