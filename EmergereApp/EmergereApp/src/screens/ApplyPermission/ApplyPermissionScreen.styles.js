@@ -195,6 +195,16 @@ export default StyleSheet.create({
     color: '#111827',
     fontWeight: '500',
   },
+  cardInputText: {
+    fontSize: 14.5,
+    color: '#111827',
+    fontWeight: '500',
+  },
+  calendarIconBtn: {
+    padding: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   selectCard: {
     height: 52,
     flexDirection: 'row',
@@ -306,4 +316,5 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-});
+
+  });

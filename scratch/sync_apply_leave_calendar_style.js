@@ -1,4 +1,13 @@
-// src/screens/ApplyPermission/ApplyPermissionScreen.jsx
+const fs = require('fs');
+
+// ==========================================
+// 1. UPDATE ApplyPermissionScreen.jsx
+// ==========================================
+const jsxPath = 'EmergereApp/EmergereApp/src/screens/ApplyPermission/ApplyPermissionScreen.jsx';
+let jsx = fs.readFileSync(jsxPath, 'utf8');
+
+// Replace date handlers with clean toggle / picker like ApplyLeaveScreen
+const newJsxContent = `// src/screens/ApplyPermission/ApplyPermissionScreen.jsx
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -70,7 +79,7 @@ export default function ApplyPermissionScreen({ navigation }) {
 
   const parseTimeToMinutes = (timeStr) => {
     if (!timeStr) return null;
-    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    const match = timeStr.trim().match(/^(\\d{1,2}):(\\d{2})\\s*(AM|PM)?$/i);
     if (!match) return null;
     let hours = parseInt(match[1], 10);
     const minutes = parseInt(match[2], 10);
@@ -94,9 +103,9 @@ export default function ApplyPermissionScreen({ navigation }) {
     const mins = diff % 60;
 
     let result = '';
-    if (hours > 0 && mins > 0) result = `${hours} Hr ${mins} Mins`;
-    else if (hours > 0) result = `${hours} Hour${hours > 1 ? 's' : ''}`;
-    else result = `${mins} Mins`;
+    if (hours > 0 && mins > 0) result = \`\${hours} Hr \${mins} Mins\`;
+    else if (hours > 0) result = \`\${hours} Hour\${hours > 1 ? 's' : ''}\`;
+    else result = \`\${mins} Mins\`;
 
     return result;
   };
@@ -146,7 +155,7 @@ export default function ApplyPermissionScreen({ navigation }) {
       toDate: date,
       startTime,
       endTime,
-      schedule: `${date} (${startTime} - ${endTime})`,
+      schedule: \`\${date} (\${startTime} - \${endTime})\`,
       duration: cleanDuration,
       totalDays: cleanDuration,
       reason: reason || 'Personal work / Medical checkup',
@@ -156,14 +165,14 @@ export default function ApplyPermissionScreen({ navigation }) {
       approvingManager: manager,
       approverComments: '',
       supportingDocs: 'None Attached',
-      remark: `Sent to ${managerDisplayName} for review.`,
+      remark: \`Sent to \${managerDisplayName} for review.\`,
       typeTone: 'purple',
       emergencyContact: manager,
       contact: manager,
-      subtitle: `${permissionType} Application`,
-      appliedPath: `${employeeName.split(' ')[0]} (Applied)`,
-      title: `${permissionType} (${cleanDuration})`,
-      subtitleReq: `${date} • ${reason || 'Personal Work'}`,
+      subtitle: \`\${permissionType} Application\`,
+      appliedPath: \`\${employeeName.split(' ')[0]} (Applied)\`,
+      title: \`\${permissionType} (\${cleanDuration})\`,
+      subtitleReq: \`\${date} • \${reason || 'Personal Work'}\`,
     };
 
     if (typeof global !== 'undefined') {
@@ -502,3 +511,173 @@ const modalStyles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+`;
+
+fs.writeFileSync(jsxPath, newJsxContent, 'utf8');
+console.log('Updated ApplyPermissionScreen.jsx');
+
+// ==========================================
+// 2. UPDATE ApplyPermissionScreen.styles.js
+// ==========================================
+const stylesPath = 'EmergereApp/EmergereApp/src/screens/ApplyPermission/ApplyPermissionScreen.styles.js';
+let stylesContent = fs.readFileSync(stylesPath, 'utf8');
+
+stylesContent = stylesContent.replace(
+  `  field: {
+    marginBottom: 18,
+    position: 'relative',
+  },
+  dateField: {
+    zIndex: 100,
+  },`,
+  `  field: {
+    marginBottom: 18,
+  },`
+);
+
+const oldRNCardStyles = /\/\* Dropdown Calendar Card[\s\S]*?\}\);?/;
+const newRNCardStyles = `});`;
+
+stylesContent = stylesContent.replace(oldRNCardStyles, newRNCardStyles);
+fs.writeFileSync(stylesPath, stylesContent, 'utf8');
+console.log('Updated ApplyPermissionScreen.styles.js');
+
+// ==========================================
+// 3. HTML & CSS for Web (Consistent with Apply Leave)
+// ==========================================
+const permDateCardHtml = `<!-- Date * -->
+            <div class="perm-field">
+              <label class="perm-label">Date <span class="perm-required">*</span></label>
+              <div class="perm-input-card" id="perm-date-card" onclick="openCalPicker('perm-date-picker')">
+                <span class="perm-card-value" id="perm-date-display">09/04/2026</span>
+                <div class="perm-card-icon" id="perm-calendar-icon-btn" onclick="openCalPicker('perm-date-picker')" title="Choose date">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <label for="perm-date-picker" class="al-hidden-picker-label perm-hidden-picker-label">
+                  <input type="date" id="perm-date-picker" value="2026-09-04" onchange="onPermDateChange(this.value)" />
+                </label>
+              </div>
+            </div>`;
+
+const permPickerCss = `
+        /* Hidden Date Picker Overlay (Consistent with Apply Leave) */
+        .perm-hidden-picker-label {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+          opacity: 0;
+          z-index: 2;
+        }
+
+        .perm-hidden-picker-label input[type="date"] {
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+`;
+
+const permPickerJs = `
+        function openCalPicker(pickerId) {
+          var picker = document.getElementById(pickerId);
+          if (picker) {
+            if (typeof picker.showPicker === 'function') {
+              try {
+                picker.showPicker();
+              } catch (e) {
+                picker.click();
+              }
+            } else {
+              picker.click();
+            }
+          }
+        }
+        window.openCalPicker = openCalPicker;
+
+        function onPermDateChange(val) {
+          if (!val) return;
+          var parts = val.split('-');
+          if (parts.length === 3) {
+            // Formats as MM/DD/YYYY matching Image 2 & Apply Permission layout
+            var formatted = parts[1] + '/' + parts[2] + '/' + parts[0];
+            var displayEl = document.getElementById('perm-date-display');
+            if (displayEl) {
+              if (displayEl.tagName === 'INPUT') displayEl.value = formatted;
+              else displayEl.textContent = formatted;
+            }
+          }
+          if (typeof calcPermDuration === 'function') calcPermDuration();
+        }
+        window.onPermDateChange = onPermDateChange;
+`;
+
+function updateHtmlBundle(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+  const tplStart = content.indexOf('<template id="tpl-ApplyPermission">');
+  if (tplStart === -1) {
+    console.error('tpl-ApplyPermission not found in ' + filePath);
+    return;
+  }
+  const tplEnd = content.indexOf('</template>', tplStart);
+  let tpl = content.substring(tplStart, tplEnd + 11);
+
+  // 1. Replace CSS
+  const oldCssRegex = /\/\* Calendar Dropdown[\s\S]*?\.cal-footer-link:hover\s*\{[^}]*\}/;
+  if (oldCssRegex.test(tpl)) {
+    tpl = tpl.replace(oldCssRegex, permPickerCss.trim());
+  }
+
+  // 2. Replace Date Field HTML
+  const oldDateFieldRegex = /<!-- Date \* -->[\s\S]*?<!-- Permission Type/m;
+  tpl = tpl.replace(oldDateFieldRegex, permDateCardHtml + '\n\n            <!-- Permission Type');
+
+  // 3. Replace JS functions
+  const oldJsRegex = /var permCalState = \{[\s\S]*?window\.selectTodayPermDate = selectTodayPermDate;/;
+  if (oldJsRegex.test(tpl)) {
+    tpl = tpl.replace(oldJsRegex, permPickerJs.trim());
+  } else if (!tpl.includes('function openCalPicker')) {
+    tpl = tpl.replace('function onPermDateChange', permPickerJs + '\n        function onPermDateChange');
+  }
+
+  content = content.substring(0, tplStart) + tpl + content.substring(tplEnd + 11);
+  fs.writeFileSync(filePath, content, 'utf8');
+  console.log('Updated ' + filePath);
+}
+
+// Update the 4 html bundles
+updateHtmlBundle('preview_app.html');
+updateHtmlBundle('index.html');
+updateHtmlBundle('EmergereApp/EmergereApp/preview_app.html');
+updateHtmlBundle('EmergereApp/EmergereApp/index.html');
+
+// Update standalone preview.css and preview.html
+const standaloneCssPath = 'EmergereApp/EmergereApp/src/screens/ApplyPermission/preview.css';
+let standCss = fs.readFileSync(standaloneCssPath, 'utf8');
+const oldStandCssRegex = /\/\* Calendar Dropdown[\s\S]*?\.cal-footer-link:hover\s*\{[^}]*\}/;
+if (oldStandCssRegex.test(standCss)) {
+  standCss = standCss.replace(oldStandCssRegex, permPickerCss.trim());
+}
+fs.writeFileSync(standaloneCssPath, standCss, 'utf8');
+console.log('Updated ' + standaloneCssPath);
+
+const standaloneHtmlPath = 'EmergereApp/EmergereApp/src/screens/ApplyPermission/preview.html';
+let standHtml = fs.readFileSync(standaloneHtmlPath, 'utf8');
+
+const oldStandDateFieldRegex = /<!-- Date \* -->[\s\S]*?<!-- Permission Type/m;
+standHtml = standHtml.replace(oldStandDateFieldRegex, permDateCardHtml + '\n\n      <!-- Permission Type');
+
+const oldStandJsRegex = /var permCalState = \{[\s\S]*?window\.selectTodayPermDate = selectTodayPermDate;/;
+if (oldStandJsRegex.test(standHtml)) {
+  standHtml = standHtml.replace(oldStandJsRegex, permPickerJs.trim());
+} else if (!standHtml.includes('function openCalPicker')) {
+  standHtml = standHtml.replace('function onPermDateChange', permPickerJs + '\nfunction onPermDateChange');
+}
+fs.writeFileSync(standaloneHtmlPath, standHtml, 'utf8');
+console.log('Updated ' + standaloneHtmlPath);
