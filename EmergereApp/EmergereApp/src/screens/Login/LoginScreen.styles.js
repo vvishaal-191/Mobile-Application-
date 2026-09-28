@@ -99,7 +99,8 @@ export default StyleSheet.create({
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 18,
+    paddingLeft: 18,
+    paddingRight: 10,
     marginBottom: 16,
     shadowColor: '#A5BCDA',
     shadowOffset: { width: 0, height: 4 },
@@ -120,7 +121,12 @@ export default StyleSheet.create({
     color: '#0F172A',
   },
   eyeBtn: {
-    padding: 6,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
   },
   errorText: {
     color: '#E5484D',

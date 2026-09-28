@@ -248,7 +248,13 @@ export default function LoginScreen({ navigation }) {
           placeholderTextColor="#94A3B8"
           secureTextEntry={!showPassword}
         />
-        <TouchableOpacity onPress={() => setShowPassword((v) => !v)} activeOpacity={0.7} style={styles.eyeBtn}>
+        <TouchableOpacity
+          onPress={() => setShowPassword((v) => !v)}
+          activeOpacity={0.7}
+          style={styles.eyeBtn}
+          accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+          accessibilityRole="button"
+        >
           <Feather
             name={showPassword ? 'eye-off' : 'eye'}
             size={18}

@@ -235,7 +235,7 @@ const newTemplateContent = `  <template id="tpl-Login">
           background: #FFFFFF;
           display: flex;
           align-items: center;
-          padding: 0 20px;
+          padding: 0 12px 0 20px;
           margin-bottom: 16px;
           position: relative;
           z-index: 10;
@@ -269,6 +269,7 @@ const newTemplateContent = `  <template id="tpl-Login">
           outline: none;
           font-family: inherit;
           padding: 0;
+          min-width: 0;
         }
 
         .neumorph-input-wrap input::placeholder {
@@ -277,20 +278,33 @@ const newTemplateContent = `  <template id="tpl-Login">
         }
 
         .eye-btn {
-          background: none;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: transparent;
           border: none;
           color: #64748B;
           cursor: pointer;
-          padding: 6px;
-          display: flex;
+          padding: 0;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          transition: color 0.15s ease;
+          margin-left: 6px;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          outline: none;
+          -webkit-tap-highlight-color: transparent;
         }
 
         .eye-btn:hover {
-          color: #1E293B;
+          color: #2563EB;
+          background: rgba(37, 99, 235, 0.08);
+        }
+
+        .eye-btn:active {
+          color: #1D4ED8;
+          background: rgba(37, 99, 235, 0.16);
+          transform: scale(0.92);
         }
 
         /* Options Row */
@@ -577,7 +591,7 @@ const newTemplateContent = `  <template id="tpl-Login">
                 </svg>
               </span>
               <input id="pwd" data-id="login-pass" type="password" placeholder="Password" oninput="updatePasswordEyeVisibility('pwd');clearLoginErrors();" onkeydown="if(event.key==='Enter'){event.preventDefault();handleLogin();}" autocomplete="current-password" />
-              <button type="button" id="pwd-eye" class="eye-btn" onclick="toggleVisibility('pwd')" title="View password" style="display:none;">
+              <button type="button" id="pwd-eye" class="eye-btn" onclick="toggleVisibility('pwd')" title="Show password" aria-label="Show password">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
@@ -667,13 +681,10 @@ const newTemplateContent = `  <template id="tpl-Login">
           if (!input) return;
           const eyeBtn = document.getElementById(input.id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
           if (!eyeBtn) return;
-          if (input.value && input.value.length > 0) {
-            eyeBtn.style.display = 'flex';
-            eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
-            eyeBtn.setAttribute('title', input.type === 'password' ? 'View password' : 'Hide password');
-          } else {
-            eyeBtn.style.display = 'none';
-          }
+          eyeBtn.style.display = 'inline-flex';
+          eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
+          eyeBtn.setAttribute('title', input.type === 'password' ? 'Show password' : 'Hide password');
+          eyeBtn.setAttribute('aria-label', input.type === 'password' ? 'Show password' : 'Hide password');
         }
 
         function toggleVisibility(id) {
@@ -684,7 +695,8 @@ const newTemplateContent = `  <template id="tpl-Login">
           const eyeBtn = document.getElementById(id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
           if (eyeBtn) {
             eyeBtn.innerHTML = isPass ? EYE_OFF_SVG_ICON : EYE_SVG_ICON;
-            eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'View password');
+            eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'Show password');
+            eyeBtn.setAttribute('aria-label', isPass ? 'Hide password' : 'Show password');
           }
         }
 

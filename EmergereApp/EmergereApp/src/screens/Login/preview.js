@@ -21,13 +21,10 @@ function updatePasswordEyeVisibility(id) {
   if (!input) return;
   const eyeBtn = document.getElementById(input.id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
   if (!eyeBtn) return;
-  if (input.value && input.value.length > 0) {
-    eyeBtn.style.display = 'flex';
-    eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
-    eyeBtn.setAttribute('title', input.type === 'password' ? 'View password' : 'Hide password');
-  } else {
-    eyeBtn.style.display = 'none';
-  }
+  eyeBtn.style.display = 'inline-flex';
+  eyeBtn.innerHTML = input.type === 'password' ? EYE_SVG_ICON : EYE_OFF_SVG_ICON;
+  eyeBtn.setAttribute('title', input.type === 'password' ? 'Show password' : 'Hide password');
+  eyeBtn.setAttribute('aria-label', input.type === 'password' ? 'Show password' : 'Hide password');
 }
 
 function toggleVisibility(id) {
@@ -38,7 +35,8 @@ function toggleVisibility(id) {
   const eyeBtn = document.getElementById(id + '-eye') || (input.parentElement ? input.parentElement.querySelector('.eye-btn') : null);
   if (eyeBtn) {
     eyeBtn.innerHTML = isPass ? EYE_OFF_SVG_ICON : EYE_SVG_ICON;
-    eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'View password');
+    eyeBtn.setAttribute('title', isPass ? 'Hide password' : 'Show password');
+    eyeBtn.setAttribute('aria-label', isPass ? 'Hide password' : 'Show password');
   }
 }
 
