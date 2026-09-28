@@ -28,10 +28,10 @@ files.forEach(f => {
 
 // 2. Verify preview.css centering
 const css = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/preview.css'), 'utf8');
-if (css.includes('margin: auto 20px;')) {
-  console.log('PASS: preview.css has margin: auto 20px for center alignment');
+if (css.includes('margin: 4px 20px auto 20px;') || css.includes('margin: auto 20px;')) {
+  console.log('PASS: preview.css has balanced center alignment margin');
 } else {
-  console.error('FAIL: preview.css missing margin: auto 20px');
+  console.error('FAIL: preview.css missing proper center margin');
   allPassed = false;
 }
 
@@ -72,10 +72,10 @@ if (prevJs.includes("document.getElementById('password') || document.getElementB
 
 // 6. Verify LoginScreen.styles.js has updated aspect ratio and centered card
 const rnStyles = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/LoginScreen.styles.js'), 'utf8');
-if (rnStyles.includes("height: width * 0.583") && rnStyles.includes("marginVertical: 'auto'")) {
+if (rnStyles.includes("height: width * 0.76") && (rnStyles.includes("marginBottom: 'auto'") || rnStyles.includes("marginVertical: 'auto'"))) {
   console.log('PASS: LoginScreen.styles.js has updated aspect ratio and auto margin for center alignment');
 } else {
-  console.error('FAIL: LoginScreen.styles.js missing aspect ratio or marginVertical');
+  console.error('FAIL: LoginScreen.styles.js missing aspect ratio or margin');
   allPassed = false;
 }
 

@@ -64,29 +64,13 @@ body {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden !important;
   box-sizing: border-box;
 }
 
-/* ── Top Header Banner (Exact Photo-Realistic Image 2) ── */
+/* ── Top Header Banner (Removed per design update) ── */
 .login-header-banner-container {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  line-height: 0;
-  z-index: 5;
-}
-
-.login-header-banner-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
-.login-logo-card {
-  display: none;
+  display: none !important;
 }
 
 /* ── Floating Main Form Card (Center-Aligned Evenly on Page) ── */

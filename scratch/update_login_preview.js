@@ -17,10 +17,6 @@ const previewHtml = `<!DOCTYPE html>
   <div class="device">
     <div class="screen login-redesign-screen" id="login-screen-wrap">
       
-      <!-- Top Royal Blue Banner with Circuit Logo Aligned Upward (Exact Reference Image 2) -->
-      <div class="login-header-banner-container">
-        <img class="login-header-banner-img" src="${b64Data.topHeader}" alt="Welcome Back - Sign in to continue" />
-      </div>
 
       <!-- Floating Main Form Card (Center-Aligned Evenly on Page) -->
       <div class="login-card-container">
@@ -50,7 +46,7 @@ const previewHtml = `<!DOCTYPE html>
           <input type="password" id="password" class="login-input-field" placeholder="Password" />
           <button type="button" id="toggle-pwd-btn" class="login-eye-btn" aria-label="Toggle password visibility">
             <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
@@ -123,4 +119,4 @@ const previewHtml = `<!DOCTYPE html>
 `;
 
 fs.writeFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/preview.html'), previewHtml);
-console.log('Updated EmergereApp/EmergereApp/src/screens/Login/preview.html successfully');
+console.log('Updated EmergereApp/EmergereApp/src/screens/Login/preview.html successfully with top-aligned card');

@@ -10,7 +10,6 @@ import {
   Platform,
   Modal,
   Image,
-  ScrollView,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import styles from './LoginScreen.styles';
@@ -199,21 +198,7 @@ export default function LoginScreen({ navigation }) {
     >
       <StatusBar barStyle="light-content" backgroundColor="#0056FF" />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-      >
-        {/* Top Royal Blue Banner with Circuit Logo & Welcome Back (Exact Reference Design) */}
-        <View style={styles.headerBannerContainer} accessibilityLabel="Welcome Back - Sign in to continue">
-          <Image
-            source={require('../../../assets/login-top-header.png')}
-            style={styles.headerBannerImage}
-            resizeMode="cover"
-            accessibilityLabel="Welcome Back - Sign in to continue"
-          />
-        </View>
-
+      <View style={styles.contentContainer}>
         {/* Floating Main Form Card */}
         <View style={styles.formCard}>
           {!!authError && (
@@ -312,7 +297,7 @@ export default function LoginScreen({ navigation }) {
             resizeMode="cover"
           />
         </View>
-      </ScrollView>
+      </View>
 
       {/* Forgot Password Modal */}
       <Modal

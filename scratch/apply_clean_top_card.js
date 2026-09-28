@@ -19,6 +19,17 @@ ${cssContent}
   <div class="device">
     <div class="screen login-redesign-screen" id="login-screen-wrap">
       
+      <!-- Top Royal Blue Banner with Circuit Logo Card Aligned to the Top -->
+      <div class="login-header-banner-container">
+        <img class="login-header-banner-img" src="${b64Data.topHeader}" alt="" />
+        <div class="login-header-content">
+          <div class="login-logo-card">
+            <img class="login-logo-img" src="${b64Data.circuitLogo}" alt="Emergere Circuit Logo" />
+          </div>
+          <div class="login-welcome-title">Welcome Back</div>
+          <div class="login-welcome-subtitle">Sign in to continue</div>
+        </div>
+      </div>
 
       <!-- Floating Main Form Card (Center-Aligned Evenly on Page) -->
       <div class="login-card-container">
@@ -48,7 +59,7 @@ ${cssContent}
           <input type="password" id="password" class="login-input-field" placeholder="Password" />
           <button type="button" id="toggle-pwd-btn" class="login-eye-btn" aria-label="Toggle password visibility">
             <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
@@ -162,7 +173,7 @@ ${cssContent}
           if (isPwdVisible) {
             eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
           } else {
-            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
           }
         });
       }
@@ -376,9 +387,81 @@ ${cssContent}
 </html>
 </template>`;
 
-const outerHeaderStyleReplacement = `/* ── Top Header Banner (Removed per design update) ── */
+const outerHeaderStyleReplacement = `/* ── Top Header Banner with Circuit Logo Card Aligned to the Top ── */
 .login-header-banner-container {
-  display: none !important;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 5;
+}
+
+.login-header-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.login-header-content {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.login-logo-card {
+  width: 92px;
+  height: 92px;
+  border-radius: 26px;
+  background: #FFFFFF;
+  box-shadow: 0 14px 32px rgba(0, 60, 220, 0.22);
+  border: 1.2px solid rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px auto;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  pointer-events: auto;
+}
+
+.login-logo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(0, 60, 220, 0.28);
+}
+
+.login-logo-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
+}
+
+.login-welcome-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 8px rgba(0, 30, 120, 0.35);
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.login-welcome-subtitle {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.1px;
+  text-shadow: 0 1px 4px rgba(0, 30, 120, 0.25);
+  margin: 0;
+  line-height: 1.2;
 }`;
 
 const targetFiles = [
@@ -389,27 +472,38 @@ const targetFiles = [
 ];
 
 targetFiles.forEach(f => {
-  if (fs.existsSync(f)) {
-    let content = fs.readFileSync(f, 'utf8');
+  if (!fs.existsSync(f)) {
+    console.log('Not found:', f);
+    return;
+  }
+  let content = fs.readFileSync(f, 'utf8');
 
-    // 1. Replace template
-    content = content.replace(/<template id="tpl-Login">[\s\S]*?<\/template>/, tplLoginContent);
+  // 1. Replace template using exact indexOf substring slices (safe from regex $ quirks)
+  const startIdx = content.indexOf('<template id="tpl-Login">');
+  if (startIdx !== -1) {
+    const endTag = '</template>';
+    const endIdx = content.indexOf(endTag, startIdx);
+    if (endIdx !== -1) {
+      content = content.substring(0, startIdx) + tplLoginContent + content.substring(endIdx + endTag.length);
+      console.log('Replaced tpl-Login in', f);
+    }
+  }
 
-    // 2. Update outer style block (hide header banner container if present in parent style)
-    content = content.replace(
-      /\/\* ── Top Header Banner[\s\S]*?\.login-welcome-subtitle\s*\{[\s\S]*?line-height:\s*1\.2;?\s*\}/,
-      outerHeaderStyleReplacement
-    );
-    content = content.replace(
-      /\/\* ── Top Header Banner[\s\S]*?\.login-logo-card\s*\{[\s\S]*?display:\s*none;?\s*\}/,
-      outerHeaderStyleReplacement
-    );
+  // 2. Update outer style block (replace old .login-logo-card { display: none; } and banner container)
+  const oldStyleIdx = content.indexOf('/* ── Top Header Banner');
+  if (oldStyleIdx !== -1) {
+    const oldStyleEndIdx = content.indexOf('.login-card-container', oldStyleIdx);
+    if (oldStyleEndIdx !== -1) {
+      content = content.substring(0, oldStyleIdx) + outerHeaderStyleReplacement + '\n\n' + content.substring(oldStyleEndIdx);
+      console.log('Updated outer header styles in', f);
+    }
+  }
 
-    // 3. Add window.navigateScreen & message listener in parent if not already present
-    if (!content.includes('window.navigateScreen =')) {
-      const targetAnchor = 'window.loadScreen = loadScreen;';
-      if (content.includes(targetAnchor)) {
-        const navAddition = `window.loadScreen = loadScreen;
+  // 3. Add window.navigateScreen & message listener in parent if not already present
+  if (!content.includes('window.navigateScreen =')) {
+    const targetAnchor = 'window.loadScreen = loadScreen;';
+    if (content.includes(targetAnchor)) {
+      const navAddition = `window.loadScreen = loadScreen;
         function navigateScreen(screenName) {
           var tplName = (screenName && screenName.indexOf('tpl-') === 0) ? screenName : ('tpl-' + screenName);
           loadScreen(tplName);
@@ -428,19 +522,16 @@ targetFiles.forEach(f => {
             navigateScreen(screen);
           }
         });`;
-        content = content.replace(targetAnchor, navAddition);
-      }
+      content = content.replace(targetAnchor, navAddition);
     }
-
-    // 4. Update frame.onload loginBtn selector so it matches new button
-    content = content.replace(
-      "var loginBtn = doc.querySelector('button.btn-primary, .btn-primary');",
-      "var loginBtn = doc.querySelector('button.btn-primary, .btn-primary, #btn-login, #btn-login-submit, .btn-login-gradient');"
-    );
-
-    fs.writeFileSync(f, content, 'utf8');
-    console.log('Updated', f, 'successfully!');
-  } else {
-    console.log('File not found:', f);
   }
+
+  // 4. Update frame.onload loginBtn selector so it matches new button
+  content = content.replace(
+    "var loginBtn = doc.querySelector('button.btn-primary, .btn-primary');",
+    "var loginBtn = doc.querySelector('button.btn-primary, .btn-primary, #btn-login, #btn-login-submit, .btn-login-gradient');"
+  );
+
+  fs.writeFileSync(f, content, 'utf8');
+  console.log('Finished updating', f);
 });
