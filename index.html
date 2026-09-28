@@ -6860,7 +6860,95 @@
           background: #0066FF;
           margin-top: 2px;
         }
-      </style>
+      
+        /* Coming Soon Popup Modal */
+        .coming-soon-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(15, 23, 42, 0.65);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          z-index: 9999;
+          opacity: 1;
+          pointer-events: auto;
+          transition: opacity 0.25s ease;
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+        }
+
+        .coming-soon-modal-card {
+          background: #FFFFFF;
+          border-radius: 24px;
+          padding: 32px 24px;
+          width: 100%;
+          max-width: 320px;
+          text-align: center;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+          transform: scale(1);
+          transition: transform 0.25s ease;
+          box-sizing: border-box;
+        }
+
+        .coming-soon-icon-wrap {
+          width: 64px;
+          height: 64px;
+          border-radius: 32px;
+          background: #EFF6FF;
+          border: 6px solid #DBEAFE;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 16px;
+          color: #2563EB;
+        }
+
+        .coming-soon-title {
+          font-size: 20px;
+          font-weight: 800;
+          color: #111827;
+          margin: 0 0 8px;
+          font-family: inherit;
+        }
+
+        .coming-soon-msg {
+          font-size: 13.5px;
+          color: #64748B;
+          line-height: 1.45;
+          margin: 0 0 24px;
+          font-family: inherit;
+        }
+
+        .coming-soon-btn {
+          width: 100%;
+          background: #0066FF;
+          color: #FFFFFF;
+          border: none;
+          border-radius: 14px;
+          padding: 13px;
+          font-size: 15px;
+          font-weight: 700;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+          transition: all 0.2s ease;
+          outline: none;
+          font-family: inherit;
+        }
+
+        .coming-soon-btn:hover {
+          background: #0052CC;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(0, 102, 255, 0.4);
+        }
+
+        .coming-soon-btn:active {
+          transform: scale(0.98);
+        }
+</style>
     </head>
 
     <body>
@@ -7171,8 +7259,38 @@
             <span>Profile</span>
           </div>
         </div>
-      </div>
+      
+        <!-- Coming Soon Popup Modal -->
+        <div class="coming-soon-modal-overlay" id="leave-balance-coming-soon-modal" onclick="if(event.target===this)handleComingSoonDone()">
+          <div class="coming-soon-modal-card">
+            <div class="coming-soon-icon-wrap">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <circle cx="12" cy="15" r="2"></circle>
+              </svg>
+            </div>
+            <h2 class="coming-soon-title">Coming Soon</h2>
+            <p class="coming-soon-msg">This feature is currently under development and will be available soon.</p>
+            <button class="coming-soon-btn" id="coming-soon-done-btn" onclick="if(typeof handleComingSoonDone==='function'){handleComingSoonDone()}else if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-EmployeeDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-EmployeeDashboard')}else{window.location.href='../EmployeeDashboard/preview.html'}">Done</button>
+          </div>
+        </div>
+</div>
       <script>
+        function handleComingSoonDone() {
+          var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+          if (pWin.loadScreen) {
+            pWin.loadScreen('tpl-EmployeeDashboard');
+          } else if (typeof loadScreen === 'function') {
+            loadScreen('tpl-EmployeeDashboard');
+          } else {
+            window.location.href = '../EmployeeDashboard/preview.html';
+          }
+        }
+        window.handleComingSoonDone = handleComingSoonDone;
+
         function setActiveNav(el) {
           document.querySelectorAll('.bottom-nav .tab').forEach((t) => t.classList.remove('active'));
           el.classList.add('active');
@@ -15066,14 +15184,11 @@ body {
 
     <!-- Bottom Navigation matching Image 3 -->
     <div class="bottom-nav">
-      <div class="tab nav-tab active" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
-        <div class="dashboard-pill-wrap">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0066FF">
-            <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-          </svg>
-        </div>
+      <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+        </svg>
         <span>Dashboard</span>
-        <span class="active-dot-indicator"></span>
       </div>
 
       <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else{window.location.href='../TeamAttendance/preview.html'}">
@@ -17016,14 +17131,11 @@ body {
 
     <!-- Bottom Navigation matching Image 4 -->
     <div class="bottom-nav">
-      <div class="tab nav-tab active" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
-        <div class="dashboard-pill-wrap">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0066FF">
-            <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-          </svg>
-        </div>
+      <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+        </svg>
         <span>Dashboard</span>
-        <span class="active-dot-indicator"></span>
       </div>
 
       <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else{window.location.href='../TeamAttendance/preview.html'}">
@@ -17522,6 +17634,13 @@ body {
           closeMobileMenu();
         }
         window.loadScreen = loadScreen;
+        function handleComingSoonDone() {
+          var target = (window.AUTH_USER && window.AUTH_USER.role === 'manager') ? 'tpl-ManagerDashboard' : 'tpl-EmployeeDashboard';
+          if (typeof loadScreen === 'function') {
+            loadScreen(target);
+          }
+        }
+        window.handleComingSoonDone = handleComingSoonDone; // top-level
         window.EMPLOYMENT_STATUS = 'Active';
         window.SIMULATED_DATE_OFFSET_DAYS = 0;
 

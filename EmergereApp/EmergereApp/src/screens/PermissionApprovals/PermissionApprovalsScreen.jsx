@@ -394,7 +394,7 @@ export default function PermissionApprovalsScreen({ navigation, route }) {
         </View>
       </ScrollView>
 
-      <BottomNavBar active="Dashboard" onNavigate={go} />
+      <BottomNavBar active="" onNavigate={go} />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 // src/screens/LeaveBalance/LeaveBalanceScreen.jsx
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import styles from './LeaveBalanceScreen.styles';
@@ -210,6 +210,31 @@ export default function LeaveBalanceScreen({ navigation }) {
           })}
         </View>
       </ScrollView>
+
+      {/* Coming Soon Modal */}
+      <Modal
+        visible={true}
+        transparent
+        animationType="fade"
+        onRequestClose={() => go('EmployeeDashboard')}
+      >
+        <View style={styles.comingSoonOverlay}>
+          <View style={styles.comingSoonCard}>
+            <View style={styles.comingSoonIconWrap}>
+              <Feather name="calendar" size={30} color="#2563EB" />
+            </View>
+            <Text style={styles.comingSoonTitle}>Coming Soon</Text>
+            <Text style={styles.comingSoonMsg}>This feature is currently under development and will be available soon.</Text>
+            <TouchableOpacity
+              style={styles.comingSoonBtn}
+              activeOpacity={0.8}
+              onPress={() => go('EmployeeDashboard')}
+            >
+              <Text style={styles.comingSoonBtnText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <BottomNavBar onNavigate={go} />
     </View>

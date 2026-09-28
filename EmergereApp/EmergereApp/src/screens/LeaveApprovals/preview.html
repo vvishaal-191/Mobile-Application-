@@ -628,14 +628,11 @@
 
     <!-- Bottom Navigation matching Image 3 -->
     <div class="bottom-nav">
-      <div class="tab nav-tab active" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
-        <div class="dashboard-pill-wrap">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0066FF">
-            <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-          </svg>
-        </div>
+      <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+        </svg>
         <span>Dashboard</span>
-        <span class="active-dot-indicator"></span>
       </div>
 
       <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-TeamAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-TeamAttendance')}else{window.location.href='../TeamAttendance/preview.html'}">

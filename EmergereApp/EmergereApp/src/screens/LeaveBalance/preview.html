@@ -315,8 +315,40 @@
       <span>Profile</span>
     </div>
   </div>
+
+  <!-- Coming Soon Popup Modal -->
+  <div class="coming-soon-modal-overlay" id="leave-balance-coming-soon-modal" onclick="if(event.target===this)handleComingSoonDone()">
+    <div class="coming-soon-modal-card">
+      <div class="coming-soon-icon-wrap">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+          <circle cx="12" cy="15" r="2"></circle>
+        </svg>
+      </div>
+      <h2 class="coming-soon-title">Coming Soon</h2>
+      <p class="coming-soon-msg">This feature is currently under development and will be available soon.</p>
+      <button class="coming-soon-btn" id="coming-soon-done-btn" onclick="handleComingSoonDone()">Done</button>
+    </div>
+  </div>
 </div>
 <script src="../../../preview/shared.js"></script>
 <script src="./preview.js"></script>
+
+<script>
+function handleComingSoonDone() {
+  var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+  if (pWin.loadScreen) {
+    pWin.loadScreen('tpl-EmployeeDashboard');
+  } else if (typeof loadScreen === 'function') {
+    loadScreen('tpl-EmployeeDashboard');
+  } else {
+    window.location.href = '../EmployeeDashboard/preview.html';
+  }
+}
+window.handleComingSoonDone = handleComingSoonDone;
+</script>
 </body>
 </html>

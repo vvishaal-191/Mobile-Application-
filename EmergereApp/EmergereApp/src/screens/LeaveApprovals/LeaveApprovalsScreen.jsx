@@ -342,7 +342,7 @@ export default function LeaveApprovalsScreen({ navigation, route }) {
         </View>
       </ScrollView>
 
-      <BottomNavBar active="Dashboard" onNavigate={go} />
+      <BottomNavBar active="" onNavigate={go} />
     </View>
   );
 }

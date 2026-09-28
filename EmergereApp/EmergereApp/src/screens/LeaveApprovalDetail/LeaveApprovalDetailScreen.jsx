@@ -375,7 +375,7 @@ export default function LeaveApprovalDetailScreen({ navigation, route }) {
       </ScrollView>
 
       <BottomNavBar
-        active="Dashboard"
+        active=""
         onNavigate={(screen) =>
           navigation && navigation.navigate(screen === 'Dashboard' ? 'ManagerDashboard' : screen)
         }
