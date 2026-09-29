@@ -17,8 +17,12 @@ const previewHtml = `<!DOCTYPE html>
   <div class="device">
     <div class="screen login-redesign-screen" id="login-screen-wrap">
       
+      <!-- Top Royal Blue Banner with Circuit Logo & Welcome Back (Exact Reference Design) -->
+      <div class="login-header-banner-container">
+        <img class="login-header-banner-img" src="${b64Data.topHeader}" alt="Welcome Back - Sign in to continue" />
+      </div>
 
-      <!-- Floating Main Form Card (Center-Aligned Evenly on Page) -->
+      <!-- Floating Main Form Card (Layered Above Header Banner) -->
       <div class="login-card-container">
         <!-- Auth Error Banner -->
         <div id="login-auth-err" class="login-err-banner" style="display:none;"></div>
@@ -63,7 +67,7 @@ const previewHtml = `<!DOCTYPE html>
         </div>
 
         <!-- Gradient Login Button with Circular Arrow Disc -->
-        <button type="button" id="btn-login-submit" class="btn-login-gradient">
+        <button type="button" id="btn-login-submit" class="btn-login-gradient" onclick="handleLogin()">
           <span class="btn-login-text">Login</span>
           <div class="login-btn-arrow-disc">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -79,11 +83,6 @@ const previewHtml = `<!DOCTYPE html>
           <span class="or-text">OR</span>
           <div class="or-line"></div>
         </div>
-      </div>
-
-      <!-- Bottom Luminous Blue Waves Decoration -->
-      <div class="login-bottom-wave-wrap">
-        <img class="login-bottom-waves-img" src="${b64Data.bottomWave}" alt="" />
       </div>
 
       <!-- Forgot Password Modal -->

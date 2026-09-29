@@ -1,9 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
-console.log('=== VERIFYING LOGIN WORKFLOW AND ALIGNMENT ===');
+console.log('=== VERIFYING COMPLETE LOGIN WORKFLOW AND CENTERING ===\n');
 
-// 1. Check all target bundle files exist and contain updated login template
+let allPassed = true;
+function assert(name, condition) {
+  if (condition) {
+    console.log('PASS: ' + name);
+  } else {
+    console.error('FAIL: ' + name);
+    allPassed = false;
+  }
+}
+
+// 1. Check all target bundle files exist
 const files = [
   'preview_app.html',
   'index.html',
@@ -14,130 +25,88 @@ const files = [
   'EmergereApp/EmergereApp/src/screens/Login/preview.css'
 ];
 
-let allPassed = true;
-
 files.forEach(f => {
   const p = path.join(__dirname, '..', f);
-  if (!fs.existsSync(p)) {
-    console.error('File missing:', f);
-    allPassed = false;
-  } else {
-    console.log('File found:', f);
-  }
+  assert(`File exists: ${f}`, fs.existsSync(p));
 });
 
 // 2. Verify preview.css centering
 const css = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/preview.css'), 'utf8');
-if (css.includes('margin: 4px 20px auto 20px;') || css.includes('margin: auto 20px;')) {
-  console.log('PASS: preview.css has balanced center alignment margin');
-} else {
-  console.error('FAIL: preview.css missing proper center margin');
-  allPassed = false;
-}
+assert('preview.css has card margin: auto for perfect center alignment', css.includes('margin: auto;'));
 
-// 3. Verify preview_app.html contains navigateScreen and message listener
+// 3. Verify preview_app.html & index.html bundle files
 const appHtml = fs.readFileSync(path.join(__dirname, '../preview_app.html'), 'utf8');
-if (appHtml.includes('window.navigateScreen = navigateScreen;') && appHtml.includes('window.addEventListener(\'message\'')) {
-  console.log('PASS: preview_app.html exposes navigateScreen and listens to message events');
-} else {
-  console.error('FAIL: preview_app.html missing navigateScreen or message listener');
-  allPassed = false;
-}
+const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 
-// 4. Verify preview_app.html tpl-Login has setAuthUser and loadScreen calls
-if (appHtml.includes('pWin.setAuthUser(\'manager\'') && appHtml.includes('pWin.loadScreen(\'tpl-ManagerDashboard\'')) {
-  console.log('PASS: preview_app.html tpl-Login navigates to ManagerDashboard for manager');
-} else {
-  console.error('FAIL: preview_app.html tpl-Login missing manager navigation');
-  allPassed = false;
-}
-
-if (appHtml.includes('pWin.setAuthUser(\'employee\'') && appHtml.includes('pWin.loadScreen(\'tpl-EmployeeDashboard\'')) {
-  console.log('PASS: preview_app.html tpl-Login navigates to EmployeeDashboard for employee');
-} else {
-  console.error('FAIL: preview_app.html tpl-Login missing employee navigation');
-  allPassed = false;
-}
-
-// 5. Verify preview.js has correct password input id and navigation
-const prevJs = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/preview.js'), 'utf8');
-if (prevJs.includes("document.getElementById('password') || document.getElementById('pwd')") &&
-    prevJs.includes("pWin.loadScreen('tpl-ManagerDashboard')") &&
-    prevJs.includes("pWin.loadScreen('tpl-EmployeeDashboard')")) {
-  console.log('PASS: preview.js has password element fallback and proper navigation');
-} else {
-  console.error('FAIL: preview.js missing password element or navigation');
-  allPassed = false;
-}
-
-// 6. Verify LoginScreen.styles.js has updated aspect ratio and centered card
-const rnStyles = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/LoginScreen.styles.js'), 'utf8');
-if (rnStyles.includes("height: width * 0.76") && (rnStyles.includes("marginBottom: 'auto'") || rnStyles.includes("marginVertical: 'auto'"))) {
-  console.log('PASS: LoginScreen.styles.js has updated aspect ratio and auto margin for center alignment');
-} else {
-  console.error('FAIL: LoginScreen.styles.js missing aspect ratio or margin');
-  allPassed = false;
-}
-
-// 7. Verify simulation of handleLogin in preview.js
-const vm = require('vm');
-const fakeStorage = {};
-const mockWindow = {
-  sessionStorage: {
-    setItem: (k, v) => { fakeStorage[k] = v; },
-    getItem: (k) => fakeStorage[k],
-    removeItem: (k) => { delete fakeStorage[k]; }
-  },
-  parent: null,
-  currentLoadedScreen: null,
-  authUser: null,
-  setAuthUser: function(role, user) {
-    this.authUser = { ...user, role };
-  },
-  loadScreen: function(tpl) {
-    this.currentLoadedScreen = tpl;
-  }
-};
-mockWindow.parent = mockWindow;
-
-const domMocks = {
-  'email': { value: 'vishnu@gmail.com' },
-  'password': { value: 'manager@123' },
-  'login-auth-err': { style: { display: 'none' }, textContent: '' },
-  'password-err': { style: { display: 'none' } },
-  'email-err': { style: { display: 'none' } }
-};
-
-const context = vm.createContext({
-  window: mockWindow,
-  document: {
-    getElementById: (id) => domMocks[id] || null,
-    addEventListener: () => {}
-  },
-  alert: (msg) => console.log('MOCK ALERT:', msg),
-  console: console
+[appHtml, indexHtml].forEach((content, i) => {
+  const docName = i === 0 ? 'preview_app.html' : 'index.html';
+  assert(`${docName} has onclick="handleLogin()" on button`, content.includes('id="btn-login-submit" class="btn-login-gradient" onclick="handleLogin()"'));
+  assert(`${docName} tpl-Login has navigateAfterLogin for ManagerDashboard`, content.includes("navigateAfterLogin('ManagerDashboard', 'manager'"));
+  assert(`${docName} tpl-Login has navigateAfterLogin for EmployeeDashboard`, content.includes("navigateAfterLogin('EmployeeDashboard', 'employee'"));
+  assert(`${docName} outer styles have margin: auto for login-card-container`, content.replace(/\r\n/g, '\n').includes(".login-card-container {\n  width: calc(100% - 36px);\n  max-width: 374px;\n  margin: auto;"));
 });
 
-vm.runInContext(prevJs, context);
+// 4. Verify LoginScreen.styles.js has auto margins for center alignment
+const rnStyles = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/LoginScreen.styles.js'), 'utf8');
+assert('LoginScreen.styles.js formCard has vertical centering (marginTop/marginBottom: auto)', rnStyles.includes("marginTop: 'auto'") && rnStyles.includes("marginBottom: 'auto'"));
 
-// Test Manager Login
-context.handleLogin();
-if (mockWindow.currentLoadedScreen === 'tpl-ManagerDashboard' && mockWindow.authUser && mockWindow.authUser.role === 'manager') {
-  console.log('PASS: Simulation of Manager Login navigated to tpl-ManagerDashboard successfully!');
-} else {
-  console.error('FAIL: Manager Login simulation failed:', mockWindow.currentLoadedScreen, mockWindow.authUser);
-  allPassed = false;
-}
+// 5. Test standalone browser redirection simulation in preview.js
+const prevJs = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/preview.js'), 'utf8');
 
-// Test Employee Login
-domMocks['email'].value = 'john@gmail.com';
-domMocks['password'].value = 'employee@123';
-context.handleLogin();
-if (mockWindow.currentLoadedScreen === 'tpl-EmployeeDashboard' && mockWindow.authUser && mockWindow.authUser.role === 'employee') {
-  console.log('PASS: Simulation of Employee Login navigated to tpl-EmployeeDashboard successfully!');
-} else {
-  console.error('FAIL: Employee Login simulation failed:', mockWindow.currentLoadedScreen, mockWindow.authUser);
-  allPassed = false;
-}
+(function testStandaloneSimulation() {
+  let redirectedUrl = '';
+  const fakeStorage = {};
+  const mockLocation = {
+    pathname: '/EmergereApp/EmergereApp/src/screens/Login/preview.html',
+    set href(val) { redirectedUrl = val; },
+    get href() { return redirectedUrl; }
+  };
+  const mockWindow = {
+    location: mockLocation,
+    parent: null,
+    sessionStorage: { setItem: (k, v) => { fakeStorage[k] = v; }, getItem: (k) => fakeStorage[k] },
+    localStorage: { setItem: (k, v) => { fakeStorage[k] = v; }, getItem: (k) => fakeStorage[k] }
+  };
+  mockWindow.parent = mockWindow;
+
+  const domMocks = {
+    'email': { value: 'john@gmail.com', style: {}, addEventListener: () => {} },
+    'password': { value: 'employee@123', type: 'password', style: {}, addEventListener: () => {} },
+    'btn-login-submit': { style: {}, onclick: null, addEventListener: () => {} },
+    'login-auth-err': { style: { display: 'none' }, textContent: '', addEventListener: () => {} },
+    'password-err': { style: { display: 'none' }, addEventListener: () => {} },
+    'email-err': { style: { display: 'none' }, addEventListener: () => {} }
+  };
+
+  const context = vm.createContext({
+    window: mockWindow,
+    document: {
+      getElementById: (id) => domMocks[id] || { style: {}, addEventListener: () => {} },
+      addEventListener: () => {},
+      readyState: 'complete'
+    },
+    sessionStorage: mockWindow.sessionStorage,
+    localStorage: mockWindow.localStorage,
+    alert: (msg) => console.log('MOCK ALERT:', msg),
+    console: console
+  });
+
+  vm.runInContext(prevJs, context);
+
+  // A. Simulate John Doe (Employee)
+  context.handleLogin();
+  assert('Employee Login (john@gmail.com) redirected to ../EmployeeDashboard/preview.html', redirectedUrl === '../EmployeeDashboard/preview.html');
+  const storedEmp = JSON.parse(fakeStorage['USER_PROFILE'] || '{}');
+  assert('Employee profile correctly stored in session for John Doe', storedEmp.name === 'John Doe');
+
+  // B. Simulate Vishnu Kumar (Manager)
+  domMocks['email'].value = 'vishnu@gmail.com';
+  domMocks['password'].value = 'manager@123';
+  context.handleLogin();
+  assert('Manager Login (vishnu@gmail.com) redirected to ../ManagerDashboard/preview.html', redirectedUrl === '../ManagerDashboard/preview.html');
+  const storedMgr = JSON.parse(fakeStorage['USER_PROFILE'] || '{}');
+  assert('Manager profile correctly stored in session for Vishnu Kumar', storedMgr.name === 'Vishnu Kumar');
+})();
 
 console.log('\n=== FINAL VERIFICATION RESULT:', allPassed ? 'ALL TESTS PASSED!' : 'SOME TESTS FAILED!');
+if (!allPassed) process.exitCode = 1;

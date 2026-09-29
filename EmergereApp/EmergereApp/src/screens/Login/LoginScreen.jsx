@@ -199,6 +199,16 @@ export default function LoginScreen({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#0056FF" />
 
       <View style={styles.contentContainer}>
+        {/* Top Royal Blue Banner with Circuit Logo & Welcome Back (Exact Reference Design) */}
+        <View style={styles.headerBannerContainer} accessibilityLabel="Welcome Back - Sign in to continue">
+          <Image
+            source={require('../../../assets/login-top-header.png')}
+            style={styles.headerBannerImage}
+            resizeMode="cover"
+            accessibilityLabel="Welcome Back - Sign in to continue"
+          />
+        </View>
+
         {/* Floating Main Form Card */}
         <View style={styles.formCard}>
           {!!authError && (
@@ -287,15 +297,6 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.orText}>OR</Text>
             <View style={styles.orLine} />
           </View>
-        </View>
-
-        {/* Bottom Luminous Blue Waves Decoration (Exact Image 2 Reference) */}
-        <View style={styles.bottomWaveContainer}>
-          <Image
-            source={require('../../../assets/login-bottom-wave.png')}
-            style={styles.bottomWaveImage}
-            resizeMode="cover"
-          />
         </View>
       </View>
 

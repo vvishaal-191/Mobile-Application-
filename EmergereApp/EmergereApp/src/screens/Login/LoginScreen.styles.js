@@ -11,20 +11,22 @@ export default StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'space-between',
+    backgroundColor: '#EEF5FF',
+    alignItems: 'center',
     overflow: 'hidden',
   },
   scrollContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    backgroundColor: '#EEF5FF',
+    alignItems: 'center',
     overflow: 'hidden',
   },
   headerBannerContainer: {
     width: '100%',
-    height: width * 0.76,
+    height: width * 0.75,
     position: 'relative',
     overflow: 'hidden',
-    zIndex: 5,
+    zIndex: 1,
   },
   headerBannerImage: {
     width: '100%',
@@ -70,9 +72,10 @@ export default StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.92)',
   },
   formCard: {
-    marginHorizontal: 18,
+    width: width - 36,
     marginTop: 'auto',
     marginBottom: 'auto',
+    marginHorizontal: 18,
     paddingHorizontal: 20,
     paddingVertical: 22,
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
