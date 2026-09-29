@@ -3,6 +3,7 @@ const path = require('path');
 
 const b64Data = JSON.parse(fs.readFileSync(path.join(__dirname, 'login_assets_base64.json'), 'utf8'));
 const cssContent = fs.readFileSync(path.join(__dirname, '../EmergereApp/EmergereApp/src/screens/Login/preview.css'), 'utf8');
+const empTplContent = fs.readFileSync(path.join(__dirname, 'tpl_employee_dashboard_restored.html'), 'utf8');
 
 const tplLoginContent = `<template id="tpl-Login">
 <!DOCTYPE html>
@@ -52,7 +53,7 @@ ${cssContent}
           <input type="password" id="password" class="login-input-field" placeholder="Password" />
           <button type="button" id="toggle-pwd-btn" class="login-eye-btn" aria-label="Toggle password visibility">
             <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
@@ -69,7 +70,7 @@ ${cssContent}
         </div>
 
         <!-- Gradient Login Button with Circular Arrow Disc -->
-        <button type="button" id="btn-login-submit" class="btn-login-gradient" onclick="handleLogin()">
+        <button type="button" id="btn-login-submit" class="btn-login-gradient">
           <span class="btn-login-text">Login</span>
           <div class="login-btn-arrow-disc">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -161,7 +162,7 @@ ${cssContent}
           if (isPwdVisible) {
             eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
           } else {
-            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
           }
         });
       }
@@ -178,7 +179,6 @@ ${cssContent}
         { name: 'Rahul Sharma', email: 'rahul@gmail.com', password: 'manager@123', role: 'Operations Manager', empId: 'MGR-2024-0012', initials: 'RS', reportingManager: 'Vice President', phone: '+91 98765 22003' }
       ];
 
-      // Navigation and Login Logic
       function navigateAfterLogin(targetScreen, role, profile) {
         const pWin = (window.parent && window.parent !== window) ? window.parent : window;
 
@@ -191,9 +191,11 @@ ${cssContent}
           }
           try { pWin.sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch(e) {}
           try { pWin.sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch(e) {}
+          try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch(e) {}
+          try { sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch(e) {}
         } catch(e) {}
 
-        try {
+        if (pWin !== window) {
           if (typeof pWin.loadScreen === 'function') {
             pWin.loadScreen('tpl-' + targetScreen);
             return;
@@ -203,27 +205,18 @@ ${cssContent}
             return;
           }
           if (typeof pWin.postMessage === 'function') {
-            pWin.postMessage({ type: 'NAVIGATE', screen: targetScreen, role: role, profile: profile }, '*');
+            pWin.postMessage({ type: 'NAVIGATE', screen: targetScreen, role: role, email: profile.email, profile: profile }, '*');
             return;
           }
-        } catch(e) {}
-
-        try {
-          sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile));
-          sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role }));
-        } catch(e) {}
-
-        const path = window.location.pathname || '';
-        if (path.includes('/screens/Login') || path.includes('\\screens\\Login')) {
-          window.location.href = '../' + targetScreen + '/preview.html';
-        } else {
-          window.location.href = '../' + targetScreen + '/preview.html';
         }
+
+        window.location.href = '../' + targetScreen + '/preview.html';
       }
 
+      // Login Submission Logic
       function handleLogin() {
         let hasErr = false;
-        let emailVal = (emailInput.value || '').trim().toLowerCase();
+        let emailVal = (emailInput.value || '').trim();
         let pwdVal = (pwdInput.value || '').trim();
 
         // If both fields are empty, default to demo employee credentials for instant one-click login testing
@@ -253,7 +246,7 @@ ${cssContent}
         authErr.style.display = 'none';
 
         // Check Manager
-        const matchedManager = PREDEFINED_MANAGERS.find(m => m.email.toLowerCase() === emailVal);
+        const matchedManager = PREDEFINED_MANAGERS.find(m => m.email.toLowerCase() === emailVal.toLowerCase());
         if (matchedManager) {
           if (matchedManager.password === pwdVal || pwdVal.length >= 4) {
             const mgrProfile = {
@@ -279,7 +272,7 @@ ${cssContent}
         }
 
         // Check Employee
-        const matchedEmployee = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal);
+        const matchedEmployee = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal.toLowerCase());
         if (matchedEmployee) {
           if (matchedEmployee.password === pwdVal || pwdVal.length >= 4) {
             const empProfile = {
@@ -328,12 +321,11 @@ ${cssContent}
       }
 
       if (loginBtn) {
-        loginBtn.onclick = handleLogin;
         loginBtn.addEventListener('click', handleLogin);
       }
 
       [emailInput, pwdInput].forEach(inp => {
-        if (inp && typeof inp.addEventListener === 'function') {
+        if (inp) {
           inp.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
               e.preventDefault();
@@ -342,8 +334,6 @@ ${cssContent}
           });
         }
       });
-
-      window.handleLogin = handleLogin;
 
       // Modal Handlers
       if (forgotLink) {
@@ -386,8 +376,9 @@ ${cssContent}
             return;
           }
 
-          alert('Password for ' + matchedUser.name + ' is: ' + matchedUser.password);
           closeModal();
+          const isMgr = matchedUser.role.toLowerCase().includes('manager');
+          navigateAfterLogin(isMgr ? 'ManagerDashboard' : 'EmployeeDashboard', isMgr ? 'manager' : 'employee', matchedUser);
         });
       }
     })();
@@ -412,7 +403,23 @@ targetFiles.forEach(f => {
     // 1. Replace template
     content = content.replace(/<template id="tpl-Login">[\s\S]*?<\/template>/, tplLoginContent);
 
-    // 2. Update outer style block (hide header banner container if present in parent style)
+    // 2. Ensure tpl-EmployeeDashboard is preserved and restored if missing
+    if (!content.includes('id="tpl-EmployeeDashboard"')) {
+      const myAttendTpl = '<template id="tpl-MyAttendance">';
+      if (content.includes(myAttendTpl)) {
+        content = content.replace(myAttendTpl, empTplContent + '\n\n  ' + myAttendTpl);
+      }
+    }
+
+    // 3. Ensure Employee Dashboard nav button exists in sidebar
+    if (!content.includes('data-tpl="tpl-EmployeeDashboard"')) {
+      const myAttendBtn = '<button class="nav-btn" data-tpl="tpl-MyAttendance">';
+      if (content.includes(myAttendBtn)) {
+        content = content.replace(myAttendBtn, '<button class="nav-btn" data-tpl="tpl-EmployeeDashboard">Employee Dashboard</button>\n    ' + myAttendBtn);
+      }
+    }
+
+    // 4. Update outer style block (hide header banner container if present in parent style)
     content = content.replace(
       /\/\* ── Top Header Banner[\s\S]*?\.login-welcome-subtitle\s*\{[\s\S]*?line-height:\s*1\.2;?\s*\}/,
       outerHeaderStyleReplacement
@@ -422,7 +429,7 @@ targetFiles.forEach(f => {
       outerHeaderStyleReplacement
     );
 
-    // 3. Add window.navigateScreen & message listener in parent if not already present
+    // 5. Add window.navigateScreen & message listener in parent if not already present
     if (!content.includes('window.navigateScreen =')) {
       const targetAnchor = 'window.loadScreen = loadScreen;';
       if (content.includes(targetAnchor)) {
@@ -449,16 +456,44 @@ targetFiles.forEach(f => {
       }
     }
 
-    // 4. Remove rogue parent click interceptor that broke login authentication
+    // 6. Ensure PREDEFINED_EMPLOYEES and PREDEFINED_MANAGERS exist in outer script
+    if (!content.includes('var PREDEFINED_EMPLOYEES =')) {
+      const defAnchor = 'var EMPLOYEE_ALLOWED_SCREENS =';
+      if (content.includes(defAnchor)) {
+        const predefinedBlock = `var PREDEFINED_EMPLOYEES = [
+        { name: 'John Doe', email: 'john@gmail.com', password: 'employee@123', role: 'Senior Software Engineer', empId: 'EMP-2024-0101', initials: 'JD', reportingManager: 'Vishnu Kumar', phone: '+91 98765 11001' },
+        { name: 'Jack Ryan', email: 'jack@gmail.com', password: 'employee@123', role: 'QA Engineer', empId: 'EMP-2024-0102', initials: 'JR', reportingManager: 'Ram Prasad', phone: '+91 98765 11002' },
+        { name: 'Sneha Reddy', email: 'sneha@gmail.com', password: 'employee@123', role: 'UI/UX Designer', empId: 'EMP-2024-0103', initials: 'SR', reportingManager: 'Rahul Sharma', phone: '+91 98765 11003' }
+      ];
+
+      var PREDEFINED_MANAGERS = [
+        { name: 'Vishnu Kumar', email: 'vishnu@gmail.com', password: 'manager@123', role: 'Engineering Manager', empId: 'MGR-2024-0010', initials: 'VK', reportingManager: 'Director of Engineering', phone: '+91 98765 22001' },
+        { name: 'Ram Prasad', email: 'ram@gmail.com', password: 'manager@123', role: 'Technical Lead / Manager', empId: 'MGR-2024-0011', initials: 'RP', reportingManager: 'Director of Engineering', phone: '+91 98765 22002' },
+        { name: 'Rahul Sharma', email: 'rahul@gmail.com', password: 'manager@123', role: 'Operations Manager', empId: 'MGR-2024-0012', initials: 'RS', reportingManager: 'Vice President', phone: '+91 98765 22003' }
+      ];\n\n      ` + defAnchor;
+        content = content.replace(defAnchor, predefinedBlock);
+      }
+    }
+
+    // 7. Ensure loadScreen clears sessionStorage AUTH_USER when on tpl-Login
+    content = content.replace(
+      `if (tplId === 'tpl-Login') {
+            window.AUTH_USER = null;
+            try {
+              sessionStorage.removeItem('USER_PROFILE');
+            } catch (e) {}`,
+      `if (tplId === 'tpl-Login') {
+            window.AUTH_USER = null;
+            try {
+              sessionStorage.removeItem('USER_PROFILE');
+              sessionStorage.removeItem('AUTH_USER');
+            } catch (e) {}`
+    );
+
+    // 8. Remove rogue parent click interceptor if present
     content = content.replace(
       /if \(currentTpl === 'tpl-Login'\) \{\s*var loginBtn = doc\.querySelector\('button\.btn-primary, \.btn-primary, #btn-login, #btn-login-submit, \.btn-login-gradient'\);\s*if \(loginBtn\) \{\s*loginBtn\.style\.cursor = 'pointer';\s*loginBtn\.addEventListener\('click', function \(e\) \{\s*e\.preventDefault\(\);\s*loadScreen\('tpl-EmployeeDashboard'\);\s*\}\);\s*\}\s*\}/,
       "if (currentTpl === 'tpl-Login') {\n            var loginBtn = doc.querySelector('button.btn-primary, .btn-primary, #btn-login, #btn-login-submit, .btn-login-gradient');\n            if (loginBtn) {\n              loginBtn.style.cursor = 'pointer';\n            }\n          }"
-    );
-
-    // 5. Update card centering margin in parent styles from -32px auto 0 to auto
-    content = content.replace(
-      /(\.login-card-container\s*\{[\s\S]*?margin:\s*)-32px auto 0;/g,
-      '$1auto;'
     );
 
     fs.writeFileSync(f, content, 'utf8');

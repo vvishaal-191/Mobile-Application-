@@ -2,43 +2,37 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 8085;
-const MIME_TYPES = {
+const mimeTypes = {
   '.html': 'text/html',
+  '.js': 'text/javascript',
   '.css': 'text/css',
-  '.js': 'application/javascript',
+  '.json': 'application/json',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
+  '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
-  '.json': 'application/json'
+  '.ico': 'image/x-icon'
 };
 
 const server = http.createServer((req, res) => {
-  let filePath = path.join(__dirname, '..', decodeURIComponent(req.url.split('?')[0]));
-  if (filePath.endsWith(path.sep) || fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, 'preview_app.html');
-  }
+  let reqPath = decodeURI(req.url.split('?')[0]);
+  if (reqPath === '/') reqPath = '/index.html';
+  const filePath = path.join(__dirname, '..', reqPath);
 
-  if (!fs.existsSync(filePath)) {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
-    return;
-  }
-
-  const ext = path.extname(filePath).toLowerCase();
-  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end('Server Error');
+  fs.stat(filePath, (err, stats) => {
+    if (err || !stats.isFile()) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Not found');
       return;
     }
+    const ext = path.extname(filePath).toLowerCase();
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': contentType });
-    res.end(data);
+    fs.createReadStream(filePath).pipe(res);
   });
 });
 
+const PORT = 3000;
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log('Server running on http://localhost:' + PORT);
 });

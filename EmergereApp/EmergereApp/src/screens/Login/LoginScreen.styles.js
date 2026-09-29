@@ -73,8 +73,7 @@ export default StyleSheet.create({
   },
   formCard: {
     width: width - 36,
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: -28,
     marginHorizontal: 18,
     paddingHorizontal: 20,
     paddingVertical: 22,

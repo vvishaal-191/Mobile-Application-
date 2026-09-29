@@ -13,7 +13,7 @@ const PREDEFINED_MANAGERS = [
   { name: 'Rahul Sharma', email: 'rahul@gmail.com', password: 'manager@123', role: 'Operations Manager', empId: 'MGR-2024-0012', initials: 'RS', phone: '+91 98765 22003', reportingManager: 'Vice President' }
 ];
 
-const EYE_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+const EYE_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
 const EYE_OFF_SVG_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="23" x2="23" y2="1"></line></svg>';
 
 function updatePasswordEyeVisibility(id) {
@@ -47,56 +47,40 @@ function isPasswordMatch(expected, actual) {
   return exp === act || exp.toLowerCase() === act.toLowerCase();
 }
 
-function navigateAfterLogin(targetScreen, role, profile) {
-  const pWin = (window.parent && window.parent !== window) ? window.parent : null;
+function navigateUser(targetScreen, role, profile, emailVal) {
+  const pWin = (window.parent && window.parent !== window) ? window.parent : window;
 
-  // 1. If running inside a parent container / iframe harness (index.html or preview_app.html)
-  if (pWin) {
-    try {
-      if (typeof pWin.setAuthUser === 'function') {
-        pWin.setAuthUser(role, profile);
-      } else {
-        pWin.AUTH_USER = { ...profile, role: role };
-        pWin.USER_PROFILE = profile;
-      }
-      try { pWin.sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch(e) {}
-      try { pWin.sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch(e) {}
-    } catch(e) {}
-
-    try {
-      if (typeof pWin.loadScreen === 'function') {
-        pWin.loadScreen('tpl-' + targetScreen);
-        return;
-      }
-      if (typeof pWin.navigateScreen === 'function') {
-        pWin.navigateScreen(targetScreen);
-        return;
-      }
-      if (typeof pWin.postMessage === 'function') {
-        pWin.postMessage({ type: 'NAVIGATE', screen: targetScreen, role: role, profile: profile }, '*');
-        return;
-      }
-    } catch(e) {}
+  if (typeof pWin.setAuthUser === 'function') {
+    pWin.setAuthUser(role, profile);
+  } else {
+    pWin.AUTH_USER = { ...profile, role: role };
+    pWin.USER_PROFILE = profile;
+    try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch (e) {}
+    try { sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch (e) {}
+    try { pWin.sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch (e) {}
+    try { pWin.sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch (e) {}
   }
 
-  // 2. Standalone browser execution fallback (direct file or local server)
-  try {
-    sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile));
-    sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role }));
-    localStorage.setItem('USER_PROFILE', JSON.stringify(profile));
-    localStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role }));
-  } catch(e) {}
+  // If running inside parent SPA (index.html or preview_app.html) or embedded
+  if (typeof pWin.loadScreen === 'function') {
+    if (role === 'manager' || targetScreen === 'ManagerDashboard') {
+      pWin.loadScreen('tpl-ManagerDashboard');
+    } else {
+      pWin.loadScreen('tpl-EmployeeDashboard');
+    }
+    return;
+  }
+  if (typeof pWin.navigateScreen === 'function') {
+    pWin.navigateScreen(targetScreen);
+    return;
+  }
+  if (window.parent && window.parent !== window && typeof window.parent.postMessage === 'function') {
+    window.parent.postMessage({ type: 'NAVIGATE', screen: targetScreen, role: role, email: emailVal, profile: profile }, '*');
+    return;
+  }
 
-  window.AUTH_USER = { ...profile, role: role };
-  window.USER_PROFILE = profile;
-
-  // Direct page navigation based on file system screen path
-  const currentPath = window.location.pathname || '';
-  if (currentPath.includes('/screens/Login') || currentPath.includes('\\screens\\Login')) {
-    window.location.href = '../' + targetScreen + '/preview.html';
-  } else if (typeof window.loadScreen === 'function') {
-    window.loadScreen('tpl-' + targetScreen);
-  } else {
+  // Standalone preview mode: navigate to screen's preview.html
+  if (typeof window !== 'undefined' && window.location) {
     window.location.href = '../' + targetScreen + '/preview.html';
   }
 }
@@ -160,7 +144,7 @@ function handleLogin() {
         phone: matchedManager.phone,
         reportingManager: matchedManager.reportingManager
       };
-      navigateAfterLogin('ManagerDashboard', 'manager', mgrProfile);
+      navigateUser('ManagerDashboard', 'manager', mgrProfile, emailVal);
       return;
     } else {
       if (errBox) {
@@ -190,7 +174,7 @@ function handleLogin() {
         phone: matchedEmp.phone,
         reportingManager: matchedEmp.reportingManager
       };
-      navigateAfterLogin('EmployeeDashboard', 'employee', empProfile);
+      navigateUser('EmployeeDashboard', 'employee', empProfile, emailVal);
       return;
     } else {
       if (errBox) {
@@ -216,7 +200,7 @@ function handleLogin() {
       phone: '+91 98765 11001',
       reportingManager: 'Vishnu Kumar'
     };
-    navigateAfterLogin('EmployeeDashboard', 'employee', fallbackProfile);
+    navigateUser('EmployeeDashboard', 'employee', fallbackProfile, emailVal);
     return;
   }
 
@@ -308,48 +292,60 @@ function confirmForgot() {
   if (modalErr) modalErr.style.display = 'none';
   closeForgotModal();
 
-  const matchedUser = [...PREDEFINED_EMPLOYEES, ...PREDEFINED_MANAGERS].find(u => u.email.toLowerCase() === emailVal) || PREDEFINED_EMPLOYEES[0];
-  const role = PREDEFINED_MANAGERS.some(m => m.email.toLowerCase() === emailVal) ? 'manager' : 'employee';
-  const target = role === 'manager' ? 'ManagerDashboard' : 'EmployeeDashboard';
-  navigateAfterLogin(target, role, matchedUser);
+  const matchedUser = [...PREDEFINED_EMPLOYEES, ...PREDEFINED_MANAGERS].find(u => u.email.toLowerCase() === emailVal);
+  const isMgr = matchedUser ? matchedUser.role.toLowerCase().includes('manager') : false;
+  const profile = matchedUser || {
+    name: emailVal.split('@')[0],
+    role: 'Senior Software Engineer',
+    employeeId: 'EMP-2024-0101',
+    initials: 'JD',
+    email: emailVal,
+    department: 'Engineering',
+    team: 'Mobile Development',
+    workLocation: 'Bangalore - Tech Park',
+    joiningDate: '15-Jan-2024',
+    phone: contactVal || '+91 98765 11001',
+    reportingManager: 'Vishnu Kumar'
+  };
+
+  navigateUser(isMgr ? 'ManagerDashboard' : 'EmployeeDashboard', isMgr ? 'manager' : 'employee', profile, emailVal);
 }
 
-function initLoginScreen() {
+document.addEventListener('DOMContentLoaded', function() {
   const loginBtn = document.getElementById('btn-login-submit') || document.getElementById('btn-login');
   if (loginBtn) {
-    loginBtn.onclick = handleLogin;
     loginBtn.addEventListener('click', handleLogin);
   }
   const toggleBtn = document.getElementById('toggle-pwd-btn');
   if (toggleBtn) {
-    toggleBtn.onclick = function() { toggleVisibility('password'); };
+    toggleBtn.addEventListener('click', function() { toggleVisibility('password'); });
   }
   const rememberRow = document.getElementById('remember-me-toggle');
   if (rememberRow) {
-    rememberRow.onclick = function() { toggleRemember(rememberRow); };
+    rememberRow.addEventListener('click', function() { toggleRemember(rememberRow); });
   }
   const forgotLnk = document.getElementById('forgot-password-link');
   if (forgotLnk) {
-    forgotLnk.onclick = openForgotModal;
+    forgotLnk.addEventListener('click', openForgotModal);
   }
   const modalClose = document.getElementById('modal-close-btn');
   if (modalClose) {
-    modalClose.onclick = closeForgotModal;
+    modalClose.addEventListener('click', closeForgotModal);
   }
   const modalCancel = document.getElementById('modal-cancel-btn');
   if (modalCancel) {
-    modalCancel.onclick = closeForgotModal;
+    modalCancel.addEventListener('click', closeForgotModal);
   }
   const modalSubmit = document.getElementById('modal-submit-btn');
   if (modalSubmit) {
-    modalSubmit.onclick = confirmForgot;
+    modalSubmit.addEventListener('click', confirmForgot);
   }
 
-  // Allow Enter key in inputs to trigger Login
+  // Attach Enter key submission on email and password inputs
   const emailInput = document.getElementById('email');
   const pwdInput = document.getElementById('password') || document.getElementById('pwd');
   [emailInput, pwdInput].forEach(inp => {
-    if (inp && typeof inp.addEventListener === 'function') {
+    if (inp) {
       inp.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
           e.preventDefault();
@@ -358,15 +354,4 @@ function initLoginScreen() {
       });
     }
   });
-}
-
-// Ensure execution whether DOM is loading or already interactive/complete
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initLoginScreen);
-} else {
-  initLoginScreen();
-}
-
-window.handleLogin = handleLogin;
-window.initLoginScreen = initLoginScreen;
-window.navigateAfterLogin = navigateAfterLogin;
+});

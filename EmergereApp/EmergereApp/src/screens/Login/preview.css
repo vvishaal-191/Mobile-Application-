@@ -94,11 +94,11 @@ body {
   border-top-right-radius: 40px;
 }
 
-/* ── Floating Main Form Card (Centered in the Page) ── */
+/* ── Floating Main Form Card (Layered Above Header Banner) ── */
 .login-card-container {
   width: calc(100% - 36px);
   max-width: 374px;
-  margin: auto;
+  margin: -32px auto 0;
   padding: 24px 20px 20px 20px;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 28px;
@@ -275,7 +275,6 @@ body {
   letter-spacing: 0.2px;
   margin: 0 auto;
   padding-left: 28px;
-  pointer-events: none;
 }
 
 .login-btn-arrow-disc {
@@ -286,7 +285,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
 }
 
 /* ── OR Divider ── */

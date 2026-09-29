@@ -460,11 +460,11 @@ body {
   border-top-right-radius: 40px;
 }
 
-/* ── Floating Main Form Card (Centered in the Page) ── */
+/* ── Floating Main Form Card (Layered Above Header Banner) ── */
 .login-card-container {
   width: calc(100% - 36px);
   max-width: 374px;
-  margin: auto;
+  margin: -32px auto 0;
   padding: 24px 20px 20px 20px;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 28px;
@@ -641,7 +641,6 @@ body {
   letter-spacing: 0.2px;
   margin: 0 auto;
   padding-left: 28px;
-  pointer-events: none;
 }
 
 .login-btn-arrow-disc {
@@ -652,7 +651,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
 }
 
 /* ── OR Divider ── */
@@ -845,7 +843,7 @@ body {
           <input type="password" id="password" class="login-input-field" placeholder="Password" />
           <button type="button" id="toggle-pwd-btn" class="login-eye-btn" aria-label="Toggle password visibility">
             <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
@@ -862,7 +860,7 @@ body {
         </div>
 
         <!-- Gradient Login Button with Circular Arrow Disc -->
-        <button type="button" id="btn-login-submit" class="btn-login-gradient" onclick="handleLogin()">
+        <button type="button" id="btn-login-submit" class="btn-login-gradient">
           <span class="btn-login-text">Login</span>
           <div class="login-btn-arrow-disc">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -954,7 +952,7 @@ body {
           if (isPwdVisible) {
             eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
           } else {
-            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
           }
         });
       }
@@ -971,7 +969,6 @@ body {
         { name: 'Rahul Sharma', email: 'rahul@gmail.com', password: 'manager@123', role: 'Operations Manager', empId: 'MGR-2024-0012', initials: 'RS', reportingManager: 'Vice President', phone: '+91 98765 22003' }
       ];
 
-      // Navigation and Login Logic
       function navigateAfterLogin(targetScreen, role, profile) {
         const pWin = (window.parent && window.parent !== window) ? window.parent : window;
 
@@ -984,9 +981,11 @@ body {
           }
           try { pWin.sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch(e) {}
           try { pWin.sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch(e) {}
+          try { sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile)); } catch(e) {}
+          try { sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role })); } catch(e) {}
         } catch(e) {}
 
-        try {
+        if (pWin !== window) {
           if (typeof pWin.loadScreen === 'function') {
             pWin.loadScreen('tpl-' + targetScreen);
             return;
@@ -996,27 +995,18 @@ body {
             return;
           }
           if (typeof pWin.postMessage === 'function') {
-            pWin.postMessage({ type: 'NAVIGATE', screen: targetScreen, role: role, profile: profile }, '*');
+            pWin.postMessage({ type: 'NAVIGATE', screen: targetScreen, role: role, email: profile.email, profile: profile }, '*');
             return;
           }
-        } catch(e) {}
-
-        try {
-          sessionStorage.setItem('USER_PROFILE', JSON.stringify(profile));
-          sessionStorage.setItem('AUTH_USER', JSON.stringify({ ...profile, role: role }));
-        } catch(e) {}
-
-        const path = window.location.pathname || '';
-        if (path.includes('/screens/Login') || path.includes('\screens\Login')) {
-          window.location.href = '../' + targetScreen + '/preview.html';
-        } else {
-          window.location.href = '../' + targetScreen + '/preview.html';
         }
+
+        window.location.href = '../' + targetScreen + '/preview.html';
       }
 
+      // Login Submission Logic
       function handleLogin() {
         let hasErr = false;
-        let emailVal = (emailInput.value || '').trim().toLowerCase();
+        let emailVal = (emailInput.value || '').trim();
         let pwdVal = (pwdInput.value || '').trim();
 
         // If both fields are empty, default to demo employee credentials for instant one-click login testing
@@ -1046,7 +1036,7 @@ body {
         authErr.style.display = 'none';
 
         // Check Manager
-        const matchedManager = PREDEFINED_MANAGERS.find(m => m.email.toLowerCase() === emailVal);
+        const matchedManager = PREDEFINED_MANAGERS.find(m => m.email.toLowerCase() === emailVal.toLowerCase());
         if (matchedManager) {
           if (matchedManager.password === pwdVal || pwdVal.length >= 4) {
             const mgrProfile = {
@@ -1072,7 +1062,7 @@ body {
         }
 
         // Check Employee
-        const matchedEmployee = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal);
+        const matchedEmployee = PREDEFINED_EMPLOYEES.find(e => e.email.toLowerCase() === emailVal.toLowerCase());
         if (matchedEmployee) {
           if (matchedEmployee.password === pwdVal || pwdVal.length >= 4) {
             const empProfile = {
@@ -1121,12 +1111,11 @@ body {
       }
 
       if (loginBtn) {
-        loginBtn.onclick = handleLogin;
         loginBtn.addEventListener('click', handleLogin);
       }
 
       [emailInput, pwdInput].forEach(inp => {
-        if (inp && typeof inp.addEventListener === 'function') {
+        if (inp) {
           inp.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
               e.preventDefault();
@@ -1135,8 +1124,6 @@ body {
           });
         }
       });
-
-      window.handleLogin = handleLogin;
 
       // Modal Handlers
       if (forgotLink) {
@@ -1179,8 +1166,9 @@ body {
             return;
           }
 
-          alert('Password for ' + matchedUser.name + ' is: ' + matchedUser.password);
           closeModal();
+          const isMgr = matchedUser.role.toLowerCase().includes('manager');
+          navigateAfterLogin(isMgr ? 'ManagerDashboard' : 'EmployeeDashboard', isMgr ? 'manager' : 'employee', matchedUser);
         });
       }
     })();
@@ -1188,6 +1176,1766 @@ body {
 </body>
 </html>
 </template>
+  <template id="tpl-EmployeeDashboard">
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      <style>
+        :root {
+          --primary: #2F6BFF;
+          --primary-dark: #1D4ED8;
+          --bg: #F4F7FB;
+          --surface: #FFFFFF;
+          --navy: #1B2333;
+          --text: #0F172A;
+          --text-secondary: #64748B;
+          --text-muted: #94A3B8;
+          --success: #1FAE6E;
+          --success-bg: #E3F8EE;
+          --danger: #E5484D;
+          --danger-bg: #FCE4E4;
+          --warning: #F5A623;
+          --warning-bg: #FDF0DA;
+          --purple: #8B5CF6;
+          --purple-bg: #EFE9FE;
+          --info: #2F6BFF;
+          --info-bg: #E7EEFF;
+          --border: #E7EAF0;
+          --chip: #EEF2FF;
+        }
+
+        * {
+          box-sizing: border-box;
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        *::-webkit-scrollbar,
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        .device::-webkit-scrollbar,
+        .screen::-webkit-scrollbar,
+        div::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
+        }
+
+        html, body, .device, .screen,
+        .screen.has-dash-header {
+
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        body {
+          margin: 0;
+          background: var(--bg);
+          display: flex;
+          justify-content: center;
+          align-items: stretch;
+          padding: 0;
+          height: 100vh;
+          height: 100dvh;
+          overflow: hidden;
+        }
+
+        .device {
+          width: 100%;
+          max-width: 440px;
+          height: 100vh;
+          height: 100dvh;
+          background: var(--bg);
+          border-radius: 0;
+          border: none;
+          overflow: hidden;
+          position: relative;
+          box-shadow: none;
+          display: flex;
+          flex-direction: column;
+          margin: 0 auto;
+        }
+
+        @media (min-width: 769px) {
+          body {
+            background: #0e1420;
+            padding: 15px 0;
+            align-items: center;
+          }
+
+          .device {
+            border-radius: 40px;
+            border: 8px solid #1f2937;
+            height: 844px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .4);
+          }
+        }
+
+        .screen {
+          flex: 1;
+          overflow-y: auto;
+          padding-top: 0 !important;
+          padding-bottom: 96px;
+          -webkit-overflow-scrolling: touch;
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        .screen::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        /* ── Header Aligned Upward ── */
+        .dash-header {
+          margin-top: 0 !important;
+          border-top-left-radius: 0 !important;
+          border-top-right-radius: 0 !important;
+          margin-top: 0 !important;
+          background: linear-gradient(135deg, #0937A0 0%, #0A4FD5 45%, #1862EE 78%, #2B76FB 100%);
+          position: relative;
+          border-radius: 0 0 28px 28px;
+          padding: 24px 18px 22px 18px;
+          color: #FFFFFF;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(10, 79, 213, 0.18);
+        }
+
+        .dash-header::before {
+          content: '';
+          position: absolute;
+          top: -40px;
+          right: -40px;
+          width: 320px;
+          height: 320px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 60%, transparent 80%);
+          pointer-events: none;
+        }
+
+        .dash-header::after {
+          content: '';
+          position: absolute;
+          bottom: -60px;
+          left: -20px;
+          width: 260px;
+          height: 180px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        .header-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          position: relative;
+          z-index: 2;
+        }
+
+        .header-left-brand {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          height: 40px;
+        }
+
+        .hamburger-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          flex-shrink: 0;
+          transition: background 0.15s ease;
+        }
+        .hamburger-btn:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .header-dashboard-title-wrap {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .header-dashboard-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #FFFFFF;
+          line-height: 1.2;
+          letter-spacing: -0.3px;
+        }
+
+        .header-bell-wrap {
+          position: relative;
+          width: 38px;
+          height: 38px;
+          border-radius: 19px;
+          background: #0B2568;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+
+        .header-bell-wrap:hover {
+          transform: scale(1.05);
+        }
+
+        .header-bell-dot {
+          position: absolute;
+          top: 3px;
+          right: 4px;
+          width: 8px;
+          height: 8px;
+          border-radius: 4px;
+          background: #EF4444;
+          border: 1.5px solid #0B2568;
+        }
+
+        @keyframes bellPulseGlow {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(77, 150, 255, 0.5), 0 0 12px rgba(47, 107, 255, 0.6);
+          }
+          50% {
+            box-shadow: 0 0 0 6px rgba(77, 150, 255, 0.15), 0 0 20px rgba(47, 107, 255, 0.9);
+          }
+        }
+
+        .header-bell-wrap.has-glow {
+          animation: bellPulseGlow 2s infinite ease-in-out;
+        }
+
+        /* Header Profile / Greeting Block */
+        .header-profile-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 20px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .profile-greeting-col {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .profile-hello {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 400;
+          line-height: 1.2;
+        }
+
+        .profile-name-title {
+          font-size: 24px;
+          font-weight: 800;
+          color: #FFFFFF;
+          line-height: 1.25;
+          margin: 2px 0 3px;
+          letter-spacing: -0.3px;
+        }
+
+        .profile-meta-role {
+          font-size: 12.5px;
+          color: rgba(255, 255, 255, 0.85);
+          font-weight: 500;
+          margin-bottom: 8px;
+        }
+
+        .profile-date-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12.5px;
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 500;
+        }
+
+        .profile-avatar-block {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          flex-shrink: 0;
+          cursor: pointer;
+          user-select: none;
+          transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+
+        .profile-avatar-block:hover {
+          opacity: 0.92;
+          transform: translateY(-1px);
+        }
+
+        .profile-avatar-block:active {
+          transform: scale(0.97);
+        }
+
+        .avatar-circle-wrap {
+          width: 74px;
+          height: 74px;
+          border-radius: 50%;
+          background: #EBF3FE;
+          border: 3.5px solid #FFFFFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+          overflow: hidden;
+        }
+
+        .avatar-caption {
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.92);
+          font-weight: 500;
+          margin-top: 6px;
+          text-align: center;
+        }
+
+        .avatar-line-accent {
+          width: 22px;
+          height: 2px;
+          background: #93C5FD;
+          border-radius: 1px;
+          margin-top: 3px;
+        }
+
+        /* ── 4 Action Cards (2x2 Grid) - Perfectly Aligned Top Edges & Uniform Heights ── */
+        .dash-action-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          margin: 14px 16px 14px 16px;
+          padding: 0;
+          align-items: stretch;
+        }
+
+        .dash-action-card {
+          background: #FFFFFF;
+          border: 1px solid #EAEFF5;
+          border-radius: 18px;
+          padding: 14px 13px 13px 13px;
+          height: 126px;
+          min-height: 126px;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.025);
+          cursor: pointer;
+          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease;
+          user-select: none;
+        }
+
+        .dash-action-card:hover {
+          transform: translateY(-2px);
+          border-color: #D3E0FF;
+          box-shadow: 0 8px 24px rgba(47, 107, 255, 0.1), 0 2px 6px rgba(47, 107, 255, 0.04);
+        }
+
+        .dash-action-card.card-leave {
+          background-image: radial-gradient(circle at 100% 100%, #D4E5FC 0%, #D4E5FC 28%, rgba(212, 229, 252, 0.5) 45%, transparent 68%);
+        }
+
+        .dash-action-card.card-perm {
+          background-image: radial-gradient(circle at 100% 100%, #D2F6FA 0%, #D2F6FA 28%, rgba(210, 246, 250, 0.5) 45%, transparent 68%);
+        }
+
+        .dash-action-card.card-reqs {
+          background-image: radial-gradient(circle at 100% 100%, #ECE6FE 0%, #ECE6FE 28%, rgba(236, 230, 254, 0.5) 45%, transparent 68%);
+        }
+
+        .dash-action-card.card-holiday {
+          background-image: radial-gradient(circle at 100% 100%, #FEEBD7 0%, #FEEBD7 28%, rgba(254, 235, 215, 0.5) 45%, transparent 68%);
+        }
+
+        .action-top-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 40px;
+        }
+
+        .action-icon-box {
+          width: 40px;
+          height: 40px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .action-chevron-btn {
+          width: 26px;
+          height: 26px;
+          border-radius: 13px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s ease;
+        }
+
+        .dash-action-card:hover .action-chevron-btn {
+          transform: translateX(2px);
+        }
+
+        .action-text-col {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          margin-top: 8px;
+        }
+
+        .action-main-title {
+          font-size: 15px;
+          font-weight: 800;
+          color: #0F172A;
+          letter-spacing: -0.2px;
+          line-height: 1.25;
+        }
+
+        .action-sub-text {
+          font-size: 11px;
+          color: #64748B;
+          margin-top: 3px;
+          line-height: 1.2;
+          font-weight: 500;
+        }
+
+        /* ── Leave Balances Card ── */
+        .leave-balances-card {
+          background: #FFFFFF;
+          border: 1px solid #EAEFF5;
+          border-radius: 18px;
+          padding: 16px 16px 14px 16px;
+          margin: 0 16px 14px 16px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.025);
+        }
+
+        .balances-card-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 14px;
+        }
+
+        .balances-card-title {
+          font-size: 15.5px;
+          font-weight: 800;
+          color: #0F172A;
+          letter-spacing: -0.2px;
+        }
+
+        .balance-item-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 13px;
+        }
+
+        .balance-item-row:last-child {
+          margin-bottom: 0;
+        }
+
+        .balance-icon-circle {
+          width: 38px;
+          height: 38px;
+          border-radius: 19px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .balance-content-col {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .balance-title-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+        }
+
+        .balance-item-label {
+          font-size: 13px;
+          font-weight: 700;
+          color: #0F172A;
+        }
+
+        .balance-item-val {
+          font-size: 12px;
+          font-weight: 700;
+          color: #2563EB;
+        }
+
+        .balance-sub-label {
+          font-size: 10.5px;
+          color: #64748B;
+          margin: 1px 0 6px;
+        }
+
+        .balance-progress-track {
+          width: 100%;
+          height: 7px;
+          background: #E2E8F0;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+
+        .balance-progress-fill {
+          height: 100%;
+          background: #1D4ED8;
+          border-radius: 4px;
+        }
+
+        /* ── Recent Requests Card (Image 4 - Displayed ONLY on Manager Approval/Rejection) ── */
+        .recent-requests-section {
+          margin: 0 16px 14px 16px;
+          display: none; /* Hidden by default */
+        }
+
+        .recent-requests-header {
+          font-size: 11.5px;
+          font-weight: 700;
+          color: #94A3B8;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin: 0 4px 8px;
+        }
+
+        .recent-request-card {
+          background: #FFFFFF;
+          border: 1px solid #EAEFF5;
+          border-radius: 18px;
+          padding: 14px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.025);
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .recent-request-card:hover {
+          transform: translateY(-2px);
+          border-color: #D3E0FF;
+          box-shadow: 0 6px 20px rgba(47, 107, 255, 0.08);
+        }
+
+        .recent-request-left {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .recent-request-title {
+          font-size: 14.5px;
+          font-weight: 800;
+          color: #0F172A;
+          letter-spacing: -0.2px;
+          line-height: 1.25;
+        }
+
+        .recent-request-sub {
+          font-size: 12px;
+          color: #64748B;
+          font-weight: 500;
+          line-height: 1.25;
+        }
+
+        .recent-request-meta {
+          font-size: 11px;
+          color: #64748B;
+          font-weight: 500;
+          line-height: 1.25;
+          margin-top: 1px;
+        }
+
+        .recent-request-right {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+          margin-left: 12px;
+        }
+
+        .recent-request-badge {
+          background: #DCFCE7;
+          color: #16A34A;
+          font-size: 11.5px;
+          font-weight: 700;
+          padding: 5px 12px;
+          border-radius: 20px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .recent-request-dismiss-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 2px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .recent-request-dismiss-btn:hover {
+          opacity: 0.75;
+          transform: scale(1.1);
+        }
+
+        /* ── Sidebar Drawer Overlay & Menu (Image 2 Redesign) ── */
+        /* ── Sidebar Overlay & Drawer matching Image 2 Reference ── */
+        .sidebar-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 8, 24, 0.6);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+          z-index: 9999;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.25s ease;
+        }
+
+        .sidebar-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .sidebar-drawer {
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 320px;
+          max-width: 84%;
+          background: linear-gradient(180deg, #002888 0%, #001A5E 140px, #00103A 260px, #000924 100%);
+          border-top-right-radius: 28px;
+          border-bottom-right-radius: 28px;
+          padding: 24px 16px 28px 16px;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 16px 0 40px rgba(0, 0, 0, 0.65);
+          transform: translateX(-100%);
+          transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+          overflow-y: auto;
+          overflow-x: hidden;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          box-sizing: border-box;
+          position: relative;
+        }
+
+        .sidebar-drawer::-webkit-scrollbar {
+          display: none;
+        }
+
+        .sidebar-overlay.open .sidebar-drawer {
+          transform: translateX(0);
+        }
+
+        .sidebar-bg-waves {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 310px;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .sidebar-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-top: 2px;
+          padding-bottom: 16px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .sidebar-brand {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+        }
+
+        .sidebar-logo {
+          width: 26px;
+          height: 26px;
+          object-fit: contain;
+          flex-shrink: 0;
+          filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
+        }
+
+        .sidebar-title {
+          font-size: 17px;
+          font-weight: 700;
+          color: #FFFFFF;
+          letter-spacing: -0.2px;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        .sidebar-close-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          transition: background 0.15s ease;
+        }
+
+        .sidebar-close-btn:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .sidebar-close-btn svg line {
+          stroke: #FFFFFF;
+        }
+
+        .sidebar-profile-card {
+          background: linear-gradient(135deg, rgba(20, 85, 220, 0.42) 0%, rgba(8, 42, 135, 0.55) 100%);
+          border: 1px solid rgba(120, 180, 255, 0.38);
+          border-radius: 20px;
+          padding: 16px 18px;
+          margin-bottom: 22px;
+          box-shadow: 0 8px 24px rgba(0, 15, 60, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          position: relative;
+          z-index: 2;
+          box-sizing: border-box;
+        }
+
+        .sidebar-profile-top {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .sidebar-avatar-circle {
+          width: 52px;
+          height: 52px;
+          min-width: 52px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #1E78FF 0%, #0056D2 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          font-size: 19px;
+          font-weight: 800;
+          box-shadow: 0 4px 16px rgba(0, 86, 210, 0.5);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-profile-info {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+
+        .sidebar-profile-name {
+          font-size: 18px;
+          font-weight: 700;
+          color: #FFFFFF;
+          letter-spacing: -0.2px;
+          line-height: 1.2;
+        }
+
+        .sidebar-role-badge {
+          background: #1D4ED8;
+          color: #FFFFFF;
+          font-size: 10.5px;
+          font-weight: 800;
+          padding: 3px 10px;
+          border-radius: 6px;
+          letter-spacing: 0.6px;
+          align-self: flex-start;
+          margin-top: 3px;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-logout-btn {
+          width: 100%;
+          margin-top: 14px;
+          background: rgba(220, 38, 38, 0.12);
+          border: 1.2px solid rgba(239, 68, 68, 0.55);
+          border-radius: 12px;
+          padding: 9px 12px;
+          color: #F87171;
+          font-size: 13.5px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: background 0.15s ease, border-color 0.15s ease;
+          box-sizing: border-box;
+        }
+
+        .sidebar-logout-btn:hover {
+          background: rgba(220, 38, 38, 0.22);
+          border-color: rgba(239, 68, 68, 0.75);
+        }
+
+        .sidebar-logout-btn:active {
+          transform: scale(0.98);
+        }
+
+        .sidebar-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .sidebar-nav-item {
+          width: 100%;
+          background: transparent;
+          border: none;
+          border-radius: 14px;
+          padding: 8px 12px 8px 10px;
+          color: #FFFFFF;
+          text-align: left;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          transition: all 0.15s ease;
+          user-select: none;
+          box-sizing: border-box;
+          gap: 12px;
+        }
+
+        .sidebar-nav-item:hover {
+          background: rgba(255, 255, 255, 0.07);
+        }
+
+        .sidebar-nav-item:active {
+          transform: scale(0.99);
+        }
+
+        .sidebar-item-icon-box {
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          transition: all 0.15s ease;
+          flex-shrink: 0;
+        }
+
+        .sidebar-item-label {
+          flex: 1;
+          font-size: 14.5px;
+          font-weight: 600;
+          color: #FFFFFF;
+          letter-spacing: -0.1px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-item-chevron {
+          color: rgba(147, 197, 253, 0.65);
+          flex-shrink: 0;
+          transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .sidebar-nav-item:hover .sidebar-item-chevron {
+          color: #FFFFFF;
+          transform: translateX(2px);
+        }
+
+        /* Active Item matching Image 2 ("Employee Dashboard") */
+        .sidebar-nav-item.active {
+          background: #DCE9FE !important;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-nav-item.active .sidebar-item-icon-box {
+          background: #0066FF !important;
+          color: #FFFFFF !important;
+          box-shadow: 0 3px 10px rgba(0, 102, 255, 0.35);
+        }
+
+        .sidebar-nav-item.active .sidebar-item-label {
+          color: #0A2540 !important;
+          font-weight: 700 !important;
+        }
+
+        .sidebar-nav-item.active .sidebar-item-chevron {
+          color: #2563EB !important;
+          stroke-width: 2.6 !important;
+        }
+
+        /* ── Bottom Navigation Bar ── */
+                .bottom-nav {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #FFFFFF;
+          border-top: 1px solid #EAEFF5;
+          border-radius: 24px 24px 0 0;
+          padding: 8px 12px 14px;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+          z-index: 100;
+          box-sizing: border-box;
+          height: 68px;
+        }
+
+        .bottom-nav .tab,
+        .nav-tab {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #64748B;
+          font-size: 11px;
+          font-weight: 500;
+          gap: 3px;
+          user-select: none;
+        }
+
+        .bottom-nav .tab.active,
+        .nav-tab.active {
+          color: #2563EB;
+          font-weight: 700;
+        }
+
+        .dashboard-pill-wrap,
+        .nav-pill-wrap {
+          background: #EEF4FF;
+          border-radius: 16px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1px;
+        }
+
+        .active-dot-indicator {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #2563EB;
+          margin-top: 1px;
+        }
+
+        .nav-apply-btn-wrap {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          margin-top: -14px;
+        }
+
+        .nav-apply-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 24px;
+          background: #2F6BFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(47, 107, 255, 0.4);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-apply-btn-wrap:hover .nav-apply-circle {
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(47, 107, 255, 0.5);
+        }
+
+        .nav-apply-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #1E293B;
+          margin-top: 4px;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="device">
+        <div class="screen has-dash-header">
+          <!-- Header Aligned Upward with Image 3 Logo and Dashboard title with dot below -->
+          <div class="dash-header">
+            <div class="header-top">
+              <div class="header-left-brand">
+                <button class="hamburger-btn" aria-label="Menu" onclick="openSidebarDrawer()">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                  </svg>
+                </button>
+                <div class="header-dashboard-title-wrap">
+                  <span class="header-dashboard-title">Dashboard</span>
+                </div>
+              </div>
+
+              <div class="header-bell-wrap" id="dash-bell-btn" onclick="openNotificationsFromDashboard()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="header-bell-dot"></span>
+              </div>
+            </div>
+
+            <!-- Profile & Greeting -->
+            <div class="header-profile-row">
+              <div class="profile-greeting-col">
+                <span class="profile-hello">Hello,</span>
+                <h1 class="profile-name-title" id="dash-greeting">Sneha Reddy</h1>
+                <div class="profile-meta-role" id="dash-role-meta">
+                  <span id="dash-role-text">UI/UX Designer</span> &bull; <span id="dash-id-text">EMP-2024-0103</span>
+                </div>
+                <div class="profile-date-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <span>Thu, Sep 03 2026</span>
+                </div>
+              </div>
+
+              <div class="profile-avatar-block" style="cursor:pointer;" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}else{window.location.href='../MyProfile/preview.html'}" role="button" aria-label="View Employee Profile" title="View Profile">
+                <div class="avatar-circle-wrap">
+                  <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="7" r="4.2" fill="#3B82F6"></circle>
+                    <path d="M4 20c0-4 3.5-6.5 8-6.5s8 2.5 8 6.5" fill="#3B82F6"></path>
+                  </svg>
+                </div>
+                <span class="avatar-caption">Have a great day!</span>
+                <span class="avatar-line-accent"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2x2 Action Cards (Level Top Edges & Uniform Heights) -->
+          <div class="dash-action-grid">
+            <!-- Apply Leave -->
+            <div class="dash-action-card card-leave" id="btn-action-leave" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}">
+              <div class="action-top-row">
+                <div class="action-icon-box" style="background:#1C6AFD;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="14" r="1" fill="#FFFFFF"></circle>
+                    <circle cx="12" cy="14" r="1" fill="#FFFFFF"></circle>
+                    <circle cx="16" cy="14" r="1" fill="#FFFFFF"></circle>
+                  </svg>
+                </div>
+                <div class="action-chevron-btn" style="background:#EDF3FF;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <div class="action-text-col">
+                <span class="action-main-title">Apply Leave</span>
+                <span class="action-sub-text">Plan your time off</span>
+              </div>
+            </div>
+
+            <!-- Apply Permission -->
+            <div class="dash-action-card card-perm" id="btn-action-perm" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyPermission')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyPermission')}">
+              <div class="action-top-row">
+                <div class="action-icon-box" style="background:#097717;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <div class="action-chevron-btn" style="background:#EDF3FF;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <div class="action-text-col">
+                <span class="action-main-title">Apply Permission</span>
+                <span class="action-sub-text">Request short leave</span>
+              </div>
+            </div>
+
+            <!-- My Requests -->
+            <div class="dash-action-card card-reqs" id="btn-action-reqs" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}">
+              <div class="action-top-row">
+                <div class="action-icon-box" style="background:#8B5CF6;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="4" width="14" height="16" rx="2" ry="2"></rect>
+                    <line x1="9" y1="9" x2="15" y2="9"></line>
+                    <line x1="9" y1="13" x2="15" y2="13"></line>
+                    <line x1="9" y1="17" x2="13" y2="17"></line>
+                  </svg>
+                </div>
+                <div class="action-chevron-btn" style="background:#ECE6FE;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <div class="action-text-col">
+                <span class="action-main-title">My Requests</span>
+                <span class="action-sub-text">Track leaves & permissions</span>
+              </div>
+            </div>
+
+            <!-- Holiday Calendar -->
+            <div class="dash-action-card card-holiday" id="btn-action-holiday" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-HolidayCalendar')}else if(typeof loadScreen==='function'){loadScreen('tpl-HolidayCalendar')}">
+              <div class="action-top-row">
+                <div class="action-icon-box" style="background:#FA6400;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="14" r="1" fill="#FFFFFF"></circle>
+                    <circle cx="12" cy="14" r="1" fill="#FFFFFF"></circle>
+                    <circle cx="16" cy="14" r="1" fill="#FFFFFF"></circle>
+                  </svg>
+                </div>
+                <div class="action-chevron-btn" style="background:#FEEBD7;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <div class="action-text-col">
+                <span class="action-main-title">Holiday Calendar</span>
+                <span class="action-sub-text">View upcoming holidays</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leave Balances Card -->
+          <div class="leave-balances-card" id="dash-leave-balance-card">
+            <div class="balances-card-header">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M21.21 15.89A10 10 0 1 1 8 2.83" stroke="#2563EB" stroke-width="2.8" stroke-linecap="round"></path>
+                <path d="M22 12A10 10 0 0 0 12 2v10z" fill="#2563EB"></path>
+              </svg>
+              <span class="balances-card-title">Leave Balances</span>
+            </div>
+
+            <!-- Casual Leave -->
+            <div class="balance-item-row">
+              <div class="balance-icon-circle" style="background:#EBF3FF;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+                  <line x1="12" y1="12" x2="12" y2="12.01"></line>
+                </svg>
+              </div>
+              <div class="balance-content-col">
+                <div class="balance-title-row">
+                  <span class="balance-item-label">Casual Leave</span>
+                  <span class="balance-item-val">8 / 12 Days</span>
+                </div>
+                <span class="balance-sub-label">For personal time</span>
+                <div class="balance-progress-track">
+                  <div class="balance-progress-fill" style="width: 66.6%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sick Leave -->
+            <div class="balance-item-row">
+              <div class="balance-icon-circle" style="background:#FEE2E2;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="10" y1="11" x2="14" y2="11"></line>
+                </svg>
+              </div>
+              <div class="balance-content-col">
+                <div class="balance-title-row">
+                  <span class="balance-item-label">Sick Leave</span>
+                  <span class="balance-item-val">5 / 7 Days</span>
+                </div>
+                <span class="balance-sub-label">For your well-being</span>
+                <div class="balance-progress-track">
+                  <div class="balance-progress-fill" style="width: 71.4%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WFH -->
+            <div class="balance-item-row">
+              <div class="balance-icon-circle" style="background:#DCFCE7;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </div>
+              <div class="balance-content-col">
+                <div class="balance-title-row">
+                  <span class="balance-item-label">WFH</span>
+                  <span class="balance-item-val">10 / 15 Days</span>
+                </div>
+                <span class="balance-sub-label">Work from home</span>
+                <div class="balance-progress-track">
+                  <div class="balance-progress-fill" style="width: 66.6%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Requests Section matching Image 4 (Displayed ONLY when manager approves or rejects request) -->
+          <div class="recent-requests-section" id="emp-recent-requests-section" style="display: none;">
+            <div class="recent-requests-header" id="emp-dash-requests-label">RECENT REQUESTS (0)</div>
+            <div id="emp-dash-requests-list"></div>
+          </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+          <div class="tab nav-tab" id="tab-dashboard" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ManagerDashboard')}else if(typeof loadScreen==='function'){loadScreen('tpl-ManagerDashboard')}else if(typeof navTo==='function'){navTo('Dashboard')}else{window.location.href='../ManagerDashboard/preview.html'}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+            </svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="tab nav-tab" id="tab-attendance" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyAttendance')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyAttendance')}else if(typeof navTo==='function'){navTo('Attendance')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Attendance</span>
+          </div>
+          <div class="tab nav-apply-btn-wrap" id="tab-apply" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-ApplyLeave')}else if(typeof loadScreen==='function'){loadScreen('tpl-ApplyLeave')}else if(typeof navTo==='function'){navTo('Apply')}">
+            <div class="nav-apply-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-apply-label">Apply</span>
+          </div>
+          <div class="tab nav-tab" id="tab-history" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-LeaveHistory')}else if(typeof loadScreen==='function'){loadScreen('tpl-LeaveHistory')}else if(typeof navTo==='function'){navTo('History')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <polyline points="12 7 12 12 15 15"></polyline>
+            </svg>
+            <span>History</span>
+          </div>
+          <div class="tab nav-tab" id="tab-profile" onclick="if(window.parent&&window.parent.loadScreen){window.parent.loadScreen('tpl-MyProfile')}else if(typeof loadScreen==='function'){loadScreen('tpl-MyProfile')}else if(typeof navTo==='function'){navTo('Profile')}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Drawer Overlay (Image 2 Redesign) -->
+        <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebarDrawer()">
+          <div class="sidebar-drawer" onclick="event.stopPropagation()">
+            <!-- Luminous Wave Graphic in Header Background matching Image 2 -->
+            <svg class="sidebar-bg-waves" viewBox="0 0 320 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="sbGlow1" cx="30%" cy="15%" r="70%">
+                  <stop offset="0%" stop-color="#0066FF" stop-opacity="0.6"/>
+                  <stop offset="55%" stop-color="#0044CC" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#001855" stop-opacity="0"/>
+                </radialGradient>
+                <!-- Upper luminous wave sweeping down-right -->
+                <linearGradient id="sbWaveSweep1" x1="0%" y1="0%" x2="100%" y2="80%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.7"/>
+                  <stop offset="35%" stop-color="#2563EB" stop-opacity="0.5"/>
+                  <stop offset="70%" stop-color="#1D4ED8" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#001F6B" stop-opacity="0"/>
+                </linearGradient>
+                <!-- Second luminous wave swooping under profile card right -->
+                <linearGradient id="sbWaveSweep2" x1="100%" y1="70%" x2="30%" y2="20%">
+                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55"/>
+                  <stop offset="50%" stop-color="#1D4ED8" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#001444" stop-opacity="0"/>
+                </linearGradient>
+                <filter id="waveGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <rect width="320" height="310" fill="url(#sbGlow1)"/>
+              <!-- Top sweeping luminous wave -->
+              <path d="M-20 40 C 60 20 140 75 220 70 C 270 66 300 45 340 30 V 0 H -20 Z" fill="url(#sbWaveSweep1)" filter="url(#waveGlow)"/>
+              <path d="M-20 75 C 60 45 150 100 235 85 C 280 75 310 50 340 38 V 0 H -20 Z" fill="url(#sbWaveSweep1)" opacity="0.6"/>
+              <!-- Lower sweeping luminous wave behind card right -->
+              <path d="M340 130 C 270 140 210 190 200 260 C 195 290 210 310 240 320 H 340 Z" fill="url(#sbWaveSweep2)" filter="url(#waveGlow)"/>
+              <path d="M340 160 C 280 170 235 210 230 270 C 228 290 240 310 260 320 H 340 Z" fill="url(#sbWaveSweep2)" opacity="0.7"/>
+            </svg>
+
+            <!-- Header matching Image 2 with Logo -->
+            <div class="sidebar-header">
+              <div class="sidebar-brand">
+                <img src="data:image/png;base64,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" class="sidebar-logo" alt="Mobile Application Logo" />
+                <span class="sidebar-title">Mobile Application</span>
+              </div>
+              <button class="sidebar-close-btn" onclick="closeSidebarDrawer()" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="sidebar-profile-card">
+              <div class="sidebar-profile-top">
+                <div class="sidebar-avatar-circle" id="sidebar-avatar-circle">
+                  <span id="sidebar-initials">JD</span>
+                </div>
+                <div class="sidebar-profile-info">
+                  <div class="sidebar-profile-name" id="sidebar-name">John Doe</div>
+                  <span class="sidebar-role-badge">EMPLOYEE</span>
+                </div>
+              </div>
+              <button class="sidebar-logout-btn" onclick="handleSidebarLogout()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Log Out</span>
+              </button>
+            </div>
+
+            <!-- Navigation Links Matching Image 2 Reference -->
+            <nav class="sidebar-nav">
+              <!-- 1. Employee Dashboard (Active in Image 2) -->
+              <button class="sidebar-nav-item active" onclick="handleSidebarNav('tpl-EmployeeDashboard')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Employee Dashboard</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 2. My Attendance -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyAttendance')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Attendance</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 3. Apply Leave -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyLeave')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Apply Leave</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 4. Apply Permission -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-ApplyPermission')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <circle cx="18" cy="18" r="4"></circle>
+                    <polyline points="18 16 18 18 19.5 19.5"></polyline>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Apply Permission</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 5. Leave Balance -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-LeaveBalance')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Leave Balance</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 6. My Requests (History) -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyRequests')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <polyline points="12 7 12 12 15 15"></polyline>
+                    <path d="M3.05 11a9 9 0 0 1 .5-2m-.5 2h3m-3 0V8"></path>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Requests (History)</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 7. Holiday Calendar -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-HolidayCalendar')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="12" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="16" cy="14" r="1.2" fill="currentColor"></circle>
+                    <circle cx="8" cy="18" r="1.2" fill="currentColor"></circle>
+                    <circle cx="12" cy="18" r="1.2" fill="currentColor"></circle>
+                    <circle cx="16" cy="18" r="1.2" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Holiday Calendar</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 8. Notifications -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-Notifications')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">Notifications</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+              <!-- 9. My Profile -->
+              <button class="sidebar-nav-item" onclick="handleSidebarNav('tpl-MyProfile')">
+                <div class="sidebar-item-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <span class="sidebar-item-label">My Profile</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-item-chevron">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function openSidebarDrawer() {
+          var overlay = document.getElementById('sidebar-overlay');
+          if (overlay) overlay.classList.add('open');
+          var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+          var prof = pWin.USER_PROFILE || window.USER_PROFILE || {};
+          var nameEl = document.getElementById('sidebar-name');
+          var initialsEl = document.getElementById('sidebar-initials');
+          var curName = prof.name || (window.AUTH_USER && window.AUTH_USER.name) || 'Sneha Reddy';
+          if (nameEl) nameEl.textContent = curName;
+          if (initialsEl) {
+            var parts = curName.trim().split(/\s+/);
+            initialsEl.textContent = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : curName.slice(0, 2).toUpperCase();
+          }
+        }
+
+        function closeSidebarDrawer() {
+          var overlay = document.getElementById('sidebar-overlay');
+          if (overlay) overlay.classList.remove('open');
+        }
+
+        function handleSidebarNav(screenId) {
+          closeSidebarDrawer();
+          if (screenId === 'tpl-Profile' || screenId === 'Profile') {
+            screenId = 'tpl-MyProfile';
+          }
+          setTimeout(function() {
+            var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+            if (pWin.loadScreen) {
+              pWin.loadScreen(screenId);
+            } else if (typeof loadScreen === 'function') {
+              loadScreen(screenId);
+            }
+          }, 120);
+        }
+
+        function handleSidebarLogout() {
+          closeSidebarDrawer();
+          setTimeout(function() {
+            var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+            if (pWin.logout) {
+              pWin.logout();
+            } else if (typeof logout === 'function') {
+              logout();
+            } else if (pWin.loadScreen) {
+              pWin.loadScreen('tpl-Login');
+            } else if (typeof loadScreen === 'function') {
+              loadScreen('tpl-Login');
+            }
+          }, 100);
+        }
+
+        function dismissRecentRequest(cardId, e) {
+          if (e && e.stopPropagation) e.stopPropagation();
+          var card = cardId ? document.getElementById(cardId) : document.querySelector('.recent-request-card');
+          if (card) {
+            card.style.transition = 'all 0.25s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            setTimeout(function() {
+              card.remove();
+              var reqList = document.getElementById('emp-dash-requests-list');
+              var remainingCards = reqList ? reqList.querySelectorAll('.recent-request-card').length : 0;
+              var label = document.getElementById('emp-dash-requests-label');
+              var sec = document.getElementById('emp-recent-requests-section');
+              if (label) label.textContent = 'RECENT REQUESTS (' + remainingCards + ')';
+              if (remainingCards === 0 && sec) {
+                sec.style.display = 'none';
+              }
+            }, 250);
+          }
+        }
+
+        function syncDashboardRequests() {
+          var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+          var docRef = document;
+          setTimeout(function() {
+            var sec = docRef.getElementById('emp-recent-requests-section');
+            var reqList = docRef.getElementById('emp-dash-requests-list');
+            var label = docRef.getElementById('emp-dash-requests-label');
+            if (!sec || !reqList) return;
+
+            var allReqs = [];
+            try {
+              if (pWin.EMP_LEAVE_REQUESTS && pWin.EMP_LEAVE_REQUESTS.length > 0) {
+                allReqs = pWin.EMP_LEAVE_REQUESTS.slice();
+              } else if (window.EMP_LEAVE_REQUESTS && window.EMP_LEAVE_REQUESTS.length > 0) {
+                allReqs = window.EMP_LEAVE_REQUESTS.slice();
+              } else if (pWin.ALL_SUBMITTED_REQUESTS && pWin.ALL_SUBMITTED_REQUESTS.length > 0) {
+                allReqs = pWin.ALL_SUBMITTED_REQUESTS.slice();
+              } else if (window.ALL_SUBMITTED_REQUESTS && window.ALL_SUBMITTED_REQUESTS.length > 0) {
+                allReqs = window.ALL_SUBMITTED_REQUESTS.slice();
+              } else {
+                var stored = sessionStorage.getItem('ALL_SUBMITTED_REQUESTS') || (pWin.sessionStorage && pWin.sessionStorage.getItem('ALL_SUBMITTED_REQUESTS'));
+                if (stored) allReqs = JSON.parse(stored);
+              }
+            } catch (e) {}
+
+            var lastDecision = pWin.LAST_LEAVE_DECISION || window.LAST_LEAVE_DECISION || pWin.lastLeaveDecision || window.lastLeaveDecision;
+            if (lastDecision && (lastDecision.status === 'approved' || lastDecision.status === 'rejected')) {
+              var alreadyIn = allReqs.some(function(r) { return String(r.id) === String(lastDecision.id); });
+              if (!alreadyIn) {
+                allReqs.unshift({
+                  id: lastDecision.id || ('dec-' + Date.now()),
+                  leaveType: lastDecision.lType || 'Casual Leave',
+                  title: (lastDecision.lType || 'Casual Leave') + ' (1.0 Day)',
+                  subtitle: (lastDecision.fromDate || '07-Sep-2026') + ' • Personal Work',
+                  fromDate: lastDecision.fromDate || '07-Sep-2026',
+                  reason: 'Personal Work',
+                  status: lastDecision.status,
+                  employeeName: lastDecision.empName || (pWin.USER_PROFILE && pWin.USER_PROFILE.name) || 'Sneha Reddy',
+                  employeeId: 'EMP-2024-0103'
+                });
+              }
+            }
+
+            // Filter ONLY approved or rejected requests (Image 4 format)
+            var approvedOrRejected = allReqs.filter(function(r) {
+              if (pWin.DELETED_REQUEST_IDS && pWin.DELETED_REQUEST_IDS.indexOf(String(r.id)) !== -1) return false;
+              if (window.DELETED_REQUEST_IDS && window.DELETED_REQUEST_IDS.indexOf(String(r.id)) !== -1) return false;
+              var st = (r.status || '').toLowerCase();
+              return st === 'approved' || st === 'rejected';
+            });
+
+            if (approvedOrRejected.length === 0) {
+              sec.style.display = 'none';
+              reqList.innerHTML = '';
+              if (label) label.textContent = 'RECENT REQUESTS (0)';
+              return;
+            }
+
+            // Display Recent Requests
+            sec.style.display = 'block';
+            if (label) label.textContent = 'RECENT REQUESTS (' + approvedOrRejected.length + ')';
+            reqList.innerHTML = '';
+
+            approvedOrRejected.forEach(function(req) {
+              var isApp = (req.status || '').toLowerCase() === 'approved';
+              var badgeBg = isApp ? '#DCFCE7' : '#FCE4E4';
+              var badgeColor = isApp ? '#16A34A' : '#E5484D';
+              var badgeText = isApp ? 'Approved' : 'Rejected';
+              var title = req.title || ((req.leaveType || req.type || 'Casual Leave') + ' (' + (req.daysText || req.totalDays || req.duration || '1.0 Day') + ')');
+              var sub = req.subtitle || ((req.fromDate || req.date || '07-Sep-2026') + ' • ' + (req.reason || 'Personal Work'));
+              var meta = (req.employeeName || (pWin.USER_PROFILE && pWin.USER_PROFILE.name) || 'Sneha Reddy') + ' • ' + (req.employeeId || (pWin.USER_PROFILE && pWin.USER_PROFILE.employeeId) || 'EMP-2024-0103');
+              var reqId = 'emp-recent-req-' + (req.id || Math.random().toString(36).substr(2, 6));
+
+              var c = docRef.createElement('div');
+              c.className = 'recent-request-card';
+              c.id = reqId;
+              c.style.marginTop = '8px';
+              c.onclick = function() {
+                if (pWin.loadScreen) pWin.loadScreen('tpl-LeaveHistory');
+                else if (typeof loadScreen === 'function') loadScreen('tpl-LeaveHistory');
+              };
+              c.innerHTML = '<div class="recent-request-left">'
+                + '<div class="recent-request-title">' + title + '</div>'
+                + '<div class="recent-request-sub">' + sub + '</div>'
+                + '<div class="recent-request-meta">' + meta + '</div>'
+                + '</div>'
+                + '<div class="recent-request-right">'
+                + '<span class="recent-request-badge" style="background:' + badgeBg + ';color:' + badgeColor + ';">' + badgeText + '</span>'
+                + '<button class="recent-request-dismiss-btn" aria-label="Dismiss">'
+                + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#94A3B8" stroke-width="1.8" fill="none"/><line x1="15" y1="9" x2="9" y2="15" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round"/></svg>'
+                + '</button>'
+                + '</div>';
+              var disBtn = c.querySelector('.recent-request-dismiss-btn');
+              if (disBtn) {
+                disBtn.onclick = function(e) {
+                  if (e && e.stopPropagation) e.stopPropagation();
+                  dismissRecentRequest(reqId, e);
+                };
+              }
+              reqList.appendChild(c);
+            });
+          }, 150);
+        }
+
+        function openNotificationsFromDashboard() {
+          var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+          pWin.HAS_NEW_NOTIFICATION = false;
+          window.HAS_NEW_NOTIFICATION = false;
+          try { sessionStorage.removeItem('HAS_NEW_NOTIFICATION'); } catch (e) {}
+          try { pWin.sessionStorage.removeItem('HAS_NEW_NOTIFICATION'); } catch (e) {}
+          var bell = document.getElementById('dash-bell-btn') || document.querySelector('.bell');
+          if (bell) bell.classList.remove('has-glow');
+          if (pWin.loadScreen) {
+            pWin.loadScreen('tpl-Notifications');
+          } else if (typeof loadScreen === 'function') {
+            loadScreen('tpl-Notifications');
+          }
+        }
+
+        function syncBellGlow() {
+          var pWin = (window.parent && window.parent !== window) ? window.parent : window;
+          var hasNew = false;
+          try {
+            hasNew = !!(pWin.HAS_NEW_NOTIFICATION || window.HAS_NEW_NOTIFICATION || sessionStorage.getItem('HAS_NEW_NOTIFICATION') === 'true' || pWin.sessionStorage.getItem('HAS_NEW_NOTIFICATION') === 'true');
+          } catch (e) {
+            hasNew = !!(pWin.HAS_NEW_NOTIFICATION || window.HAS_NEW_NOTIFICATION);
+          }
+          var bell = document.getElementById('dash-bell-btn') || document.querySelector('.bell');
+          if (bell) {
+            if (hasNew) {
+              bell.classList.add('has-glow');
+            } else {
+              bell.classList.remove('has-glow');
+            }
+          }
+        }
+        syncBellGlow();
+        syncDashboardRequests();
+        document.addEventListener('DOMContentLoaded', function() {
+          syncBellGlow();
+          syncDashboardRequests();
+        });
+      </script>
+    </body>
+    </html>
+  </template>
+
   <template id="tpl-MyAttendance">
     <!DOCTYPE html>
     <html>
@@ -16098,7 +17846,19 @@ body {
         };
         window.PERSON_DATA = PERSON_DATA;
 
-        var EMPLOYEE_ALLOWED_SCREENS = [
+        var PREDEFINED_EMPLOYEES = [
+        { name: 'John Doe', email: 'john@gmail.com', password: 'employee@123', role: 'Senior Software Engineer', empId: 'EMP-2024-0101', initials: 'JD', reportingManager: 'Vishnu Kumar', phone: '+91 98765 11001' },
+        { name: 'Jack Ryan', email: 'jack@gmail.com', password: 'employee@123', role: 'QA Engineer', empId: 'EMP-2024-0102', initials: 'JR', reportingManager: 'Ram Prasad', phone: '+91 98765 11002' },
+        { name: 'Sneha Reddy', email: 'sneha@gmail.com', password: 'employee@123', role: 'UI/UX Designer', empId: 'EMP-2024-0103', initials: 'SR', reportingManager: 'Rahul Sharma', phone: '+91 98765 11003' }
+      ];
+
+      var PREDEFINED_MANAGERS = [
+        { name: 'Vishnu Kumar', email: 'vishnu@gmail.com', password: 'manager@123', role: 'Engineering Manager', empId: 'MGR-2024-0010', initials: 'VK', reportingManager: 'Director of Engineering', phone: '+91 98765 22001' },
+        { name: 'Ram Prasad', email: 'ram@gmail.com', password: 'manager@123', role: 'Technical Lead / Manager', empId: 'MGR-2024-0011', initials: 'RP', reportingManager: 'Director of Engineering', phone: '+91 98765 22002' },
+        { name: 'Rahul Sharma', email: 'rahul@gmail.com', password: 'manager@123', role: 'Operations Manager', empId: 'MGR-2024-0012', initials: 'RS', reportingManager: 'Vice President', phone: '+91 98765 22003' }
+      ];
+
+      var EMPLOYEE_ALLOWED_SCREENS = [
           'tpl-Login',
           'tpl-EmployeeDashboard',
           'tpl-MyAttendance',
